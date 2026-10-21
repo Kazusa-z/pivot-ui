@@ -1,17 +1,9 @@
 import { defineConfig } from '@pandacss/dev'
-import { globalCss, globalFontface } from '../../panda/global'
-import { tokens } from '../../panda/theme'
+import { pandaBase } from '../../panda/base'
 
 export default defineConfig({
-  preflight: false,
-  include: ['./src/panda-pilot/**/*.{ts,tsx}'],
+  ...pandaBase,
+  include: ['./src/**/*.{ts,tsx}', '../ui/src/**/*.{ts,tsx}'],
+  exclude: ['**/*.stories.tsx', '**/*.stories.ts'],
   outdir: 'styled-system',
-  prefix: 'panda',
-  jsxFramework: 'react',
-  globalCss,
-  globalFontface,
-  theme: {
-    tokens,
-    extend: {},
-  },
 })

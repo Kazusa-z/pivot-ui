@@ -41,7 +41,7 @@ type IEditableText = {
   onFocus?: (val: string) => void
   onEdit?: () => void
   onBlur?: (val: string) => void
-  css?: CSS
+  css?: any
 }
 
 function EditableText(props: IEditableText) {
@@ -113,7 +113,7 @@ function EditableText(props: IEditableText) {
             !showIcon && edit()
           }}
           gap="xs"
-          wrap="false"
+          wrap={false}
           css={css}>
           <Text ellipsis size={1} css={css}>
             {draft}

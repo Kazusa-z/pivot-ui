@@ -1,17 +1,19 @@
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledText = styled('p', {
-  fontFamily: '$default',
-  fontSynthesis: 'none',
+  base: {
+    fontFamily: 'var(--fonts-default)',
+    fontSynthesis: 'none',
+  },
   variants: {
     code: {
       true: {
-        fontFamily: '$mono',
+        fontFamily: 'var(--fonts-mono)',
       },
     },
     highContrast: {
       true: {
-        color: '$hiContrast',
+        color: 'var(--colors-hiContrast)',
       },
     },
     selectable: {
@@ -41,28 +43,28 @@ const StyledText = styled('p', {
         fontSize: '10px',
       },
       1: {
-        fontSize: '$1',
-        lineHeight: '$1',
+        fontSize: 'var(--fontSizes-1)',
+        lineHeight: 'var(--lineHeights-1)',
       },
       2: {
-        fontSize: '$2',
-        lineHeight: '$2',
+        fontSize: 'var(--fontSizes-2)',
+        lineHeight: 'var(--lineHeights-2)',
       },
       3: {
-        fontSize: '$3',
-        lineHeight: '$3',
+        fontSize: 'var(--fontSizes-3)',
+        lineHeight: 'var(--lineHeights-3)',
       },
       4: {
-        fontSize: '$4',
-        lineHeight: '$4',
+        fontSize: 'var(--fontSizes-4)',
+        lineHeight: 'var(--lineHeights-4)',
       },
       5: {
-        fontSize: '$6',
-        lineHeight: '$6',
+        fontSize: 'var(--fontSizes-6)',
+        lineHeight: 'var(--lineHeights-6)',
       },
       sm: {
-        fontSize: '$1',
-        lineHeight: '$1',
+        fontSize: 'var(--fontSizes-1)',
+        lineHeight: 'var(--lineHeights-1)',
       },
     },
     align: {
@@ -72,7 +74,7 @@ const StyledText = styled('p', {
     },
     muted: {
       true: {
-        color: '$textMuted',
+        color: 'var(--colors-textMuted)',
       },
     },
     deleted: {
@@ -90,38 +92,41 @@ const StyledText = styled('p', {
     },
     primary: {
       true: {
-        color: '$textStrong',
+        color: 'var(--colors-textStrong)',
       },
     },
     error: {
       true: {
-        color: '$red9',
+        color: 'var(--colors-red9)',
       },
     },
   },
   defaultVariants: {
-    size: 'md',
     weight: 'normal',
     highContrast: false,
   },
 })
 
 const StyledBold = styled('strong', {
-  fontWeight: 'bold',
-  color: '$textStrong',
+  base: {
+    fontWeight: 'bold',
+    color: 'var(--colors-textStrong)',
+  },
   variants: {
     variant: {
       subtle: {
-        color: '$grayA11',
+        color: 'var(--colors-grayA11)',
       },
     },
   },
 })
 
 const StyledTitle = styled('h2', {
-  display: 'block',
-  margin: 0,
-  color: '$textStrong',
+  base: {
+    display: 'block',
+    margin: 0,
+    color: 'var(--colors-textStrong)',
+  },
   variants: {
     weight: {
       light: {
@@ -142,19 +147,19 @@ const StyledTitle = styled('h2', {
     },
     size: {
       1: {
-        fontSize: '$1',
+        fontSize: 'var(--fontSizes-1)',
         lineHeight: 1.2,
       },
       2: {
-        fontSize: '$2',
+        fontSize: 'var(--fontSizes-2)',
         lineHeight: 1.2,
       },
       3: {
-        fontSize: '$4',
+        fontSize: 'var(--fontSizes-4)',
         lineHeight: 1.4,
       },
       4: {
-        fontSize: '$6',
+        fontSize: 'var(--fontSizes-6)',
         lineHeight: 1.4,
       },
       5: {
@@ -174,13 +179,15 @@ const StyledTitle = styled('h2', {
 })
 
 const StyledLink = styled('a', {
-  color: 'CurrentColor',
-  textDecoration: 'underline',
-  textDecorationColor: '$grayA6',
-  textUnderlineOffset: '4px',
-  cursor: 'pointer',
-  '&:hover': {
-    color: '$gray12',
+  base: {
+    color: 'CurrentColor',
+    textDecoration: 'underline',
+    textDecorationColor: 'var(--colors-grayA6)',
+    textUnderlineOffset: '4px',
+    cursor: 'pointer',
+    '&:hover': {
+      color: 'var(--colors-gray12)',
+    },
   },
 })
 

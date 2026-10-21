@@ -22,7 +22,7 @@ export const Overview: StoryFn<typeof Dialog> = (args) => {
       </Button>
       <Dialog open={open} closable onOpenChange={(open) => setOpen(false)}>
         <Flex direction="column" gap="xs" css={{ marginBottom: '$6' }}>
-          <Title size="2">Register</Title>
+          <Title size={2}>Register</Title>
           <Text>Register use password or OAuth2.0</Text>
         </Flex>
         <Select placeholder="Select Fruits..." defaultValue="apple" width="initial">

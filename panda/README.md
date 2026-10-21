@@ -10,6 +10,8 @@ This folder holds the shared Panda CSS setup used by both packages during the mi
 - **Global reset/fonts are migrated to Panda.**
   - `global.ts` is derived from the Stitches reset and the existing font-face declarations.
   - Storybook UI and GUI load Panda reset instead of `resetStyle()`.
+- **Import runtime styling directly from `styled-system`.**
+  - Do not re-export `styled`/`css` through a local facade; Panda's static extractor does not follow the re-export and variants can produce classes without matching CSS. Import from `styled-system/jsx`, `styled-system/css`, and `styled-system/tokens` directly.
 - **`css` prop is supported.**
   - A Panda `styled` component accepts `css={{ ... }}` and applies the style through Panda utility classes.
   - Use `token('colors.textMuted')` / `token('spacing.1')` for token values; do not write `'textMuted'` or `'colors.textMuted'` as raw style values (they emit invalid CSS).

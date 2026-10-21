@@ -1,16 +1,16 @@
-import React, { PropsWithChildren } from 'react'
+import React, { type ComponentProps, type PropsWithChildren } from 'react'
 
-import { styled } from '../design-system'
-import type { StitchesComponent } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledFlex = styled('div', {
-  display: 'flex',
-  boxSizing: 'border-box',
+  base: {
+    display: 'flex',
+    boxSizing: 'border-box',
+  },
   variants: {
     direction: {
       column: {
         flexDirection: 'column',
-        // alignItems: "flex-start"
       },
       row: { flexDirection: 'row' },
       'row-reverse': { flexDirection: 'row-reverse' },
@@ -49,12 +49,12 @@ const StyledFlex = styled('div', {
       reverse: { flexWrap: 'wrap-reverse' },
     },
     gap: {
-      none: { gap: 'none' },
-      xxs: { gap: '$0_5' },
-      xs: { gap: '$1' },
-      sm: { gap: '$2' },
-      md: { gap: '$3' },
-      lg: { gap: '$4' },
+      none: { gap: '0' },
+      xxs: { gap: '2px' },
+      xs: { gap: '4px' },
+      sm: { gap: '8px' },
+      md: { gap: '12px' },
+      lg: { gap: '16px' },
     },
     fullWidth: {
       true: {
@@ -68,7 +68,10 @@ const StyledFlex = styled('div', {
   },
 })
 
-export type FlexProps = PropsWithChildren<StitchesComponent<typeof StyledFlex>>
+type StyledFlexProps = ComponentProps<typeof StyledFlex>
+
+// TODO: narrow this to Panda's SystemStyleObject once all Flex css props are migrated.
+export type FlexProps = PropsWithChildren<Omit<StyledFlexProps, 'css'> & { css?: any }>
 
 export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(function Flex(props: FlexProps, forwardedRef) {
   return (

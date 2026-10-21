@@ -11,7 +11,7 @@ export default {
 
 const body = (
   <>
-    <Title size="2">Register</Title>
+    <Title size={2}>Register</Title>
     <Text>Register use password or OAuth2.0</Text>
   </>
 )

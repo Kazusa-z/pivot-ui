@@ -1,18 +1,14 @@
-import { useEffect, useState } from 'react'
-import { Button, Flex, ThemeProvider, Text, Title, resetStyle } from '@pivot-ui/editor'
+import { useState } from 'react'
+import { Button, Flex, ThemeProvider, Text, Title } from '@pivot-ui/editor'
 
 function App() {
   const [count, setCount] = useState(0)
-
-  useEffect(() => {
-    resetStyle()
-  }, [])
 
   return (
     <ThemeProvider>
       <Flex align="both" css={{ width: '100vw', height: '100vh' }}>
         <Flex direction="column" gap="sm" align="v">
-          <Title size="6" weight="bold">
+          <Title size={6} weight="bold">
             Pivot UI
           </Title>
           <Text>Count: {count}</Text>
