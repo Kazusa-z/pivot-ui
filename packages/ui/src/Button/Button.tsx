@@ -1,163 +1,159 @@
-import { PropsWithChildren, ReactNode, forwardRef } from 'react'
+import { forwardRef, type ComponentProps, type PropsWithChildren, type ReactNode } from 'react'
 import { Slot, Slottable } from '@radix-ui/react-slot'
 
-import { button } from '../design-system/recipes'
-import { styled, StitchesComponent } from '../design-system'
-
+import { styled } from '../../styled-system/jsx'
 import { Spin } from '../Spin'
 import { useAsyncStatus } from '../hooks/useAsyncStatus'
 
-const StyledButton = styled('button', button, {
-  transition: '$shadow, $borderColor, $backgroundColor, $color, opacity .2s ease-out',
-  userSelect: 'none',
-  whiteSpace: 'nowrap',
-  outline: 'none',
-  '&:disabled': {
-    color: '$textMuted',
-    cursor: 'not-allowed',
-    boxShadow: 'none',
-    '&:hover': {
-      color: '$textMuted',
+const StyledButton = styled('button', {
+  base: {
+    all: 'unset',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1,
+    border: '1px solid transparent',
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+    transition:
+      'box-shadow .2s ease, border-color .2s ease, background-color .2s ease, color .2s ease, opacity .2s ease-out',
+    userSelect: 'none',
+    whiteSpace: 'nowrap',
+    outline: 'none',
+    '&:focus-visible': {
+      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+    },
+    '&:disabled': {
+      backgroundColor: 'var(--colors-surfaceSubtle)',
+      color: 'var(--colors-textMuted)',
+      cursor: 'not-allowed',
+      boxShadow: 'none',
+      '&:hover': {
+        color: 'var(--colors-textMuted)',
+      },
     },
   },
   variants: {
     size: {
       xs: {
-        height: '$xs',
-        fontSize: '$1',
-        lineHeight: '$lineHeights$1',
+        height: '20px',
+        fontSize: '12px',
+        lineHeight: '16px',
         fontWeight: 500,
-        borderRadius: '$xs',
-        padding: '0 $1_5',
-        [`& ${Spin}`]: {
-          height: '$2',
-          width: '$2',
-        },
+        borderRadius: '4px',
+        padding: '0 6px',
       },
       sm: {
-        height: '$sm',
-        fontSize: '$1',
-        lineHeight: '$lineHeights$1',
+        height: '24px',
+        fontSize: '12px',
+        lineHeight: '16px',
         fontWeight: 500,
-        borderRadius: '$sm',
-        padding: '0 $2',
-        [`& ${Spin}`]: {
-          height: '$iconSm',
-          width: '$iconSm',
-        },
+        borderRadius: '4px',
+        padding: '0 8px',
       },
       md: {
-        height: '$md',
-        borderRadius: '$md',
-        padding: '0 $3',
-        fontSize: '$2',
-        lineHeight: '$lineHeights$2',
+        height: '32px',
+        borderRadius: '6px',
+        padding: '0 12px',
+        fontSize: '14px',
+        lineHeight: '20px',
         fontWeight: 500,
-        [`& ${Spin}`]: {
-          height: '$iconMd',
-          width: '$iconMd',
-        },
       },
       lg: {
-        height: '$lg',
-        fontSize: '$2',
-        lineHeight: '$lineHeights$2',
+        height: '36px',
+        fontSize: '14px',
+        lineHeight: '20px',
         fontWeight: 500,
-        borderRadius: '$xl',
-        padding: '0 $4',
-        [`& ${Spin}`]: {
-          height: '$iconLg',
-          width: '$iconLg',
-        },
+        borderRadius: '8px',
+        padding: '0 16px',
       },
     },
-    // The Variant of button
     variant: {
       outline: {
-        color: '$text',
+        color: 'var(--colors-text)',
         backgroundColor: 'transparent',
-        border: '1px solid $border',
+        border: '1px solid var(--colors-border)',
         '&:hover': {
-          borderColor: '$borderStrong',
-          backgroundColor: '$surfaceSubtle',
+          borderColor: 'var(--colors-borderStrong)',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
         },
         '&:active': {
-          backgroundColor: '$surfaceStrong',
+          backgroundColor: 'var(--colors-surfaceStrong)',
         },
         '&:disabled': {
-          color: '$textMuted',
-          borderColor: '$border',
+          color: 'var(--colors-textMuted)',
+          borderColor: 'var(--colors-border)',
           backgroundColor: 'transparent',
         },
       },
       soft: {
-        color: '$text',
-        backgroundColor: '$softBg',
+        color: 'var(--colors-text)',
+        backgroundColor: 'var(--colors-softBg)',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$textStrong',
-          backgroundColor: '$softBgHover',
+          color: 'var(--colors-textStrong)',
+          backgroundColor: 'var(--colors-softBgHover)',
           borderColor: 'transparent',
         },
         '&:active': {
-          color: '$textStrong',
-          backgroundColor: '$softBgActive',
+          color: 'var(--colors-textStrong)',
+          backgroundColor: 'var(--colors-softBgActive)',
           borderColor: 'transparent',
         },
         '&:disabled': {
-          color: '$textMuted',
-          backgroundColor: '$surfaceSubtle',
+          color: 'var(--colors-textMuted)',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
           borderColor: 'transparent',
         },
       },
       solid: {
-        backgroundColor: '$primary',
-        borderColor: '$primary',
-        color: '$white',
+        backgroundColor: 'var(--colors-primary)',
+        borderColor: 'var(--colors-primary)',
+        color: 'var(--colors-white)',
         '&:hover': {
-          backgroundColor: '$primaryActive',
-          borderColor: '$primaryActive',
+          backgroundColor: 'var(--colors-primaryActive)',
+          borderColor: 'var(--colors-primaryActive)',
         },
         '&:active': {
-          backgroundColor: '$primaryActive',
-          borderColor: '$primaryActive',
+          backgroundColor: 'var(--colors-primaryActive)',
+          borderColor: 'var(--colors-primaryActive)',
         },
         '&:disabled': {
-          color: '$textMuted',
-          backgroundColor: '$surfaceSubtle',
-          borderColor: '$border',
+          color: 'var(--colors-textMuted)',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
+          borderColor: 'var(--colors-border)',
         },
       },
       subtle: {
-        color: '$text',
+        color: 'var(--colors-text)',
         borderColor: 'transparent',
         '&:hover': {
-          backgroundColor: '$surfaceSubtle',
-          color: '$textStrong',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
+          color: 'var(--colors-textStrong)',
         },
         '&:active': {
-          backgroundColor: '$surfaceStrong',
+          backgroundColor: 'var(--colors-surfaceStrong)',
         },
         '&:disabled': {
-          color: '$textMuted',
+          color: 'var(--colors-textMuted)',
           backgroundColor: 'transparent',
           borderColor: 'transparent',
         },
       },
       inverted: {
-        color: '$textInverted',
-        backgroundColor: '$textStrong',
-        borderColor: '$textStrong',
+        color: 'var(--colors-textInverted)',
+        backgroundColor: 'var(--colors-textStrong)',
+        borderColor: 'var(--colors-textStrong)',
         '&:hover': {
-          backgroundColor: '$textStrong',
+          backgroundColor: 'var(--colors-textStrong)',
         },
         '&:active': {
-          backgroundColor: '$textStrong',
+          backgroundColor: 'var(--colors-textStrong)',
         },
         '&:disabled': {
-          color: '$textMuted',
-          backgroundColor: '$surfaceStrong',
-          borderColor: '$border',
+          color: 'var(--colors-textMuted)',
+          backgroundColor: 'var(--colors-surfaceStrong)',
+          borderColor: 'var(--colors-border)',
         },
       },
     },
@@ -171,40 +167,39 @@ const StyledButton = styled('button', button, {
         textTransform: 'uppercase',
       },
     },
-    // The state of button
     critical: {
       true: {
-        color: '$dangerText',
+        color: 'var(--colors-dangerText)',
         backgroundColor: 'transparent',
         '&:hover': {
-          backgroundColor: '$dangerBg',
+          backgroundColor: 'var(--colors-dangerBg)',
         },
         '&:active': {
-          backgroundColor: '$dangerBgHover',
+          backgroundColor: 'var(--colors-dangerBgHover)',
         },
       },
     },
     positive: {
       true: {
-        color: '$successText',
+        color: 'var(--colors-successText)',
         backgroundColor: 'transparent',
         '&:hover': {
-          backgroundColor: '$successBg',
+          backgroundColor: 'var(--colors-successBg)',
         },
         '&:active': {
-          backgroundColor: '$successBgHover',
+          backgroundColor: 'var(--colors-successBgHover)',
         },
       },
     },
     loading: {
       true: {
-        opacity: '.6',
+        opacity: '0.6',
         pointerEvents: 'none',
       },
     },
     round: {
       true: {
-        borderRadius: '$round',
+        borderRadius: '9999px',
       },
     },
   },
@@ -217,18 +212,18 @@ const StyledButton = styled('button', button, {
       variant: 'outline',
       critical: true,
       css: {
-        color: '$dangerText',
-        borderColor: '$dangerBorder',
+        color: 'var(--colors-dangerText)',
+        borderColor: 'var(--colors-dangerBorder)',
         '&:hover': {
-          borderColor: '$dangerBorder',
-          backgroundColor: '$dangerBg',
+          borderColor: 'var(--colors-dangerBorder)',
+          backgroundColor: 'var(--colors-dangerBg)',
         },
         '&:active': {
-          borderColor: '$dangerBorder',
-          backgroundColor: '$dangerBgHover',
+          borderColor: 'var(--colors-dangerBorder)',
+          backgroundColor: 'var(--colors-dangerBgHover)',
         },
         '&:disabled': {
-          borderColor: '$border',
+          borderColor: 'var(--colors-border)',
         },
       },
     },
@@ -236,15 +231,15 @@ const StyledButton = styled('button', button, {
       variant: 'outline',
       positive: true,
       css: {
-        color: '$successText',
-        borderColor: '$successBorder',
+        color: 'var(--colors-successText)',
+        borderColor: 'var(--colors-successBorder)',
         '&:hover': {
-          borderColor: '$successBorder',
-          backgroundColor: '$successBg',
+          borderColor: 'var(--colors-successBorder)',
+          backgroundColor: 'var(--colors-successBg)',
         },
         '&:active': {
-          borderColor: '$successBorder',
-          backgroundColor: '$successBgHover',
+          borderColor: 'var(--colors-successBorder)',
+          backgroundColor: 'var(--colors-successBgHover)',
         },
       },
     },
@@ -252,16 +247,16 @@ const StyledButton = styled('button', button, {
       variant: 'soft',
       critical: true,
       css: {
-        color: '$dangerText',
-        backgroundColor: '$dangerBg',
+        color: 'var(--colors-dangerText)',
+        backgroundColor: 'var(--colors-dangerBg)',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$dangerText',
-          backgroundColor: '$dangerBgHover',
+          color: 'var(--colors-dangerText)',
+          backgroundColor: 'var(--colors-dangerBgHover)',
           borderColor: 'transparent',
         },
         '&:active': {
-          backgroundColor: '$dangerBgHover',
+          backgroundColor: 'var(--colors-dangerBgHover)',
           borderColor: 'transparent',
         },
       },
@@ -270,16 +265,16 @@ const StyledButton = styled('button', button, {
       variant: 'soft',
       positive: true,
       css: {
-        color: '$successText',
-        backgroundColor: '$successBg',
+        color: 'var(--colors-successText)',
+        backgroundColor: 'var(--colors-successBg)',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$successText',
-          backgroundColor: '$successBgHover',
+          color: 'var(--colors-successText)',
+          backgroundColor: 'var(--colors-successBgHover)',
           borderColor: 'transparent',
         },
         '&:active': {
-          backgroundColor: '$successBgHover',
+          backgroundColor: 'var(--colors-successBgHover)',
           borderColor: 'transparent',
         },
       },
@@ -288,16 +283,16 @@ const StyledButton = styled('button', button, {
       variant: 'solid',
       critical: true,
       css: {
-        color: '$white',
-        backgroundColor: '$dangerSolid',
-        borderColor: '$dangerSolid',
+        color: 'var(--colors-white)',
+        backgroundColor: 'var(--colors-dangerSolid)',
+        borderColor: 'var(--colors-dangerSolid)',
         '&:hover': {
-          backgroundColor: '$dangerSolidHover',
-          borderColor: '$dangerSolidHover',
+          backgroundColor: 'var(--colors-dangerSolidHover)',
+          borderColor: 'var(--colors-dangerSolidHover)',
         },
         '&:active': {
-          backgroundColor: '$dangerSolidHover',
-          borderColor: '$dangerSolidHover',
+          backgroundColor: 'var(--colors-dangerSolidHover)',
+          borderColor: 'var(--colors-dangerSolidHover)',
         },
       },
     },
@@ -305,16 +300,16 @@ const StyledButton = styled('button', button, {
       variant: 'solid',
       positive: true,
       css: {
-        color: '$white',
-        backgroundColor: '$successSolid',
-        borderColor: '$successSolid',
+        color: 'var(--colors-white)',
+        backgroundColor: 'var(--colors-successSolid)',
+        borderColor: 'var(--colors-successSolid)',
         '&:hover': {
-          backgroundColor: '$successSolidHover',
-          borderColor: '$successSolidHover',
+          backgroundColor: 'var(--colors-successSolidHover)',
+          borderColor: 'var(--colors-successSolidHover)',
         },
         '&:active': {
-          backgroundColor: '$successSolidHover',
-          borderColor: '$successSolidHover',
+          backgroundColor: 'var(--colors-successSolidHover)',
+          borderColor: 'var(--colors-successSolidHover)',
         },
       },
     },
@@ -322,16 +317,16 @@ const StyledButton = styled('button', button, {
       variant: 'subtle',
       critical: true,
       css: {
-        color: '$dangerText',
+        color: 'var(--colors-dangerText)',
         '&:focus-visible': {
-          boxShadow: '$focus',
+          boxShadow: '0 0 0 2px var(--colors-dangerBorder)',
         },
         '&:hover': {
-          color: '$dangerText',
-          backgroundColor: '$dangerBg',
+          color: 'var(--colors-dangerText)',
+          backgroundColor: 'var(--colors-dangerBg)',
         },
         '&:active': {
-          backgroundColor: '$dangerBgHover',
+          backgroundColor: 'var(--colors-dangerBgHover)',
         },
       },
     },
@@ -339,16 +334,16 @@ const StyledButton = styled('button', button, {
       variant: 'subtle',
       positive: true,
       css: {
-        color: '$successText',
+        color: 'var(--colors-successText)',
         '&:focus-visible': {
-          boxShadow: '$focus',
+          boxShadow: '0 0 0 2px var(--colors-successBorder)',
         },
         '&:hover': {
-          color: '$successText',
-          backgroundColor: '$successBg',
+          color: 'var(--colors-successText)',
+          backgroundColor: 'var(--colors-successBg)',
         },
         '&:active': {
-          backgroundColor: '$successBgHover',
+          backgroundColor: 'var(--colors-successBgHover)',
         },
       },
     },
@@ -356,16 +351,16 @@ const StyledButton = styled('button', button, {
       variant: 'inverted',
       critical: true,
       css: {
-        color: '$textInverted',
-        backgroundColor: '$dangerSolidHover',
-        borderColor: '$dangerSolidHover',
+        color: 'var(--colors-textInverted)',
+        backgroundColor: 'var(--colors-dangerSolidHover)',
+        borderColor: 'var(--colors-dangerSolidHover)',
         '&:hover': {
-          backgroundColor: '$dangerText',
-          borderColor: '$dangerText',
+          backgroundColor: 'var(--colors-dangerText)',
+          borderColor: 'var(--colors-dangerText)',
         },
         '&:active': {
-          backgroundColor: '$dangerText',
-          borderColor: '$dangerText',
+          backgroundColor: 'var(--colors-dangerText)',
+          borderColor: 'var(--colors-dangerText)',
         },
       },
     },
@@ -373,93 +368,98 @@ const StyledButton = styled('button', button, {
       variant: 'inverted',
       positive: true,
       css: {
-        color: '$textInverted',
-        backgroundColor: '$successSolidHover',
-        borderColor: '$successSolidHover',
+        color: 'var(--colors-textInverted)',
+        backgroundColor: 'var(--colors-successSolidHover)',
+        borderColor: 'var(--colors-successSolidHover)',
         '&:hover': {
-          backgroundColor: '$successText',
-          borderColor: '$successText',
+          backgroundColor: 'var(--colors-successText)',
+          borderColor: 'var(--colors-successText)',
         },
         '&:active': {
-          backgroundColor: '$successText',
-          borderColor: '$successText',
+          backgroundColor: 'var(--colors-successText)',
+          borderColor: 'var(--colors-successText)',
         },
       },
     },
   ],
 })
 
+const SlotContainer = styled('div', {
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  variants: {
+    position: {
+      start: {
+        marginRight: '4px',
+      },
+      end: {
+        marginLeft: '4px',
+      },
+    },
+    size: {
+      xs: {},
+      sm: {
+        fontSize: '12px',
+      },
+      md: {
+        fontSize: '14px',
+      },
+      lg: {
+        fontSize: '14px',
+      },
+    },
+    gap: {
+      xs: {
+        '&[data-position="start"]': {
+          marginRight: '4px',
+        },
+        '&[data-position="end"]': {
+          marginLeft: '4px',
+        },
+      },
+      sm: {
+        '&[data-position="start"]': {
+          marginRight: '6px',
+        },
+        '&[data-position="end"]': {
+          marginLeft: '6px',
+        },
+      },
+      md: {
+        '&[data-position="start"]': {
+          marginRight: '8px',
+        },
+        '&[data-position="end"]': {
+          marginLeft: '8px',
+        },
+      },
+      lg: {
+        '&[data-position="start"]': {
+          marginRight: '8px',
+        },
+        '&[data-position="end"]': {
+          marginLeft: '8px',
+        },
+      },
+    },
+  },
+})
+
+type StyledButtonProps = ComponentProps<typeof StyledButton>
+
 export type ButtonProps = PropsWithChildren<
-  StitchesComponent<typeof StyledButton> & {
+  Omit<StyledButtonProps, 'css'> & {
+    css?: any
     startSlot?: ReactNode
     endSlot?: ReactNode
     async?: () => Promise<unknown>
     asChild?: boolean
   }
 >
-
-const SlotContainer = styled('div', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-  variants: {
-    position: {
-      start: {
-        marginRight: '$1',
-      },
-      end: {
-        marginLeft: '$1',
-      },
-    },
-    size: {
-      xs: {},
-      sm: {
-        fontSize: '$1',
-      },
-      md: {
-        fontSize: '$2',
-      },
-      lg: {
-        fontSize: '$2',
-      },
-    },
-    gap: {
-      xs: {
-        '&[data-position="start"]': {
-          marginRight: '$1',
-        },
-        '&[data-position="end"]': {
-          marginLeft: '$1',
-        },
-      },
-      sm: {
-        '&[data-position="start"]': {
-          marginRight: '$1_5',
-        },
-        '&[data-position="end"]': {
-          marginLeft: '$1_5',
-        },
-      },
-      md: {
-        '&[data-position="start"]': {
-          marginRight: '$2',
-        },
-        '&[data-position="end"]': {
-          marginLeft: '$2',
-        },
-      },
-      lg: {
-        '&[data-position="start"]': {
-          marginRight: '$2',
-        },
-        '&[data-position="end"]': {
-          marginLeft: '$2',
-        },
-      },
-    },
-  },
-})
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, forwardedRef) {
   const { children, startSlot, endSlot, async, size, loading: propLoading, onClick, asChild, disabled, ...rest } = props
@@ -470,8 +470,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props,
   })
 
   const resolvedSize = size ?? 'sm'
-  const spin = <Spin color="inherit" size="xs" />
-  const Comp = asChild ? Slot : StyledButton
+  const spinSize =
+    resolvedSize === 'xs' ? '8px' : resolvedSize === 'sm' ? '14px' : resolvedSize === 'md' ? '16px' : '18px'
+  const spin = <Spin className="button-spin" color="inherit" size="xs" style={{ height: spinSize, width: spinSize }} />
+  // Slot and the Panda button have different prop shapes; keep the public behavior unchanged.
+  const Comp = (asChild ? Slot : StyledButton) as any
   const leadingSlot = startSlot ? (loading ? spin : startSlot) : !endSlot && loading ? spin : null
   const trailingSlot = endSlot ? (loading ? spin : endSlot) : null
 

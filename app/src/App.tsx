@@ -12,7 +12,7 @@ function App() {
             Pivot UI
           </Title>
           <Text>Count: {count}</Text>
-          <Button size="md" variant="solid" onClick={() => setCount(count + 1)} css={{ margin: '$4 0' }}>
+          <Button size="md" variant="solid" onClick={() => setCount(count + 1)} css={{ margin: '16px 0' }}>
             Increment Count
           </Button>
           <Text size="sm" muted>

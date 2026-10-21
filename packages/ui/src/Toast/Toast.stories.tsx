@@ -49,7 +49,7 @@ export const Overview: StoryFn = (args) => {
                   <Text size="sm" muted>
                     Custom and Undoable toast
                   </Text>
-                  <Button css={{ marginLeft: '$2' }} size="sm" onClick={() => toast.dismiss(t.id)} variant="soft">
+                  <Button css={{ marginLeft: '8px' }} size="sm" onClick={() => toast.dismiss(t.id)} variant="soft">
                     Undo
                   </Button>
                 </Flex>
