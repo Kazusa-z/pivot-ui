@@ -8,158 +8,36 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { IconCheck, IconChevronDown, IconChevronUp } from '@tabler/icons-react'
 import React, { forwardRef } from 'react'
 
-import { CSS, styled } from '../design-system'
-import { checkboxItemStyle, indicatorStyle, labelStyle } from '../design-system/recipes'
+import { styled } from '../../styled-system/jsx'
+import { css } from '../../styled-system/css'
+import type { SystemStyleObject } from '../../styled-system/types'
+import {
+  selectContentConfig,
+  selectIconConfig,
+  selectIndicatorConfig,
+  selectItemConfig,
+  selectLabelConfig,
+  selectScrollButtonConfig,
+  selectSlotConfig,
+  selectTriggerConfig,
+  selectValueConfig,
+  selectViewportConfig,
+  selectItemContentConfig,
+  selectItemContentConfig as itemContentConfig,
+  triggerContentConfig,
+} from './selectStyles'
 import { IconRightBottomCorner } from '../Icons'
 import { Flex } from '../Flex'
 
-const SelectTrigger = styled(SelectPrimitive.SelectTrigger, {
-  all: 'unset',
-  position: 'relative',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-  color: '$text',
-  border: '1px solid transparent',
-  transition: '$borderColor, $backgroundColor, $color, $shadow',
-  userSelect: 'none',
-  cursor: 'pointer',
-  width: '100%',
-  boxSizing: 'border-box',
-  '&:disabled': {
-    backgroundColor: '$surfaceSubtle',
-    borderColor: '$border',
-    color: '$textMuted',
-    '&:hover': {
-      backgroundColor: '$surfaceSubtle',
-      color: '$textMuted',
-      cursor: 'default',
-    },
-  },
-  '&:hover': {
-    backgroundColor: '$softBgHover',
-    borderColor: '$borderStrong',
-  },
-  '&[data-placeholder]': {
-    color: '$textMuted',
-  },
-  '&:focus-visible': {
-    borderColor: '$borderStrong',
-    boxShadow: '$focus',
-  },
-  variants: {
-    size: {
-      xs: {
-        height: '$controlXs',
-        borderRadius: '$xs',
-        padding: '0 $5 0 $1_5',
-        fontSize: '$1',
-      },
-      sm: {
-        height: '$sm',
-        borderRadius: '$sm',
-        padding: '0 $5 0 $2',
-        fontSize: '$1',
-      },
-      md: {
-        height: '$md',
-        borderRadius: '$md',
-        padding: '0 $6 0 $3',
-        fontSize: '$2',
-      },
-    },
-    variant: {
-      outline: {
-        backgroundColor: '$surface',
-        borderColor: '$border',
-        '&:hover': {
-          backgroundColor: '$surfaceSubtle',
-          borderColor: '$borderStrong',
-        },
-      },
-      soft: {
-        backgroundColor: '$softBg',
-        borderColor: 'transparent',
-        '&:hover': {
-          backgroundColor: '$softBgHover',
-          borderColor: 'transparent',
-        },
-      },
-      subtle: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
-        '&:hover': {
-          backgroundColor: '$surfaceSubtle',
-          borderColor: 'transparent',
-        },
-      },
-    },
-  },
-  defaultVariants: {
-    size: 'sm',
-    variant: 'soft',
-  },
-})
+const SelectTrigger = styled(SelectPrimitive.SelectTrigger, selectTriggerConfig)
 
-const SelectIcon = styled(SelectPrimitive.SelectIcon, {
-  position: 'absolute',
-  height: '100%',
-  display: 'inline-flex',
-  color: 'CurrentColor',
-  alignItems: 'center',
-  right: 4,
-  lineHeight: 1,
-  '& > svg': {
-    height: '$iconXs',
-    width: '$iconXs',
-  },
-  variants: {
-    size: {
-      xs: {
-        '& > svg': {
-          height: '$iconXs',
-          width: '$iconXs',
-        },
-      },
-      sm: {
-        '& > svg': {
-          height: '$iconSm',
-          width: '$iconSm',
-        },
-      },
-      md: {
-        '& > svg': {
-          height: '$iconMd',
-          width: '$iconMd',
-        },
-      },
-    },
-  },
-})
+const SelectIcon = styled(SelectPrimitive.SelectIcon, selectIconConfig)
 
-const StyledTriggerContent = styled('div', {
-  display: 'flex',
-  flex: 1,
-  minWidth: 0,
-  height: '100%',
-  alignItems: 'center',
-  gap: '$1',
-})
+const StyledTriggerContent = styled('div', triggerContentConfig)
 
-const SelectValue = styled(SelectPrimitive.Value, {
-  display: 'flex',
-  flex: 1,
-  minWidth: 0,
-  height: '100%',
-  alignItems: 'center',
-  lineHeight: 1,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  color: 'inherit',
-})
+const SelectValue = styled(SelectPrimitive.Value, selectValueConfig)
 
-const CornerIcon = styled(IconRightBottomCorner, {
+const cornerIconClass = css({
   position: 'absolute',
   width: '4px !important',
   height: '4px !important',
@@ -168,44 +46,19 @@ const CornerIcon = styled(IconRightBottomCorner, {
   right: 1,
 })
 
-const SelectContent = styled(SelectPrimitive.Content, {
-  overflow: 'auto',
-  maxHeight: 'min(300px, var(--radix-select-content-available-height))',
-  backgroundColor: '$surfaceOverlay',
-  minWidth: 'var(--radix-select-trigger-width)',
-  borderRadius: '$lg',
-  boxShadow: '$popContainer',
-  border: '1px solid $border',
-})
+const SelectContent = styled(SelectPrimitive.Content, selectContentConfig)
 
-const SelectViewport = styled(SelectPrimitive.Viewport, {
-  padding: '$1',
-  maxHeight: '300px',
-  overflowY: 'auto',
-  '@media (prefers-reduced-motion: no-preference)': {
-    scrollBehavior: 'smooth',
-  },
-})
+const SelectViewport = styled(SelectPrimitive.Viewport, selectViewportConfig)
 
-const StyledItem = styled(SelectPrimitive.Item, checkboxItemStyle)
+const StyledItem = styled(SelectPrimitive.Item, selectItemConfig)
 
-const SelectLabel = styled(SelectPrimitive.Label, labelStyle)
+const SelectLabel = styled(SelectPrimitive.Label, selectLabelConfig)
 
-const StyledItemIndicator = styled(SelectPrimitive.ItemIndicator, indicatorStyle)
+const StyledItemIndicator = styled(SelectPrimitive.ItemIndicator, selectIndicatorConfig)
 
-const scrollButtonStyles = {
-  display: 'flex',
-  height: '$4',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '$2',
-  color: '$textMuted',
-  cursor: 'default',
-}
+const SelectScrollUpButton = styled(SelectPrimitive.ScrollUpButton, selectScrollButtonConfig)
 
-const SelectScrollUpButton = styled(SelectPrimitive.ScrollUpButton, scrollButtonStyles)
-
-const SelectScrollDownButton = styled(SelectPrimitive.ScrollDownButton, scrollButtonStyles)
+const SelectScrollDownButton = styled(SelectPrimitive.ScrollDownButton, selectScrollButtonConfig)
 
 type SelectContextProps = {
   size: 'xs' | 'sm' | 'md'
@@ -219,37 +72,9 @@ const SelectContext = React.createContext<SelectContextProps>({
   valueRenderer: undefined,
 })
 
-const StyledSelectItemContent = styled('span', {
-  display: 'flex',
-  alignItems: 'center',
-  '& > svg': {
-    marginRight: '$1_5',
-    width: '$4',
-    height: '$4',
-  },
-})
+const StyledSelectItemContent = styled('span', selectItemContentConfig)
 
-const StyledSelectSlot = styled(Flex, {
-  flexShrink: 0,
-  userSelect: 'none',
-  color: '$textMuted',
-  variants: {
-    size: {
-      xs: {
-        paddingRight: '$1',
-        fontSize: '$1',
-      },
-      sm: {
-        paddingRight: '$1',
-        fontSize: '$1',
-      },
-      md: {
-        paddingRight: '$2',
-        fontSize: '$2',
-      },
-    },
-  },
-})
+const StyledSelectSlot = styled(Flex, selectSlotConfig)
 
 export interface SelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
   value: any
@@ -314,7 +139,7 @@ export interface SelectProps extends Omit<PrimitiveSelectProps, 'value' | 'defau
   children?: React.ReactNode
   arrow?: boolean
   cornerArrow?: boolean
-  triggerCss?: CSS
+  triggerCss?: SystemStyleObject
   startSlot?: React.ReactNode
 }
 
@@ -385,7 +210,11 @@ function Select(props: SelectProps) {
             )}
             <SelectValue placeholder={placeholder}>{renderedValue}</SelectValue>
           </StyledTriggerContent>
-          {arrow && <SelectIcon size={size}>{cornerArrow ? <CornerIcon /> : <IconChevronDown />}</SelectIcon>}
+          {arrow && (
+            <SelectIcon size={size}>
+              {cornerArrow ? <IconRightBottomCorner className={cornerIconClass} /> : <IconChevronDown />}
+            </SelectIcon>
+          )}
         </SelectTrigger>
         <SelectPrimitive.Portal>
           <SelectContent position={position} sideOffset={sideOffset} collisionPadding={4}>

@@ -5,275 +5,53 @@ import { createPortal } from 'react-dom'
 
 import { Badge } from '../Badge'
 import { Checkbox } from '../Checkbox'
-import { styled } from '../design-system'
-import { basicItemStyle } from '../design-system/recipes'
+import { styled } from '../../styled-system/jsx'
+import {
+  chevronConfig,
+  comboItemConfig,
+  comboboxContentConfig,
+  comboboxHeaderConfig,
+  comboboxSearchInputConfig,
+  comboboxSlotConfig,
+  comboboxTriggerConfig,
+  comboboxTriggerContentConfig,
+  comboboxValueNodeConfig,
+  placeholderConfig,
+  searchIconConfig,
+  selectAllTextConfig,
+  selectAllWrapperConfig,
+} from './selectStyles'
 import { Flex } from '../Flex'
 import { Popover, PopoverCloseTrigger } from '../Popover'
 import { Text } from '../Typography'
 
 const SELECT_ALL_VALUE = '$$SELECT_ALL$$'
 
-const StyledComboboxTrigger = styled('button', {
-  all: 'unset',
-  position: 'relative',
-  display: 'flex',
-  width: '100%',
-  gap: '$1',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-  boxSizing: 'border-box',
-  color: '$text',
-  border: '1px solid transparent',
-  transition: '$borderColor, $backgroundColor, $color, $shadow',
-  cursor: 'pointer',
-  variants: {
-    size: {
-      xs: {
-        height: '$controlXs',
-        borderRadius: '$xs',
-        padding: '0 $5 0 $1_5',
-      },
-      sm: {
-        height: '$sm',
-        borderRadius: '$sm',
-        padding: '0 $5 0 $0_5',
-      },
-      md: {
-        height: '$md',
-        borderRadius: '$md',
-        padding: '0 $6 0 $3',
-      },
-    },
-    variant: {
-      outline: {
-        backgroundColor: '$surface',
-        borderColor: '$border',
-        '&:hover': {
-          backgroundColor: '$surfaceSubtle',
-          borderColor: '$borderStrong',
-        },
-      },
-      soft: {
-        backgroundColor: '$softBg',
-        borderColor: 'transparent',
-        '&:hover': {
-          backgroundColor: '$softBgHover',
-          borderColor: 'transparent',
-        },
-      },
-      subtle: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
-        '&:hover': {
-          backgroundColor: '$surfaceSubtle',
-          borderColor: 'transparent',
-        },
-      },
-    },
-  },
-  defaultVariants: {
-    size: 'sm',
-    variant: 'soft',
-  },
-})
+const StyledComboboxTrigger = styled('button', comboboxTriggerConfig)
 
-const StyledChevronDown = styled(IconChevronDown, {
-  height: '$iconXs',
-  width: '$iconXs',
-  color: '$textMuted',
-  flexShrink: 0,
-  position: 'absolute',
-  right: '$1_5',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  variants: {
-    size: {
-      xs: {
-        height: '$iconXs',
-        width: '$iconXs',
-      },
-      sm: {
-        height: '$iconSm',
-        width: '$iconSm',
-      },
-      md: {
-        height: '$iconMd',
-        width: '$iconMd',
-      },
-    },
-  },
-})
+const StyledChevronDown = styled(IconChevronDown, chevronConfig)
 
-const SearchIcon = styled(IconSearch, {
-  height: '$iconSm',
-  width: '$iconSm',
-  color: '$textMuted',
-  strokeWidth: 1.5,
-  flexShrink: 0,
-})
+const SearchIcon = styled(IconSearch, searchIconConfig)
 
-const StyledPlaceholder = styled('span', {
-  all: 'unset',
-  fontSize: '$1',
-  color: '$textMuted',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-})
+const StyledPlaceholder = styled('span', placeholderConfig)
 
-const StyledComboboxContent = styled(Flex, {
-  padding: '$1',
-  minHeight: '60px',
-  maxHeight: '300px',
-  overflowY: 'auto',
-  position: 'relative',
-  flex: 1,
-  flexWrap: 'nowrap !important',
-  backgroundColor: '$surfaceOverlay',
-  '&[data-state="open"]': {
-    animation: 'none',
-  },
-  '&::-webkit-scrollbar': {
-    width: '$0_5',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: 'transparent',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: '$scrollbarThumb',
-    borderRadius: '4px',
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    background: '$scrollbarTrackHover',
-  },
-})
+const StyledComboboxContent = styled(Flex, comboboxContentConfig)
 
-const StyledComboboxSearchInput = styled('input', {
-  all: 'unset',
-  width: '100%',
-  padding: '$1',
-  fontSize: '$1',
-  color: '$text',
-  boxSizing: 'border-box',
-  '&::placeholder': {
-    color: '$textMuted',
-  },
-})
+const StyledComboboxSearchInput = styled('input', comboboxSearchInputConfig)
 
-const StyledComboBoxItem = styled('button', basicItemStyle, {
-  userSelect: 'none',
-  width: '100%',
-  flexShrink: 0,
-  '&:focus': {
-    backgroundColor: 'transparent',
-    color: '$text',
-  },
-  '&:hover': {
-    color: '$textStrong',
-    backgroundColor: '$surfaceSubtle',
-  },
-  variants: {
-    focused: {
-      true: {},
-    },
-    selected: {
-      true: {
-        backgroundColor: '$selectionBg',
-        color: '$selectionText',
-        borderRadius: 0,
-        '&:focus': {
-          backgroundColor: '$selectionBg',
-          color: '$selectionText',
-        },
-        '&:hover': {
-          backgroundColor: '$selectionBgHover',
-          color: '$selectionText',
-        },
-      },
-    },
-    selectedStart: {
-      true: {
-        borderTopLeftRadius: '$sm',
-        borderTopRightRadius: '$sm',
-      },
-    },
-    selectedEnd: {
-      true: {
-        borderBottomLeftRadius: '$sm',
-        borderBottomRightRadius: '$sm',
-      },
-    },
-  },
-})
+const StyledComboBoxItem = styled('button', comboItemConfig)
 
-const StyledComboboxHeader = styled(Flex, {
-  borderBottom: '1px solid $border',
-  padding: '$1 $2',
-  flexShrink: 0,
-  gap: '$2',
-})
+const StyledComboboxHeader = styled(Flex, comboboxHeaderConfig)
 
-const StyledSelectAllWrapper = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$1',
-  padding: '$1 0',
-  cursor: 'pointer',
-})
+const StyledSelectAllWrapper = styled('div', selectAllWrapperConfig)
 
-const SelectAllText = styled('span', {
-  fontSize: '$1',
-  color: '$text',
-  cursor: 'pointer',
-  userSelect: 'none',
-})
+const SelectAllText = styled('span', selectAllTextConfig)
 
-const StyledComboboxSlot = styled('div', {
-  display: 'flex',
-  position: 'relative',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-  color: '$textMuted',
-  transition: 'color 0.2s ease',
-  userSelect: 'none',
-  variants: {
-    size: {
-      xs: {
-        paddingRight: '$1',
-        fontSize: '$1',
-      },
-      sm: {
-        paddingRight: '$1_5',
-        fontSize: '$1',
-      },
-      md: {
-        paddingRight: '$2',
-        fontSize: '$2',
-      },
-    },
-  },
-})
+const StyledComboboxSlot = styled('div', comboboxSlotConfig)
 
-const StyledComboboxTriggerContent = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  flex: 1,
-  minWidth: 0,
-  height: '100%',
-  gap: '$1',
-})
+const StyledComboboxTriggerContent = styled('div', comboboxTriggerContentConfig)
 
-const StyledComboboxValueNode = styled(Flex, {
-  flex: 1,
-  minWidth: 0,
-  height: '100%',
-  alignItems: 'center',
-  overflow: 'hidden',
-  '& > *': {
-    minWidth: 0,
-  },
-})
+const StyledComboboxValueNode = styled(Flex, comboboxValueNodeConfig)
 
 interface ComboboxContextProps {
   autoClose: boolean

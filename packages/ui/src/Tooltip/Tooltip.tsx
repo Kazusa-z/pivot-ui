@@ -1,24 +1,22 @@
-import React, { useState, PropsWithChildren, ComponentProps } from 'react'
+import React, { type PropsWithChildren } from 'react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
-import { styled, keyframes, VariantProps, CSS } from '../design-system'
+import { css } from '../../styled-system/css'
 
-const scaleIn = keyframes({
-  '0%': { opacity: 0, transform: 'scale(0) translateY(-4px)' },
-  '100%': { opacity: 1, transform: 'scale(1) translateY(0px)' },
-})
-
-const StyledContent = styled(TooltipPrimitive.Content, {
+const contentClass = css({
   display: 'flex',
   alignItems: 'center',
   fontSize: '13px',
-  padding: '$2 $3',
-  backgroundColor: '$gray2',
-  borderRadius: '$4',
-  color: '$gray12',
-  boxShadow: 'inset 0 0 0 1px $colors$grayA4',
+  padding: '8px 12px',
+  backgroundColor: 'var(--colors-gray2)',
+  borderRadius: '8px',
+  color: 'var(--colors-gray12)',
+  boxShadow: 'inset 0 0 0 1px var(--colors-grayA4)',
   transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
-  animation: `${scaleIn} 0.2s ease forwards`,
+  animationName: 'scaleIn',
+  animationDuration: '0.2s',
+  animationTimingFunction: 'ease',
+  animationFillMode: 'forwards',
 })
 
 export interface TooltipProps extends Omit<TooltipPrimitive.TooltipContentProps, 'content'> {
@@ -33,9 +31,9 @@ function Tooltip(props: PropsWithChildren<TooltipProps>) {
       <TooltipPrimitive.Root delayDuration={delayDuration} {...rest}>
         <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
-          <StyledContent sideOffset={sideOffset} side={side}>
+          <TooltipPrimitive.Content className={contentClass} sideOffset={sideOffset} side={side}>
             {content}
-          </StyledContent>
+          </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>
       </TooltipPrimitive.Root>
     </TooltipPrimitive.TooltipProvider>

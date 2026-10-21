@@ -4,50 +4,39 @@ import * as PopoverPrimitive from '@radix-ui/react-popover'
 import type { PopoverContentProps as PrimitiveContentProps } from '@radix-ui/react-popover'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 
-import { CSS, styled } from '../design-system'
-import { keyframes } from '../design-system/keyframes'
-import { contentStyle } from '../design-system/recipes'
+import { css, cx } from '../../styled-system/css'
+import type { SystemStyleObject } from '../../styled-system/types'
 import { composeEventHandlers } from '../utils/composeEventHandler'
 
-const StyledContent = styled(PopoverPrimitive.Content, contentStyle, {
-  padding: '$2',
-  fontSize: '$1',
-  color: '$text',
-  minWidth: '160px',
-  outline: 'none',
+const contentClass = css({
+  backgroundColor: 'var(--colors-overlayBg)',
+  borderRadius: '6px',
+  boxShadow: 'var(--shadows-popContainer)',
+  border: '1px solid var(--colors-border)',
+  transformOrigin: 'var(--radix-popover-content-transform-origin)',
+  animationName: 'scaleIn',
   animationDuration: '300ms',
   animationTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
+  willChange: 'transform, opacity',
+  padding: '8px',
+  fontSize: '12px',
+  color: 'var(--colors-text)',
+  minWidth: '160px',
+  outline: 'none',
   '&[data-state="open"]': {
-    '&[data-side="top"]': { animationName: keyframes.slideDownAndFade },
-    '&[data-side="right"]': { animationName: keyframes.slideLeftAndFade },
-    '&[data-side="bottom"]': { animationName: keyframes.slideUpAndFade },
-    '&[data-side="left"]': { animationName: keyframes.slideRightAndFade },
-  },
-  variants: {
-    compact: {
-      true: {
-        padding: 0,
-      },
-    },
-    constrainSize: {
-      true: {
-        width: 'var(--radix-popover-trigger-width)',
-        maxHeight: 'var(--radix-popover-content-available-height)',
-      },
-    },
+    '&[data-side="top"]': { animationName: 'slideDownAndFade' },
+    '&[data-side="right"]': { animationName: 'slideLeftAndFade' },
+    '&[data-side="bottom"]': { animationName: 'slideUpAndFade' },
+    '&[data-side="left"]': { animationName: 'slideRightAndFade' },
   },
 })
 
-const Trigger = styled(PopoverPrimitive.Trigger, {
-  variants: {
-    disabled: {
-      true: {
-        pointerEvents: 'none',
-        userSelect: 'none',
-      },
-    },
-  },
+const compactClass = css({ padding: 0 })
+const constrainClass = css({
+  width: 'var(--radix-popover-trigger-width)',
+  maxHeight: 'var(--radix-popover-content-available-height)',
 })
+const disabledTriggerClass = css({ pointerEvents: 'none', userSelect: 'none' })
 
 export type PopoverProps = PopoverContentProps & {
   trigger: React.ReactNode
@@ -56,7 +45,7 @@ export type PopoverProps = PopoverContentProps & {
   open?: boolean
   compact?: boolean
   constrainSize?: boolean
-  css?: CSS
+  css?: SystemStyleObject
   container?: Element
 }
 
@@ -65,13 +54,26 @@ interface PopoverContentProps extends PrimitiveContentProps {
   open?: boolean
   forceRender?: boolean
   container?: Element
+  compact?: boolean
+  constrainSize?: boolean
+  css?: SystemStyleObject
 }
 
 const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function PopoverContent(
   props: PopoverContentProps,
   forwardedRef
 ) {
-  const { children, open, container, forceRender = false, ...rest } = props
+  const {
+    children,
+    open,
+    container,
+    forceRender = false,
+    compact,
+    constrainSize,
+    css: cssProp,
+    className,
+    ...rest
+  } = props
 
   const [fragment, setFragment] = React.useState<DocumentFragment>()
 
@@ -86,9 +88,18 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
 
   return (
     <PopoverPrimitive.Portal container={container}>
-      <StyledContent {...rest} ref={forwardedRef}>
+      <PopoverPrimitive.Content
+        {...rest}
+        ref={forwardedRef}
+        className={cx(
+          contentClass,
+          compact && compactClass,
+          constrainSize && constrainClass,
+          cssProp && css(cssProp),
+          className
+        )}>
         {children}
-      </StyledContent>
+      </PopoverPrimitive.Content>
     </PopoverPrimitive.Portal>
   )
 })
@@ -102,16 +113,15 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(function Popover(props:
     onChange: onOpenChange,
   })
 
-  // https://github.com/radix-ui/primitives/issues/1159
   function stopPropagation(e: React.MouseEvent | React.TouchEvent) {
     e.stopPropagation()
   }
 
   return (
     <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
-      <Trigger asChild disabled={disabled}>
+      <PopoverPrimitive.Trigger asChild disabled={disabled} className={disabled ? disabledTriggerClass : undefined}>
         {trigger}
-      </Trigger>
+      </PopoverPrimitive.Trigger>
       <PopoverContent
         {...rest}
         sideOffset={sideOffset}

@@ -1,152 +1,142 @@
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'
 import { IconTriangleInvertedFilled } from '@tabler/icons-react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
+import type { ComponentProps, ReactNode } from 'react'
+import type { SystemStyleObject } from '../../styled-system/types'
 
-import { styled, StitchesComponent } from '../design-system'
+import { css, cx } from '../../styled-system/css'
 
-const StyledContent = styled(CollapsiblePrimitive.Content, {
-  borderRadius: '0 0 $sm $sm',
-  padding: '0 $1 $1 $1',
-  backgroundColor: '$panelBg',
-  '&:empty': {
-    padding: 0,
-  },
-  variants: {
-    guideline: {
-      true: {
-        position: 'relative',
-        paddingLeft: '$1 !important',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          width: '1px',
-          height: '100%',
-          backgroundColor: '$grayA5',
-          left: -1,
-        },
-      },
+const rootClass = css({
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  color: 'var(--colors-text)',
+  borderRadius: '4px',
+  overflow: 'hidden',
+  '& [data-part="root"]': {
+    backgroundColor: 'var(--colors-panelBg)',
+    paddingLeft: '4px',
+    '&::before': {
+      display: 'none',
+    },
+    '& [data-part="title"]': {
+      paddingLeft: '4px',
+    },
+    '& > [data-part="content"]': {
+      position: 'relative',
+      padding: 0,
     },
   },
 })
 
-const StyledTitle = styled('div', {
+const subtleClass = css({
+  backgroundColor: 'var(--colors-appBg)',
+  borderRadius: '6px',
+  border: '1px solid var(--colors-border)',
+  '& > [data-part="title"]': {
+    minHeight: '30px',
+  },
+  '& > [data-part="content"]': {
+    backgroundColor: 'var(--colors-surface)',
+    borderRadius: '6px',
+    padding: '4px 8px 4px',
+  },
+  '&[data-state=open] > [data-part="title"]': {
+    borderBottom: '1px solid var(--colors-border)',
+  },
+})
+
+const transparentClass = css({
+  backgroundColor: 'transparent',
+  '& [data-part="root"]': {
+    backgroundColor: 'transparent',
+  },
+  '& > [data-part="title"]': {
+    backgroundColor: 'transparent',
+  },
+  '& > [data-part="content"]': {
+    backgroundColor: 'transparent',
+  },
+})
+
+const nestingClass = css({
+  borderBottom: 'none',
+  '& > [data-part="title"] > svg': {
+    display: 'none',
+  },
+})
+
+const contentClass = css({
+  borderRadius: '0 0 4px 4px',
+  padding: '0 4px 4px 4px',
+  backgroundColor: 'var(--colors-panelBg)',
+  '&:empty': {
+    padding: 0,
+  },
+})
+
+const guidelineClass = css({
+  position: 'relative',
+  paddingLeft: '4px !important',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    width: '1px',
+    height: '100%',
+    backgroundColor: 'var(--colors-grayA5)',
+    left: -1,
+  },
+})
+
+const titleClass = css({
   display: 'flex',
   width: '100%',
   alignItems: 'center',
   lineHeight: 1,
   justifyContent: 'space-between',
-  color: '$text',
-  padding: '0 $1 0 $1',
+  color: 'var(--colors-text)',
+  padding: '0 4px 0 4px',
   minHeight: '30px',
-  fontSize: '$1',
+  fontSize: '12px',
   userSelect: 'none',
-  backgroundColor: '$panelBg',
+  backgroundColor: 'var(--colors-panelBg)',
 })
 
-const StyledTitleContent = styled('div', {
-  flex: 1,
-})
+const titleContentClass = css({ flex: 1 })
 
-const StyledTrigger = styled(CollapsiblePrimitive.Trigger, {
+const triggerClass = css({
   all: 'unset',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  borderRadius: '$xs',
-  height: '$6',
-  width: '$6',
+  borderRadius: '4px',
+  height: '24px',
+  width: '24px',
   cursor: 'pointer',
   '&:focus-visible': {
-    boxShadow: '$subtleFocus',
+    boxShadow: '0 0 0 2px var(--colors-focusRingMuted)',
   },
 })
 
-const StyledRoot = styled(CollapsiblePrimitive.Root, {
-  position: 'relative',
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  color: '$text',
-  borderRadius: '$sm',
-  overflow: 'hidden',
-  '&  &': {
-    backgroundColor: '$panelBg',
-    paddingLeft: '$1',
-    '&::before': {
-      display: 'none',
-    },
-    [`${StyledTitle}`]: {
-      paddingLeft: '$1',
-    },
-    [`& > ${StyledContent}`]: {
-      position: 'relative',
-      padding: 0,
-    },
-  },
-  variants: {
-    subtle: {
-      true: {
-        backgroundColor: '$appBg',
-        borderRadius: '$md',
-        border: '1px solid $border',
-        [`& > ${StyledTitle}`]: {
-          minHeight: '30px',
-        },
-        [`& > ${StyledContent}`]: {
-          backgroundColor: '$surface',
-          borderRadius: '$md',
-          padding: '$1 $2 $1',
-        },
-        [`&[data-state=open] > ${StyledTitle}`]: {
-          borderBottom: '1px solid $border',
-        },
-      },
-    },
-    transparent: {
-      true: {
-        backgroundColor: 'transparent',
-        '& &': {
-          backgroundColor: 'transparent',
-        },
-        [`& > ${StyledTitle}`]: {
-          backgroundColor: 'transparent',
-        },
-        [`& > ${StyledContent}`]: {
-          backgroundColor: 'transparent',
-        },
-      },
-    },
-    nesting: {
-      true: {
-        borderBottom: 'none',
-        [`& > ${StyledTitle} > svg`]: {
-          display: 'none',
-        },
-      },
-    },
-  },
-})
-
-const StyledChevron = styled(IconTriangleInvertedFilled, {
-  margin: '0 $1_5 0 $1',
+const chevronClass = css({
+  margin: '0 6px 0 4px',
   height: '6px',
   width: '6px',
   transform: 'rotate(-90deg)',
-  variants: {
-    open: {
-      true: {
-        transform: 'rotate(0)',
-      },
-    },
-  },
 })
 
-export type CollapsibleProps = Omit<StitchesComponent<typeof StyledRoot>, 'title'> & {
-  title?: any
+const chevronOpenClass = css({ transform: 'rotate(0)' })
+
+export type CollapsibleProps = Omit<ComponentProps<typeof CollapsiblePrimitive.Root>, 'title'> & {
+  title?: ReactNode
   triggerTitle?: boolean
   collapsible?: boolean
   transparent?: boolean
+  subtle?: boolean
+  nesting?: boolean
   guideline?: boolean
+  css?: SystemStyleObject
 }
 
 function Collapsible(props: CollapsibleProps) {
@@ -155,8 +145,12 @@ function Collapsible(props: CollapsibleProps) {
     title,
     guideline = false,
     transparent = false,
+    subtle = false,
+    nesting = false,
     collapsible = true,
     triggerTitle = true,
+    className,
+    css: cssProp,
     ...rest
   } = props
 
@@ -166,41 +160,51 @@ function Collapsible(props: CollapsibleProps) {
     defaultProp: props.defaultOpen,
   })
 
-  const handleOnOpenChange = (open) => {
+  const handleOnOpenChange = (nextOpen) => {
     if (!collapsible) return
-    setOpen(open)
+    setOpen(nextOpen)
     if (props.onOpenChange) {
-      props.onOpenChange(open)
+      props.onOpenChange(nextOpen)
     }
   }
 
   return (
-    <StyledRoot
+    <CollapsiblePrimitive.Root
       {...rest}
-      className="collapsible"
+      data-part="root"
+      className={cx(
+        'collapsible',
+        rootClass,
+        subtle && subtleClass,
+        transparent && transparentClass,
+        nesting && nestingClass,
+        cssProp && css(cssProp),
+        className
+      )}
       open={open}
       onOpenChange={handleOnOpenChange}
-      disabled={!collapsible}
-      transparent={transparent}>
+      disabled={!collapsible}>
       {triggerTitle ? (
         <CollapsiblePrimitive.Trigger asChild disabled={!collapsible}>
-          <StyledTitle>
-            {collapsible && <StyledChevron open={open} />}
-            <StyledTitleContent>{title}</StyledTitleContent>
-          </StyledTitle>
+          <div data-part="title" className={titleClass}>
+            {collapsible && <IconTriangleInvertedFilled className={cx(chevronClass, open && chevronOpenClass)} />}
+            <div className={titleContentClass}>{title}</div>
+          </div>
         </CollapsiblePrimitive.Trigger>
       ) : (
-        <StyledTitle>
+        <div data-part="title" className={titleClass}>
           {collapsible && (
-            <StyledTrigger disabled={!collapsible}>
-              <StyledChevron open={open} />
-            </StyledTrigger>
+            <CollapsiblePrimitive.Trigger className={triggerClass} disabled={!collapsible}>
+              <IconTriangleInvertedFilled className={cx(chevronClass, open && chevronOpenClass)} />
+            </CollapsiblePrimitive.Trigger>
           )}
-          <StyledTitleContent>{title}</StyledTitleContent>
-        </StyledTitle>
+          <div className={titleContentClass}>{title}</div>
+        </div>
       )}
-      <StyledContent guideline={guideline}>{children}</StyledContent>
-    </StyledRoot>
+      <CollapsiblePrimitive.Content data-part="content" className={cx(contentClass, guideline && guidelineClass)}>
+        {children}
+      </CollapsiblePrimitive.Content>
+    </CollapsiblePrimitive.Root>
   )
 }
 

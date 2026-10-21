@@ -25,8 +25,23 @@ import type {
   DropdownMenuCheckboxItemProps,
 } from '@radix-ui/react-dropdown-menu'
 
-import { styled } from '../design-system'
-import * as listStyle from '../design-system/recipes'
+import { styled } from '../../styled-system/jsx'
+import {
+  checkboxItemConfig,
+  contentConfig,
+  contextContentConfig,
+  dotConfig,
+  dropdownContentConfig,
+  indicatorConfig,
+  itemConfig,
+  labelConfig,
+  menuItemContentConfig,
+  menubarRootConfig,
+  menubarTriggerConfig,
+  radioGroupConfig,
+  separatorConfig,
+  subMenuItemConfig,
+} from './menuStyles'
 import { KbdGroup } from '../Kbd'
 import { ScrollArea } from '../ScrollArea'
 
@@ -34,15 +49,7 @@ type MenuType = 'context' | 'dropdown' | 'menubar'
 type MenuSize = 'xs' | 'sm' | 'md'
 type PickedContentProps = 'side' | 'sideOffset' | 'align' | 'alignOffset'
 
-const StyledMenuItemContent = styled('span', {
-  display: 'flex',
-  alignItems: 'center',
-  '& > svg': {
-    marginRight: '$1_5',
-    width: '$4',
-    height: '$4',
-  },
-})
+const StyledMenuItemContent = styled('span', menuItemContentConfig)
 
 const anatomy = {
   context: {
@@ -50,48 +57,48 @@ const anatomy = {
     Group: ContextMenuPrimitive.Group,
     Sub: ContextMenuPrimitive.Sub,
     Portal: ContextMenuPrimitive.Portal,
-    RadioGroup: styled(ContextMenuPrimitive.RadioGroup, listStyle.radioGroupStyle),
-    MenuLabel: styled(ContextMenuPrimitive.Label, listStyle.labelStyle),
-    MenuItem: styled(ContextMenuPrimitive.Item, listStyle.basicItemStyle),
-    Content: styled(ContextMenuPrimitive.Content, listStyle.contentStyle, listStyle.contextMenuContentStyle),
-    SubContent: styled(ContextMenuPrimitive.SubContent, listStyle.contentStyle, listStyle.contextMenuContentStyle),
-    SubMenuItem: styled(ContextMenuPrimitive.SubTrigger, listStyle.subMenuItemStyle),
-    Separator: styled(ContextMenuPrimitive.Separator, listStyle.separatorStyle),
-    CheckboxItem: styled(ContextMenuPrimitive.CheckboxItem, listStyle.checkboxItemStyle),
-    RadioItem: styled(ContextMenuPrimitive.RadioItem, listStyle.radioItemStyle),
-    ItemIndicator: styled(ContextMenuPrimitive.ItemIndicator, listStyle.indicatorStyle),
+    RadioGroup: styled(ContextMenuPrimitive.RadioGroup, radioGroupConfig),
+    MenuLabel: styled(ContextMenuPrimitive.Label, labelConfig),
+    MenuItem: styled(ContextMenuPrimitive.Item, itemConfig),
+    Content: styled(ContextMenuPrimitive.Content, contextContentConfig),
+    SubContent: styled(ContextMenuPrimitive.SubContent, contextContentConfig),
+    SubMenuItem: styled(ContextMenuPrimitive.SubTrigger, subMenuItemConfig),
+    Separator: styled(ContextMenuPrimitive.Separator, separatorConfig),
+    CheckboxItem: styled(ContextMenuPrimitive.CheckboxItem, checkboxItemConfig),
+    RadioItem: styled(ContextMenuPrimitive.RadioItem, checkboxItemConfig),
+    ItemIndicator: styled(ContextMenuPrimitive.ItemIndicator, indicatorConfig),
   },
   dropdown: {
     Root: DropdownMenuPrimitive.Root,
     Group: DropdownMenuPrimitive.Group,
-    RadioGroup: styled(DropdownMenuPrimitive.RadioGroup, listStyle.radioGroupStyle),
+    RadioGroup: styled(DropdownMenuPrimitive.RadioGroup, radioGroupConfig),
     Sub: DropdownMenuPrimitive.Sub,
     Portal: DropdownMenuPrimitive.Portal,
-    MenuLabel: styled(DropdownMenuPrimitive.Label, listStyle.labelStyle),
-    MenuItem: styled(DropdownMenuPrimitive.Item, listStyle.basicItemStyle),
-    Content: styled(DropdownMenuPrimitive.Content, listStyle.contentStyle, listStyle.dropdownMenuContentStyle),
-    SubContent: styled(DropdownMenuPrimitive.SubContent, listStyle.contentStyle, listStyle.dropdownMenuContentStyle),
-    SubMenuItem: styled(DropdownMenuPrimitive.SubTrigger, listStyle.subMenuItemStyle),
-    Separator: styled(DropdownMenuPrimitive.Separator, listStyle.separatorStyle),
-    CheckboxItem: styled(DropdownMenuPrimitive.CheckboxItem, listStyle.checkboxItemStyle),
-    RadioItem: styled(DropdownMenuPrimitive.RadioItem, listStyle.radioItemStyle),
-    ItemIndicator: styled(DropdownMenuPrimitive.ItemIndicator, listStyle.indicatorStyle),
+    MenuLabel: styled(DropdownMenuPrimitive.Label, labelConfig),
+    MenuItem: styled(DropdownMenuPrimitive.Item, itemConfig),
+    Content: styled(DropdownMenuPrimitive.Content, dropdownContentConfig),
+    SubContent: styled(DropdownMenuPrimitive.SubContent, dropdownContentConfig),
+    SubMenuItem: styled(DropdownMenuPrimitive.SubTrigger, subMenuItemConfig),
+    Separator: styled(DropdownMenuPrimitive.Separator, separatorConfig),
+    CheckboxItem: styled(DropdownMenuPrimitive.CheckboxItem, checkboxItemConfig),
+    RadioItem: styled(DropdownMenuPrimitive.RadioItem, checkboxItemConfig),
+    ItemIndicator: styled(DropdownMenuPrimitive.ItemIndicator, indicatorConfig),
   },
   menubar: {
     Root: MenubarPrimitive.Root,
     Group: MenubarPrimitive.Group,
-    RadioGroup: styled(MenubarPrimitive.RadioGroup, listStyle.radioGroupStyle),
+    RadioGroup: styled(MenubarPrimitive.RadioGroup, radioGroupConfig),
     Sub: MenubarPrimitive.Sub,
     Portal: MenubarPrimitive.Portal,
-    MenuLabel: styled(MenubarPrimitive.Label, listStyle.labelStyle),
-    MenuItem: styled(MenubarPrimitive.Item, listStyle.basicItemStyle),
-    Content: styled(MenubarPrimitive.Content, listStyle.contentStyle),
-    SubContent: styled(MenubarPrimitive.SubContent, listStyle.contentStyle),
-    SubMenuItem: styled(MenubarPrimitive.SubTrigger, listStyle.subMenuItemStyle),
-    Separator: styled(MenubarPrimitive.Separator, listStyle.separatorStyle),
-    CheckboxItem: styled(MenubarPrimitive.CheckboxItem, listStyle.checkboxItemStyle),
-    RadioItem: styled(MenubarPrimitive.RadioItem, listStyle.radioItemStyle),
-    ItemIndicator: styled(MenubarPrimitive.ItemIndicator, listStyle.indicatorStyle),
+    MenuLabel: styled(MenubarPrimitive.Label, labelConfig),
+    MenuItem: styled(MenubarPrimitive.Item, itemConfig),
+    Content: styled(MenubarPrimitive.Content, contentConfig),
+    SubContent: styled(MenubarPrimitive.SubContent, contentConfig),
+    SubMenuItem: styled(MenubarPrimitive.SubTrigger, subMenuItemConfig),
+    Separator: styled(MenubarPrimitive.Separator, separatorConfig),
+    CheckboxItem: styled(MenubarPrimitive.CheckboxItem, checkboxItemConfig),
+    RadioItem: styled(MenubarPrimitive.RadioItem, checkboxItemConfig),
+    ItemIndicator: styled(MenubarPrimitive.ItemIndicator, indicatorConfig),
   },
 } as const
 
@@ -221,7 +228,7 @@ function MenuGroup(props: GroupProps) {
     <React.Fragment>
       {showTopDivider && <MenuSeparator />}
       <Group {...rest}>
-        {label && <MenuLabel>{label}</MenuLabel>}
+        {label && <MenuLabel data-menu-label>{label}</MenuLabel>}
         {children}
       </Group>
       {showBottomDivider && <MenuSeparator />}
@@ -256,12 +263,7 @@ interface RadioItemProps extends ContextMenuRadioItemProps {
   name: string
 }
 
-const DotIndicator = styled('div', {
-  height: '$1',
-  width: '$1',
-  borderRadius: '$round',
-  backgroundColor: 'currentColor',
-})
+const DotIndicator = styled('div', dotConfig)
 
 function RadioItem(props: RadioItemProps) {
   const { value, onSelect, name } = props
@@ -289,7 +291,7 @@ function MenuRadioGroup(props: RadioGroupProps) {
 
   return (
     <RadioGroupPrimitive {...rest} size={size}>
-      {label && <MenuLabel>{label}</MenuLabel>}
+      {label && <MenuLabel data-menu-label>{label}</MenuLabel>}
       {items.map((item, index) => (
         <RadioItem key={index} {...item} />
       ))}
@@ -405,31 +407,7 @@ function ContextMenu(props: IContextMenuProps) {
   )
 }
 
-const StyledMenubarTrigger = styled(MenubarPrimitive.Trigger, {
-  all: 'unset',
-  display: 'flex',
-  height: '$6',
-  alignItems: 'center',
-  padding: '0 $2',
-  fontSize: '$sm',
-  // fontFamily: "$mono",
-  outline: 'none',
-  cursor: 'default',
-  userSelect: 'none',
-  borderRadius: '$2',
-  '&:hover': {
-    backgroundColor: '$grayA4',
-    color: '$gray12',
-  },
-  '&:focus': {
-    backgroundColor: '$grayA4',
-    color: '$gray12',
-  },
-  '&[data-state=open]': {
-    backgroundColor: '$grayA4',
-    color: '$gray12',
-  },
-})
+const StyledMenubarTrigger = styled(MenubarPrimitive.Trigger, menubarTriggerConfig)
 
 const MenubarTrigger = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Trigger>,
@@ -456,13 +434,7 @@ function MenubarItem(props: MenubarItemProps) {
   )
 }
 
-const StyledMenubarRoot = styled(MenubarPrimitive.Root, {
-  display: 'flex',
-  height: '100%',
-  alignItems: 'center',
-  padding: '0 $2',
-  flexWrap: 'nowrap',
-})
+const StyledMenubarRoot = styled(MenubarPrimitive.Root, menubarRootConfig)
 
 function Menubar(props: PropsWithChildren<{ size?: MenuSize }>) {
   const { size = 'sm' } = props
