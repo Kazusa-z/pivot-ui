@@ -7,15 +7,15 @@
     "lint": "pretty-quick --staged",
     "dev": "pnpm --filter \"@pivot-ui/editor\" dev",
     "dev:gui": "pnpm --filter \"@pivot-ui/gui\" dev",
-    "dev:demo": "pnpm --filter app dev",
-    "build:app": "pnpm --filter app build",
-    "analyze:app": "pnpm --filter app analyze",
+    "dev:demo": "pnpm --filter @pivot-ui/demo dev",
     "clean": "pnpm -r run clean && rimraf .cache node_modules/.cache node_modules/.vite node_modules/.vite-temp",
-    "clear": "npx rimraf ./**/*/node_modules",
+    "clear": "rimraf node_modules packages/*/node_modules app/node_modules",
     "typecheck": "pnpm -r --if-present typecheck",
     "build:storybook": "pnpm --filter @pivot-ui/editor build-storybook && pnpm --filter @pivot-ui/gui build-storybook",
     "verify:quick": "pnpm exec prettier --check . && pnpm typecheck",
-    "verify": "pnpm run verify:quick && pnpm build:app && pnpm build:storybook"
+    "verify": "pnpm run verify:quick && pnpm build:demo && pnpm build:storybook",
+    "build:demo": "pnpm --filter @pivot-ui/demo build",
+    "analyze:demo": "pnpm --filter @pivot-ui/demo analyze"
   },
   "keywords": [
     "ui",
@@ -29,6 +29,7 @@
   "license": "MIT",
   "packageManager": "pnpm@12.14.0",
   "devDependencies": {
+    "@radix-ui/colors": "^3.0.0",
     "@types/node": "^26.6.5",
     "esbuild": "^0.28.2",
     "prettier": "^3.9.10",

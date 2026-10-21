@@ -13,9 +13,9 @@ Pivot UI is distributed from this repository as source packages. An application 
 Inside the workspace, reference the packages with `workspace:*`. For an application outside the workspace, link the package directory:
 
 ```bash
-pnpm link ../editor-ui/packages/ui
+pnpm link ../pivot-ui/packages/ui
 # Optional high-level GUI package
-pnpm link ../editor-ui/packages/gui
+pnpm link ../pivot-ui/packages/gui
 ```
 
 React remains a peer dependency and must be installed by the application.
@@ -35,15 +35,15 @@ A consuming application needs a Panda config that includes its own source and th
 ```ts
 // panda.config.ts
 import { defineConfig } from '@pandacss/dev'
-import { pandaBase } from '../editor-ui/panda/base'
+import { pandaBase } from '../pivot-ui/panda/base'
 
 export default defineConfig({
   ...pandaBase,
   include: [
     './src/**/*.{ts,tsx}',
-    '../editor-ui/packages/ui/src/**/*.{ts,tsx}',
+    '../pivot-ui/packages/ui/src/**/*.{ts,tsx}',
     // Include this when using @pivot-ui/gui:
-    '../editor-ui/packages/gui/src/**/*.{ts,tsx}',
+    '../pivot-ui/packages/gui/src/**/*.{ts,tsx}',
   ],
   exclude: ['**/*.stories.tsx', '**/*.stories.ts'],
 })

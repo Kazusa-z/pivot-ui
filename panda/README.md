@@ -18,6 +18,7 @@ For the migration record, see:
 | `designTokens.ts`     | Generated token snapshot                                       |
 | `reset.ts`            | Reset styles                                                   |
 | `generate-tokens.mjs` | Regenerates `designTokens.ts` from the data-only token sources |
+| `token-source/`       | Color and size source values used by the token generator       |
 
 ## Theme model
 
@@ -29,7 +30,7 @@ Panda's prefix is `panda`, so a token resolves through a CSS variable:
 
 `global.ts` emits all color, spacing, size, radius, shadow, font, weight, line-height and transition variables on `:root` for dark mode and `.light-theme` for light mode. The plain `light-theme` / `dark-theme` classes are managed by `ThemeProvider`.
 
-Panda owns the token snapshot in `designTokens.ts`. The remaining `packages/ui/src/design-system/colors.ts` and `sizes.ts` files are data-only inputs for `generate-tokens.mjs`; no Stitches runtime remains.
+Panda owns the token snapshot in `designTokens.ts`. `panda/token-source/colors.ts` and `sizes.ts` are data-only inputs for `generate-tokens.mjs`; they are not part of the component runtime.
 
 ## Styling rules
 

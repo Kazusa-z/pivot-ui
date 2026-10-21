@@ -17,7 +17,7 @@ Pivot UI is a React component and GUI toolkit for building browser-based 3D edit
 | --------------------------------------------- | ------------------------------------------------------------ |
 | [`@pivot-ui/editor`](./packages/ui/README.md) | Base components, overlays, color tools, asset and tree views |
 | [`@pivot-ui/gui`](./packages/gui/README.md)   | Form controls, panels and the imperative `GUI` class         |
-| [`app`](./app)                                | Vite demo application                                        |
+| [`@pivot-ui/demo`](./app)                     | Vite demo application                                        |
 
 ## Getting started
 
@@ -43,12 +43,12 @@ pnpm dev:gui
 pnpm dev:demo
 ```
 
-The Storybook package scripts default to port `6006`. See the [development guide](./docs/DEVELOPMENT.md) when running both explorers together.
+Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`. See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
 
 ### Build and verify
 
 ```bash
-pnpm build:app          # Production demo build
+pnpm build:demo         # Production demo build
 pnpm build:storybook    # Both Storybook sites
 pnpm verify             # Formatting, types, demo build and Storybook builds
 ```

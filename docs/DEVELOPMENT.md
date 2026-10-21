@@ -15,7 +15,7 @@ pnpm install
 ## Repository layout
 
 ```text
-app/                 demo Vite application
+app/                 @pivot-ui/demo Vite application
 packages/ui/         @pivot-ui/editor
 packages/gui/        @pivot-ui/gui
 panda/               shared Panda configuration, tokens and reset
@@ -32,18 +32,13 @@ Both component packages are source packages. They are consumed through `workspac
 | `pnpm dev:gui`         | GUI Storybook                                                     |
 | `pnpm dev:demo`        | Demo application                                                  |
 | `pnpm typecheck`       | Type-check all packages and the app                               |
-| `pnpm build:app`       | Build the demo application                                        |
+| `pnpm build:demo`      | Build the demo application                                        |
 | `pnpm build:storybook` | Build both Storybook sites                                        |
 | `pnpm verify:quick`    | Prettier check + typecheck                                        |
 | `pnpm verify`          | Full verification: formatting, types, demo build, both Storybooks |
 | `pnpm clean`           | Remove generated builds and caches                                |
 
-The Storybook package scripts default to port `6006`. Run both sites with distinct ports when needed:
-
-```bash
-pnpm --filter @pivot-ui/editor exec storybook dev -p 6007 --no-open
-pnpm --filter @pivot-ui/gui exec storybook dev -p 6008 --no-open
-```
+The Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`.
 
 ## Panda CSS pipeline
 
@@ -66,7 +61,7 @@ pnpm --filter @pivot-ui/gui panda
 
 ### Token snapshot
 
-`panda/generate-tokens.mjs` reads the data-only token sources in `packages/ui/src/design-system/` and writes `panda/designTokens.ts`:
+`panda/generate-tokens.mjs` reads the data-only token sources in `panda/token-source/` and writes `panda/designTokens.ts`:
 
 ```bash
 node panda/generate-tokens.mjs

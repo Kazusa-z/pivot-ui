@@ -7,7 +7,7 @@ The package is part of the Pivot UI workspace and can be integrated through the 
 ## Installation
 
 ```bash
-pnpm link ../editor-ui/packages/ui
+pnpm link ../pivot-ui/packages/ui
 ```
 
 React and React DOM 19 are peer dependencies.

@@ -23,7 +23,7 @@ An opinionated GUI library designed to create engaging and functional online too
 This package is part of the Pivot UI workspace and can be integrated through the workspace or a package link:
 
 ```bash
-pnpm link ../editor-ui/packages/gui
+pnpm link ../pivot-ui/packages/gui
 ```
 
 React and React DOM 19 are peer dependencies. If you use the `GUI` class outside a React project, React is still required because the class renders its UI with React internally.

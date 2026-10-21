@@ -7,4 +7,5 @@ es/
 lib/
 types/
 storybook-static/
+styled-system/
 *.tsbuildinfo

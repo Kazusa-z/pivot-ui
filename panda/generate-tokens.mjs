@@ -5,10 +5,7 @@ import fs from 'node:fs'
 const outdir = '/tmp/pivot-token-gen'
 fs.rmSync(outdir, { recursive: true, force: true })
 await build({
-  entryPoints: [
-    path.resolve('packages/ui/src/design-system/colors.ts'),
-    path.resolve('packages/ui/src/design-system/sizes.ts'),
-  ],
+  entryPoints: [path.resolve('panda/token-source/colors.ts'), path.resolve('panda/token-source/sizes.ts')],
   bundle: true,
   platform: 'node',
   format: 'esm',
@@ -82,6 +79,6 @@ const body = Object.entries(data)
   .join('\n\n')
 fs.writeFileSync(
   'panda/designTokens.ts',
-  `// Generated from packages/ui/src/design-system token sources.\n// Keep this snapshot in sync when the Stitches token source changes.\n\n${body}\n`
+  `// Generated from panda/token-source token values.\n// Regenerate with node panda/generate-tokens.mjs after changing the token sources.\n\n${body}\n`
 )
 console.log('wrote panda/designTokens.ts')

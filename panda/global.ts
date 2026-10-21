@@ -60,44 +60,44 @@ const convert = (value: unknown): unknown => {
 }
 
 const colorPickerCss = {
-  '.galacecan-color-picker .react-colorful': {
+  '.pivot-color-picker .react-colorful': {
     width: '220px !important',
     height: '180px !important',
   },
-  '.galacecan-color-picker .react-colorful__saturation': {
+  '.pivot-color-picker .react-colorful__saturation': {
     borderBottom: '6px !important',
     borderRadius: '6px !important',
   },
-  '.galacecan-color-picker .react-colorful__hue': {
+  '.pivot-color-picker .react-colorful__hue': {
     width: '140px !important',
     height: '6px !important',
     margin: '12px 0 !important',
     borderRadius: '4px !important',
   },
-  '.galacecan-color-picker .react-colorful__hue .react-colorful__pointer': {
+  '.pivot-color-picker .react-colorful__hue .react-colorful__pointer': {
     height: '12px !important',
     width: '12px !important',
     borderRadius: '9999px !important',
     borderWidth: '2px !important',
   },
-  '.galacecan-color-picker .react-colorful__pointer': {
+  '.pivot-color-picker .react-colorful__pointer': {
     height: '16px !important',
     width: '16px !important',
     borderRadius: '9999px !important',
     borderWidth: '2px !important',
   },
-  '.galacecan-color-picker .react-colorful__alpha': {
+  '.pivot-color-picker .react-colorful__alpha': {
     width: '140px !important',
     height: '6px !important',
     borderRadius: '4px !important',
   },
-  '.galacecan-color-picker .react-colorful__alpha .react-colorful__pointer': {
+  '.pivot-color-picker .react-colorful__alpha .react-colorful__pointer': {
     height: '12px !important',
     width: '12px !important',
     borderRadius: '9999px !important',
     borderWidth: '2px !important',
   },
-  '.galacecan-color-picker[data-readonly="true"] .react-colorful__saturation, .galacecan-color-picker[data-readonly="true"] .react-colorful__hue':
+  '.pivot-color-picker[data-readonly="true"] .react-colorful__saturation, .pivot-color-picker[data-readonly="true"] .react-colorful__hue':
     {
       pointerEvents: 'none !important',
       opacity: '0.5 !important',

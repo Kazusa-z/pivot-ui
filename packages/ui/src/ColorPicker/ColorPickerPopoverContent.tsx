@@ -213,7 +213,7 @@ const ColorPickerRoot = function ColorPickerRoot(
           onChange={setParticleColor}
         />
       )}
-      <ConstantColorPickerRoot className="galacecan-color-picker" data-readonly={readonly}>
+      <ConstantColorPickerRoot className="pivot-color-picker" data-readonly={readonly}>
         {renderColorPicker()}
         <ColorPickerInputGroup
           colorSpace={colorSpace}

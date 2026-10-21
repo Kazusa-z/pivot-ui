@@ -1,5 +1,5 @@
-// Generated from packages/ui/src/design-system token sources.
-// Keep this snapshot in sync when the Stitches token source changes.
+// Generated from panda/token-source token values.
+// Regenerate with node panda/generate-tokens.mjs after changing the token sources.
 
 export const darkColors = {
   gray1: '#111113',

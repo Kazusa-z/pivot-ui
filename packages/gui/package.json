@@ -8,9 +8,9 @@
   "module": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "dev": "storybook dev -p 6006",
+    "dev": "storybook dev -p 6008",
     "predev": "panda codegen",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6008",
     "prestorybook": "panda codegen",
     "build-storybook": "storybook build",
     "prebuild-storybook": "panda codegen",
