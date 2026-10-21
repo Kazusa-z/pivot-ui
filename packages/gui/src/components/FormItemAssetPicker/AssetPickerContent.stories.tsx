@@ -4,8 +4,16 @@ import { AssetPickerContent } from './AssetPickerContent'
 import type { BasicAssetType } from './PickableAssetItem'
 
 export default {
-  title: 'Panda Audit/AssetPicker',
+  title: 'Components/AssetPickerContent',
   component: AssetPickerContent,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Asset search and selection surface used by the asset picker. It supports grouped assets, search, selection and scene/prefab results.',
+      },
+    },
+  },
 } as Meta
 
 const makeAsset = (id: string, name: string, type = 'Texture'): BasicAssetType => ({

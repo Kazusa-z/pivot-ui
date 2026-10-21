@@ -7,7 +7,7 @@ import { Flex } from '../Flex'
 import { ActionButton, ActionButtonGroup as PrimitiveActionButtonGroup } from './'
 
 /**
- * `<ActionButton />` is a Button component but only support icon as children. In addition to apply `HTMLButtonAttribute` props, it also provide some custom props such as `size`, `variant` and `fancy`.
+ * `<ActionButton />` is an icon-only button. It accepts standard HTML button attributes plus the `size`, `variant` and `fancy` props.
  */
 const meta: Meta<typeof ActionButton> = {
   title: 'Inputs/ActionButton',
@@ -54,7 +54,7 @@ const meta: Meta<typeof ActionButton> = {
     },
     corner: {
       description:
-        'Sometimes the ActionButton is acting as a trigger like opening a modal, in this case, you could set the `corner` prop to `true` to show a corner icon.',
+        'Use `corner` when the ActionButton acts as a trigger, such as opening a menu or dialog, to display a corner indicator.',
       type: {
         name: 'boolean',
       },
@@ -88,9 +88,7 @@ export const Sizes: StoryFn<typeof ActionButton> = (args) => {
 }
 
 /**
- * Sometimes you need to use async function to handle some actions by clicking the button.
- *
- * In this case, you could use `async: () => Promise<unknown>` property to let the button handle the async status automatically.
+ * Use the `async: () => Promise<unknown>` prop when the button triggers asynchronous work. The component then manages the pending and loading states.
  */
 export const WithAsyncFunction: StoryFn = (args) => {
   const [done, setDone] = useState(false)
@@ -111,7 +109,7 @@ export const WithAsyncFunction: StoryFn = (args) => {
 /**
  * `<ActionButtonGroup />` is a styled wrapper component to group multiple ActionButton components. This component could handle `radius` prop correctly so that you can set multi ActionButton Component in a group.
  *
- * You could use `direction` prop to set the direction of the group.
+ * Use the `direction` prop to lay the group out horizontally or vertically.
  */
 export const ActionButtonGroup: StoryFn = (args) => {
   const { direction, ...rest } = args

@@ -1,17 +1,17 @@
 # Release archive: Panda CSS migration
 
-| Field                     | Value                            |
-| ------------------------- | -------------------------------- |
-| Archive                   | `pivot-ui-panda-2026-10-22`      |
-| Archive tag               | `pivot-ui-panda-2026-10-22`      |
-| Status                    | Closed                           |
-| Archive date              | 2026-10-22                       |
-| Workspace version         | `1.0.0`                          |
-| `@pivot-ui/editor`        | `1.2.0`                          |
-| `@pivot-ui/gui`           | `1.2.1`                          |
-| Branch                    | `feat/panda-css-migration`       |
-| Migration baseline commit | `925a7bf`                        |
-| Distribution              | Local-only; not published to npm |
+| Field                     | Value                              |
+| ------------------------- | ---------------------------------- |
+| Archive                   | `pivot-ui-panda-2026-10-22`        |
+| Archive tag               | `pivot-ui-panda-2026-10-22`        |
+| Status                    | Closed                             |
+| Archive date              | 2026-10-22                         |
+| Workspace version         | `1.0.0`                            |
+| `@pivot-ui/editor`        | `1.2.0`                            |
+| `@pivot-ui/gui`           | `1.2.1`                            |
+| Branch                    | `feat/panda-css-migration`         |
+| Migration baseline commit | `925a7bf`                          |
+| Distribution              | Source packages in this repository |
 
 ## Scope
 
@@ -33,7 +33,7 @@ The migration was delivered in phases and batches. Every batch had an independen
 - The runtime `resetStyle()` helper was removed.
 - The generated token snapshot is `panda/designTokens.ts`; Panda no longer imports Stitches token modules at runtime.
 - All tracked migration debt (TD-01 through TD-12) is resolved.
-- The workspace remains source-only: there is no npm publish, CI pipeline, `dist` bundle or UMD build.
+- The workspace remains a source-package monorepo; there is no published package artifact, CI pipeline, `dist` bundle or UMD build.
 
 ## Verification
 
@@ -64,11 +64,16 @@ The two reviewed exceptions are documented in [migration/VISUAL_REGRESSION.md](.
 - `inputs-textarea--states`: an old Stitches CSS-injection-order inconsistency; Panda now renders deterministically and matches the larger `Matrix` fixture.
 - `display-tree--overview`: an intentional story-content change from Batch 3, not a component regression.
 
-## Known operational notes
+## Integration notes
 
-- Consumers must configure Panda/PostCSS and load the package CSS layer entry. See [CONSUMING.md](./CONSUMING.md).
-- The migration branch is local. It has not been merged into `main` or pushed.
+- A consuming application must configure Panda/PostCSS and load the package CSS layer entry. See [CONSUMING.md](./CONSUMING.md).
 - Visual-regression screenshots are regenerated artifacts and are not stored in the repository; the per-story results are archived in `migration/visual-regression-report.json`.
+
+## Archive provenance
+
+- Archive tag: `pivot-ui-panda-2026-10-22`
+- Migration ledger: [migration/LEDGER.md](./migration/LEDGER.md)
+- Visual regression: [migration/VISUAL_REGRESSION.md](./migration/VISUAL_REGRESSION.md)
 
 ## Artifacts
 

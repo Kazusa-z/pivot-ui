@@ -106,7 +106,7 @@ export const compositeState: StoryFn<typeof Input> = (args) => {
 }
 
 /**
- * You could use the `startSlot` or `endSlot` props to add an icon or any other element to the input.
+ * Use `startSlot` or `endSlot` to add an icon or another element to the input.
  */
 export const Slot: StoryFn<typeof Input> = (args) => {
   return (

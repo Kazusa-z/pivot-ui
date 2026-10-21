@@ -2,12 +2,11 @@
 
 `@pivot-ui/editor` provides React components for building 3D editor interfaces in the browser. It includes basic controls, overlays, color tools, asset and tree views, and editor-specific components such as `ColorPicker`, `BezierCurveEditor` and `GradientSlider`.
 
-The package is local-only and source-only. It is consumed through the Pivot UI workspace or a local `pnpm link`; it is not published to npm.
+The package is part of the Pivot UI workspace and can be integrated through the workspace or a package link.
 
-## Local usage
+## Installation
 
 ```bash
-# From another local project
 pnpm link ../editor-ui/packages/ui
 ```
 
@@ -17,7 +16,7 @@ React and React DOM 19 are peer dependencies.
 
 Components use Panda CSS. The consuming application must run Panda's PostCSS plugin and include this package's source in its Panda config. The `panda.css` file declares layer order only; it is not a prebuilt stylesheet.
 
-See [Consuming Pivot UI](../../docs/CONSUMING.md) for the full configuration. The demo app in `app/` is the reference integration.
+See [Integrating Pivot UI](../../docs/CONSUMING.md) for the full configuration. The demo app in `app/` is the reference integration.
 
 ```ts
 // application entry, after Panda/PostCSS is configured
@@ -36,7 +35,7 @@ export function Toolbar() {
   return (
     <Flex gap="sm" align="v">
       <Button>Save</Button>
-      <Text muted>Local-first UI</Text>
+      <Text muted>Scene settings</Text>
       <ColorPicker mode="constant" value={color} onValueChange={setColor} />
     </Flex>
   )
@@ -72,15 +71,15 @@ export function App() {
 - `Text` and `Title` sizes are numeric variants: `size={2}`, not `size="2"`.
 - `Flex.wrap` accepts `true`, `false` or `"reverse"`.
 - Migrated components accept a Panda `css` prop typed as `SystemStyleObject`.
-- Use raw CSS variables (`var(--colors-...)`) or Panda `token(...)` calls in `css` values; do not use legacy Stitches `$token` strings.
+- Use raw CSS variables (`var(--colors-...)`) or Panda `token(...)` calls in `css` values.
 - `ActionButton` no longer exposes the unused `as` prop.
 - `resetStyle()` was removed; load the Panda CSS pipeline instead.
 
 ## Documentation
 
 - [Documentation index](../../docs/README.md)
-- [Consuming Pivot UI](../../docs/CONSUMING.md)
-- [Migration archive](../../docs/RELEASE_ARCHIVE.md)
+- [Integration guide](../../docs/CONSUMING.md)
+- [Development guide](../../docs/DEVELOPMENT.md)
 - [GUI package](../gui/README.md)
 
 ## Development

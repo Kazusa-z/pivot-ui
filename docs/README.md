@@ -1,23 +1,25 @@
 # Pivot UI Documentation
 
-Pivot UI is a local-only React component library for building 3D editor interfaces. The workspace contains a low-level component package (`@pivot-ui/editor`) and a higher-level GUI package (`@pivot-ui/gui`).
+Pivot UI is a React component and GUI toolkit for building browser-based 3D editors, inspectors and content tools. The workspace contains two complementary packages: `@pivot-ui/editor` for reusable interface components and `@pivot-ui/gui` for form controls and the imperative GUI layer.
 
-## Start here
+These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0` and `@pivot-ui/gui` `1.2.1`.
 
-| Document                                            | Use it for                                                          |
-| --------------------------------------------------- | ------------------------------------------------------------------- |
-| [Consuming Pivot UI](./CONSUMING.md)                | Linking the packages, loading styles, theming and local integration |
-| [Development](./DEVELOPMENT.md)                     | Workspace setup, scripts, Panda CSS pipeline and verification       |
-| [Release archive](./RELEASE_ARCHIVE.md)             | Formal archive of the completed Panda CSS migration                 |
-| [@pivot-ui/editor README](../packages/ui/README.md) | Component package reference                                         |
-| [@pivot-ui/gui README](../packages/gui/README.md)   | GUI class and React form API                                        |
+## Guides
 
-## Migration archive
+| Document                                   | Purpose                                                       |
+| ------------------------------------------ | ------------------------------------------------------------- |
+| [Integrating Pivot UI](./CONSUMING.md)     | Package integration, Panda CSS setup, theming and first usage |
+| [Development](./DEVELOPMENT.md)            | Repository setup, commands, architecture and verification     |
+| [Editor package](../packages/ui/README.md) | Component package reference                                   |
+| [GUI package](../packages/gui/README.md)   | GUI class and React form API                                  |
 
-The Stitches → Panda CSS migration is closed. The historical record is kept here:
+## Project archive
 
+The completed design-system migration is retained as a traceable project record:
+
+- [Release archive](./RELEASE_ARCHIVE.md)
 - [Migration ledger](./migration/LEDGER.md)
-- [Full visual regression report](./migration/VISUAL_REGRESSION.md)
+- [Visual regression report](./migration/VISUAL_REGRESSION.md)
 - [Raw visual regression results](./migration/visual-regression-report.json)
 
-These files are archival. They describe the migration that produced the current code, not a work plan for future changes.
+Archive documents describe how the current implementation was established. Current usage and development guidance belongs in the guides above.

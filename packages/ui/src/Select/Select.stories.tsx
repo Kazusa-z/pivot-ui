@@ -40,11 +40,11 @@ const mock_data = [
 ]
 
 /**
- * The Select component consist of `<Select>` and `<SelectItem />`, allow users to select one or multiple options from a list of options.
+ * The Select component combines `<Select>` and `<SelectItem />` to let users choose one or more options from a list.
  *
  * A part of this component built on top of the `@radix-ui/react-select`
  *
- * This component provide controlled and uncontrolled modes.
+ * The component supports controlled and uncontrolled usage.
  */
 export const Overview: StoryFn<typeof Select> = (args) => {
   return (

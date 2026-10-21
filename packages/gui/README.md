@@ -5,7 +5,7 @@ An opinionated GUI library designed to create engaging and functional online too
 ## Documentation
 
 - [Documentation index](../../docs/README.md)
-- [Consuming Pivot UI](../../docs/CONSUMING.md)
+- [Integrating Pivot UI](../../docs/CONSUMING.md)
 - [Development](../../docs/DEVELOPMENT.md)
 - [Editor package](../ui/README.md)
 
@@ -18,12 +18,11 @@ An opinionated GUI library designed to create engaging and functional online too
 - ♿ **Accessibility First** - Built with accessibility in mind
 - 🔧 **TypeScript Support** - Full type safety and IntelliSense
 
-## Local usage
+## Installation
 
-This package is part of the local Pivot UI pnpm workspace and is **not published to npm**. It is consumed through `workspace:*` or linked directly:
+This package is part of the Pivot UI workspace and can be integrated through the workspace or a package link:
 
 ```bash
-# From another local project
 pnpm link ../editor-ui/packages/gui
 ```
 
@@ -38,7 +37,7 @@ Components use Panda CSS. Configure Panda's PostCSS plugin in the consumer and i
 import '@pivot-ui/gui/panda.css'
 ```
 
-See [Consuming Pivot UI](../../docs/CONSUMING.md) for the complete configuration. The GUI Storybook is the reference integration.
+See [Integrating Pivot UI](../../docs/CONSUMING.md) for the complete configuration. The GUI Storybook is the reference integration.
 
 ## Quick Start
 
@@ -783,11 +782,11 @@ const gui = new GUI(sceneData, guiConfig)
 
 MIT License. See [LICENSE](../../LICENSE) for details.
 
-## Migration archive
+## Project documentation
 
-The package was migrated from Stitches to Panda CSS. The completed migration record is archived in:
-
-- [Release archive](../../docs/RELEASE_ARCHIVE.md)
-- [Migration ledger](../../docs/migration/LEDGER.md)
+- [Documentation index](../../docs/README.md)
+- [Integration guide](../../docs/CONSUMING.md)
+- [Development guide](../../docs/DEVELOPMENT.md)
+- [Editor package](../ui/README.md)
 
 `FormItem.fieldColumn` numeric variants use numbers: `fieldColumn={1}`, not `fieldColumn="1"`.

@@ -1,6 +1,6 @@
-# Consuming Pivot UI locally
+# Integrating Pivot UI
 
-Pivot UI is a local pnpm workspace, not an npm package. The packages are consumed from this workspace or through a local link. They are source-only and do not ship a prebuilt `dist` bundle.
+Pivot UI is distributed from this repository as source packages. An application can consume it through the pnpm workspace or by linking a package directory.
 
 ## Requirements
 
@@ -8,31 +8,32 @@ Pivot UI is a local pnpm workspace, not an npm package. The packages are consume
 - pnpm `12.14.0`
 - React and React DOM 19
 
-## Link from another local project
+## Add a package
+
+Inside the workspace, reference the packages with `workspace:*`. For an application outside the workspace, link the package directory:
 
 ```bash
-# From the consuming project
 pnpm link ../editor-ui/packages/ui
 # Optional high-level GUI package
 pnpm link ../editor-ui/packages/gui
 ```
 
-React remains a peer dependency and must be installed by the consuming application.
+React remains a peer dependency and must be installed by the application.
 
-## Load the Panda CSS pipeline
+## Configure Panda CSS
 
-Components are styled with Panda CSS. The package `panda.css` file only declares the CSS layer order; it is not a prebuilt stylesheet. The consuming application must run Panda's PostCSS plugin so the generated styles are injected.
+Components are styled with Panda CSS. The package `panda.css` file declares CSS layer order; it is not a prebuilt stylesheet. The application must run Panda's PostCSS plugin so generated styles are included in the build.
 
-Use the reference integration in this workspace:
+Use the integrations in this repository as references:
 
-- Demo app: `app/postcss.config.cjs`, `app/panda.config.ts`, `app/src/main.tsx`
+- Demo application: `app/postcss.config.cjs`, `app/panda.config.ts`, `app/src/main.tsx`
 - Editor Storybook: `packages/ui/postcss.config.cjs`, `packages/ui/panda.config.ts`
 - GUI Storybook: `packages/gui/panda.config.ts`
 
-A linked consumer needs a Panda config that includes both its own source and the linked package source, for example:
+A consuming application needs a Panda config that includes its own source and the Pivot UI package source:
 
 ```ts
-// panda.config.ts in the consuming project
+// panda.config.ts
 import { defineConfig } from '@pandacss/dev'
 import { pandaBase } from '../editor-ui/panda/base'
 
@@ -41,14 +42,14 @@ export default defineConfig({
   include: [
     './src/**/*.{ts,tsx}',
     '../editor-ui/packages/ui/src/**/*.{ts,tsx}',
-    // Add this when using @pivot-ui/gui:
+    // Include this when using @pivot-ui/gui:
     '../editor-ui/packages/gui/src/**/*.{ts,tsx}',
   ],
   exclude: ['**/*.stories.tsx', '**/*.stories.ts'],
 })
 ```
 
-Then add the PostCSS plugin:
+Add the PostCSS plugin:
 
 ```js
 // postcss.config.cjs
@@ -65,15 +66,15 @@ Import the matching layer entry once in the application entry:
 // @pivot-ui/editor
 import '@pivot-ui/editor/panda.css'
 
-// or, when using the GUI package, its entry also covers its bundled UI sources
+// or, when using @pivot-ui/gui
 import '@pivot-ui/gui/panda.css'
 ```
 
-Do not import both entries in the same application; use the one that matches the package you consume.
+Use the entry that matches the package being consumed; do not import both in one application.
 
 ## Theme provider
 
-Wrap the application so light/dark switching is applied to the document:
+Wrap the application so light and dark mode are applied to the document:
 
 ```tsx
 import { ThemeProvider, useTheme } from '@pivot-ui/editor'
@@ -93,9 +94,9 @@ export function App() {
 }
 ```
 
-`ThemeProvider` owns the class switch; the actual colors come from the Panda CSS variables emitted by the package stylesheet.
+`ThemeProvider` manages the `light-theme` / `dark-theme` class. The color values are emitted by the Panda CSS pipeline.
 
-## Basic usage
+## First component
 
 ```tsx
 import { useState } from 'react'
@@ -106,15 +107,15 @@ export function Toolbar() {
 
   return (
     <Flex gap="sm" align="v">
-      <Button>Pivot Editor</Button>
-      <Text muted>Local-first UI</Text>
+      <Button>Save</Button>
+      <Text muted>Scene settings</Text>
       <ColorPicker mode="constant" value={color} onValueChange={setColor} />
     </Flex>
   )
 }
 ```
 
-For the imperative GUI:
+## Imperative GUI
 
 ```ts
 import { GUI } from '@pivot-ui/gui'
@@ -133,18 +134,17 @@ const gui = new GUI(sceneData, [
 
 ## Custom styling
 
-Migrated components accept a Panda `css` prop typed as `SystemStyleObject`:
+Components accept a Panda `css` prop typed as `SystemStyleObject`:
 
 ```tsx
 <Button css={{ borderRadius: '8px' }}>Save</Button>
 ```
 
-Prefer raw CSS variables or Panda `token(...)` calls over legacy Stitches `$token` strings.
+Use CSS variables such as `var(--colors-textMuted)` or Panda `token('colors.textMuted')` in style values.
 
-## More documentation
+## Related documents
 
 - [Documentation index](./README.md)
 - [Development](./DEVELOPMENT.md)
-- [Release archive](./RELEASE_ARCHIVE.md)
 - [Editor package](../packages/ui/README.md)
 - [GUI package](../packages/gui/README.md)

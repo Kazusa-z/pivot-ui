@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Introduction" />
+
+# Pivot UI GUI
+
+`@pivot-ui/gui` adds form controls, collapsible panels and an imperative GUI layer on top of `@pivot-ui/editor`. It is designed for scene inspectors, material editors, render settings and other tool panels.
+
+## Two APIs
+
+**Declarative React components** compose directly into application UI:
+
+```tsx
+import { FormItemInput, FormItemSlider, Panel } from '@pivot-ui/gui'
+
+export function Inspector() {
+  return (
+    <Panel>
+      <FormItemInput label="Name" value={name} onChange={setName} />
+      <FormItemSlider label="Intensity" value={intensity} min={0} max={2} onChange={setIntensity} />
+    </Panel>
+  )
+}
+```
+
+**The imperative `GUI` class** provides a compact dat.gui-style API:
+
+```ts
+import { GUI } from '@pivot-ui/gui'
+
+const gui = new GUI(sceneData, [
+  {
+    label: 'Camera Position',
+    bindPath: 'camera.position',
+    type: 'Vector3',
+    onChange(value) {
+      camera.position.set(value.x, value.y, value.z)
+    },
+  },
+])
+```
+
+## Input types
+
+The GUI layer supports text, numbers, sliders, colors, vectors, rectangles, toggles, selects, text areas, cascade sliders, groups and arrays. See the `Components` stories for component-level examples and the `GUI` stories for imperative configuration.
+
+## Styling
+
+The package uses Panda CSS. Configure Panda's PostCSS plugin in the application and import the GUI layer entry once:
+
+```ts
+import '@pivot-ui/gui/panda.css'
+```
+
+The package CSS entry declares layer order; Panda generates the component styles during the application build.
+
+## Theming
+
+The GUI uses the `ThemeProvider` from `@pivot-ui/editor`. The `GUI` class provides `setTheme('light' | 'dark')` for imperative usage.
+
+## Acknowledgements
+
+Pivot UI is built with [Panda CSS](https://panda-css.com/), [Radix UI](https://www.radix-ui.com/), [react-colorful](https://github.com/omgovich/react-colorful), [colord](https://github.com/omgovich/colord) and [Tabler Icons](https://tabler.io/icons).

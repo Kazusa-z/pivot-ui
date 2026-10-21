@@ -1,50 +1,61 @@
 # Pivot UI
 
-Pivot UI is a local-first React UI library for building 3D editor interfaces in the browser. It combines a low-level component package with an opinionated GUI layer for scene inspectors, asset panels and tool controls.
+Pivot UI is a React component and GUI toolkit for building browser-based 3D editors, inspectors and content tools. It provides production-ready controls for scene properties, assets, colors, curves and hierarchical data, together with an imperative GUI layer for rapid tool development.
 
-The workspace is private and source-only. Packages are consumed through the pnpm workspace or a local link; there is no npm publish, CI pipeline, `dist` bundle or UMD build.
+## Highlights
+
+- **Editor-focused components** — color pickers, gradient and HDR sliders, bezier curve editing, asset views, trees, tables and inspector panels.
+- **Two APIs** — use declarative React components for application UI, or the dat.gui-style `GUI` class for compact tooling and prototypes.
+- **Consistent theming** — light and dark themes are driven by a shared design-token system.
+- **Accessible foundations** — interactive primitives are built on Radix UI and support keyboard navigation.
+- **Engine agnostic** — bind controls to any scene graph, store or plain JavaScript object.
+- **TypeScript first** — public component props and GUI configuration are fully typed.
 
 ## Packages
 
-| Package                                       | Version | Role                                                         |
-| --------------------------------------------- | ------- | ------------------------------------------------------------ |
-| [`@pivot-ui/editor`](./packages/ui/README.md) | `1.2.0` | Base components, overlays, color tools, asset and tree views |
-| [`@pivot-ui/gui`](./packages/gui/README.md)   | `1.2.1` | Form controls, panels and the imperative GUI class           |
-| [`app`](./app)                                | `0.0.1` | Vite demo application                                        |
+| Package                                       | Role                                                         |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| [`@pivot-ui/editor`](./packages/ui/README.md) | Base components, overlays, color tools, asset and tree views |
+| [`@pivot-ui/gui`](./packages/gui/README.md)   | Form controls, panels and the imperative `GUI` class         |
+| [`app`](./app)                                | Vite demo application                                        |
 
-## Status
+## Getting started
 
-The Stitches → Panda CSS migration is complete and archived:
-
-- [Release archive](./docs/RELEASE_ARCHIVE.md)
-- [Migration ledger](./docs/migration/LEDGER.md)
-- [Full visual regression report](./docs/migration/VISUAL_REGRESSION.md)
-
-The final migration baseline is commit `925a7bf` on `feat/panda-css-migration`. The branch has not been merged or pushed.
-
-## Quick start
-
-Requirements:
+### Prerequisites
 
 - Node.js `^22.18.0`, `^24.11.0` or `>=26.0.0`
 - pnpm `12.14.0`
 
+### Run the project
+
+After cloning the repository, run from its root:
+
 ```bash
 pnpm install
 
-# Editor Storybook
+# Editor component explorer
 pnpm dev
 
-# GUI Storybook
+# GUI component explorer
 pnpm dev:gui
 
 # Demo application
 pnpm dev:demo
 ```
 
-Storybook package scripts default to port `6006`. Use the commands in the [development guide](./docs/DEVELOPMENT.md) when running both sites simultaneously.
+The Storybook package scripts default to port `6006`. See the [development guide](./docs/DEVELOPMENT.md) when running both explorers together.
+
+### Build and verify
+
+```bash
+pnpm build:app          # Production demo build
+pnpm build:storybook    # Both Storybook sites
+pnpm verify             # Formatting, types, demo build and Storybook builds
+```
 
 ## Usage
+
+### React components
 
 ```tsx
 import { useState } from 'react'
@@ -55,13 +66,15 @@ export function Toolbar() {
 
   return (
     <Flex gap="sm" align="v">
-      <Button>Pivot Editor</Button>
-      <Text muted>Local-first UI</Text>
+      <Button>Save</Button>
+      <Text muted>Scene settings</Text>
       <ColorPicker mode="constant" value={color} onValueChange={setColor} />
     </Flex>
   )
 }
 ```
+
+### Imperative GUI
 
 ```ts
 import { GUI } from '@pivot-ui/gui'
@@ -78,43 +91,37 @@ const gui = new GUI(sceneData, [
 ])
 ```
 
-## Consuming locally
+### Three.js integration
 
-Pivot UI is not published to npm. Link a package from another local project:
+```ts
+import * as THREE from 'three'
+import { GUI } from '@pivot-ui/gui'
 
-```bash
-pnpm link ../editor-ui/packages/ui
-# or
-pnpm link ../editor-ui/packages/gui
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+
+const gui = new GUI({ camera: { position: { x: 0, y: 0, z: 5 } } }, [
+  {
+    label: 'Camera Position',
+    bindPath: 'camera.position',
+    type: 'Vector3',
+    onChange(value) {
+      camera.position.set(value.x, value.y, value.z)
+    },
+  },
+])
 ```
-
-Panda CSS must be wired into the consuming application. The package `panda.css` files declare layer order only; generated styles are injected by Panda's PostCSS plugin. See [Consuming Pivot UI](./docs/CONSUMING.md) for the required configuration and theme provider setup.
 
 ## Documentation
 
 - [Documentation index](./docs/README.md)
-- [Consuming](./docs/CONSUMING.md)
-- [Development](./docs/DEVELOPMENT.md)
-- [Release archive](./docs/RELEASE_ARCHIVE.md)
+- [Integration guide](./docs/CONSUMING.md)
+- [Development guide](./docs/DEVELOPMENT.md)
 - [Editor package](./packages/ui/README.md)
 - [GUI package](./packages/gui/README.md)
 
-## Architecture
+## Technology
 
-- **Panda CSS** owns styling, reset, tokens and theme variables.
-- **Radix UI** provides accessible primitives.
-- **React 19** is the UI runtime; both packages peer-depend on React.
-- **Source-only workspace**: packages export TypeScript source and are consumed locally.
-
-## Verification
-
-```bash
-pnpm verify
-pnpm install --frozen-lockfile
-pnpm dedupe --check
-```
-
-`pnpm verify` runs Prettier, TypeScript, the demo build and both Storybook builds.
+Pivot UI is organized as a pnpm monorepo. Components are written in React 19 and TypeScript, styled with Panda CSS, and built on Radix UI primitives. Both component packages are TypeScript source packages.
 
 ## License
 

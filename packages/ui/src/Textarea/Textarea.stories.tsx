@@ -30,7 +30,7 @@ export default {
     },
   },
   args: {
-    placeholder: 'Just input something...',
+    placeholder: 'Enter a value...',
     variant: 'soft',
     size: 'sm',
   },

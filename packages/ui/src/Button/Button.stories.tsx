@@ -100,7 +100,7 @@ export const Variants: StoryFn = (args) => {
   )
 }
 
-/** You could add icons or extra actions by using `startSlot` and `endSlot` property */
+/** Add icons or extra actions with the `startSlot` and `endSlot` props. */
 export const WithSlot: StoryFn = (args) => {
   return (
     <Flex gap="sm">
@@ -115,9 +115,7 @@ export const WithSlot: StoryFn = (args) => {
 }
 
 /**
- * Sometimes you need to use async function to handle some actions by clicking the button.
- *
- * In this case, you could use `async: () => Promise<unknown>` property to let the button handle the async status automatically.
+ * Use the `async: () => Promise<unknown>` prop when the button triggers asynchronous work. The component then manages the pending and loading states.
  */
 export const WithAsyncFunction: StoryFn = (args) => {
   const [done, setDone] = useState(false)

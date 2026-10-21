@@ -43,7 +43,7 @@ export const Overview: StoryFn = (args) => {
  * - double click on the top or bottom of the slider to add a new thumb.
  * - pick a thumb and drag down to remove it.
  *
- * This component provide both controlled and uncontrolled modes.
+ * The component supports controlled and uncontrolled usage.
  *
  * > If you want to use the GradientSlider in a controlled mode, you have to keep in mind that the `colors` property must contain at least two `GradientColor` colors.
  */
@@ -61,7 +61,7 @@ export const GradientSlider: StoryFn = (args) => {
  * - double click on the top or bottom of the slider to add a new thumb.
  * - pick a thumb and drag down to remove it.
  *
- * This component provide both controlled and uncontrolled modes.
+ * The component supports controlled and uncontrolled usage.
  *
  * > If you want to use the GradientSlider in a controlled mode, you have to keep in mind that the `colors` property must contain at least two `ParticleColor` colors.
  */

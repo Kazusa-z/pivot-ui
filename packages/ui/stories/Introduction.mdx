@@ -1,45 +1,71 @@
 import { Meta } from '@storybook/addon-docs/blocks'
-import { Title } from '@storybook/addon-docs/blocks'
 
-# Introduction
+<Meta title="Introduction" />
 
-`@pivot-ui/editor` is a React component library for building 3D editor interfaces in the browser. It is engine-agnostic and can drive any scene graph or plain data.
+# Pivot UI Editor
 
-In addition to including some basic components such as `<Button>` or `<Input />`, it also provides some dedicated components like `<ColorPicker />`, `<GradientSlider />`, `<ParticleSlider />`, `AssetPicker` and some hooks to help you build your own graphic editor.
+`@pivot-ui/editor` is a React component library for building browser-based 3D editors, inspectors and content tools. It is engine agnostic and can bind to any scene graph, store or plain JavaScript object.
 
-You can also use it to build custom editor panels and plugins.
+The library includes foundational controls such as `Button`, `Input` and `Flex`, plus editor-specific components including `ColorPicker`, `GradientSlider`, `ParticleSlider`, `BezierCurveEditor`, `AssetItem`, `Tree` and `Table`.
 
-Accessibility is a key part of the package, all components are designed to be accessible. Besides, we also forward the ref to the underlying DOM element to let you control the component directly.
+## Features
 
-## Local usage
-
-This package is developed and consumed inside the local Pivot UI pnpm workspace. It is not published to npm; use `workspace:*` or link the package from another local project.
+- **Editor-focused components** — inspector controls, overlays, color tools, asset views and hierarchical data.
+- **Controllable state** — most interactive components support controlled and uncontrolled usage.
+- **Theme support** — consistent light and dark themes driven by shared design tokens.
+- **Accessible primitives** — interactive behavior is built on Radix UI.
+- **Ref forwarding** — components expose their underlying DOM element where useful.
+- **TypeScript** — public props and component APIs are fully typed.
 
 ## Usage
-
-Import the components from the package in your application.
 
 ```tsx
 import { Button } from '@pivot-ui/editor'
 
-function App() {
-  return <Button>Pivot UI</Button>
+export function App() {
+  return <Button>Save</Button>
 }
 ```
 
-Note: You have to keep your application with some **reset css** to make sure the components work correctly. If not you could use `resetStyle()` which exported from `@pivot-ui/editor` to reset the style.
+## Styling
 
-> This package does not use the `z-index` style.
+Components are styled with Panda CSS. The consuming application must run Panda's PostCSS plugin and import the package layer entry once:
 
-## Acknowledgement
+```ts
+import '@pivot-ui/editor/panda.css'
+```
 
-This library would not have been possible without these excellent open-source projects:
+The package CSS entry declares layer order; Panda generates the component styles during the application build. See the repository integration guide for the complete Panda configuration.
 
-- `@stitches/react` CSS-in-JS solution
-- `@radix-ui` for building accessibility components
-- `@radix-ui/colors` for color system
-- `react-colorful` a tiny color picker component
-- `colord` for color manipulation
-- `@tabler/icons-react` for some icons
+## Theming
 
-> Developed and designed by Mrkou47
+Wrap the application in `ThemeProvider` and use `useTheme` to switch modes:
+
+```tsx
+import { ThemeProvider, useTheme } from '@pivot-ui/editor'
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  return <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>Toggle theme</button>
+}
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <ThemeToggle />
+    </ThemeProvider>
+  )
+}
+```
+
+## Acknowledgements
+
+Pivot UI is built with:
+
+- [Panda CSS](https://panda-css.com/) for the styling system
+- [Radix UI](https://www.radix-ui.com/) for accessible primitives
+- [react-colorful](https://github.com/omgovich/react-colorful) for color picking
+- [colord](https://github.com/omgovich/colord) for color manipulation
+- [Tabler Icons](https://tabler.io/icons) for icons
+
+Designed and developed by Mrkou47.

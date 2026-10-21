@@ -30,11 +30,9 @@ export default {
 } as Meta<typeof SegmentControl>
 
 /**
- * `<SegmentControl />` consist of `<SegmentControl />` and `<SegmentControlItem />`. You could used to switch between different states.
+ * `<SegmentControl />` groups `<SegmentControlItem />` items for switching between mutually exclusive states.
  *
- * This component built on top of the `@radix-ui/react-radio-group`
- *
- * This component provide controlled and uncontrolled modes.
+ * The component is built on `@radix-ui/react-radio-group` and supports controlled and uncontrolled usage.
  */
 export const Overview: StoryFn<typeof SegmentControl> = (args) => {
   return (
