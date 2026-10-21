@@ -108,7 +108,7 @@ export function PandaFormItemColor(props: PandaFormItemColorProps) {
             value={colorStr}
             onChange={inputOnChange}
             onKeyDown={onKeyDown}
-            css={{ fontFamily: '$mono' }}
+            css={{ fontFamily: 'var(--fonts-mono)' }}
             endSlot={
               <PandaColorSpaceBadge
                 onClick={() => {

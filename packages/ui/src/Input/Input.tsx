@@ -1,95 +1,95 @@
 import React from 'react'
 
-import { CSS, styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledInputSlot = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-  color: '$textMuted',
-  transition: '$color',
-  userSelect: 'none',
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    color: 'var(--colors-textMuted)',
+    transition: 'color .2s ease',
+    userSelect: 'none',
+  },
   variants: {
     size: {
       xs: {
-        padding: '0 $1',
-        fontSize: '$1',
+        padding: '0 4px',
+        fontSize: '12px',
       },
       sm: {
-        padding: '0 $1_5',
-        fontSize: '$1',
+        padding: '0 6px',
+        fontSize: '12px',
       },
       md: {
-        padding: '0 $2',
-        fontSize: '$1_5',
+        padding: '0 8px',
+        fontSize: '13px',
       },
       lg: {
-        padding: '0 $3',
-        fontSize: '$2',
+        padding: '0 12px',
+        fontSize: '14px',
       },
     },
   },
 })
 
 const StyledInput = styled('input', {
-  appearance: 'none',
-  height: '100%',
-  borderWidth: '0',
-  boxSizing: 'border-box',
-  outline: 'none',
-  flex: 1,
-  minWidth: 0,
-  width: '100%',
-  color: '$text',
-  borderRadius: 'inherit',
-  fontFamily: '$default',
-  fontWeight: '$regular',
-  lineHeight: 'inherit',
-  backgroundColor: 'transparent',
-  textAlign: 'inherit',
-  padding: 0,
-  '&:hover': {
-    color: '$textStrong',
-  },
-  '&:focus-visible': {
-    color: '$textStrong',
-  },
-  '&::placeholder': {
-    color: '$textMuted',
-  },
-  '&[readonly]': {
-    cursor: 'default',
-  },
-  '&::read-only::placeholder': {
-    color: '$textMuted',
+  base: {
+    appearance: 'none',
+    height: '100%',
+    borderWidth: '0',
+    boxSizing: 'border-box',
+    outline: 'none',
+    flex: 1,
+    minWidth: 0,
+    width: '100%',
+    color: 'var(--colors-text)',
+    borderRadius: 'inherit',
+    fontFamily: 'var(--fonts-default)',
+    fontWeight: 400,
+    lineHeight: 'inherit',
+    backgroundColor: 'transparent',
+    textAlign: 'inherit',
+    padding: 0,
+    '&:hover': {
+      color: 'var(--colors-textStrong)',
+    },
+    '&:focus-visible': {
+      color: 'var(--colors-textStrong)',
+    },
+    '&::placeholder': {
+      color: 'var(--colors-textMuted)',
+    },
+    '&[readonly]': {
+      cursor: 'default',
+    },
+    '&::read-only::placeholder': {
+      color: 'var(--colors-textMuted)',
+    },
   },
   variants: {
     code: {
       true: {
-        fontFamily: '$mono $default',
+        fontFamily: 'var(--fonts-mono)',
       },
     },
     size: {
       xs: {
-        fontSize: '$1',
-        paddingLeft: '$1_5',
-        paddingRight: '$1_5',
+        fontSize: '12px',
+        padding: '0 6px',
       },
       sm: {
-        fontSize: '$1',
-        paddingLeft: '$2',
-        paddingRight: '$2',
+        fontSize: '12px',
+        padding: '0 8px',
       },
       md: {
-        fontSize: '$2',
-        paddingLeft: '$3',
-        paddingRight: '$3',
+        fontSize: '14px',
+        padding: '0 12px',
       },
       lg: {
-        fontSize: '$2',
-        paddingLeft: '$4',
-        paddingRight: '$4',
+        fontSize: '14px',
+        padding: '0 16px',
       },
     },
     ellipsis: {
@@ -114,100 +114,102 @@ const StyledInput = styled('input', {
 })
 
 export const StyledInputRoot = styled('div', {
-  display: 'flex',
-  width: '100%',
-  boxSizing: 'border-box',
-  border: '1px solid transparent',
-  color: '$textStrong',
-  transition: '$shadow, $borderColor, $backgroundColor',
-  [`${StyledInputSlot} + ${StyledInput}`]: {
-    paddingLeft: 0,
-  },
-  '&[data-state="default"]:focus-within': {
-    borderColor: '$borderStrong',
-    boxShadow: '$focus',
-    [`${StyledInputSlot}`]: {
-      color: '$text',
+  base: {
+    display: 'flex',
+    width: '100%',
+    boxSizing: 'border-box',
+    border: '1px solid transparent',
+    color: 'var(--colors-textStrong)',
+    transition: 'box-shadow .2s ease, border-color .2s ease, background-color .2s ease',
+    '& [data-part="slot"] + [data-part="input"]': {
+      paddingLeft: 0,
     },
-  },
-  '&[data-state="valid"]:focus-within': {
-    borderColor: '$successBorder',
-    boxShadow: '$focus',
-    [`${StyledInputSlot}`]: {
-      color: '$successText',
+    '&[data-state="default"]:focus-within': {
+      borderColor: 'var(--colors-borderStrong)',
+      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+      '& [data-part="slot"]': {
+        color: 'var(--colors-text)',
+      },
     },
-  },
-  '&[data-state="invalid"]:focus-within': {
-    borderColor: '$dangerBorder',
-    boxShadow: '$focus',
-    [`${StyledInputSlot}`]: {
-      color: '$dangerText',
+    '&[data-state="valid"]:focus-within': {
+      borderColor: 'var(--colors-successBorder)',
+      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+      '& [data-part="slot"]': {
+        color: 'var(--colors-successText)',
+      },
+    },
+    '&[data-state="invalid"]:focus-within': {
+      borderColor: 'var(--colors-dangerBorder)',
+      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+      '& [data-part="slot"]': {
+        color: 'var(--colors-dangerText)',
+      },
     },
   },
   variants: {
     size: {
       xs: {
-        height: '$xs',
-        lineHeight: '$lineHeights$1',
-        borderRadius: '$xs',
-        fontSize: '$1',
+        height: '20px',
+        lineHeight: '16px',
+        borderRadius: '4px',
+        fontSize: '12px',
       },
       sm: {
-        height: '$sm',
-        lineHeight: '$lineHeights$1',
-        fontSize: '$1',
-        borderRadius: '$sm',
+        height: '24px',
+        lineHeight: '16px',
+        fontSize: '12px',
+        borderRadius: '4px',
       },
       md: {
-        height: '$md',
-        fontSize: '$2',
-        lineHeight: '$lineHeights$2',
-        borderRadius: '$md',
+        height: '32px',
+        fontSize: '14px',
+        lineHeight: '20px',
+        borderRadius: '6px',
       },
       lg: {
-        height: '$lg',
-        fontSize: '$2',
-        lineHeight: '$lineHeights$2',
-        borderRadius: '$xl',
+        height: '36px',
+        fontSize: '14px',
+        lineHeight: '20px',
+        borderRadius: '8px',
       },
     },
     disabled: {
       true: {
-        backgroundColor: '$surfaceSubtle',
-        borderColor: '$border',
+        backgroundColor: 'var(--colors-surfaceSubtle)',
+        borderColor: 'var(--colors-border)',
         boxShadow: 'none',
-        [`${StyledInputSlot}`]: {
-          color: '$textMuted',
+        '& [data-part="slot"]': {
+          color: 'var(--colors-textMuted)',
         },
-        [`${StyledInput}`]: {
-          color: '$textMuted',
+        '& [data-part="input"]': {
+          color: 'var(--colors-textMuted)',
           '&:focus': {
-            color: '$textMuted',
+            color: 'var(--colors-textMuted)',
           },
           '&:hover': {
-            color: '$textMuted',
+            color: 'var(--colors-textMuted)',
           },
         },
       },
     },
     variant: {
       outline: {
-        backgroundColor: '$surface',
-        borderColor: '$border',
+        backgroundColor: 'var(--colors-surface)',
+        borderColor: 'var(--colors-border)',
         '&[data-state="default"]:hover': {
-          borderColor: '$borderStrong',
-          [`${StyledInputSlot}`]: {
-            color: '$text',
+          borderColor: 'var(--colors-borderStrong)',
+          '& [data-part="slot"]': {
+            color: 'var(--colors-text)',
           },
         },
       },
       soft: {
-        backgroundColor: '$softBg',
+        backgroundColor: 'var(--colors-softBg)',
         borderColor: 'transparent',
         '&[data-state="default"]:hover': {
-          backgroundColor: '$softBgHover',
-          [`${StyledInputSlot}`]: {
-            color: '$text',
+          backgroundColor: 'var(--colors-softBgHover)',
+          '& [data-part="slot"]': {
+            color: 'var(--colors-text)',
           },
         },
       },
@@ -215,38 +217,38 @@ export const StyledInputRoot = styled('div', {
         backgroundColor: 'transparent',
         borderColor: 'transparent',
         '&[data-state="default"]:hover': {
-          [`${StyledInputSlot}`]: {
-            color: '$text',
+          '& [data-part="slot"]': {
+            color: 'var(--colors-text)',
           },
         },
       },
     },
     state: {
       valid: {
-        backgroundColor: '$successBg',
-        borderColor: '$successBorder',
-        [`${StyledInputSlot}`]: {
-          color: '$successText',
+        backgroundColor: 'var(--colors-successBg)',
+        borderColor: 'var(--colors-successBorder)',
+        '& [data-part="slot"]': {
+          color: 'var(--colors-successText)',
         },
-        [`${StyledInput}, ${StyledInput}:hover, ${StyledInput}:focus-visible`]: {
-          color: '$successText',
+        '& [data-part="input"], & [data-part="input"]:hover, & [data-part="input"]:focus-visible': {
+          color: 'var(--colors-successText)',
         },
-        [`${StyledInput}::placeholder`]: {
-          color: '$successText',
+        '& [data-part="input"]::placeholder': {
+          color: 'var(--colors-successText)',
           opacity: 0.8,
         },
       },
       invalid: {
-        backgroundColor: '$dangerBg',
-        borderColor: '$dangerBorder',
-        [`${StyledInputSlot}`]: {
-          color: '$dangerText',
+        backgroundColor: 'var(--colors-dangerBg)',
+        borderColor: 'var(--colors-dangerBorder)',
+        '& [data-part="slot"]': {
+          color: 'var(--colors-dangerText)',
         },
-        [`${StyledInput}, ${StyledInput}:hover, ${StyledInput}:focus-visible`]: {
-          color: '$dangerText',
+        '& [data-part="input"], & [data-part="input"]:hover, & [data-part="input"]:focus-visible': {
+          color: 'var(--colors-dangerText)',
         },
-        [`${StyledInput}::placeholder`]: {
-          color: '$dangerText',
+        '& [data-part="input"]::placeholder': {
+          color: 'var(--colors-dangerText)',
           opacity: 0.8,
         },
       },
@@ -257,7 +259,7 @@ export const StyledInputRoot = styled('div', {
       variant: 'soft',
       disabled: true,
       css: {
-        backgroundColor: '$surfaceSubtle',
+        backgroundColor: 'var(--colors-surfaceSubtle)',
         borderColor: 'transparent',
       },
     },
@@ -273,14 +275,14 @@ export const StyledInputRoot = styled('div', {
       state: 'valid',
       disabled: true,
       css: {
-        [`${StyledInputSlot}`]: {
-          color: '$textMuted',
+        '& [data-part="slot"]': {
+          color: 'var(--colors-textMuted)',
         },
-        [`${StyledInput}, ${StyledInput}:hover, ${StyledInput}:focus-visible`]: {
-          color: '$textMuted',
+        '& [data-part="input"], & [data-part="input"]:hover, & [data-part="input"]:focus-visible': {
+          color: 'var(--colors-textMuted)',
         },
-        [`${StyledInput}::placeholder`]: {
-          color: '$textMuted',
+        '& [data-part="input"]::placeholder': {
+          color: 'var(--colors-textMuted)',
         },
       },
     },
@@ -288,14 +290,14 @@ export const StyledInputRoot = styled('div', {
       state: 'invalid',
       disabled: true,
       css: {
-        [`${StyledInputSlot}`]: {
-          color: '$textMuted',
+        '& [data-part="slot"]': {
+          color: 'var(--colors-textMuted)',
         },
-        [`${StyledInput}, ${StyledInput}:hover, ${StyledInput}:focus-visible`]: {
-          color: '$textMuted',
+        '& [data-part="input"], & [data-part="input"]:hover, & [data-part="input"]:focus-visible': {
+          color: 'var(--colors-textMuted)',
         },
-        [`${StyledInput}::placeholder`]: {
-          color: '$textMuted',
+        '& [data-part="input"]::placeholder': {
+          color: 'var(--colors-textMuted)',
         },
       },
     },
@@ -314,14 +316,14 @@ export interface InputProps extends Omit<React.ComponentPropsWithoutRef<'input'>
   overrideEndSlotStyle?: boolean
   rootRef?: any
   disabled?: boolean
-  css?: CSS
+  css?: any
   size?: 'xs' | 'sm' | 'md' | 'lg'
   variant?: 'outline' | 'soft' | 'subtle'
   state?: 'valid' | 'invalid'
 }
 
 /**
- * The `<Input />` component could lets users enter one of various types of text on a single line.
+ * The `<Input />` component lets users enter one of various types of text on a single line.
  */
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input(props, forwardedRef) {
   const {
@@ -347,9 +349,23 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       state={state}
       disabled={disabled}
       data-state={state ?? 'default'}>
-      {!!startSlot && (overrideStartSlotStyle ? startSlot : <StyledInputSlot size={size}>{startSlot}</StyledInputSlot>)}
-      <StyledInput disabled={disabled} ref={forwardedRef} size={size} {...rest} />
-      {!!endSlot && (overrideEndSlotStyle ? endSlot : <StyledInputSlot size={size}>{endSlot}</StyledInputSlot>)}
+      {!!startSlot &&
+        (overrideStartSlotStyle ? (
+          startSlot
+        ) : (
+          <StyledInputSlot data-part="slot" size={size}>
+            {startSlot}
+          </StyledInputSlot>
+        ))}
+      <StyledInput data-part="input" disabled={disabled} ref={forwardedRef} size={size} {...rest} />
+      {!!endSlot &&
+        (overrideEndSlotStyle ? (
+          endSlot
+        ) : (
+          <StyledInputSlot data-part="slot" size={size}>
+            {endSlot}
+          </StyledInputSlot>
+        ))}
     </StyledInputRoot>
   )
 })

@@ -3,7 +3,7 @@ import React, { useState, useEffect, forwardRef, useRef } from 'react'
 import { useInputNumberState } from './useInputNumberState'
 import { clamp } from '../utils/math'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { Input } from '../Input'
 import { mergeRefs } from '../utils/merge-refs'
 
@@ -35,15 +35,19 @@ function compound<T extends (...args: any[]) => any>(fn1?: T, fn2?: T): T | unde
 }
 
 const StyledNumController = styled('div', {
-  position: 'absolute',
-  cursor: 'ew-resize',
-  inset: 0,
-  borderRadius: 'inherit',
+  base: {
+    position: 'absolute',
+    cursor: 'ew-resize',
+    inset: 0,
+    borderRadius: 'inherit',
+  },
 })
 
 const StyledInputNumberRoot = styled('div', {
-  position: 'relative',
-  borderRadius: 'inherit',
+  base: {
+    position: 'relative',
+    borderRadius: 'inherit',
+  },
 })
 
 export interface InputNumberProps extends Omit<
