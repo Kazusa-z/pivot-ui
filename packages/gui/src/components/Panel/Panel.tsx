@@ -108,7 +108,7 @@ export const Panel = forwardRef<HTMLDivElement, PanelProps>(function Panel(props
 
   return (
     <StyledPanel ref={mergeRefs([forwardedRef, panelRef])}>
-      <PanelHeader align="both" onMouseDown={handleMouseDown} justifyContent="around">
+      <PanelHeader align="both" onMouseDown={handleMouseDown} justify="around">
         <ActionButton
           size="xs"
           variant="ghost"

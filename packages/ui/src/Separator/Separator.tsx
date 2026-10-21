@@ -13,13 +13,13 @@ const StyledCrosslineText = styled('div', {
     userSelect: 'none',
     '&::before': {
       borderBottom: '1px solid var(--colors-border)',
-      content: '',
+      content: '""',
       flex: '1 0 0',
       transform: 'translateY(-0.5px)',
     },
     '&::after': {
       borderBottom: '1px solid var(--colors-border)',
-      content: '',
+      content: '""',
       flex: '1 0 0',
       transform: 'translateY(-0.5px)',
     },

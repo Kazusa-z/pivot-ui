@@ -19,84 +19,42 @@ This file tracks migration progress, temporary compromises, and the exit criteri
 
 ## Temporary Compromises
 
-| ID    | Compromise                                                                         | Location                                         | Why it exists                                                                     | Exit criterion                                                                                      | Resolve by                   |
-| ----- | ---------------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------- |
-| TD-01 | `css?: any` on migrated public components                                          | Button, Flex, Input, Badge, Separator, Progress  | Remaining consumers still passed Stitches `CSS` objects                           | No `css?: any` remains in migrated components                                                       | **Resolved** in this pass    |
-| TD-02 | Button passed explicit inline Spin width/height                                    | Button                                           | Spin used to be a Stitches component whose unlayered styles beat Panda utilities  | Spin is Panda; Button uses size-variant selectors again                                             | **Resolved**                 |
-| TD-03 | `ActionButton` still uses the Stitches `button` recipe                             | ActionButton                                     | Not included in Batch 1                                                           | ActionButton migrated; Stitches `button` recipe has no consumers                                    | **Resolved**                 |
-| TD-04 | Pilot duplicates remain                                                            | `panda-pilot/*`                                  | Used for visual comparison during the pilot phase                                 | Production Dialog/FormItemColor migrated; all pilot files and pilot stories removed                 | **Resolved**                 |
-| TD-05 | Global CSS variables are generated from Stitches token sources                     | `panda/global.ts`                                | Keeps light/dark theme behavior while components migrate                          | Panda token snapshot owns values; no runtime dependency on Stitches token modules                   | **Resolved**                 |
-| TD-06 | `resetStyle`, `ThemeProvider` and `.light-theme` were Stitches-backed              | design-system / app                              | Full theme migration was deferred                                                 | Panda owns reset/tokens; ThemeProvider uses plain theme classes; `resetStyle` export removed        | **Resolved**                 |
-| TD-07 | Remaining Stitches components and stories still use `$token` CSS values            | Remaining `packages/ui` and `packages/gui` files | They have not been migrated yet                                                   | No migrated component/story CSS uses `$token`; token sources remain only for the snapshot generator | **Resolved**                 |
-| TD-08 | Button cast `Slot`/`StyledButton` to `any`                                         | Button                                           | The two components have different prop shapes                                     | Typed `asChild` / `StyledButton` branches; only a DOM-boundary cast remains                         | **Resolved**                 |
-| TD-09 | Numeric `Text`/`Title` size props and boolean `Flex.wrap` are breaking API changes | Typography, Flex                                 | Panda variants are numeric/boolean                                                | Document migration notes in package README; update local usages                                     | **Resolved**; README updated |
-| TD-10 | `EditableText` still types `css` as `any`                                          | EditableText                                     | It still wrapped a Stitches `Container`                                           | EditableText migrated; `css` is `SystemStyleObject`                                                 | **Resolved**                 |
-| TD-11 | Menu/Select style configs cast to `any`                                            | `Menu/menuStyles.ts`, `Select/selectStyles.ts`   | Panda custom-component `styled` overload rejects config objects held in variables | **Resolved (accepted):** static configs are verified; casts are confined to style-config modules    | **Resolved**                 |
-| TD-12 | ColorPicker injects react-colorful overrides at runtime                            | `ColorPicker/colorPickerOverrides.ts`            | Third-party CSS must stay unlayered; runtime injection is framework-agnostic      | **Resolved (accepted):** no Stitches dependency and works in app/Storybook/GUI                      | **Resolved**                 |
+| ID    | Compromise                                                                         | Location                                                          | Why it exists                                                                     | Exit criterion                                                                                                                               | Resolve by                   |
+| ----- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| TD-01 | `css?: any` on migrated public components                                          | Button, Flex, Input, Badge, Separator, Progress                   | Remaining consumers still passed Stitches `CSS` objects                           | No `css?: any` remains in migrated components                                                                                                | **Resolved** in this pass    |
+| TD-02 | Button passed explicit inline Spin width/height                                    | Button                                                            | Spin used to be a Stitches component whose unlayered styles beat Panda utilities  | Spin is Panda; Button uses size-variant selectors again                                                                                      | **Resolved**                 |
+| TD-03 | `ActionButton` still uses the Stitches `button` recipe                             | ActionButton                                                      | Not included in Batch 1                                                           | ActionButton migrated; Stitches `button` recipe has no consumers                                                                             | **Resolved**                 |
+| TD-04 | Pilot duplicates remain                                                            | `panda-pilot/*`                                                   | Used for visual comparison during the pilot phase                                 | Production Dialog/FormItemColor migrated; all pilot files and pilot stories removed                                                          | **Resolved**                 |
+| TD-05 | Global CSS variables are generated from Stitches token sources                     | `panda/global.ts`                                                 | Keeps light/dark theme behavior while components migrate                          | Panda token snapshot owns values; no runtime dependency on Stitches token modules                                                            | **Resolved**                 |
+| TD-06 | `resetStyle`, `ThemeProvider` and `.light-theme` were Stitches-backed              | design-system / app                                               | Full theme migration was deferred                                                 | Panda owns reset/tokens; ThemeProvider uses plain theme classes; `resetStyle` export removed                                                 | **Resolved**                 |
+| TD-07 | Remaining Stitches components and stories still use `$token` CSS values            | Remaining `packages/ui` and `packages/gui` files                  | They have not been migrated yet                                                   | No migrated component/story CSS uses `$token`; token sources remain only for the snapshot generator                                          | **Resolved**                 |
+| TD-08 | Button cast `Slot`/`StyledButton` to `any`                                         | Button                                                            | The two components have different prop shapes                                     | Typed `asChild` / `StyledButton` branches; only a DOM-boundary cast remains                                                                  | **Resolved**                 |
+| TD-09 | Numeric `Text`/`Title` size props and boolean `Flex.wrap` are breaking API changes | Typography, Flex                                                  | Panda variants are numeric/boolean                                                | Document migration notes in package README; update local usages                                                                              | **Resolved**; README updated |
+| TD-10 | `EditableText` still types `css` as `any`                                          | EditableText                                                      | It still wrapped a Stitches `Container`                                           | EditableText migrated; `css` is `SystemStyleObject`                                                                                          | **Resolved**                 |
+| TD-11 | Menu/Select style configs cast to `any`                                            | `Menu/Menu.tsx`, `Select/Combobox.tsx`, `Select/SingleSelect.tsx` | Panda custom-component `styled` overload rejects config objects held in variables | **Resolved:** configs were inlined at the call sites; no `as any` remains; static extraction and all Select/Menu stories are pixel-identical | **Resolved**                 |
+| TD-12 | ColorPicker injects react-colorful overrides at runtime                            | `panda/global.ts`                                                 | Third-party CSS must beat the unlayered library styles                            | **Resolved:** overrides live in Panda global CSS with `!important`; runtime injector removed; picker measures 220x180                        | **Resolved**                 |
 
 ## Resolution Schedule
 
-### Resolved in this batch pass
+## Resolution notes
 
 - TD-01: Button/Flex/Input/Badge/Separator/Progress now accept `SystemStyleObject`.
 - TD-02: Button Spin sizing is CSS-driven again.
 - TD-04: pilots removed; Dialog and FormItemColor are production implementations.
 - TD-08: Button uses explicit typed branches instead of `as any`.
 - TD-09: package migration notes added.
-- Dialog animations moved to Panda keyframes; FormItemColor production implementation owns the Panda badge.
-- TD-03: ActionButton migrated; Stitches `button` recipe removed.
 - TD-10: EditableText migrated and its `css` prop narrowed.
-- Batch 3: Table, Tree, ResizablePanel, ColorPicker, BezierCurveEditor and AssetPicker migrated. ColorPicker’s react-colorful overrides are injected at runtime and tracked as TD-12.
+- TD-11: Menu/Select configs were inlined; `menuStyles.ts` and `selectStyles.ts` were removed. No `as any` remains, and Menu/Select stories are pixel-identical.
+- TD-12: react-colorful overrides live in Panda global CSS with `!important`; the runtime injector was removed. The picker measures 220x180.
+- Batch 3: Table, Tree, ResizablePanel, ColorPicker, BezierCurveEditor and AssetPicker migrated.
+- Batch 4: GUI local styles are Panda; ResizablePanel and AssetPicker have runtime stories; the Panda token snapshot owns token values.
+- Batch 5: `@stitches/react` and the Stitches design-system runtime were removed. ThemeProvider uses plain `light-theme` / `dark-theme` classes; reset is loaded through Panda CSS.
 
-### Batch 5 closed
+### Visual regression
 
-- `@stitches/react` removed from the workspace and lockfile.
-- Stitches design-system runtime/config/recipes/keyframes/reset removed.
-- ThemeProvider uses plain `light-theme` / `dark-theme` classes; reset is loaded through Panda CSS.
-- All remaining component and story styles migrated to Panda.
-
-### Batch 4 closed
-
-- GUI local styles are Panda; FormItem, Label, Panel, GUIRoot wrapper, FormItemArray and AssetPicker content migrated.
-- ResizablePanel and AssetPicker now have runtime stories.
-- FormItemColor production screenshot hash is unchanged after the GUI style migration.
-
-- All local GUI `styled` usages were migrated to Panda; GUIRoot still calls the shared Stitches-backed `resetStyle` (TD-06).
-- ResizablePanel and AssetPicker have runtime stories.
-- `panda/designTokens.ts` is a generated, Panda-owned snapshot; `panda/global.ts` no longer imports Stitches token modules.
-- TD-12 is accepted as a deliberate third-party CSS injection; TD-11 is carried to Batch 5.
-
-### Batch 5 closed
-
-- `@stitches/react` removed from the workspace and lockfile.
-- Stitches design-system runtime/config/recipes/keyframes/reset removed.
-- ThemeProvider uses plain `light-theme` / `dark-theme` classes; reset is loaded through Panda CSS.
-- All remaining component and story styles migrated to Panda.
-
-### Batch 4 closed
-
-- Native Panda token snapshot and global theme variables are in place.
-- TD-11 (Menu/Select config casts) remains for Batch 5.
-
-### Batch 3 closed
-
-- All Batch 3 components are migrated; Table/Tree/ColorPicker/Bezier have runtime checks, ResizablePanel is covered by type/build checks pending a story.
-
-### Batch 2 closed
-
-- All Batch 2 components are migrated and covered by runtime checks.
-- TD-07 remains for Batch 3/4 components and the remaining Stitches stories.
-
-### Batch 3–4
-
-- Continue removing `$token` usage component by component (TD-07).
-- Replace the Stitches-token-derived global variables with native Panda theme values (TD-05).
-- Replace Menu/Select `as any` style configs with a typed helper (TD-11).
-
-### Batch 5
-
-- Stitches runtime, theme classes, reset and dependency removal are complete.
-- The remaining token source files are data-only inputs for `panda/generate-tokens.mjs`.
+- All 111 stories shared by the Stitches baseline and the Panda branch were captured and compared.
+- 94 pixel-identical; 15 subpixel/text-antialias-only differences (<= 0.2%); 2 reviewed exceptions.
+- Full details: `panda/VISUAL_REGRESSION.md` and `panda/visual-regression-report.json`.
 
 ## Batch Definition of Done
 

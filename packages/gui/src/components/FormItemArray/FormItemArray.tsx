@@ -21,7 +21,7 @@ const AddItemButton = styled(Button, {
     borderRadius: 0,
     '& > svg': { marginRight: '4px' },
     '&::after': {
-      content: "''",
+      content: '""',
       position: 'absolute',
       top: 0,
       left: 0,

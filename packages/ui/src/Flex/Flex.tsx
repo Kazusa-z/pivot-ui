@@ -9,47 +9,29 @@ const StyledFlex = styled('div', {
     boxSizing: 'border-box',
   },
   variants: {
-    direction: {
-      column: {
-        flexDirection: 'column',
-      },
+    orientation: {
+      column: { flexDirection: 'column' },
       row: { flexDirection: 'row' },
       'row-reverse': { flexDirection: 'row-reverse' },
       'column-reverse': { flexDirection: 'column-reverse' },
     },
-    justifyContent: {
-      center: {
-        justifyContent: 'center',
-      },
-      between: {
-        justifyContent: 'space-between',
-      },
-      around: {
-        justifyContent: 'space-around',
-      },
-      end: {
-        justifyContent: 'flex-end',
-      },
+    justify: {
+      center: { justifyContent: 'center' },
+      between: { justifyContent: 'space-between' },
+      around: { justifyContent: 'space-around' },
+      end: { justifyContent: 'flex-end' },
     },
     align: {
-      both: {
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      v: {
-        alignItems: 'center',
-        lineHeight: 1,
-      },
-      h: {
-        justifyContent: 'center',
-      },
+      both: { alignItems: 'center', justifyContent: 'center' },
+      v: { alignItems: 'center', lineHeight: 1 },
+      h: { justifyContent: 'center' },
     },
-    wrap: {
+    wrapMode: {
       true: { flexWrap: 'wrap' },
       false: { flexWrap: 'nowrap' },
       reverse: { flexWrap: 'wrap-reverse' },
     },
-    gap: {
+    spacing: {
       none: { gap: '0' },
       xxs: { gap: '2px' },
       xs: { gap: '4px' },
@@ -58,25 +40,55 @@ const StyledFlex = styled('div', {
       lg: { gap: '16px' },
     },
     fullWidth: {
-      true: {
-        width: '100%',
-      },
+      true: { width: '100%' },
     },
   },
   defaultVariants: {
-    direction: 'row',
-    wrap: true,
+    orientation: 'row',
+    wrapMode: true,
   },
 })
 
 type StyledFlexProps = ComponentProps<typeof StyledFlex>
 
-export type FlexProps = PropsWithChildren<Omit<StyledFlexProps, 'css'> & { css?: SystemStyleObject }>
+export type FlexProps = PropsWithChildren<
+  Omit<StyledFlexProps, 'css' | 'flexDirection' | 'justify' | 'spacing' | 'flexWrap'> & {
+    css?: SystemStyleObject
+    direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse'
+    justifyContent?: 'center' | 'between' | 'around' | 'end'
+    gap?: 'none' | 'xxs' | 'xs' | 'sm' | 'md' | 'lg'
+    wrap?: true | false | 'reverse'
+    orientation?: 'row' | 'column' | 'row-reverse' | 'column-reverse'
+    flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse'
+    justify?: 'center' | 'between' | 'around' | 'end'
+    spacing?: 'none' | 'xxs' | 'xs' | 'sm' | 'md' | 'lg'
+    flexWrap?: true | false | 'reverse'
+  }
+>
 
-export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(function Flex(props: FlexProps, forwardedRef) {
+export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(function Flex(props, forwardedRef) {
+  const {
+    direction,
+    justifyContent,
+    gap,
+    wrap,
+    orientation,
+    flexDirection,
+    justify,
+    spacing,
+    flexWrap,
+    children,
+    ...rest
+  } = props
   return (
-    <StyledFlex {...props} ref={forwardedRef}>
-      {props.children}
+    <StyledFlex
+      orientation={orientation ?? flexDirection ?? direction}
+      justify={justify ?? justifyContent}
+      spacing={spacing ?? gap}
+      wrapMode={flexWrap ?? wrap}
+      {...rest}
+      ref={forwardedRef}>
+      {children}
     </StyledFlex>
   )
 })

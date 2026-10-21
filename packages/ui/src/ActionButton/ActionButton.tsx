@@ -257,7 +257,7 @@ const StyledActionButtonGroup = styled('div', {
     display: 'flex',
   },
   variants: {
-    direction: {
+    orientation: {
       horizontal: {
         '& [data-action-button]': {
           borderRadius: 0,
@@ -300,7 +300,7 @@ const StyledActionButtonGroup = styled('div', {
     },
   },
   defaultVariants: {
-    direction: 'horizontal',
+    orientation: 'horizontal',
   },
 })
 
@@ -352,11 +352,14 @@ export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(fun
 
 ActionButton.toString = () => '.action-button'
 
-export type ActionButtonGroupProps = ComponentProps<typeof StyledActionButtonGroup>
+export type ActionButtonGroupProps = Omit<ComponentProps<typeof StyledActionButtonGroup>, 'orientation'> & {
+  direction?: 'horizontal' | 'vertical'
+}
 
 export const ActionButtonGroup = forwardRef<HTMLDivElement, PropsWithChildren<ActionButtonGroupProps>>(
   function ActionButtonGroup(props, forwardedRef) {
-    return <StyledActionButtonGroup ref={forwardedRef} {...props} />
+    const { direction, ...rest } = props
+    return <StyledActionButtonGroup ref={forwardedRef} orientation={direction} {...rest} />
   }
 )
 

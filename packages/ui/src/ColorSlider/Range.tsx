@@ -11,7 +11,7 @@ export const StyledTrack = styled('div', {
     borderRadius: '2px',
     boxShadow: 'inset 0 0 0 1px var(--colors-grayA5)',
     overflow: 'hidden',
-    backgroundSize: '100% 100%',
+    backgroundSize: '10px 10px',
     backgroundImage:
       'linear-gradient(45deg, #b0b0b0 25%, transparent 25%), linear-gradient(-45deg, #b0b0b0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #b0b0b0 75%), linear-gradient(-45deg, #fff 75%, #b0b0b0 75%)',
     backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px',

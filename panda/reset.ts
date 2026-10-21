@@ -37,7 +37,7 @@ export const resetCSS = {
     quotes: 'none',
   },
   'blockquote:before, blockquote:after, q:before, q:after': {
-    content: '',
+    content: 'none',
   },
   table: {
     borderSpacing: '0',

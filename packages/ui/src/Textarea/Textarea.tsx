@@ -45,14 +45,10 @@ const StyledTextarea = styled('textarea', {
     },
     state: {
       valid: {
-        backgroundColor: 'var(--colors-successBg)',
-        borderColor: 'var(--colors-successBorder)',
         color: 'var(--colors-successText)',
         '&::placeholder': { color: 'var(--colors-successText)', opacity: 0.8 },
       },
       invalid: {
-        backgroundColor: 'var(--colors-dangerBg)',
-        borderColor: 'var(--colors-dangerBorder)',
         color: 'var(--colors-dangerText)',
         '&::placeholder': { color: 'var(--colors-dangerText)', opacity: 0.8 },
       },
@@ -66,6 +62,22 @@ const StyledTextarea = styled('textarea', {
     },
   },
   compoundVariants: [
+    {
+      variant: 'outline',
+      state: 'valid',
+      css: {
+        backgroundColor: 'var(--colors-successBg)',
+        borderColor: 'var(--colors-successBorder)',
+      },
+    },
+    {
+      variant: 'outline',
+      state: 'invalid',
+      css: {
+        backgroundColor: 'var(--colors-dangerBg)',
+        borderColor: 'var(--colors-dangerBorder)',
+      },
+    },
     {
       state: 'valid',
       css: {

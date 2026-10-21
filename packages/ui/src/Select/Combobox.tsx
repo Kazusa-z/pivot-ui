@@ -6,52 +6,358 @@ import { createPortal } from 'react-dom'
 import { Badge } from '../Badge'
 import { Checkbox } from '../Checkbox'
 import { styled } from '../../styled-system/jsx'
-import {
-  chevronConfig,
-  comboItemConfig,
-  comboboxContentConfig,
-  comboboxHeaderConfig,
-  comboboxSearchInputConfig,
-  comboboxSlotConfig,
-  comboboxTriggerConfig,
-  comboboxTriggerContentConfig,
-  comboboxValueNodeConfig,
-  placeholderConfig,
-  searchIconConfig,
-  selectAllTextConfig,
-  selectAllWrapperConfig,
-} from './selectStyles'
 import { Flex } from '../Flex'
 import { Popover, PopoverCloseTrigger } from '../Popover'
 import { Text } from '../Typography'
 
 const SELECT_ALL_VALUE = '$$SELECT_ALL$$'
 
-const StyledComboboxTrigger = styled('button', comboboxTriggerConfig)
+const StyledComboboxTrigger = styled('button', {
+  base: {
+    all: 'unset',
+    position: 'relative',
+    display: 'flex',
+    width: '100%',
+    gap: '4px',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    boxSizing: 'border-box',
+    color: 'var(--colors-text)',
+    border: '1px solid transparent',
+    transition: 'border-color .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease',
+    cursor: 'pointer',
+  },
+  variants: {
+    size: {
+      xs: {
+        height: '20px',
+        borderRadius: '4px',
+        padding: '0 20px 0 6px',
+      },
+      sm: {
+        height: '24px',
+        borderRadius: '4px',
+        padding: '0 20px 0 2px',
+      },
+      md: {
+        height: '32px',
+        borderRadius: '6px',
+        padding: '0 24px 0 12px',
+      },
+    },
+    variant: {
+      outline: {
+        backgroundColor: 'var(--colors-surface)',
+        borderColor: 'var(--colors-border)',
+        '&:hover': {
+          backgroundColor: 'var(--colors-surfaceSubtle)',
+          borderColor: 'var(--colors-borderStrong)',
+        },
+      },
+      soft: {
+        backgroundColor: 'var(--colors-softBg)',
+        borderColor: 'transparent',
+        '&:hover': {
+          backgroundColor: 'var(--colors-softBgHover)',
+          borderColor: 'transparent',
+        },
+      },
+      subtle: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        '&:hover': {
+          backgroundColor: 'var(--colors-surfaceSubtle)',
+          borderColor: 'transparent',
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
+    variant: 'soft',
+  },
+})
 
-const StyledChevronDown = styled(IconChevronDown, chevronConfig)
+const StyledChevronDown = styled(IconChevronDown, {
+  base: {
+    height: '12px',
+    width: '12px',
+    color: 'var(--colors-textMuted)',
+    flexShrink: 0,
+    position: 'absolute',
+    right: '6px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+  },
+  variants: {
+    size: {
+      xs: {
+        height: '12px',
+        width: '12px',
+      },
+      sm: {
+        height: '14px',
+        width: '14px',
+      },
+      md: {
+        height: '16px',
+        width: '16px',
+      },
+    },
+  },
+})
 
-const SearchIcon = styled(IconSearch, searchIconConfig)
+const SearchIcon = styled(IconSearch, {
+  base: {
+    height: '14px',
+    width: '14px',
+    color: 'var(--colors-textMuted)',
+    strokeWidth: 1.5,
+    flexShrink: 0,
+  },
+})
 
-const StyledPlaceholder = styled('span', placeholderConfig)
+const StyledPlaceholder = styled('span', {
+  base: {
+    all: 'unset',
+    fontSize: '12px',
+    color: 'var(--colors-textMuted)',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+})
 
-const StyledComboboxContent = styled(Flex, comboboxContentConfig)
+const StyledComboboxContent = styled(Flex, {
+  base: {
+    padding: '4px',
+    minHeight: '60px',
+    maxHeight: '300px',
+    overflowY: 'auto',
+    position: 'relative',
+    flex: 1,
+    flexWrap: 'nowrap !important',
+    backgroundColor: 'var(--colors-surfaceOverlay)',
+    '&[data-state="open"]': {
+      animation: 'none',
+    },
+    '&::-webkit-scrollbar': {
+      width: '2px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: 'var(--colors-scrollbarThumb)',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: 'var(--colors-scrollbarTrackHover)',
+    },
+  },
+})
 
-const StyledComboboxSearchInput = styled('input', comboboxSearchInputConfig)
+const StyledComboboxSearchInput = styled('input', {
+  base: {
+    all: 'unset',
+    width: '100%',
+    padding: '4px',
+    fontSize: '12px',
+    color: 'var(--colors-text)',
+    boxSizing: 'border-box',
+    '&::placeholder': {
+      color: 'var(--colors-textMuted)',
+    },
+  },
+})
 
-const StyledComboBoxItem = styled('button', comboItemConfig)
+const StyledComboBoxItem = styled('button', {
+  base: {
+    all: 'unset',
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    lineHeight: 1,
+    fontSize: '12px',
+    borderRadius: '4px',
+    color: 'var(--colors-text)',
+    padding: '4px 8px',
+    userSelect: 'none',
+    boxSizing: 'border-box',
+    minWidth: 'max-content',
+    cursor: 'default',
+    '&[data-disabled]': {
+      color: 'var(--colors-textMuted)',
+      pointerEvents: 'none',
+    },
+    '&:focus': {
+      backgroundColor: 'transparent',
+      color: 'var(--colors-text)',
+    },
+    width: '100%',
+    flexShrink: 0,
+    '&:hover': {
+      color: 'var(--colors-textStrong)',
+      backgroundColor: 'var(--colors-surfaceSubtle)',
+    },
+  },
+  variants: {
+    size: {
+      xs: {
+        height: '20px',
+        fontSize: '10px',
+        borderRadius: '4px',
+        padding: '0 6px',
+        minWidth: 'min-content',
+      },
+      sm: {
+        height: '24px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        padding: '0 8px',
+      },
+      md: {
+        height: '32px',
+        borderRadius: '6px',
+        fontSize: '13px',
+        padding: '0 12px',
+      },
+      lg: {
+        height: '36px',
+        borderRadius: '6px',
+        fontSize: '14px',
+        padding: '0 16px',
+      },
+    },
+    critical: {
+      true: {
+        color: 'var(--colors-red10)',
+        '& > .kbd-item': {
+          backgroundColor: 'var(--colors-redA3)',
+        },
+        '&:focus': {
+          color: 'var(--colors-white)',
+          backgroundColor: 'var(--colors-red10)',
+        },
+      },
+    },
+    focused: {
+      true: {},
+    },
+    selected: {
+      true: {
+        backgroundColor: 'var(--colors-selectionBg)',
+        color: 'var(--colors-selectionText)',
+        borderRadius: 0,
+        '&:focus': {
+          backgroundColor: 'var(--colors-selectionBg)',
+          color: 'var(--colors-selectionText)',
+        },
+        '&:hover': {
+          backgroundColor: 'var(--colors-selectionBgHover)',
+          color: 'var(--colors-selectionText)',
+        },
+      },
+    },
+    selectedStart: {
+      true: {
+        borderTopLeftRadius: '4px',
+        borderTopRightRadius: '4px',
+      },
+    },
+    selectedEnd: {
+      true: {
+        borderBottomLeftRadius: '4px',
+        borderBottomRightRadius: '4px',
+      },
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
+  },
+})
 
-const StyledComboboxHeader = styled(Flex, comboboxHeaderConfig)
+const StyledComboboxHeader = styled(Flex, {
+  base: {
+    borderBottom: '1px solid var(--colors-border)',
+    padding: '4px 8px',
+    flexShrink: 0,
+    gap: '8px',
+  },
+})
 
-const StyledSelectAllWrapper = styled('div', selectAllWrapperConfig)
+const StyledSelectAllWrapper = styled('div', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '4px 0',
+    cursor: 'pointer',
+  },
+})
 
-const SelectAllText = styled('span', selectAllTextConfig)
+const SelectAllText = styled('span', {
+  base: {
+    fontSize: '12px',
+    color: 'var(--colors-text)',
+    cursor: 'pointer',
+    userSelect: 'none',
+  },
+})
 
-const StyledComboboxSlot = styled('div', comboboxSlotConfig)
+const StyledComboboxSlot = styled('div', {
+  base: {
+    display: 'flex',
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    color: 'var(--colors-textMuted)',
+    transition: 'color 0.2s ease',
+    userSelect: 'none',
+  },
+  variants: {
+    size: {
+      xs: {
+        paddingRight: '4px',
+        fontSize: '12px',
+      },
+      sm: {
+        paddingRight: '6px',
+        fontSize: '12px',
+      },
+      md: {
+        paddingRight: '8px',
+        fontSize: '14px',
+      },
+    },
+  },
+})
 
-const StyledComboboxTriggerContent = styled('div', comboboxTriggerContentConfig)
+const StyledComboboxTriggerContent = styled('div', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+    minWidth: 0,
+    height: '100%',
+    gap: '4px',
+  },
+})
 
-const StyledComboboxValueNode = styled(Flex, comboboxValueNodeConfig)
+const StyledComboboxValueNode = styled(Flex, {
+  base: {
+    flex: 1,
+    minWidth: 0,
+    height: '100%',
+    alignItems: 'center',
+    overflow: 'hidden',
+    '& > *': {
+      minWidth: 0,
+    },
+  },
+})
 
 interface ComboboxContextProps {
   autoClose: boolean
@@ -120,7 +426,7 @@ export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProp
       <StyledComboboxTrigger {...rest} ref={forwardedRef} size={size} variant={variant}>
         <StyledComboboxTriggerContent>
           {startSlot && <StyledComboboxSlot size={size}>{startSlot}</StyledComboboxSlot>}
-          <StyledComboboxValueNode gap="xxs" wrap={false} ref={onValueNodeChange}>
+          <StyledComboboxValueNode spacing="xxs" wrap={false} ref={onValueNodeChange}>
             {shouldShowSummary && (
               <Text size="sm" css={{ padding: '0 6px' }}>
                 {summaryText}
@@ -467,7 +773,7 @@ export function Combobox(props: ComboboxProps) {
                 </StyledComboboxHeader>
               ))}
           </div>
-          <StyledComboboxContent ref={contentRef} direction="column" role="listbox">
+          <StyledComboboxContent ref={contentRef} orientation="column" role="listbox">
             {children}
           </StyledComboboxContent>
         </div>

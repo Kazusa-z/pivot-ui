@@ -26,7 +26,7 @@ const StyledThumb = styled('div', {
     backgroundSize: '5px 5px',
     backgroundPosition: '0 0, 0 2.5px, 2.5px -2.5px, -2.5px 0px',
     '&::after': {
-      content: "''",
+      content: '""',
       display: 'block',
       position: 'absolute',
       bottom: '11.6px',
@@ -145,7 +145,7 @@ function Thumb(props: ThumbProps) {
   return (
     <StyledThumbRoot
       active={active}
-      direction="column"
+      orientation="column"
       align="v"
       ref={ref}
       onClick={handleSelectThumb}

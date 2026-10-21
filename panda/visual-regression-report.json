@@ -1,0 +1,901 @@
+{
+  "source": "4c8b588 (Stitches) vs 027d3f6+ working tree (Panda)",
+  "viewport": "1000x800, fullPage, animations/transitions disabled, fonts ready",
+  "total": 111,
+  "exact": 94,
+  "tiny": 15,
+  "review": 2,
+  "tolerance": "tiny = <= 0.2% changed pixels after 5/255 channel threshold",
+  "items": [
+    {
+      "suite": "gui",
+      "story": "components-formitem--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "gui",
+      "story": "components-formitemcolor--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "gui",
+      "story": "components-formitemgroup--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "gui",
+      "story": "components-formitemvector3--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "gui",
+      "story": "components-formitemvector4--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "gui",
+      "story": "components-panel--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "gui",
+      "story": "gui--overview",
+      "pct": 0.004,
+      "changed": 32,
+      "bbox": [774, 90, 788, 104],
+      "status": "tiny"
+    },
+    {
+      "suite": "gui",
+      "story": "guiroot--overview",
+      "pct": 0.004,
+      "changed": 32,
+      "bbox": [774, 370, 788, 384],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "container-accordion--controlled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-accordion--custom-title-content",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-accordion--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-accordion--uncontrolled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-collapsible--controlled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-collapsible--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-collapsible--uncontrolled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-flex--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "container-scrollarea--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "data-table--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "dialog--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-assetitem--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-badge--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-badge--surface-variant",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-callout--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-kbd--kbd-color",
+      "pct": 0.0405,
+      "changed": 324,
+      "bbox": [417, 393, 579, 409],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "display-kbd--kbd-group",
+      "pct": 0.1485,
+      "changed": 1188,
+      "bbox": [372, 392, 628, 408],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "display-kbd--overview",
+      "pct": 0.0135,
+      "changed": 108,
+      "bbox": [489, 395, 507, 411],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "display-kbd--sizes",
+      "pct": 0.0175,
+      "changed": 140,
+      "bbox": [468, 392, 528, 408],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "display-progress--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-progress--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-separator--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-separator--with-text",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "display-spin--overview",
+      "pct": 0.01,
+      "changed": 80,
+      "bbox": [474, 391, 525, 409],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "display-spin--sizes",
+      "pct": 0.012,
+      "changed": 96,
+      "bbox": [468, 391, 531, 409],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "display-tree--overview",
+      "pct": 1.7384,
+      "changed": 13907,
+      "bbox": [329, 302, 671, 491],
+      "status": "review",
+      "note": "Intentional story content change: Tree demo was enriched during Batch 3; not a component regression."
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-actionbutton--action-button-group",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-actionbutton--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-actionbutton--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-actionbutton--with-async-function",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-beziercurveeditor--controlled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-beziercurveeditor--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-beziercurveeditor--uncontrolled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-button--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-button--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-button--variants",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-button--with-async-function",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-button--with-slot",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-cascadeslider--controllable",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-cascadeslider--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-cascadeslider--uncontrollable",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-checkbox--controlled",
+      "pct": 0.004,
+      "changed": 32,
+      "bbox": [545, 393, 559, 407],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-checkbox--disabled",
+      "pct": 0.004,
+      "changed": 32,
+      "bbox": [493, 393, 507, 407],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-checkbox--uncontrolled",
+      "pct": 0.004,
+      "changed": 32,
+      "bbox": [493, 393, 507, 407],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-checkbox--with-label",
+      "pct": 0.004,
+      "changed": 32,
+      "bbox": [493, 393, 507, 407],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorpicker--color-space-mode",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorpicker--gradient-mode",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorpicker--hdr-mode",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorpicker--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorpicker--particle-mode",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorslider--gradient-slider",
+      "pct": 0.007,
+      "changed": 56,
+      "bbox": [345, 379, 653, 395],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorslider--hdr-slider",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorslider--overview",
+      "pct": 0.0187,
+      "changed": 150,
+      "bbox": [345, 301, 653, 411],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-colorslider--particle-slider",
+      "pct": 0.0118,
+      "changed": 94,
+      "bbox": [345, 369, 653, 423],
+      "status": "tiny"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-editabletext--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-input--composite-state",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-input--override-slot-style",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-input--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-input--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-input--slot",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-input--states",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-inputnumber--controlled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-inputnumber--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-inputnumber--uncontrolled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-segmentcontrol--controlled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-segmentcontrol--disabled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-segmentcontrol--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-segmentcontrol--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-segmentcontrol--uncontrolled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-segmentcontrol--variants",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--controlled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--custom-value-renderer",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--multiple",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--uncontrolled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--uncontrolled-number",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--value-type",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-select--variants",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-slider--controlled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-slider--multi-value",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-slider--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-slider--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-slider--uncontrolled",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-textarea--matrix",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-textarea--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-textarea--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-textarea--states",
+      "pct": 1.8181,
+      "changed": 14545,
+      "bbox": [370, 372, 630, 428],
+      "status": "review",
+      "note": "Legacy Stitches CSS-injection-order inconsistency: the same classes rendered state backgrounds differently in old Matrix and States stories. Panda is deterministic and matches Matrix."
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-togglegroup--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "inputs-togglegroup--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "navigation-breadcrumbs--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "navigation-breadcrumbs--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "navigation-pagination--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "navigation-pagination--sizes",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "overlay-alertdialog--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "overlay-menu--context-menu-demo",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "overlay-menu--context-menu-in-list",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "overlay-menu--dropdown-menu-demo",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "overlay-menu--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "overlay-popover--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "overlay-toast--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "symbols-iconography--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    },
+    {
+      "suite": "ui",
+      "story": "symbols-triangle--overview",
+      "pct": 0.0,
+      "changed": 0,
+      "bbox": null,
+      "status": "exact"
+    }
+  ]
+}

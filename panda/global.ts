@@ -59,18 +59,67 @@ const convert = (value: unknown): unknown => {
   return value
 }
 
+const colorPickerCss = {
+  '.galacecan-color-picker .react-colorful': {
+    width: '220px !important',
+    height: '180px !important',
+  },
+  '.galacecan-color-picker .react-colorful__saturation': {
+    borderBottom: '6px !important',
+    borderRadius: '6px !important',
+  },
+  '.galacecan-color-picker .react-colorful__hue': {
+    width: '140px !important',
+    height: '6px !important',
+    margin: '12px 0 !important',
+    borderRadius: '4px !important',
+  },
+  '.galacecan-color-picker .react-colorful__hue .react-colorful__pointer': {
+    height: '12px !important',
+    width: '12px !important',
+    borderRadius: '9999px !important',
+    borderWidth: '2px !important',
+  },
+  '.galacecan-color-picker .react-colorful__pointer': {
+    height: '16px !important',
+    width: '16px !important',
+    borderRadius: '9999px !important',
+    borderWidth: '2px !important',
+  },
+  '.galacecan-color-picker .react-colorful__alpha': {
+    width: '140px !important',
+    height: '6px !important',
+    borderRadius: '4px !important',
+  },
+  '.galacecan-color-picker .react-colorful__alpha .react-colorful__pointer': {
+    height: '12px !important',
+    width: '12px !important',
+    borderRadius: '9999px !important',
+    borderWidth: '2px !important',
+  },
+  '.galacecan-color-picker[data-readonly="true"] .react-colorful__saturation, .galacecan-color-picker[data-readonly="true"] .react-colorful__hue':
+    {
+      pointerEvents: 'none !important',
+      opacity: '0.5 !important',
+    },
+}
+
 export const globalCss = {
   ...(convert(resetCSS) as Record<string, unknown>),
+  ...(colorPickerCss as any),
   ':root': commonVars as any,
   '.light-theme': lightVars as any,
   html: {
-    fontFamily: 'geist, InterVariable, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+    fontFamily:
+      'geist, InterVariable, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol',
     fontSize: '16px',
     backgroundColor: 'var(--colors-surface, #111113)',
     color: 'var(--colors-textStrong, #edeef0)',
   },
   body: {
     ...(convert(resetCSS.body) as Record<string, unknown>),
+    fontSize: '16px',
+    lineHeight: 'normal',
     backgroundColor: 'var(--colors-surface, #111113)',
     color: 'var(--colors-textStrong, #edeef0)',
   },

@@ -146,7 +146,7 @@ export function AssetPickerContent<T extends BasicAssetType>(props: AssetPickerP
 
   return (
     <StyledAssetPickerContent>
-      <StyledHeader gap="xs" wrap={false}>
+      <StyledHeader spacing="xs" wrap={false}>
         <Input
           value={searchText}
           ref={searchRef}
@@ -159,7 +159,7 @@ export function AssetPickerContent<T extends BasicAssetType>(props: AssetPickerP
             setSearchText(value)
           }}
         />
-        <Flex gap="xs" wrap={false} align="both">
+        <Flex spacing="xs" wrap={false} align="both">
           <ActionButton fancy variant="ghost" active={displayMode === 'grid'} onClick={handleChangeDisplayMode('grid')}>
             <IconLayoutGrid />
           </ActionButton>

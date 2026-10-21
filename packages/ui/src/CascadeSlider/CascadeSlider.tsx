@@ -28,7 +28,7 @@ const StyledThumb = styled(SliderPrimitive.Thumb, {
     cursor: 'ew-resize',
     transition: 'background-color .2s ease',
     '&::after': {
-      content: '',
+      content: '""',
       position: 'absolute',
       top: 0,
       bottom: 0,

@@ -48,8 +48,8 @@ const HDRPreviewItem = styled(Flex, {
       '-2': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.2)' } },
       '-1': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.1)' } },
       '0': { '&::before': { backgroundColor: 'transparent' }, border: '2px solid #FFFFFF' },
-      '+1': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.4)' } },
-      '+2': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.5)' } },
+      '+1': { '&::before': { backgroundColor: 'transparent' } },
+      '+2': { '&::before': { backgroundColor: 'transparent' } },
     },
   },
 })

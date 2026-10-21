@@ -26,22 +26,6 @@ import type {
 } from '@radix-ui/react-dropdown-menu'
 
 import { styled } from '../../styled-system/jsx'
-import {
-  checkboxItemConfig,
-  contentConfig,
-  contextContentConfig,
-  dotConfig,
-  dropdownContentConfig,
-  indicatorConfig,
-  itemConfig,
-  labelConfig,
-  menuItemContentConfig,
-  menubarRootConfig,
-  menubarTriggerConfig,
-  radioGroupConfig,
-  separatorConfig,
-  subMenuItemConfig,
-} from './menuStyles'
 import { KbdGroup } from '../Kbd'
 import { ScrollArea } from '../ScrollArea'
 
@@ -49,7 +33,17 @@ type MenuType = 'context' | 'dropdown' | 'menubar'
 type MenuSize = 'xs' | 'sm' | 'md'
 type PickedContentProps = 'side' | 'sideOffset' | 'align' | 'alignOffset'
 
-const StyledMenuItemContent = styled('span', menuItemContentConfig)
+const StyledMenuItemContent = styled('span', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    '& > svg': {
+      marginRight: '6px',
+      width: '16px',
+      height: '16px',
+    },
+  },
+})
 
 const anatomy = {
   context: {
@@ -57,48 +51,1489 @@ const anatomy = {
     Group: ContextMenuPrimitive.Group,
     Sub: ContextMenuPrimitive.Sub,
     Portal: ContextMenuPrimitive.Portal,
-    RadioGroup: styled(ContextMenuPrimitive.RadioGroup, radioGroupConfig),
-    MenuLabel: styled(ContextMenuPrimitive.Label, labelConfig),
-    MenuItem: styled(ContextMenuPrimitive.Item, itemConfig),
-    Content: styled(ContextMenuPrimitive.Content, contextContentConfig),
-    SubContent: styled(ContextMenuPrimitive.SubContent, contextContentConfig),
-    SubMenuItem: styled(ContextMenuPrimitive.SubTrigger, subMenuItemConfig),
-    Separator: styled(ContextMenuPrimitive.Separator, separatorConfig),
-    CheckboxItem: styled(ContextMenuPrimitive.CheckboxItem, checkboxItemConfig),
-    RadioItem: styled(ContextMenuPrimitive.RadioItem, checkboxItemConfig),
-    ItemIndicator: styled(ContextMenuPrimitive.ItemIndicator, indicatorConfig),
+    RadioGroup: styled(ContextMenuPrimitive.RadioGroup, {
+      variants: {
+        size: {
+          xs: {
+            '& [data-menu-label]': {
+              paddingLeft: '20px',
+            },
+          },
+          sm: {
+            '& [data-menu-label]': {
+              paddingLeft: '24px',
+            },
+          },
+          md: {
+            '& [data-menu-label]': {
+              paddingLeft: '28px',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    MenuLabel: styled(ContextMenuPrimitive.Label, {
+      base: {
+        color: 'var(--colors-textMuted)',
+        userSelect: 'none',
+      },
+      variants: {
+        size: {
+          xs: {
+            fontSize: '10px',
+            padding: '4px 6px',
+          },
+          sm: {
+            fontSize: '10px',
+            padding: '4px 8px',
+          },
+          md: {
+            fontSize: '12px',
+            padding: '6px 12px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    MenuItem: styled(ContextMenuPrimitive.Item, {
+      base: {
+        all: 'unset',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    Content: styled(ContextMenuPrimitive.Content, {
+      base: {
+        position: 'relative',
+        backgroundColor: 'var(--colors-overlayBg)',
+        borderRadius: '6px',
+        padding: 0,
+        boxShadow: 'var(--shadows-popContainer)',
+        transformOrigin: 'var(--radix-context-menu-content-transform-origin)',
+        border: '1px solid var(--colors-border)',
+        minWidth: '200px',
+        animationName: 'scaleIn',
+        animationDuration: '300ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity',
+        '&[data-side="top"]': {
+          animationName: 'slideDownAndFade',
+        },
+        '&[data-side="bottom"]': {
+          animationName: 'slideUpAndFade',
+        },
+        '&[data-side="left"]': {
+          animationName: 'slideRightAndFade',
+        },
+        '&[data-side="right"]': {
+          animationName: 'slideLeftAndFade',
+        },
+        maxHeight: 'var(--radix-context-menu-content-available-height)',
+      },
+      variants: {
+        size: {
+          xs: {
+            minWidth: 'max-content',
+          },
+          sm: {
+            borderRadius: '6px',
+          },
+          md: {
+            borderRadius: '8px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    SubContent: styled(ContextMenuPrimitive.SubContent, {
+      base: {
+        position: 'relative',
+        backgroundColor: 'var(--colors-overlayBg)',
+        borderRadius: '6px',
+        padding: 0,
+        boxShadow: 'var(--shadows-popContainer)',
+        transformOrigin: 'var(--radix-context-menu-content-transform-origin)',
+        border: '1px solid var(--colors-border)',
+        minWidth: '200px',
+        animationName: 'scaleIn',
+        animationDuration: '300ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity',
+        '&[data-side="top"]': {
+          animationName: 'slideDownAndFade',
+        },
+        '&[data-side="bottom"]': {
+          animationName: 'slideUpAndFade',
+        },
+        '&[data-side="left"]': {
+          animationName: 'slideRightAndFade',
+        },
+        '&[data-side="right"]': {
+          animationName: 'slideLeftAndFade',
+        },
+        maxHeight: 'var(--radix-context-menu-content-available-height)',
+      },
+      variants: {
+        size: {
+          xs: {
+            minWidth: 'max-content',
+          },
+          sm: {
+            borderRadius: '6px',
+          },
+          md: {
+            borderRadius: '8px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    SubMenuItem: styled(ContextMenuPrimitive.SubTrigger, {
+      base: {
+        all: 'unset',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        '& > svg': {
+          width: '12px',
+          height: '12px',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    Separator: styled(ContextMenuPrimitive.Separator, {
+      base: {
+        height: '1px',
+        backgroundColor: 'var(--colors-border)',
+        margin: '4px',
+      },
+    }),
+    CheckboxItem: styled(ContextMenuPrimitive.CheckboxItem, {
+      base: {
+        all: 'unset',
+        position: 'relative !important',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        paddingLeft: '24px !important',
+        '&[data-state=checked]': {
+          display: 'flex',
+          justifyContent: 'initial',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+            paddingLeft: '20px !important',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+            paddingLeft: '28px !important',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    RadioItem: styled(ContextMenuPrimitive.RadioItem, {
+      base: {
+        all: 'unset',
+        position: 'relative !important',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        paddingLeft: '24px !important',
+        '&[data-state=checked]': {
+          display: 'flex',
+          justifyContent: 'initial',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+            paddingLeft: '20px !important',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+            paddingLeft: '28px !important',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    ItemIndicator: styled(ContextMenuPrimitive.ItemIndicator, {
+      base: {
+        position: 'absolute',
+        top: '50%',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: 'translateY(-50%)',
+      },
+      variants: {
+        size: {
+          xs: {
+            left: '4px',
+            width: '12px',
+            height: '12px',
+            marginRight: '4px',
+            '& > svg': {
+              width: '12px',
+              height: '12px',
+            },
+          },
+          sm: {
+            left: '4px',
+            width: '16px',
+            height: '16px',
+            marginRight: '6px',
+            '& > svg': {
+              width: '14px',
+              height: '14px',
+            },
+          },
+          md: {
+            left: '8px',
+            width: '16px',
+            height: '16px',
+            marginRight: '8px',
+            '& > svg': {
+              width: '16px',
+              height: '16px',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
   },
   dropdown: {
     Root: DropdownMenuPrimitive.Root,
     Group: DropdownMenuPrimitive.Group,
-    RadioGroup: styled(DropdownMenuPrimitive.RadioGroup, radioGroupConfig),
+    RadioGroup: styled(DropdownMenuPrimitive.RadioGroup, {
+      variants: {
+        size: {
+          xs: {
+            '& [data-menu-label]': {
+              paddingLeft: '20px',
+            },
+          },
+          sm: {
+            '& [data-menu-label]': {
+              paddingLeft: '24px',
+            },
+          },
+          md: {
+            '& [data-menu-label]': {
+              paddingLeft: '28px',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
     Sub: DropdownMenuPrimitive.Sub,
     Portal: DropdownMenuPrimitive.Portal,
-    MenuLabel: styled(DropdownMenuPrimitive.Label, labelConfig),
-    MenuItem: styled(DropdownMenuPrimitive.Item, itemConfig),
-    Content: styled(DropdownMenuPrimitive.Content, dropdownContentConfig),
-    SubContent: styled(DropdownMenuPrimitive.SubContent, dropdownContentConfig),
-    SubMenuItem: styled(DropdownMenuPrimitive.SubTrigger, subMenuItemConfig),
-    Separator: styled(DropdownMenuPrimitive.Separator, separatorConfig),
-    CheckboxItem: styled(DropdownMenuPrimitive.CheckboxItem, checkboxItemConfig),
-    RadioItem: styled(DropdownMenuPrimitive.RadioItem, checkboxItemConfig),
-    ItemIndicator: styled(DropdownMenuPrimitive.ItemIndicator, indicatorConfig),
+    MenuLabel: styled(DropdownMenuPrimitive.Label, {
+      base: {
+        color: 'var(--colors-textMuted)',
+        userSelect: 'none',
+      },
+      variants: {
+        size: {
+          xs: {
+            fontSize: '10px',
+            padding: '4px 6px',
+          },
+          sm: {
+            fontSize: '10px',
+            padding: '4px 8px',
+          },
+          md: {
+            fontSize: '12px',
+            padding: '6px 12px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    MenuItem: styled(DropdownMenuPrimitive.Item, {
+      base: {
+        all: 'unset',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    Content: styled(DropdownMenuPrimitive.Content, {
+      base: {
+        position: 'relative',
+        backgroundColor: 'var(--colors-overlayBg)',
+        borderRadius: '6px',
+        padding: 0,
+        boxShadow: 'var(--shadows-popContainer)',
+        transformOrigin: 'var(--radix-dropdown-menu-content-transform-origin)',
+        border: '1px solid var(--colors-border)',
+        minWidth: '200px',
+        animationName: 'scaleIn',
+        animationDuration: '300ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity',
+        '&[data-side="top"]': {
+          animationName: 'slideDownAndFade',
+        },
+        '&[data-side="bottom"]': {
+          animationName: 'slideUpAndFade',
+        },
+        '&[data-side="left"]': {
+          animationName: 'slideRightAndFade',
+        },
+        '&[data-side="right"]': {
+          animationName: 'slideLeftAndFade',
+        },
+        maxHeight: 'var(--radix-dropdown-menu-content-available-height)',
+      },
+      variants: {
+        size: {
+          xs: {
+            minWidth: 'max-content',
+          },
+          sm: {
+            borderRadius: '6px',
+          },
+          md: {
+            borderRadius: '8px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    SubContent: styled(DropdownMenuPrimitive.SubContent, {
+      base: {
+        position: 'relative',
+        backgroundColor: 'var(--colors-overlayBg)',
+        borderRadius: '6px',
+        padding: 0,
+        boxShadow: 'var(--shadows-popContainer)',
+        transformOrigin: 'var(--radix-dropdown-menu-content-transform-origin)',
+        border: '1px solid var(--colors-border)',
+        minWidth: '200px',
+        animationName: 'scaleIn',
+        animationDuration: '300ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity',
+        '&[data-side="top"]': {
+          animationName: 'slideDownAndFade',
+        },
+        '&[data-side="bottom"]': {
+          animationName: 'slideUpAndFade',
+        },
+        '&[data-side="left"]': {
+          animationName: 'slideRightAndFade',
+        },
+        '&[data-side="right"]': {
+          animationName: 'slideLeftAndFade',
+        },
+        maxHeight: 'var(--radix-dropdown-menu-content-available-height)',
+      },
+      variants: {
+        size: {
+          xs: {
+            minWidth: 'max-content',
+          },
+          sm: {
+            borderRadius: '6px',
+          },
+          md: {
+            borderRadius: '8px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    SubMenuItem: styled(DropdownMenuPrimitive.SubTrigger, {
+      base: {
+        all: 'unset',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        '& > svg': {
+          width: '12px',
+          height: '12px',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    Separator: styled(DropdownMenuPrimitive.Separator, {
+      base: {
+        height: '1px',
+        backgroundColor: 'var(--colors-border)',
+        margin: '4px',
+      },
+    }),
+    CheckboxItem: styled(DropdownMenuPrimitive.CheckboxItem, {
+      base: {
+        all: 'unset',
+        position: 'relative !important',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        paddingLeft: '24px !important',
+        '&[data-state=checked]': {
+          display: 'flex',
+          justifyContent: 'initial',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+            paddingLeft: '20px !important',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+            paddingLeft: '28px !important',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    RadioItem: styled(DropdownMenuPrimitive.RadioItem, {
+      base: {
+        all: 'unset',
+        position: 'relative !important',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        paddingLeft: '24px !important',
+        '&[data-state=checked]': {
+          display: 'flex',
+          justifyContent: 'initial',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+            paddingLeft: '20px !important',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+            paddingLeft: '28px !important',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    ItemIndicator: styled(DropdownMenuPrimitive.ItemIndicator, {
+      base: {
+        position: 'absolute',
+        top: '50%',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: 'translateY(-50%)',
+      },
+      variants: {
+        size: {
+          xs: {
+            left: '4px',
+            width: '12px',
+            height: '12px',
+            marginRight: '4px',
+            '& > svg': {
+              width: '12px',
+              height: '12px',
+            },
+          },
+          sm: {
+            left: '4px',
+            width: '16px',
+            height: '16px',
+            marginRight: '6px',
+            '& > svg': {
+              width: '14px',
+              height: '14px',
+            },
+          },
+          md: {
+            left: '8px',
+            width: '16px',
+            height: '16px',
+            marginRight: '8px',
+            '& > svg': {
+              width: '16px',
+              height: '16px',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
   },
   menubar: {
     Root: MenubarPrimitive.Root,
     Group: MenubarPrimitive.Group,
-    RadioGroup: styled(MenubarPrimitive.RadioGroup, radioGroupConfig),
+    RadioGroup: styled(MenubarPrimitive.RadioGroup, {
+      variants: {
+        size: {
+          xs: {
+            '& [data-menu-label]': {
+              paddingLeft: '20px',
+            },
+          },
+          sm: {
+            '& [data-menu-label]': {
+              paddingLeft: '24px',
+            },
+          },
+          md: {
+            '& [data-menu-label]': {
+              paddingLeft: '28px',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
     Sub: MenubarPrimitive.Sub,
     Portal: MenubarPrimitive.Portal,
-    MenuLabel: styled(MenubarPrimitive.Label, labelConfig),
-    MenuItem: styled(MenubarPrimitive.Item, itemConfig),
-    Content: styled(MenubarPrimitive.Content, contentConfig),
-    SubContent: styled(MenubarPrimitive.SubContent, contentConfig),
-    SubMenuItem: styled(MenubarPrimitive.SubTrigger, subMenuItemConfig),
-    Separator: styled(MenubarPrimitive.Separator, separatorConfig),
-    CheckboxItem: styled(MenubarPrimitive.CheckboxItem, checkboxItemConfig),
-    RadioItem: styled(MenubarPrimitive.RadioItem, checkboxItemConfig),
-    ItemIndicator: styled(MenubarPrimitive.ItemIndicator, indicatorConfig),
+    MenuLabel: styled(MenubarPrimitive.Label, {
+      base: {
+        color: 'var(--colors-textMuted)',
+        userSelect: 'none',
+      },
+      variants: {
+        size: {
+          xs: {
+            fontSize: '10px',
+            padding: '4px 6px',
+          },
+          sm: {
+            fontSize: '10px',
+            padding: '4px 8px',
+          },
+          md: {
+            fontSize: '12px',
+            padding: '6px 12px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    MenuItem: styled(MenubarPrimitive.Item, {
+      base: {
+        all: 'unset',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    Content: styled(MenubarPrimitive.Content, {
+      base: {
+        position: 'relative',
+        backgroundColor: 'var(--colors-overlayBg)',
+        borderRadius: '6px',
+        padding: '4px',
+        boxShadow: 'var(--shadows-popContainer)',
+        transformOrigin: 'var(--radix-context-menu-content-transform-origin)',
+        border: '1px solid var(--colors-border)',
+        minWidth: '200px',
+        animationName: 'scaleIn',
+        animationDuration: '300ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity',
+        '&[data-side="top"]': {
+          animationName: 'slideDownAndFade',
+        },
+        '&[data-side="bottom"]': {
+          animationName: 'slideUpAndFade',
+        },
+        '&[data-side="left"]': {
+          animationName: 'slideRightAndFade',
+        },
+        '&[data-side="right"]': {
+          animationName: 'slideLeftAndFade',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            minWidth: 'max-content',
+          },
+          sm: {
+            borderRadius: '6px',
+          },
+          md: {
+            borderRadius: '8px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    SubContent: styled(MenubarPrimitive.SubContent, {
+      base: {
+        position: 'relative',
+        backgroundColor: 'var(--colors-overlayBg)',
+        borderRadius: '6px',
+        padding: '4px',
+        boxShadow: 'var(--shadows-popContainer)',
+        transformOrigin: 'var(--radix-context-menu-content-transform-origin)',
+        border: '1px solid var(--colors-border)',
+        minWidth: '200px',
+        animationName: 'scaleIn',
+        animationDuration: '300ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity',
+        '&[data-side="top"]': {
+          animationName: 'slideDownAndFade',
+        },
+        '&[data-side="bottom"]': {
+          animationName: 'slideUpAndFade',
+        },
+        '&[data-side="left"]': {
+          animationName: 'slideRightAndFade',
+        },
+        '&[data-side="right"]': {
+          animationName: 'slideLeftAndFade',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            minWidth: 'max-content',
+          },
+          sm: {
+            borderRadius: '6px',
+          },
+          md: {
+            borderRadius: '8px',
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    SubMenuItem: styled(MenubarPrimitive.SubTrigger, {
+      base: {
+        all: 'unset',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        '& > svg': {
+          width: '12px',
+          height: '12px',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    Separator: styled(MenubarPrimitive.Separator, {
+      base: {
+        height: '1px',
+        backgroundColor: 'var(--colors-border)',
+        margin: '4px',
+      },
+    }),
+    CheckboxItem: styled(MenubarPrimitive.CheckboxItem, {
+      base: {
+        all: 'unset',
+        position: 'relative !important',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        paddingLeft: '24px !important',
+        '&[data-state=checked]': {
+          display: 'flex',
+          justifyContent: 'initial',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+            paddingLeft: '20px !important',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+            paddingLeft: '28px !important',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    RadioItem: styled(MenubarPrimitive.RadioItem, {
+      base: {
+        all: 'unset',
+        position: 'relative !important',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        lineHeight: 1,
+        fontSize: '12px',
+        borderRadius: '4px',
+        color: 'var(--colors-text)',
+        padding: '4px 8px',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        minWidth: 'max-content',
+        cursor: 'default',
+        '&[data-disabled]': {
+          color: 'var(--colors-textMuted)',
+          pointerEvents: 'none',
+        },
+        '&:focus': {
+          backgroundColor: 'var(--colors-primary)',
+          color: 'var(--colors-white)',
+        },
+        paddingLeft: '24px !important',
+        '&[data-state=checked]': {
+          display: 'flex',
+          justifyContent: 'initial',
+        },
+      },
+      variants: {
+        size: {
+          xs: {
+            height: '20px',
+            fontSize: '10px',
+            borderRadius: '4px',
+            padding: '0 6px',
+            minWidth: 'min-content',
+            paddingLeft: '20px !important',
+          },
+          sm: {
+            height: '24px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            padding: '0 8px',
+          },
+          md: {
+            height: '32px',
+            borderRadius: '6px',
+            fontSize: '13px',
+            padding: '0 12px',
+            paddingLeft: '28px !important',
+          },
+          lg: {
+            height: '36px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            padding: '0 16px',
+          },
+        },
+        critical: {
+          true: {
+            color: 'var(--colors-red10)',
+            '& > .kbd-item': {
+              backgroundColor: 'var(--colors-redA3)',
+            },
+            '&:focus': {
+              color: 'var(--colors-white)',
+              backgroundColor: 'var(--colors-red10)',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
+    ItemIndicator: styled(MenubarPrimitive.ItemIndicator, {
+      base: {
+        position: 'absolute',
+        top: '50%',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: 'translateY(-50%)',
+      },
+      variants: {
+        size: {
+          xs: {
+            left: '4px',
+            width: '12px',
+            height: '12px',
+            marginRight: '4px',
+            '& > svg': {
+              width: '12px',
+              height: '12px',
+            },
+          },
+          sm: {
+            left: '4px',
+            width: '16px',
+            height: '16px',
+            marginRight: '6px',
+            '& > svg': {
+              width: '14px',
+              height: '14px',
+            },
+          },
+          md: {
+            left: '8px',
+            width: '16px',
+            height: '16px',
+            marginRight: '8px',
+            '& > svg': {
+              width: '16px',
+              height: '16px',
+            },
+          },
+        },
+      },
+      defaultVariants: {
+        size: 'sm',
+      },
+    }),
   },
 } as const
 
@@ -263,7 +1698,14 @@ interface RadioItemProps extends ContextMenuRadioItemProps {
   name: string
 }
 
-const DotIndicator = styled('div', dotConfig)
+const DotIndicator = styled('div', {
+  base: {
+    height: '4px',
+    width: '4px',
+    borderRadius: '9999px',
+    backgroundColor: 'currentColor',
+  },
+})
 
 function RadioItem(props: RadioItemProps) {
   const { value, onSelect, name } = props
@@ -407,7 +1849,32 @@ function ContextMenu(props: IContextMenuProps) {
   )
 }
 
-const StyledMenubarTrigger = styled(MenubarPrimitive.Trigger, menubarTriggerConfig)
+const StyledMenubarTrigger = styled(MenubarPrimitive.Trigger, {
+  base: {
+    all: 'unset',
+    display: 'flex',
+    height: '24px',
+    alignItems: 'center',
+    padding: '0 8px',
+    fontSize: '12px',
+    outline: 'none',
+    cursor: 'default',
+    userSelect: 'none',
+    borderRadius: '4px',
+    '&:hover': {
+      backgroundColor: 'var(--colors-grayA4)',
+      color: 'var(--colors-gray12)',
+    },
+    '&:focus': {
+      backgroundColor: 'var(--colors-grayA4)',
+      color: 'var(--colors-gray12)',
+    },
+    '&[data-state=open]': {
+      backgroundColor: 'var(--colors-grayA4)',
+      color: 'var(--colors-gray12)',
+    },
+  },
+})
 
 const MenubarTrigger = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Trigger>,
@@ -434,7 +1901,15 @@ function MenubarItem(props: MenubarItemProps) {
   )
 }
 
-const StyledMenubarRoot = styled(MenubarPrimitive.Root, menubarRootConfig)
+const StyledMenubarRoot = styled(MenubarPrimitive.Root, {
+  base: {
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    padding: '0 8px',
+    flexWrap: 'nowrap',
+  },
+})
 
 function Menubar(props: PropsWithChildren<{ size?: MenuSize }>) {
   const { size = 'sm' } = props
