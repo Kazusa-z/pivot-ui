@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
-import { Meta, StoryFn } from '@storybook/react'
+import { useMemo, useState } from 'react'
+import type { Meta, StoryFn } from '@storybook/react'
+import { IconFile, IconFolder, IconTrash } from '@tabler/icons-react'
+import { ActionButton } from '../ActionButton'
+import { Button } from '../Button'
 import { Flex } from '../Flex'
 import { TreeGroup, TreeItemContent, TreeItemRoot } from './'
 
@@ -7,56 +10,147 @@ export default {
   title: 'Display/Tree',
 } as Meta
 
+type TreeNode = {
+  id: string
+  name: string
+  children?: TreeNode[]
+}
+
+const initialTree: TreeNode[] = [
+  {
+    id: 'scene',
+    name: 'Scene',
+    children: [
+      {
+        id: 'meshes',
+        name: 'Meshes',
+        children: [
+          { id: 'mesh-sphere', name: 'Sphere' },
+          { id: 'mesh-cube', name: 'Cube' },
+          { id: 'mesh-plane', name: 'Plane' },
+        ],
+      },
+      {
+        id: 'lights',
+        name: 'Lights',
+        children: [
+          { id: 'light-main', name: 'Main Light' },
+          { id: 'light-fill', name: 'Fill Light' },
+        ],
+      },
+      {
+        id: 'cameras',
+        name: 'Cameras',
+        children: [{ id: 'camera-main', name: 'Main Camera' }],
+      },
+    ],
+  },
+]
+
 /**
- * Tree component might be the most complex component in the React UI library. People have different data structure, different data flow solution like observable or immutable, and different ways to interact with the tree.
- * For that, We don't provide a complete tree component like Ant Design or Material-UI which will have constant rule for define tree data. Instead, we provide a set of low-level styled components and some hooks to help you build your own tree component.
- * You could combine these components according with your actual requirement.
+ * A small interactive example of the low-level Tree primitives.
  *
- * Mostly, a tree component will have these features:
- *
- * - Drag and drop (reorder, move)
- * - Rename
- * - Delete
- * - Add
- * - Search and filter
- * - Expand and collapse
- * - Selection or multi-selection
- * - Context menu
- * - Customizable style
- * - Customizable data structure
- * - Start slot for custom icon, badge, etc.
- * - End slot for operation buttons
- * - Customizable item content
+ * It demonstrates expansion, selection, inline rename, start/end slots and
+ * deletion. Drag and drop is intentionally left to the consuming editor.
  */
-export const Overview = () => {
+export const Overview: StoryFn = () => {
+  const [tree, setTree] = useState(initialTree)
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['scene', 'meshes']))
+  const [selected, setSelected] = useState('mesh-sphere')
+  const [names, setNames] = useState<Record<string, string>>({})
+
+  const allParentIds = useMemo(() => {
+    const ids: string[] = []
+    const visit = (nodes: TreeNode[]) => {
+      nodes.forEach((node) => {
+        if (node.children?.length) {
+          ids.push(node.id)
+          visit(node.children)
+        }
+      })
+    }
+    visit(tree)
+    return ids
+  }, [tree])
+
+  const toggleNode = (id: string) => {
+    setExpanded((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const removeNode = (id: string) => {
+    const remove = (nodes: TreeNode[]): TreeNode[] =>
+      nodes
+        .filter((node) => node.id !== id)
+        .map((node) => (node.children ? { ...node, children: remove(node.children) } : node))
+
+    setTree((current) => remove(current))
+    if (selected === id) setSelected('scene')
+  }
+
+  const renderNodes = (nodes: TreeNode[], level: number) =>
+    nodes.map((node) => {
+      const hasChildren = !!node.children?.length
+      const isExpanded = expanded.has(node.id)
+      const isSelected = selected === node.id
+
+      return (
+        <TreeItemRoot key={node.id} isSelected={isSelected}>
+          <TreeItemContent
+            id={node.id}
+            name={names[node.id] ?? node.name}
+            level={level}
+            isExpandable={hasChildren}
+            isExpanded={isExpanded}
+            isSelected={isSelected}
+            isActive
+            onSelect={setSelected}
+            onExpand={toggleNode}
+            onRename={(id, name) => setNames((current) => ({ ...current, [id]: name }))}
+            startSlot={hasChildren ? <IconFolder size={12} /> : <IconFile size={12} />}
+            endSlot={
+              <ActionButton
+                size="xs"
+                variant="ghost"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  removeNode(node.id)
+                }}>
+                <IconTrash size={11} />
+              </ActionButton>
+            }
+          />
+          {hasChildren && isExpanded && <TreeGroup>{renderNodes(node.children!, level + 1)}</TreeGroup>}
+        </TreeItemRoot>
+      )
+    })
+
   return (
-    <Flex gap="md" style={{ width: 300 }} direction="column">
-      <TreeItemRoot>
-        <TreeItemContent
-          id="root"
-          name="Scene"
-          level={0}
-          isExpandable
-          isExpanded
-          isSelected={false}
-          onSelect={() => {}}
-          onExpand={() => {}}
-        />
-        <TreeGroup>
-          <TreeItemRoot>
-            <TreeItemContent
-              id="child"
-              name="Mesh"
-              level={1}
-              isExpandable={false}
-              isExpanded={false}
-              isSelected
-              onSelect={() => {}}
-              onExpand={() => {}}
-            />
-          </TreeItemRoot>
-        </TreeGroup>
-      </TreeItemRoot>
+    <Flex direction="column" gap="sm" style={{ width: 340 }}>
+      <Flex gap="xs" align="v">
+        <Button size="xs" variant="soft" onClick={() => setExpanded(new Set(allParentIds))}>
+          Expand all
+        </Button>
+        <Button size="xs" variant="soft" onClick={() => setExpanded(new Set())}>
+          Collapse all
+        </Button>
+        <Button
+          size="xs"
+          variant="subtle"
+          onClick={() => {
+            setTree(initialTree)
+            setExpanded(new Set(['scene', 'meshes']))
+            setSelected('mesh-sphere')
+            setNames({})
+          }}>
+          Reset
+        </Button>
+      </Flex>
+      <TreeGroup>{renderNodes(tree, 0)}</TreeGroup>
     </Flex>
   )
 }

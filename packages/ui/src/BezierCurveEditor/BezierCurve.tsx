@@ -3,34 +3,33 @@ import React, { useEffect, useState } from 'react'
 import type { IBezierPoint, IPoint } from './types'
 import { generateCurve, generateLineByPoints } from './helper'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledPath = styled('path', {
-  strokeWidth: 1,
-  stroke: '$orange10',
-  fill: 'none',
+  base: {
+    strokeWidth: 1,
+    stroke: 'var(--colors-orange10)',
+    fill: 'none',
+  },
   variants: {
     hitline: {
-      true: {
-        strokeWidth: 5,
-        stroke: 'transparent',
-      },
+      true: { strokeWidth: 5, stroke: 'transparent' },
     },
   },
 })
 
 const StyledExtensionPath = styled('path', {
-  strokeWidth: 1,
-  stroke: '$orange6',
-  fill: 'none',
+  base: { strokeWidth: 1, stroke: 'var(--colors-orange6)', fill: 'none' },
 })
 
 const StyledTempPoint = styled('circle', {
-  fill: '$orange11',
-  r: 3,
-  transition: 'transform .1s ease',
-  strokeWidth: 1,
-  stroke: '$orange12',
+  base: {
+    fill: 'var(--colors-orange11)',
+    r: 3,
+    transition: 'transform .1s ease',
+    strokeWidth: 1,
+    stroke: 'var(--colors-orange12)',
+  },
 })
 
 interface BezierCurveProps {

@@ -5,23 +5,22 @@ import { BezierCurveEditor as Editor } from './BezierCurveEditor'
 import { convertPointsToBezierPoints, denormalizePoint, generateCurve, generateLineByPoints } from './helper'
 
 import { mergeRefs } from '../utils/merge-refs'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { IPoint, BezierCurveEditorProps as InnerBezierCurveEditorProps } from './types'
 import { Popover } from '../Popover'
 import { BezierCurvePresets } from './Preset'
 
 const BezierCurveEditorTrigger = styled('div', {
-  display: 'flex',
-  height: '$6',
-  width: '100%',
-  background: '$grayA3',
-  borderRadius: '$2',
-  overflow: 'hidden',
-  fontSize: '$1',
-  cursor: 'pointer',
-  '& > svg': {
-    stroke: '$orange9',
-    fill: 'none',
+  base: {
+    display: 'flex',
+    height: '24px',
+    width: '100%',
+    background: 'var(--colors-grayA3)',
+    borderRadius: '4px',
+    overflow: 'hidden',
+    fontSize: '12px',
+    cursor: 'pointer',
+    '& > svg': { stroke: 'var(--colors-orange9)', fill: 'none' },
   },
 })
 
@@ -86,9 +85,7 @@ const EditorTrigger = forwardRef<HTMLDivElement, EditorTriggerProps>(function Ed
 })
 
 const CurveWrapper = styled('div', {
-  borderRadius: '$3',
-  backgroundColor: '$gray1',
-  padding: '$2',
+  base: { borderRadius: '6px', backgroundColor: 'var(--colors-gray1)', padding: '8px' },
 })
 
 const LocalStorageKey = '_bezier_curve_presets'

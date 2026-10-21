@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 
 import type { IPoint } from './types'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 export const POINT_HIT_RADIUS = 10
 const POINT_RING_RADIUS = 5
@@ -11,67 +11,53 @@ const POINT_HOVER_RING_RADIUS = 10
 const POINT_HOVER_CENTER_RADIUS = 6
 
 const StyledPoint = styled('circle', {
-  fill: '$green9',
-  cursor: 'pointer',
-  transition: 'r 0.2s ease',
+  base: {
+    fill: 'var(--colors-green9)',
+    cursor: 'pointer',
+    transition: 'r 0.2s ease',
+    '&[data-point-type="hitpoint"]': { stroke: 'transparent', fill: 'transparent' },
+    '&[data-point-type="ring"]': { fill: 'var(--colors-green4)' },
+  },
   variants: {
     pointType: {
       main: {
-        fill: '$orange9',
-        [`&[data-point-type="ring"]`]: {
-          fill: '$orange4',
-        },
+        fill: 'var(--colors-orange9)',
+        '&[data-point-type="ring"]': { fill: 'var(--colors-orange4)' },
       },
       control: {
-        fill: '$green8',
-        [`&[data-point-type="ring"]`]: {
-          fill: '$green4',
-        },
+        fill: 'var(--colors-green8)',
+        '&[data-point-type="ring"]': { fill: 'var(--colors-green4)' },
       },
       placeholder: {
-        fill: '$amber9',
-        [`&[data-point-type="ring"]`]: {
-          fill: '$amber4',
-        },
+        fill: 'var(--colors-amber9)',
+        '&[data-point-type="ring"]': { fill: 'var(--colors-amber4)' },
       },
     },
-  },
-  '&[data-point-type="hitpoint"]': {
-    stroke: 'transparent',
-    fill: 'transparent',
-  },
-  '&[data-point-type="ring"]': {
-    fill: '$green4',
   },
 })
 
 const StyledPointRoot = styled('g', {
-  cursor: 'grab',
-  touchAction: 'none',
-  '&:hover': {
-    [`${StyledPoint}[data-point-type="ring"]`]: {
-      r: POINT_HOVER_RING_RADIUS,
-    },
-    [`${StyledPoint}[data-point-type="point"]`]: {
-      r: POINT_HOVER_CENTER_RADIUS,
-    },
+  base: {
+    cursor: 'grab',
+    touchAction: 'none',
+    '&:hover [data-point-type="ring"]': { r: POINT_HOVER_RING_RADIUS },
+    '&:hover [data-point-type="point"]': { r: POINT_HOVER_CENTER_RADIUS },
   },
 })
 
 const StyledPointLabel = styled('text', {
-  fill: '$gray12',
-  fontSize: '10px',
-  pointerEvents: 'none',
-  userSelect: 'none',
+  base: { fill: 'var(--colors-gray12)', fontSize: '10px', pointerEvents: 'none', userSelect: 'none' },
 })
 
 const StyledPointLabelBg = styled('rect', {
-  fill: '$gray2',
-  stroke: '$gray7',
-  strokeWidth: 1,
-  rx: 3,
-  ry: 3,
-  pointerEvents: 'none',
+  base: {
+    fill: 'var(--colors-gray2)',
+    stroke: 'var(--colors-gray7)',
+    strokeWidth: 1,
+    rx: 3,
+    ry: 3,
+    pointerEvents: 'none',
+  },
 })
 
 interface PointProps {

@@ -46,7 +46,11 @@ This file tracks migration progress, temporary compromises, and the exit criteri
 - Dialog animations moved to Panda keyframes; FormItemColor production implementation owns the Panda badge.
 - TD-03: ActionButton migrated; Stitches `button` recipe removed.
 - TD-10: EditableText migrated and its `css` prop narrowed.
-- Batch 3: Table, Tree, ResizablePanel and ColorPicker migrated. ColorPicker’s react-colorful overrides are injected at runtime and tracked as TD-12.
+- Batch 3: Table, Tree, ResizablePanel, ColorPicker, BezierCurveEditor and AssetPicker migrated. ColorPicker’s react-colorful overrides are injected at runtime and tracked as TD-12.
+
+### Batch 3 closed
+
+- All Batch 3 components are migrated; Table/Tree/ColorPicker/Bezier have runtime checks, ResizablePanel is covered by type/build checks pending a story.
 
 ### Batch 2 closed
 

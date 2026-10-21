@@ -15,7 +15,7 @@ import { Grid } from './Grid'
 import { POINT_HIT_RADIUS } from './Point'
 import { TICK_EPSILON, formatTick, getTickPrecision } from './tick'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { clamp, mergeRefs } from '../utils'
 import { ActionButton, ActionButtonGroup } from '../ActionButton'
 import { IconPlayerPlayFilled, IconZoomInFilled, IconZoomOutFilled, IconZoomReset } from '@tabler/icons-react'
@@ -42,57 +42,63 @@ function normalizeInputPoints(inputPoints: IPoint[], minY: number, maxY: number)
 }
 
 const StyledSvgRoot = styled('svg', {
-  overflow: 'unset',
-  fontSize: 0,
-  userSelect: 'none',
-  backgroundImage: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, $orangeA2 100%)',
+  base: {
+    overflow: 'unset',
+    fontSize: 0,
+    userSelect: 'none',
+    backgroundImage: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--colors-orangeA2) 100%)',
+  },
 })
 
 const StyledPanelBorder = styled('rect', {
-  fill: 'none',
-  stroke: '$orange7',
-  strokeWidth: 1,
-  shapeRendering: 'crispEdges',
-  pointerEvents: 'none',
+  base: {
+    fill: 'none',
+    stroke: 'var(--colors-orange7)',
+    strokeWidth: 1,
+    shapeRendering: 'crispEdges',
+    pointerEvents: 'none',
+  },
 })
 
 const BezierCurveContainer = styled('div', {
-  position: 'relative',
-  marginLeft: '$7',
-  outline: 'none',
+  base: { position: 'relative', marginLeft: '28px', outline: 'none' },
 })
 
 const StyledYScaleInputWrap = styled('div', {
-  position: 'absolute',
-  left: `${Y_TICK_ANCHOR_X}px`,
-  top: `${Y_TICK_ANCHOR_Y}px`,
-  transform: 'translateX(-100%)',
-  width: '1.2ch',
-  height: '10px',
-  fontSize: '10px',
-  fontVariantNumeric: 'tabular-nums',
-  zIndex: 3,
-  pointerEvents: 'auto',
-  display: 'flex',
-  alignItems: 'center',
-  borderRadius: '$1',
-  backgroundColor: '$gray3',
-  boxShadow: 'inset 0 0 0 1px $colors$grayA6',
+  base: {
+    position: 'absolute',
+    left: `${Y_TICK_ANCHOR_X}px`,
+    top: `${Y_TICK_ANCHOR_Y}px`,
+    transform: 'translateX(-100%)',
+    width: '1.2ch',
+    height: '10px',
+    fontSize: '10px',
+    fontVariantNumeric: 'tabular-nums',
+    zIndex: 3,
+    pointerEvents: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: '4px',
+    backgroundColor: 'var(--colors-gray3)',
+    boxShadow: 'inset 0 0 0 1px var(--colors-grayA6)',
+  },
 })
 
 const StyledYScaleInput = styled('input', {
-  all: 'unset',
-  boxSizing: 'border-box',
-  display: 'block',
-  width: '100%',
-  height: '100%',
-  backgroundColor: '$gray3',
-  color: '$gray12',
-  fontSize: '10px',
-  lineHeight: '10px',
-  textAlign: 'right',
-  fontVariantNumeric: 'tabular-nums',
-  userSelect: 'text',
+  base: {
+    all: 'unset',
+    boxSizing: 'border-box',
+    display: 'block',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'var(--colors-gray3)',
+    color: 'var(--colors-gray12)',
+    fontSize: '10px',
+    lineHeight: '10px',
+    textAlign: 'right',
+    fontVariantNumeric: 'tabular-nums',
+    userSelect: 'text',
+  },
 })
 
 const defaultPoints = [

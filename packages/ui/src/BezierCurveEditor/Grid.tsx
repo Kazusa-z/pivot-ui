@@ -1,5 +1,5 @@
 import React from 'react'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { TICK_EPSILON, formatTick, getAlignedTickPrecision, getTickPrecision } from './tick'
 
 const TICK_EDGE_CAPTURE = 8
@@ -13,41 +13,28 @@ const X_TICK_Y_OFFSET = 16
 const Y_TICK_X_OFFSET = 12
 
 const StyledTicks = styled('text', {
-  fontSize: '10px',
-  fill: '$gray10',
-  userSelect: 'none',
-  pointerEvents: 'none',
+  base: { fontSize: '10px', fill: 'var(--colors-gray10)', userSelect: 'none', pointerEvents: 'none' },
   variants: {
     direction: {
-      vertical: {
-        textOrientation: 'mixed',
-        textAnchor: 'end',
-      },
-      horizontal: {
-        textAnchor: 'middle',
-      },
+      vertical: { textOrientation: 'mixed', textAnchor: 'end' },
+      horizontal: { textAnchor: 'middle' },
     },
   },
-  defaultVariants: {
-    direction: 'horizontal',
-  },
+  defaultVariants: { direction: 'horizontal' },
 })
 
 const StyledLabel = styled('text', {
-  fontSize: '11px',
-  textAnchor: 'middle',
-  fill: '$grayA11',
-  userSelect: 'none',
-  pointerEvents: 'none',
+  base: {
+    fontSize: '11px',
+    textAnchor: 'middle',
+    fill: 'var(--colors-grayA11)',
+    userSelect: 'none',
+    pointerEvents: 'none',
+  },
 })
 
-const StyledGridLine = styled('rect', {
-  fill: '$grayA3',
-})
-
-const StyledAxis = styled('line', {
-  stroke: '$grayA6',
-})
+const StyledGridLine = styled('rect', { base: { fill: 'var(--colors-grayA3)' } })
+const StyledAxis = styled('line', { base: { stroke: 'var(--colors-grayA6)' } })
 
 interface GridProps {
   children?: React.ReactNode

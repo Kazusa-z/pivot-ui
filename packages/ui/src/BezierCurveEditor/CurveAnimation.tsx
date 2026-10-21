@@ -1,21 +1,14 @@
 import React, { useMemo, useImperativeHandle, forwardRef } from 'react'
 import { IBezierPoint } from './types'
 import { convertBezierPointToPoint, getPointOnCurve, getPointOnLinear } from './helper'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const AnimatedCircle = styled('circle', {
-  fill: 'transparent',
-  transition: 'fill 0.3s ease',
-  pointerEvents: 'none',
+  base: { fill: 'transparent', transition: 'fill 0.3s ease', pointerEvents: 'none' },
   variants: {
     display: {
-      false: {
-        fill: 'transparent',
-      },
-      true: {
-        fill: '$orange10',
-        display: 'block',
-      },
+      false: { fill: 'transparent' },
+      true: { fill: 'var(--colors-orange10)', display: 'block' },
     },
   },
 })

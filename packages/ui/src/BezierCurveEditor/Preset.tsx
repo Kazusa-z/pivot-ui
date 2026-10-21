@@ -1,26 +1,25 @@
 import { useState } from 'react'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { IPoint } from './types'
 import { IconCirclePlusFilled, IconCircleXFilled } from '@tabler/icons-react'
 import { Flex } from '../Flex'
 import { Button } from '../Button'
 
 const PresetPath = styled('path', {
-  fill: 'none',
-  stroke: '$grayA8',
-  strokeWidth: '1.5px',
-  transition: 'stroke .2s ease-in-out, stroke-width .2s ease-in-out',
+  base: {
+    fill: 'none',
+    stroke: 'var(--colors-grayA8)',
+    strokeWidth: '1.5px',
+    transition: 'stroke .2s ease-in-out, stroke-width .2s ease-in-out',
+  },
 })
 
 const PresetSvg = styled('svg', {
-  width: '100%',
-  height: '100%',
-  overflow: 'hidden',
-  '&:hover': {
-    [`& ${PresetPath}`]: {
-      stroke: '$orange10',
-      strokeWidth: '2px',
-    },
+  base: {
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+    '&:hover path': { stroke: 'var(--colors-orange10)', strokeWidth: '2px' },
   },
 })
 
@@ -52,41 +51,43 @@ const defaultPresets = [
 ]
 
 const PresetList = styled('div', {
-  width: '100%',
-  display: 'grid',
-  padding: '$1 0',
-  gridTemplateColumns: 'repeat(5, 1fr)',
-  alignItems: 'center',
-  gap: '$2',
+  base: {
+    width: '100%',
+    display: 'grid',
+    padding: '4px 0',
+    gridTemplateColumns: 'repeat(5, 1fr)',
+    alignItems: 'center',
+    gap: '8px',
+  },
 })
 
 const DeleteButton = styled('button', {
-  all: 'unset',
-  position: 'absolute',
-  right: 0,
-  top: 0,
-  borderRadius: '$round',
-  color: '$gray9',
-  transform: 'translate(50%, -50%)',
-  '&:hover': {
-    color: '$red10',
+  base: {
+    all: 'unset',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    borderRadius: '9999px',
+    color: 'var(--colors-gray9)',
+    transform: 'translate(50%, -50%)',
+    '&:hover': { color: 'var(--colors-red10)' },
   },
 })
 
 const CurvePresetItem = styled('div', {
-  position: 'relative',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '$8',
-  borderRadius: '$2',
-  color: '$grayA9',
-  cursor: 'pointer',
-  backgroundColor: '$appBackground',
-  border: '1px solid $grayA3',
-  transition: 'color .2s ease-in-out',
-  '&:hover': {
-    color: '$orange10',
+  base: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '32px',
+    borderRadius: '4px',
+    color: 'var(--colors-grayA9)',
+    cursor: 'pointer',
+    backgroundColor: 'var(--colors-appBg)',
+    border: '1px solid var(--colors-grayA3)',
+    transition: 'color .2s ease-in-out',
+    '&:hover': { color: 'var(--colors-orange10)' },
   },
 })
 

@@ -5,45 +5,46 @@ import { BasicAssetType, AssetPickerPopoverProps } from './AssetPickerPopover'
 import { AssetPickerContent } from './AssetPickerContent'
 
 import { FormItem, extractFormItemProps } from '../FormItem'
-import { ActionButton, Button, styled, Popover, PopoverCloseTrigger, useDrop } from '@pivot-ui/editor'
+import { ActionButton, Button, Popover, PopoverCloseTrigger, useDrop } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 
 const PreviewFallbackIcon = styled(IconFileFilled, {
-  flexShrink: 0,
+  base: { flexShrink: 0 },
 })
 
 const SelectedAssetPreview = styled('div', {
-  width: '64px',
-  height: '64px',
-  borderRadius: '$1',
-  flexShrink: 0,
-  backgroundColor: '$softBg',
-  border: '1px solid $gray5',
-  overflow: 'hidden',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: '$gray11',
-  '& img': {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
+  base: {
+    width: '64px',
+    height: '64px',
+    borderRadius: '4px',
+    flexShrink: 0,
+    backgroundColor: 'var(--colors-softBg)',
+    border: '1px solid var(--colors-gray5)',
+    overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'var(--colors-gray11)',
+    '& img': { width: '100%', height: '100%', objectFit: 'cover' },
   },
 })
 
 const TextureAssetControl = styled('div', {
-  width: '100%',
-  minHeight: '68px',
-  color: '$gray10',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$1_5',
-  outline: 'none',
+  base: {
+    width: '100%',
+    minHeight: '68px',
+    color: 'var(--colors-gray10)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    outline: 'none',
+  },
   variants: {
     isDraggingOver: {
       true: {
-        color: '$blue12',
-        outline: '2px solid $colors$blue10',
+        color: 'var(--colors-blue12)',
+        outline: '2px solid var(--colors-blue10)',
         outlineOffset: '2px',
       },
     },
@@ -51,64 +52,50 @@ const TextureAssetControl = styled('div', {
 })
 
 const TextureAssetControls = styled('div', {
-  minWidth: 0,
-  flex: 1,
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$1',
+  base: { minWidth: 0, flex: 1, display: 'flex', alignItems: 'center', gap: '4px' },
 })
 
 const TextureAssetNamePopover = styled('div', {
-  minWidth: 0,
-  flex: 1,
+  base: { minWidth: 0, flex: 1 },
 })
 
 const TextureAssetName = styled('button', {
-  appearance: 'none',
-  border: 0,
-  minWidth: 0,
-  width: '100%',
-  height: '$sm',
-  padding: '0 $2',
-  borderRadius: '$sm',
-  backgroundColor: '$softBg',
-  color: 'inherit',
-  fontFamily: 'inherit',
-  fontSize: '$sm',
-  fontWeight: 500,
-  lineHeight: 1,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '$1',
-  cursor: 'pointer',
-  transition: '$backgroundColor, $color',
-  '&:hover': {
-    backgroundColor: '$softBgHover',
-    color: '$textStrong',
-  },
-  '&:disabled': {
-    backgroundColor: '$softBg',
-    color: '$textMuted',
-    cursor: 'not-allowed',
-    '&:hover': {
-      backgroundColor: '$softBg',
-      color: '$textMuted',
+  base: {
+    appearance: 'none',
+    border: 0,
+    minWidth: 0,
+    width: '100%',
+    height: '24px',
+    padding: '0 8px',
+    borderRadius: '4px',
+    backgroundColor: 'var(--colors-softBg)',
+    color: 'inherit',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+    fontWeight: 500,
+    lineHeight: 1,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '4px',
+    cursor: 'pointer',
+    transition: 'background-color .2s ease, color .2s ease',
+    '&:hover': { backgroundColor: 'var(--colors-softBgHover)', color: 'var(--colors-textStrong)' },
+    '&:disabled': {
+      backgroundColor: 'var(--colors-softBg)',
+      color: 'var(--colors-textMuted)',
+      cursor: 'not-allowed',
+      '&:hover': { backgroundColor: 'var(--colors-softBg)', color: 'var(--colors-textMuted)' },
     },
   },
 })
 
 const TextureAssetActions = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$1',
+  base: { display: 'flex', alignItems: 'center', gap: '4px' },
 })
 
 const TextureAssetNameText = styled('span', {
-  minWidth: 0,
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
+  base: { minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
 })
 
 export interface FormItemAssetPickerProps<T extends BasicAssetType>
@@ -124,20 +111,17 @@ export interface FormItemAssetPickerProps<T extends BasicAssetType>
 }
 
 const Placeholder = styled('span', {
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  lineHeight: 2,
+  base: { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 2 },
 })
 
 const StyledTriggerButton = styled(Button, {
-  width: '100%',
+  base: { width: '100%' },
   variants: {
     isDraggingOver: {
       true: {
-        color: '$blue12',
-        outline: '2px solid $colors$blue10',
-        backgroundColor: '$blueA4',
+        color: 'var(--colors-blue12)',
+        outline: '2px solid var(--colors-blue10)',
+        backgroundColor: 'var(--colors-blueA4)',
       },
     },
   },

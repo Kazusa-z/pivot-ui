@@ -25,7 +25,7 @@ This folder holds the shared Panda CSS setup used by both packages during the mi
 
 ## Verification
 
-- Batch 1/2 components, the promoted Dialog/FormItemColor, and the Batch 3 Table/Tree/ColorPicker checks were compared against their Stitches implementations.
+- Batch 1/2/3 components were checked against their Stitches implementations where a baseline existed; third-party ColorPicker overrides are tracked as TD-12.
 - `css` prop probe: `marginLeft` applied correctly.
 - Generated token aliases verified, e.g.:
   - `--panda-colors-gray3: var(--colors-gray3)`

@@ -2,10 +2,10 @@ import React from 'react'
 import type { IPoint, IBezierPoint } from './types'
 import { Point } from './Point'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledControlLine = styled('line', {
-  stroke: '$gray5',
+  base: { stroke: 'var(--colors-gray5)' },
 })
 
 export interface BezierPointProps {
