@@ -1,45 +1,48 @@
-import { styled } from '../design-system'
-import { keyframes } from '../design-system/keyframes'
+import { styled } from '../../styled-system/jsx'
 
 const Spin = styled('div', {
-  $$borderSize: '2px',
-  position: 'relative',
-  height: '$3',
-  width: '$3',
-  border: '$$borderSize solid $grayA6',
-  borderRadius: '$round',
-  animation: `${keyframes.infinateRotateAnmi} 0.8s linear infinite`,
-  transformOrigin: 'center',
-  boxSizing: 'border-box',
-  '&::after': {
-    content: ' ',
-    display: 'block',
-    position: 'absolute',
-    inset: '-$$borderSize',
-    borderRadius: '$round',
-    border: '$$borderSize solid $gray12',
-    borderColor: 'transparent transparent transparent white',
+  base: {
+    position: 'relative',
+    height: '12px',
+    width: '12px',
+    border: '2px solid var(--colors-grayA6)',
+    borderRadius: '9999px',
+    animationName: 'spin',
+    animationDuration: '0.8s',
+    animationTimingFunction: 'linear',
+    animationIterationCount: 'infinite',
+    transformOrigin: 'center',
     boxSizing: 'border-box',
+    '&::after': {
+      content: ' ',
+      display: 'block',
+      position: 'absolute',
+      inset: '-2px',
+      borderRadius: '9999px',
+      border: '2px solid var(--colors-gray12)',
+      borderColor: 'transparent transparent transparent white',
+      boxSizing: 'border-box',
+    },
   },
   variants: {
     size: {
       xs: {
-        height: '$3',
-        width: '$3',
+        height: '12px',
+        width: '12px',
       },
       sm: {
-        height: '$4',
-        width: '$4',
+        height: '16px',
+        width: '16px',
       },
       md: {
-        height: '$5',
-        width: '$5',
+        height: '20px',
+        width: '20px',
       },
     },
     color: {
       primary: {
         '&::after': {
-          borderColor: 'transparent transparent transparent $blueA11',
+          borderColor: 'transparent transparent transparent var(--colors-blueA11)',
         },
       },
       inherit: {
@@ -49,7 +52,7 @@ const Spin = styled('div', {
       },
       default: {
         '&::after': {
-          borderColor: 'transparent transparent transparent $white',
+          borderColor: 'transparent transparent transparent var(--colors-white)',
         },
       },
     },

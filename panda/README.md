@@ -7,6 +7,8 @@ This folder holds the shared Panda CSS setup used by both packages during the mi
 - **Tokens are aliases to the existing Stitches CSS variables.**
   - Panda's prefix is `panda`, so a token resolves to `var(--panda-colors-gray3)`, whose value is `var(--colors-gray3)`.
   - This lets components migrate to Panda tokens before the light/dark theme implementation is migrated; the Stitches `ThemeProvider` still controls the underlying variables.
+- **Theme variables are emitted by Panda.**
+  - All Stitches token variables are generated in `globalCss` on `:root` (dark) and `.light-theme` (light). This removes the dependency on another Stitches component being rendered on the page before Panda components can resolve `var(--colors-*)`.
 - **Global reset/fonts are migrated to Panda.**
   - `global.ts` is derived from the Stitches reset and the existing font-face declarations.
   - Storybook UI and GUI load Panda reset instead of `resetStyle()`.

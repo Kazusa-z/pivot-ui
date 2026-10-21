@@ -3,7 +3,7 @@ import { IconHandFinger, IconHandTwoFingers } from '@tabler/icons-react'
 import { MouseRightDownIcon } from '../Icons/MouseRightDownIcon'
 import { MouseLeftDownIcon } from '../Icons/MouseLeftDownIcon'
 import { MouseDoubleDownIcon } from '../Icons/MouseDoubleDownIcon'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const symbolsMap = {
   backspace: '⌫',
@@ -70,54 +70,58 @@ const gastureMap = {
 }
 
 const IconSlot = styled('span', {
-  display: 'inline-block',
-  marginLeft: '-1',
-  height: '18px',
-  width: '18px',
+  base: {
+    display: 'inline-block',
+    marginLeft: '-1px',
+    height: '18px',
+    width: '18px',
+  },
   variants: {
     half: {
       true: {
-        marginLeft: '-0_5',
+        marginLeft: '-2px',
       },
     },
   },
 })
 
 const StyledKbd = styled('kbd', {
-  display: 'inline-block',
-  background: '$gray3',
-  fontSize: '10px',
-  minWidth: '$3',
-  height: '$4',
-  lineHeight: '14px',
-  borderRadius: '$2',
-  backgroundColor: '$grayA2',
-  border: '1px solid $grayA4',
-  padding: '0 $1',
-  marginRight: '$1',
-  color: 'currentColor',
-  userSelect: 'none',
+  base: {
+    display: 'inline-block',
+    background: 'var(--colors-gray3)',
+    fontSize: '10px',
+    minWidth: '12px',
+    height: '16px',
+    lineHeight: '14px',
+    borderRadius: '8px',
+    backgroundColor: 'var(--colors-grayA2)',
+    border: '1px solid var(--colors-grayA4)',
+    padding: '0 4px',
+    marginRight: '4px',
+    color: 'currentColor',
+    userSelect: 'none',
+  },
   variants: {
     size: {
       xs: {
-        minWidth: '$3',
-        height: '$3',
+        minWidth: '12px',
+        height: '12px',
         fontSize: '10px',
-        borderRadius: '$1',
-        padding: '0 $0_5',
+        borderRadius: '4px',
+        padding: '0 2px',
       },
       sm: {
-        minWidth: '$4',
-        height: '$4',
+        minWidth: '16px',
+        height: '16px',
         fontSize: '10px',
       },
       md: {
-        minWidth: '$5',
-        height: '$5',
-        fontSize: '$1',
-        lineHeight: '$lineHeights$1',
-        borderRadius: '$2',
-        padding: '0 $1_5',
+        minWidth: '20px',
+        height: '20px',
+        fontSize: '12px',
+        lineHeight: '16px',
+        borderRadius: '8px',
+        padding: '0 6px',
       },
     },
     uppercase: {
@@ -137,10 +141,12 @@ const StyledKbd = styled('kbd', {
 })
 
 export const StyledKbdGroup = styled('div', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  '& > kbd:last-child': {
-    marginRight: 0,
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    '& > kbd:last-child': {
+      marginRight: 0,
+    },
   },
 })
 

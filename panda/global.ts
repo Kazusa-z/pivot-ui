@@ -1,4 +1,81 @@
 import { resetCSS } from '../packages/ui/src/design-system/reset.css'
+import { colors } from '../packages/ui/src/design-system/colors'
+import { fontSizes, radii, shadows, sizes, space } from '../packages/ui/src/design-system/sizes'
+
+const resolveColor = (value: string, map: Record<string, string>) => {
+  let current = value
+  const seen = new Set<string>()
+  while (current.startsWith('$')) {
+    const key = current.slice(1)
+    if (seen.has(key) || !(key in map)) break
+    seen.add(key)
+    current = map[key]
+  }
+  return current
+}
+
+const resolveScale = (map: Record<string, string | number>) => {
+  return Object.fromEntries(
+    Object.entries(map).map(([key, value]) => {
+      if (typeof value !== 'string' || !value.startsWith('$')) return [key, value]
+      const resolved = map[value.slice(1)]
+      return [key, resolved ?? value]
+    })
+  )
+}
+
+const cssVars = (prefix: string, values: Record<string, string | number>) =>
+  Object.fromEntries(Object.entries(values).map(([key, value]) => [`--${prefix}-${key}`, String(value)]))
+
+const darkColors = Object.fromEntries(
+  Object.entries(colors.dark).map(([key, value]) => [key, resolveColor(value, colors.dark)])
+)
+const lightColors = Object.fromEntries(
+  Object.entries(colors.light).map(([key, value]) => [key, resolveColor(value, colors.light)])
+)
+
+const resolvedSizes = resolveScale(sizes)
+const resolvedFontSizes = resolveScale(fontSizes)
+
+const resolvedShadows = Object.fromEntries(
+  Object.entries(shadows).map(([key, value]) => [key, value.replace(/\$colors\$([A-Za-z0-9_]+)/g, 'var(--colors-$1)')])
+)
+
+const commonVars = {
+  ...cssVars('colors', darkColors),
+  ...cssVars('space', space),
+  ...cssVars('sizes', resolvedSizes),
+  ...cssVars('fontSizes', resolvedFontSizes),
+  ...cssVars('radii', radii),
+  ...cssVars('shadows', resolvedShadows),
+  ...cssVars('fonts', {
+    default:
+      'geist,InterVariable,-apple-system,system-ui,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol',
+    untitled: 'Untitled Sans, -apple-system, system-ui, sans-serif',
+    mono: 'mono, -apple-system, system-ui, sans-serif',
+  }),
+  ...cssVars('fontWeights', { light: 300, regular: 400, medium: 500, bold: 600 }),
+  ...cssVars('lineHeights', {
+    1: '16px',
+    '1_5': '18px',
+    2: '20px',
+    3: '24px',
+    4: '26px',
+    5: '28px',
+    6: '32px',
+    7: '36px',
+    8: '40px',
+    9: '48px',
+  }),
+  ...cssVars('transitions', {
+    shadow: 'box-shadow .2s ease',
+    backgroundColor: 'background-color .2s ease',
+    borderColor: 'border-color .2s ease',
+    color: 'color .2s ease',
+  }),
+}
+
+const lightVars = cssVars('colors', lightColors)
 
 const colorFallbacks: Record<string, string> = {
   gray1: '#111113',
@@ -30,6 +107,8 @@ const convert = (value: unknown): unknown => {
 
 export const globalCss = {
   ...(convert(resetCSS) as Record<string, unknown>),
+  ':root': commonVars as any,
+  '.light-theme': lightVars as any,
   html: {
     fontFamily: 'geist, InterVariable, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
     fontSize: '16px',
