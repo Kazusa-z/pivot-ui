@@ -1,39 +1,31 @@
 import React, { useState, useCallback, useEffect, useRef, forwardRef } from 'react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { clamp } from '../utils'
 import { mergeRefs } from '../utils/merge-refs'
 
 const StyledResizeHandler = styled('div', {
-  '&:after': {
-    content: '""',
-    position: 'absolute',
+  base: {
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+    },
   },
   variants: {
     variant: {
       solid: {
-        borderColor: '$border',
+        borderColor: 'var(--colors-border)',
         '&:hover': {
-          '&::after': {
-            borderColor: '$blue10',
-          },
+          '&::after': { borderColor: 'var(--colors-blue10)' },
         },
       },
       transparent: {
-        '&::after': {
-          borderColor: 'transparent',
-        },
-        '&:hover': {
-          '&::after': {
-            borderColor: '$blue10',
-          },
-        },
+        '&::after': { borderColor: 'transparent' },
+        '&:hover': { '&::after': { borderColor: 'var(--colors-blue10)' } },
       },
     },
     needPosition: {
-      true: {
-        position: 'absolute',
-      },
+      true: { position: 'absolute' },
     },
     direction: {
       horizontal: {
@@ -54,32 +46,20 @@ const StyledResizeHandler = styled('div', {
         height: '4px',
         width: '100%',
         cursor: 'row-resize',
-        '&:after': {
+        '&::after': {
           width: '100%',
           height: '4px',
-          borderBottom: '4px solid $border',
+          borderBottom: '4px solid var(--colors-border)',
           borderLeft: 'none',
           transition: 'all .2s ease',
         },
       },
     },
     position: {
-      left: {
-        top: 0,
-        left: 0,
-      },
-      right: {
-        top: 0,
-        right: 0,
-      },
-      top: {
-        top: 0,
-        left: 0,
-      },
-      bottom: {
-        bottom: 0,
-        left: 0,
-      },
+      left: { top: 0, left: 0 },
+      right: { top: 0, right: 0 },
+      top: { top: 0, left: 0 },
+      bottom: { bottom: 0, left: 0 },
     },
   },
   defaultVariants: {

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { RgbaColorPicker, RgbColorPicker } from 'react-colorful'
 
-import { overrideStyle } from './override_style'
 import { GradientSlider } from '../ColorSlider/GradientSlider'
 import { ParticleSlider } from '../ColorSlider/ParticleSlider'
 import { HDRSlider } from '../ColorSlider/HDRSlider'
@@ -10,10 +9,10 @@ import { ColorPickerInputGroup } from './ColorPickerInputGroup'
 import { ColorPickerTools } from './ColorPickerTools'
 import { type Color, type GradientColor, type ParticleColor, type HDRColor, type ColorSpace } from './helper'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const ConstantColorPickerRoot = styled('div', {
-  position: 'relative',
+  base: { position: 'relative' },
 })
 
 interface GradientColorPickerProps {
@@ -186,10 +185,6 @@ const ColorPickerRoot = function ColorPickerRoot(
 
     return <RgbaColorPicker color={color} onChange={setColor} />
   }
-
-  useEffect(() => {
-    overrideStyle()
-  }, [])
 
   useEffect(() => {
     if (mode === 'gradient') {

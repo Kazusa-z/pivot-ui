@@ -1,6 +1,6 @@
 import React, { forwardRef, SVGProps } from 'react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { TransparentPattern } from './TransparentPattern'
 import { Flex } from '../Flex'
 import { Color, ColorSpace, ColorPickerMode, ParticleColor, GradientColor, generatePreviewColor } from './helper'
@@ -43,74 +43,63 @@ function IconHDR(props: SVGProps<SVGSVGElement>) {
 }
 
 const StyledTrigger = styled('button', {
-  all: 'unset',
-  position: 'relative',
-  height: '$6',
-  width: '$6',
-  textAlign: 'right',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '$2',
-  transition: '$shadow',
-  cursor: 'pointer',
-  overflow: 'hidden',
-  '& > div': {
-    position: 'absolute',
-    inset: 0,
-    borderRadius: '$2',
-  },
-  '&:focus-visible': {
-    boxShadow: '0px 0px 0px 2px $colors$gray7',
+  base: {
+    all: 'unset',
+    position: 'relative',
+    height: '24px',
+    width: '24px',
+    textAlign: 'right',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '4px',
+    transition: 'box-shadow .2s ease',
+    cursor: 'pointer',
+    overflow: 'hidden',
+    '& > div': { position: 'absolute', inset: 0, borderRadius: '4px' },
+    '&:focus-visible': { boxShadow: '0 0 0 2px var(--colors-gray7)' },
   },
   variants: {
     fullsize: {
       true: {
         width: '100%',
-        borderRadius: '$2',
-        '&::before': {
-          width: '100%',
-        },
+        borderRadius: '4px',
+        '&::before': { width: '100%' },
       },
     },
   },
 })
 
 const StyledHDRBadge = styled('div', {
-  position: 'absolute',
-  bottom: '1px',
-  right: '1px',
-  fontSize: '$0_5',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '$0_5 $1',
-  justifyContent: 'center',
-  borderRadius: '$2 0 3px 0',
-  backgroundColor: '$gray3',
-  strokeWidth: 1.2,
-  color: '$gray12',
+  base: {
+    position: 'absolute',
+    bottom: '1px',
+    right: '1px',
+    fontSize: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '2px 4px',
+    justifyContent: 'center',
+    borderRadius: '4px 0 3px 0',
+    backgroundColor: 'var(--colors-gray3)',
+    strokeWidth: 1.2,
+    color: 'var(--colors-gray12)',
+  },
 })
 
-/**
- * Fix the issue of the color picker trigger will show a 1px border when the color is too dark
- * And we use the svg pattern instead of the background-gradient could provide a better visual experience(In that case)
- * https://stackoverflow.com/a/47072024
- */
 const StyledTransparentPattern = styled(TransparentPattern, {
-  position: 'absolute',
-  inset: 0,
-  borderRadius: '$2',
-  height: '$6',
-  width: '$6',
-  border: '1px solid transparent',
-  perspective: 1000,
-  backfaceVisibility: 'hidden',
-  transform: 'translate3d(0,0,0)',
+  base: {
+    position: 'absolute',
+    inset: 0,
+    borderRadius: '4px',
+    height: '24px',
+    width: '24px',
+    border: '1px solid transparent',
+    perspective: 1000,
+    backfaceVisibility: 'hidden',
+    transform: 'translate3d(0,0,0)',
+  },
   variants: {
-    fullsize: {
-      true: {
-        width: '100%',
-      },
-    },
+    fullsize: { true: { width: '100%' } },
   },
 })
 

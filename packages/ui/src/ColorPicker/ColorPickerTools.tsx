@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { IconCopy, IconCheck } from '@tabler/icons-react'
 import { colord } from 'colord'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 import { useEyeDropper } from '../hooks/useEyeDropper'
 
@@ -11,45 +11,37 @@ import { EyeDropperIcon } from '../Icons'
 import { Color, ColorSpace, linearColorToSRGB, srgbColorToLinear } from './helper'
 
 const StyledColorPickerTools = styled(Flex, {
-  position: 'absolute',
-  top: '152px',
-  right: 0,
+  base: {
+    position: 'absolute',
+    top: '152px',
+    right: 0,
+  },
   variants: {
-    readonly: {
-      true: {
-        pointerEvents: 'none',
-        opacity: 0.5,
-      },
-    },
+    readonly: { true: { pointerEvents: 'none', opacity: 0.5 } },
   },
 })
 
 const StyledColorPreview = styled('div', {
-  position: 'relative',
-  height: '30px',
-  width: '30px',
-  borderRadius: '$round',
-  overflow: 'hidden',
-  background: 'repeating-conic-gradient(#ebebeb 0 25%,#fff 0 50%) 50%/12px 12px',
-  cursor: 'pointer',
-  '&:hover': {
+  base: {
+    position: 'relative',
+    height: '30px',
+    width: '30px',
+    borderRadius: '9999px',
+    overflow: 'hidden',
+    background: 'repeating-conic-gradient(#ebebeb 0 25%,#fff 0 50%) 50%/12px 12px',
+    cursor: 'pointer',
+    '&:hover': { '& > svg': { visibility: 'visible' } },
+    '& > div': { width: '100%', height: '100%' },
     '& > svg': {
-      visibility: 'visible',
+      visibility: 'hidden',
+      position: 'absolute',
+      color: 'var(--colors-white)',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '16px',
+      height: '16px',
     },
-  },
-  '& > div': {
-    width: '100%',
-    height: '100%',
-  },
-  '& > svg': {
-    visibility: 'hidden',
-    position: 'absolute',
-    color: '$white',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '$4',
-    height: '$4',
   },
 })
 

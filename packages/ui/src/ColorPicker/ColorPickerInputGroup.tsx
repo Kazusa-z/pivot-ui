@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { IconSelector } from '@tabler/icons-react'
 import { HexColorInput } from 'react-colorful'
 import { colord, HslaColor, RgbaColor } from 'colord'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 import { ActionButton } from '../ActionButton'
 import { useEventCallback } from '../hooks/useEventCallback'
@@ -14,71 +14,69 @@ type HexaColor = string
 const colorModes = ['RGBA', 'HSLA', 'HEX'] as const
 
 const ColorSpaceBadge = styled('div', {
-  position: 'absolute',
-  top: '-$3',
-  left: '-$3',
-  fontSize: '$0_5',
-  transform: 'scale(0.7)',
-  borderRadius: '$round',
-  padding: '$0_5 $1_5',
-  backgroundColor: '$gray3',
-  boxShadow: '0 0 0 1px $colors$grayA5',
-  strokeWidth: 1.2,
-  color: '$gray12',
-  cursor: 'pointer',
-  userSelect: 'none',
-  '&:hover': {
-    backgroundColor: '$gray4',
+  base: {
+    position: 'absolute',
+    top: '-12px',
+    left: '-12px',
+    fontSize: '10px',
+    transform: 'scale(0.7)',
+    borderRadius: '9999px',
+    padding: '2px 6px',
+    backgroundColor: 'var(--colors-gray3)',
+    boxShadow: '0 0 0 1px var(--colors-grayA5)',
+    strokeWidth: 1.2,
+    color: 'var(--colors-gray12)',
+    cursor: 'pointer',
+    userSelect: 'none',
+    '&:hover': { backgroundColor: 'var(--colors-gray4)' },
   },
 })
 
 const InputGrid = styled('div', {
-  position: 'relative',
-  display: 'flex',
-  gridTemplateRows: '1fr',
-  gap: '$2',
-  marginTop: '$4',
-  alignItems: 'center',
+  base: {
+    position: 'relative',
+    display: 'flex',
+    gridTemplateRows: '1fr',
+    gap: '8px',
+    marginTop: '16px',
+    alignItems: 'center',
+  },
   variants: {
     readonly: {
-      true: {
-        pointerEvents: 'none',
-        opacity: 0.5,
-      },
+      true: { pointerEvents: 'none', opacity: 0.5 },
     },
   },
 })
 
 const InputItem = styled('div', {
-  width: 0,
-  maxWidth: '100%',
-  flexGrow: 1,
-  '& > label': {
-    display: 'block',
-    textAlign: 'center',
-    fontSize: '$1',
-    marginTop: '$1',
-    color: '$gray11',
-    userSelect: 'none',
-  },
-  '& > input': {
-    all: 'unset',
-    height: '$6',
-    width: '100%',
-    fontSize: '$1',
-    textAlign: 'center',
-    padding: '0 $1_5',
-    color: '$gray11',
-    borderRadius: '$3',
-    backgroundColor: '$grayA3',
-    // border: "1px solid $gray5",
-    boxSizing: 'border-box',
-    userSelect: 'none',
-    '&:focus': {
-      color: '$hiContrast',
-      borderColor: '$gray8',
-      '& + label': {
-        color: '$gray12',
+  base: {
+    width: 0,
+    maxWidth: '100%',
+    flexGrow: 1,
+    '& > label': {
+      display: 'block',
+      textAlign: 'center',
+      fontSize: '12px',
+      marginTop: '4px',
+      color: 'var(--colors-gray11)',
+      userSelect: 'none',
+    },
+    '& > input': {
+      all: 'unset',
+      height: '24px',
+      width: '100%',
+      fontSize: '12px',
+      textAlign: 'center',
+      padding: '0 6px',
+      color: 'var(--colors-gray11)',
+      borderRadius: '6px',
+      backgroundColor: 'var(--colors-grayA3)',
+      boxSizing: 'border-box',
+      userSelect: 'none',
+      '&:focus': {
+        color: 'var(--colors-hiContrast)',
+        borderColor: 'var(--colors-gray8)',
+        '& + label': { color: 'var(--colors-gray12)' },
       },
     },
   },

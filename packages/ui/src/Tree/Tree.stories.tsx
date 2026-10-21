@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 import { Flex } from '../Flex'
+import { TreeGroup, TreeItemContent, TreeItemRoot } from './'
 
 export default {
   title: 'Display/Tree',
@@ -27,7 +28,35 @@ export default {
  * - End slot for operation buttons
  * - Customizable item content
  */
-export const Overview = (args) => {
-  const [val, setVal] = useState(0)
-  return <Flex gap="md"></Flex>
+export const Overview = () => {
+  return (
+    <Flex gap="md" style={{ width: 300 }} direction="column">
+      <TreeItemRoot>
+        <TreeItemContent
+          id="root"
+          name="Scene"
+          level={0}
+          isExpandable
+          isExpanded
+          isSelected={false}
+          onSelect={() => {}}
+          onExpand={() => {}}
+        />
+        <TreeGroup>
+          <TreeItemRoot>
+            <TreeItemContent
+              id="child"
+              name="Mesh"
+              level={1}
+              isExpandable={false}
+              isExpanded={false}
+              isSelected
+              onSelect={() => {}}
+              onExpand={() => {}}
+            />
+          </TreeItemRoot>
+        </TreeGroup>
+      </TreeItemRoot>
+    </Flex>
+  )
 }

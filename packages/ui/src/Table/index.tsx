@@ -1,124 +1,94 @@
 import React, { ReactNode } from 'react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const Tr = styled('tr', {
-  color: '$gray11',
+  base: { color: 'var(--colors-gray11)' },
 })
 
 const Th = styled('th', {
-  fontWeight: 'unset',
-  textAlign: 'start',
-  fontSize: '$2',
-  padding: '$2',
-  borderBottom: '1px solid $gray3',
-  userSelect: 'none',
-  '&:nth-child(1)': {
-    paddingLeft: '$2',
+  base: {
+    fontWeight: 'unset',
+    textAlign: 'start',
+    fontSize: '14px',
+    padding: '8px',
+    borderBottom: '1px solid var(--colors-gray3)',
+    userSelect: 'none',
+    '&:nth-child(1)': { paddingLeft: '8px' },
   },
   variants: {
     align: {
-      start: {
-        textAlign: 'start',
-      },
-      center: {
-        textAlign: 'center',
-      },
-      end: {
-        textAlign: 'end',
-      },
+      start: { textAlign: 'start' },
+      center: { textAlign: 'center' },
+      end: { textAlign: 'end' },
     },
     border: {
-      solid: {
-        borderBottom: '1px solid $gray3',
-      },
-      dashed: {
-        borderBottom: '1px dashed $gray8',
-      },
+      solid: { borderBottom: '1px solid var(--colors-gray3)' },
+      dashed: { borderBottom: '1px dashed var(--colors-gray8)' },
     },
   },
-  defaultVariants: {
-    align: 'start',
-    border: 'solid',
-  },
+  defaultVariants: { align: 'start', border: 'solid' },
 })
 
 const Td = styled('td', {
-  py: '$2',
-  borderBottom: '1px solid $gray3',
-  fontSize: '$2',
-  padding: '$2',
-  verticalAlign: 'middle',
-  userSelect: 'none',
+  base: {
+    paddingTop: '8px',
+    paddingBottom: '8px',
+    borderBottom: '1px solid var(--colors-gray3)',
+    fontSize: '14px',
+    padding: '8px',
+    verticalAlign: 'middle',
+    userSelect: 'none',
+  },
   variants: {
     align: {
-      start: {
-        textAlign: 'start',
-      },
-      center: {
-        textAlign: 'center',
-      },
-      end: {
-        textAlign: 'end',
-      },
+      start: { textAlign: 'start' },
+      center: { textAlign: 'center' },
+      end: { textAlign: 'end' },
     },
     border: {
-      solid: {
-        borderBottom: '1px solid $gray3',
-      },
-      dashed: {
-        borderBottom: '1px dashed $gray8',
-      },
+      solid: { borderBottom: '1px solid var(--colors-gray3)' },
+      dashed: { borderBottom: '1px dashed var(--colors-gray8)' },
     },
   },
-  defaultVariants: {
-    align: 'start',
-    border: 'solid',
-  },
+  defaultVariants: { align: 'start', border: 'solid' },
 })
 
 const Thead = styled('thead', {
-  [`& ${Th}`]: {
-    fontSize: '$1',
-    color: '$gray9',
-  },
-  [`& ${Td}`]: {
-    fontSize: '$1',
-    color: '$gray9',
+  base: {
+    '& th': { fontSize: '12px', color: 'var(--colors-gray9)' },
+    '& td': { fontSize: '12px', color: 'var(--colors-gray9)' },
   },
 })
 
 const Tbody = styled('tbody', {
-  width: '100%',
-  [`& ${Tr}`]: {
-    '&:hover': {
-      backgroundColor: '$gray2',
-    },
+  base: {
+    width: '100%',
+    '& tr:hover': { backgroundColor: 'var(--colors-gray2)' },
   },
 })
 
 const StyledTable = styled('table', {
-  width: '100%',
-  tableLayout: 'fixed',
-  borderSpacing: 0,
+  base: {
+    width: '100%',
+    tableLayout: 'fixed',
+    borderSpacing: 0,
+  },
   variants: {
     compact: {
       true: {
-        [`& ${Th}`]: {
-          padding: '$2 $0_5',
-          '&:nth-child(1)': {
-            paddingLeft: '$2',
-          },
+        '& th': {
+          padding: '8px 2px',
+          '&:nth-child(1)': { paddingLeft: '8px' },
         },
-        [`& ${Td}`]: {
-          padding: '$0_5',
-          fontSize: '$1',
+        '& td': {
+          padding: '2px',
+          fontSize: '12px',
         },
       },
     },
   },
 })
-
 export interface TableProps<T> {
   columns: {
     title: string

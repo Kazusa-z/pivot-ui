@@ -1,29 +1,31 @@
 import React from 'react'
 
-import { styled, css } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledDragPreview = styled('div', {
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  width: '300px',
-  height: '$7',
-  fontSize: '$1',
-  boxSizing: 'border-box',
-  justifyContent: 'space-between',
-  padding: '0 $2',
-  color: 'white',
-  backgroundColor: '$blue9',
-  borderRadius: '$1',
-  '& > span:nth-child(2)': {
+  base: {
+    position: 'relative',
     display: 'flex',
     alignItems: 'center',
-    height: '$5',
-    fontSize: '$xs',
-    padding: '0 $2',
-    borderRadius: '$round',
-    backgroundColor: 'white',
-    color: '$blue9',
+    width: '300px',
+    height: '28px',
+    fontSize: '12px',
+    boxSizing: 'border-box',
+    justifyContent: 'space-between',
+    padding: '0 8px',
+    color: 'white',
+    backgroundColor: 'var(--colors-blue9)',
+    borderRadius: '4px',
+    '& > span:nth-child(2)': {
+      display: 'flex',
+      alignItems: 'center',
+      height: '20px',
+      fontSize: '10px',
+      padding: '0 8px',
+      borderRadius: '9999px',
+      backgroundColor: 'white',
+      color: 'var(--colors-blue9)',
+    },
   },
 })
 

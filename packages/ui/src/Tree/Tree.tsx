@@ -1,93 +1,79 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { IconChevronRight, IconChevronDown } from '@tabler/icons-react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { Flex } from '../Flex'
 import { Text } from '../Typography'
 
-export const TreeGroup = styled('div', {
-  borderRadius: '$2',
+const StyledTreeGroup = styled('div', {
+  base: { borderRadius: '4px' },
 })
+
+export const TreeGroup = React.forwardRef<HTMLDivElement, React.ComponentProps<typeof StyledTreeGroup>>(
+  function TreeGroup(props, ref) {
+    return <StyledTreeGroup data-tree-group {...props} ref={ref} />
+  }
+)
 
 // TreeItemPreview is used for the preview of the tree item during drag and drop operation.
 export const TreeItemPreview = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '$1',
-  height: '$6',
-  fontSize: '$1',
-  padding: '$2',
-  borderRadius: '$round',
-  backgroundColor: '$blueA10',
-  color: '$white',
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '4px',
+    height: '24px',
+    fontSize: '12px',
+    padding: '8px',
+    borderRadius: '9999px',
+    backgroundColor: 'var(--colors-blueA10)',
+    color: 'var(--colors-white)',
+  },
 })
 
 const TreeItemName = styled(Flex, {
-  height: '100%',
-  flex: 1,
-  minWidth: 0,
-  userSelect: 'none',
+  base: { height: '100%', flex: 1, minWidth: 0, userSelect: 'none' },
 })
 
 const TreeItemContentRoot = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  width: '100%',
-  height: '$6',
-  fontSize: '$1',
-  boxSizing: 'border-box',
-  padding: '0 $1',
-  borderRadius: '$2',
-  gap: '$1',
-  '&:hover': {
-    boxShadow: '0 0 0 1px var(--colors-blue11)',
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    height: '24px',
+    fontSize: '12px',
+    boxSizing: 'border-box',
+    padding: '0 4px',
+    borderRadius: '4px',
+    gap: '4px',
+    '&:hover': { boxShadow: '0 0 0 1px var(--colors-blue11)' },
   },
-  // borderRadius: '$2',
   variants: {
-    isHovered: {
-      true: {
-        boxShadow: '0 0 0 1px var(--colors-blue11)',
-      },
-    },
+    isHovered: { true: { boxShadow: '0 0 0 1px var(--colors-blue11)' } },
     selected: {
-      true: {
-        color: '$white',
-        backgroundColor: '$blue10',
-        borderRadius: 0,
-      },
+      true: { color: 'var(--colors-white)', backgroundColor: 'var(--colors-blue10)', borderRadius: 0 },
     },
-    isActive: {
-      false: {
-        color: '$gray9',
-      },
-    },
+    isActive: { false: { color: 'var(--colors-gray9)' } },
   },
-  compoundVariants: [
-    {
-      selected: true,
-      isActive: false,
-      css: {
-        color: '$white',
-      },
-    },
-  ],
+  compoundVariants: [{ selected: true, isActive: false, css: { color: 'var(--colors-white)' } }],
 })
 
 // TreeItemRenameInput is used for renaming the tree item.
 const TreeItemRenameInput = styled('input', {
-  all: 'unset',
-  width: '100%',
-  fontWeight: 'inherit',
-  height: '$5',
-  outline: 'none',
-  border: 'none',
-  borderRadius: '$1',
-  padding: '$1_5 0 $1_5 $1',
-  fontSize: '$sm',
-  backgroundColor: '$white',
-  color: 'black',
-  boxSizing: 'border-box',
+  base: {
+    all: 'unset',
+    width: '100%',
+    fontWeight: 'inherit',
+    height: '20px',
+    outline: 'none',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '6px 0 6px 4px',
+    fontSize: '12px',
+    backgroundColor: 'var(--colors-white)',
+    color: 'black',
+    boxSizing: 'border-box',
+  },
 })
 
 /**
@@ -104,59 +90,33 @@ const TreeItemRenameInput = styled('input', {
  * <TreeItemRoot />
  */
 export const TreeItemRoot = styled('div', {
-  position: 'relative',
-  borderRadius: '0',
-  color: '$gray11',
-  fontWeight: 300,
-  '&:hover': {
-    backgroundColor: '$grayA2',
-  },
-  '&:focus-visible': {
-    outline: 'none',
-  },
-  ['&[data-selected="true"]']: {
-    // backgroundColor: "$blue10",
-  },
-  [`&[data-drop-target="true"] > ${TreeItemContentRoot}`]: {
-    color: '$gray12',
-    backgroundColor: '$grayA4',
-    borderRadius: '$2',
+  base: {
+    position: 'relative',
+    borderRadius: '0',
+    color: 'var(--colors-gray11)',
+    fontWeight: 300,
+    '&:hover': { backgroundColor: 'var(--colors-grayA2)' },
+    '&:focus-visible': { outline: 'none' },
+    '&[data-drop-target="true"] > [data-part="content"]': {
+      color: 'var(--colors-gray12)',
+      backgroundColor: 'var(--colors-grayA4)',
+      borderRadius: '4px',
+    },
   },
   variants: {
-    isHovered: {
-      true: {
-        backgroundColor: '$grayA2',
-      },
-    },
+    isHovered: { true: { backgroundColor: 'var(--colors-grayA2)' } },
     isSelected: {
       true: {
-        color: '$white',
-        borderRadius: '$2',
+        color: 'var(--colors-white)',
+        borderRadius: '4px',
         boxShadow: '0 0 0 1px var(--colors-blueA11)',
         overflow: 'hidden',
-        [`& > ${TreeGroup}`]: {
-          backgroundColor: '$blue3',
-        },
+        '& > [data-tree-group]': { backgroundColor: 'var(--colors-blue3)' },
       },
     },
-    noTopRadius: {
-      true: {
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-      },
-    },
-    noBottomRadius: {
-      true: {
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-      },
-    },
-    disabled: {
-      true: {
-        opacity: 0.5,
-        pointerEvents: 'none',
-      },
-    },
+    noTopRadius: { true: { borderTopLeftRadius: 0, borderTopRightRadius: 0 } },
+    noBottomRadius: { true: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } },
+    disabled: { true: { opacity: 0.5, pointerEvents: 'none' } },
   },
 })
 
@@ -258,6 +218,7 @@ export function TreeItemContent(props: TreeItemContentProps) {
 
   return (
     <TreeItemContentRoot
+      data-part="content"
       style={{ paddingLeft: `${(isExpandable ? 0 : 16) + 6 + level * 6}px` }}
       onContextMenu={handleContextMenu}
       onMouseEnter={props.handleMouseEnter}

@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useState } from 'react'
-import { overrideStyle } from './/override_style'
+import { injectColorPickerStyles } from './colorPickerOverrides'
 import { ColorPickerRoot, type ColorPickerRootProps } from './ColorPickerPopoverContent'
 import { ColorPickerTrigger } from './ColorPickerTrigger'
 import { Color, generatePreviewColor, type ColorSpace } from './helper'
@@ -41,14 +41,14 @@ const ColorPicker = forwardRef<HTMLButtonElement, ColorPickerProps>(function Col
 
   const [_, setPreviewColor] = useState(generatePreviewColor(mode, value, originalColorSpace, displayColorSpace))
 
+  useEffect(() => {
+    injectColorPickerStyles()
+  }, [])
+
   const handlePreviewChange = (nextColor: any) => {
     const colorStr = generatePreviewColor(mode, nextColor, originalColorSpace, displayColorSpace)
     setPreviewColor(colorStr)
   }
-
-  useEffect(() => {
-    overrideStyle()
-  }, [])
 
   return (
     <Popover

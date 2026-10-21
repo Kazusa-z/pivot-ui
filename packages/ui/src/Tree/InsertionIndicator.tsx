@@ -1,38 +1,41 @@
 import React from 'react'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { useDrop } from '../hooks/useDrop'
 
 const IndicatorRoot = styled('div', {
-  display: 'flex',
-  position: 'absolute',
-  width: 'calc(100% - $sizes$8)',
-  height: '$1',
-  alignItems: 'center',
-  marginLeft: '$3',
-  marginTop: '-$0_5',
-  outline: 'none',
-  flexDirection: 'row-reverse',
+  base: {
+    display: 'flex',
+    position: 'absolute',
+    width: 'calc(100% - 32px)',
+    height: '4px',
+    alignItems: 'center',
+    marginLeft: '12px',
+    marginTop: '-2px',
+    outline: 'none',
+    flexDirection: 'row-reverse',
+  },
 })
 
 const StyledIndicator = styled('div', {
-  position: 'relative',
-  height: 1,
-  outline: 'none',
-  pointerEvents: 'none',
-  flexDirection: 'row-reverse',
-  // backgroundColor: "#fff",
-  [`&[data-drop-target="true"]`]: {
-    backgroundColor: '#fff',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      top: -4,
-      left: -8,
-      width: 6,
-      height: 6,
-      borderRadius: '$round',
-      border: '1px solid white',
-      zIndex: 1,
+  base: {
+    position: 'relative',
+    height: '1px',
+    outline: 'none',
+    pointerEvents: 'none',
+    flexDirection: 'row-reverse',
+    '&[data-drop-target="true"]': {
+      backgroundColor: '#fff',
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        top: -4,
+        left: -8,
+        width: 6,
+        height: 6,
+        borderRadius: '9999px',
+        border: '1px solid white',
+        zIndex: 1,
+      },
     },
   },
 })
