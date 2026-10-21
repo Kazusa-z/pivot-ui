@@ -42,6 +42,7 @@ type PrimitiveProgressProps = ComponentProps<typeof ProgressPrimitive.Root>
 
 export type ProgressProps = PrimitiveProgressProps & {
   size?: 'sm' | 'md' | 'lg'
+  // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
   css?: any
 }
 

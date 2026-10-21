@@ -71,6 +71,7 @@ const StyledFlex = styled('div', {
 type StyledFlexProps = ComponentProps<typeof StyledFlex>
 
 // TODO: narrow this to Panda's SystemStyleObject once all Flex css props are migrated.
+// TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
 export type FlexProps = PropsWithChildren<Omit<StyledFlexProps, 'css'> & { css?: any }>
 
 export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(function Flex(props: FlexProps, forwardedRef) {

@@ -316,6 +316,7 @@ export interface InputProps extends Omit<React.ComponentPropsWithoutRef<'input'>
   overrideEndSlotStyle?: boolean
   rootRef?: any
   disabled?: boolean
+  // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
   css?: any
   size?: 'xs' | 'sm' | 'md' | 'lg'
   variant?: 'outline' | 'soft' | 'subtle'

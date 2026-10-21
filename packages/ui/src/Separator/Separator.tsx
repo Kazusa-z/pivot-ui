@@ -73,6 +73,7 @@ type PrimitiveSeparatorProps = ComponentProps<typeof PrimitiveSeparator.Root>
 
 export interface SeparatorProps extends PrimitiveSeparatorProps {
   text?: string
+  // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
   css?: any
   orientation?: 'horizontal' | 'vertical'
   raw?: boolean

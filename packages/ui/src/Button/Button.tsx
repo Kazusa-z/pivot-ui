@@ -42,6 +42,10 @@ const StyledButton = styled('button', {
         fontWeight: 500,
         borderRadius: '4px',
         padding: '0 6px',
+        '& .button-spin': {
+          height: '8px',
+          width: '8px',
+        },
       },
       sm: {
         height: '24px',
@@ -50,6 +54,10 @@ const StyledButton = styled('button', {
         fontWeight: 500,
         borderRadius: '4px',
         padding: '0 8px',
+        '& .button-spin': {
+          height: '14px',
+          width: '14px',
+        },
       },
       md: {
         height: '32px',
@@ -58,6 +66,10 @@ const StyledButton = styled('button', {
         fontSize: '14px',
         lineHeight: '20px',
         fontWeight: 500,
+        '& .button-spin': {
+          height: '16px',
+          width: '16px',
+        },
       },
       lg: {
         height: '36px',
@@ -66,6 +78,10 @@ const StyledButton = styled('button', {
         fontWeight: 500,
         borderRadius: '8px',
         padding: '0 16px',
+        '& .button-spin': {
+          height: '18px',
+          width: '18px',
+        },
       },
     },
     variant: {
@@ -453,6 +469,7 @@ type StyledButtonProps = ComponentProps<typeof StyledButton>
 
 export type ButtonProps = PropsWithChildren<
   Omit<StyledButtonProps, 'css'> & {
+    // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
     css?: any
     startSlot?: ReactNode
     endSlot?: ReactNode
@@ -470,10 +487,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props,
   })
 
   const resolvedSize = size ?? 'sm'
-  const spinSize =
-    resolvedSize === 'xs' ? '8px' : resolvedSize === 'sm' ? '14px' : resolvedSize === 'md' ? '16px' : '18px'
-  const spin = <Spin className="button-spin" color="inherit" size="xs" style={{ height: spinSize, width: spinSize }} />
+  const spin = <Spin className="button-spin" color="inherit" size="xs" />
   // Slot and the Panda button have different prop shapes; keep the public behavior unchanged.
+  // TODO(TD-08): replace this cast with a typed polymorphic wrapper.
   const Comp = (asChild ? Slot : StyledButton) as any
   const leadingSlot = startSlot ? (loading ? spin : startSlot) : !endSlot && loading ? spin : null
   const trailingSlot = endSlot ? (loading ? spin : endSlot) : null

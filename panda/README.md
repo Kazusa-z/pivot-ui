@@ -1,6 +1,6 @@
 # Panda CSS Infrastructure
 
-This folder holds the shared Panda CSS setup used by both packages during the migration.
+This folder holds the shared Panda CSS setup used by both packages during the migration. See [MIGRATION.md](./MIGRATION.md) for batch status, temporary compromises and resolution criteria.
 
 ## Current strategy
 

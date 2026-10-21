@@ -245,6 +245,7 @@ export type BadgeProps = PropsWithChildren<
   Omit<StyledBadgeProps, 'dot' | 'css'> & {
     closable?: boolean
     onClose?: (e: any) => void
+    // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
     css?: any
   }
 >
