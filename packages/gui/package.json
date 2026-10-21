@@ -9,10 +9,15 @@
   "types": "src/index.ts",
   "scripts": {
     "dev": "storybook dev -p 6006",
+    "predev": "panda codegen",
     "storybook": "storybook dev -p 6006",
+    "prestorybook": "panda codegen",
     "build-storybook": "storybook build",
+    "prebuild-storybook": "panda codegen",
+    "panda": "panda codegen",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.stories.json",
-    "clean": "rimraf es lib dist types .cache storybook-static node_modules/.cache node_modules/.vite node_modules/.vite-temp"
+    "pretypecheck": "panda codegen",
+    "clean": "rimraf es lib dist types .cache storybook-static styled-system node_modules/.cache node_modules/.vite node_modules/.vite-temp"
   },
   "sideEffects": false,
   "keywords": [
@@ -27,6 +32,7 @@
     "name": "Mrkou47"
   },
   "devDependencies": {
+    "@pandacss/dev": "2.2.0",
     "@storybook/addon-docs": "^10.6.3",
     "@storybook/addon-links": "^10.6.3",
     "@storybook/react": "^10.6.3",

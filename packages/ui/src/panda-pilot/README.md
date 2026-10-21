@@ -1,24 +1,32 @@
 # Panda CSS Phase 0 Pilot
 
-This folder contains the first isolated migration pilot. Nothing here is exported from `@pivot-ui/editor` yet.
+This folder contains the Phase 0 migration pilots. Nothing here is exported from `@pivot-ui/editor` yet.
 
 ## Scope
 
 - `PandaButton`: Panda CSS `styled` + variants.
-- Compared side by side with the current Stitches `Button` in Storybook.
-- Covers `solid / outline / soft / subtle / inverted`, `xs / sm / md / lg`, `disabled`, `round`, and `fullWidth`.
-- Uses the existing Stitches CSS variables (`--colors-*`) so this pilot tests the Panda API/cascade without migrating the theme yet.
+- `PandaDialog`: Radix Dialog + Panda CSS, including overlay/content/close button and animations.
+- Compared side by side with the current Stitches implementations in Storybook.
+
+Button covers `solid / outline / soft / subtle / inverted`, `xs / sm / md / lg`, `disabled`, `round`, and `fullWidth`. Dialog has been checked with identical content against the Stitches Dialog. FormItemColor has its own pilot in the GUI package.
 
 ## Not covered yet
 
 - `loading` / `Spin` composition
 - `css` prop compatibility
-- theme/light-dark migration
-- Dialog / FormItemColor
-- the other 290+ styled components
+- theme/light-dark token migration
+- the remaining 290+ styled components
 
 ## Verification
 
-The pilot story was checked with computed-style comparison against the Stitches Button for the covered variants, sizes, and disabled/round states. No computed-style differences were found for the compared properties.
+The pilot stories were checked with computed-style comparison against the Stitches counterparts:
 
-Next phase: migrate the design-system tokens/theme to Panda, then port Dialog and FormItemColor before touching production exports.
+- Button: 11 pairs, 0 computed-style differences.
+- Dialog: identical content, 0 computed-style differences.
+- FormItemColor: color badge and controls matched (see the GUI pilot).
+
+## Temporary reset bridge
+
+Stitches' reset is unlayered while Panda utilities are emitted in CSS layers. This means the Stitches `div` reset can win over Panda utility classes for properties like `padding` and `font-size`. The pilot contains a small unlayered bridge class in `panda.css` so the comparison is meaningful; this disappears once the reset is migrated to Panda.
+
+Next phase: migrate the design-system tokens/theme and reset to Panda, then promote the pilots into the real components.
