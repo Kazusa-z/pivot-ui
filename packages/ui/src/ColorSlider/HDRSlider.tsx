@@ -6,84 +6,56 @@ import { type Color, type HDRColor } from '../ColorPicker/helper'
 
 import { Slider } from '../Slider'
 import { Flex } from '../Flex'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { InputNumber } from '../InputNumber'
 import { Text } from '../Typography'
 
 const StyledHDRSliderRoot = styled('div', {
-  display: 'grid',
-  gridTemplateColumns: '48px 1fr',
-  alignItems: 'center',
-  gap: '$1_5',
-  flexWrap: 'nowrap',
+  base: {
+    display: 'grid',
+    gridTemplateColumns: '48px 1fr',
+    alignItems: 'center',
+    gap: '6px',
+    flexWrap: 'nowrap',
+  },
 })
 
 const StyledHDRPreviewRoot = styled('div', {
-  display: 'grid',
-  borderRadius: '$2',
-  gridTemplateColumns: 'repeat(5, 1fr)',
-  overflow: 'hidden',
-  height: '$6',
-  backgroundColor: '$grayA3',
+  base: {
+    display: 'grid',
+    borderRadius: '4px',
+    gridTemplateColumns: 'repeat(5, 1fr)',
+    overflow: 'hidden',
+    height: '24px',
+    backgroundColor: 'var(--colors-grayA3)',
+  },
 })
 
 const HDRPreviewItem = styled(Flex, {
-  position: 'relative',
-  height: '100%',
-  fontSize: '10px',
-  lineHeight: 1,
-  cursor: 'pointer',
-  userSelect: 'none',
-  '-webkit-user-select': 'none',
-  '-moz-user-select': 'none',
-  '-ms-user-select': 'none',
-
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    inset: 0,
-    backgroundColor: 'transparent',
-  },
-  '& > span': {
-    color: '$grayA12',
-    mixBlendMode: 'color-dodge',
+  base: {
+    position: 'relative',
+    height: '100%',
+    fontSize: '10px',
+    lineHeight: 1,
+    cursor: 'pointer',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    '&::before': { content: '""', position: 'absolute', inset: 0, backgroundColor: 'transparent' },
+    '& > span': { color: 'var(--colors-grayA12)', mixBlendMode: 'color-dodge' },
   },
   variants: {
     level: {
-      '-2': {
-        '&::before': {
-          backgroundColor: 'rgba(0, 0, 0, 0.2)',
-        },
-      },
-      '-1': {
-        '&::before': {
-          backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        },
-      },
-      '0': {
-        '&::before': {
-          backgroundColor: 'transparent',
-        },
-        border: '2px solid #FFFFFF',
-      },
-      '+1': {
-        '&::before': {
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
-        },
-      },
-      '+2': {
-        '&::before': {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        },
-      },
+      '-2': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.2)' } },
+      '-1': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.1)' } },
+      '0': { '&::before': { backgroundColor: 'transparent' }, border: '2px solid #FFFFFF' },
+      '+1': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.4)' } },
+      '+2': { '&::before': { backgroundColor: 'rgba(0, 0, 0, 0.5)' } },
     },
   },
 })
 
 const IconIntensity = styled(IconBrightness, {
-  color: '$gray10',
-  height: '$4',
-  width: '$4',
+  base: { color: 'var(--colors-gray10)', height: '16px', width: '16px' },
 })
 
 interface HDRSliderProps {
@@ -154,12 +126,12 @@ export function HDRSlider(props: HDRSliderProps) {
   }, [colorstr])
 
   const previewItems = [
-    { level: -2, text: '-2', bgColor: darkenColor[0], change: -2 },
-    { level: -1, text: '-1', bgColor: darkenColor[1], change: -1 },
-    { level: 0, text: '', bgColor: colorstr, change: 0 },
-    { level: +1, text: '+1', bgColor: lightenColor[0], change: 1 },
-    { level: +2, text: '+2', bgColor: lightenColor[1], change: 2 },
-  ]
+    { level: '-2', text: '-2', bgColor: darkenColor[0], change: -2 },
+    { level: '-1', text: '-1', bgColor: darkenColor[1], change: -1 },
+    { level: '0', text: '', bgColor: colorstr, change: 0 },
+    { level: '+1', text: '+1', bgColor: lightenColor[0], change: 1 },
+    { level: '+2', text: '+2', bgColor: lightenColor[1], change: 2 },
+  ] as const
 
   return (
     <Flex gap="sm" direction="column" css={{ marginTop: '12px' }}>

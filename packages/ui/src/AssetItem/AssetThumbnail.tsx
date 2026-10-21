@@ -1,87 +1,70 @@
 import React, { forwardRef, Fragment } from 'react'
 import { IconCaretRightFilled, IconCaretLeftFilled, IconCloudDownload, IconCloudX } from '@tabler/icons-react'
 
-import { styled, type CSS } from '../design-system'
+import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 import { ActionButton } from '../ActionButton'
 import { mergeRefs } from '../utils/merge-refs'
 import { Flex } from '../Flex'
 import IconPendingFile from '../Icons/Files/Pending'
 
 const ExpandButton = styled(ActionButton, {
-  position: 'absolute',
-  top: '50%',
-  right: '0',
-  transform: 'translateY(-50%)',
-  opacity: 0,
-  transition: 'opacity 0.16s ease-in-out',
-  color: '$gray12',
+  base: {
+    position: 'absolute',
+    top: '50%',
+    right: '0',
+    transform: 'translateY(-50%)',
+    opacity: 0,
+    transition: 'opacity 0.16s ease-in-out',
+    color: 'var(--colors-gray12)',
+  },
   variants: {
-    expanded: {
-      true: {
-        opacity: 1,
-      },
-    },
+    expanded: { true: { opacity: 1 } },
   },
 })
 
 const AssetThumbnailRoot = styled(Flex, {
-  position: 'relative',
-  width: '100%',
-  aspectRatio: '1/1',
-  borderRadius: '$3',
-  flexShrink: 0,
-  userSelect: 'none',
-  backgroundColor: 'transparent',
-  outline: '0px solid transparent',
-  transition: 'background-color 0.16s ease-in-out, outline 0.16s ease-in-out',
-  '&:hover': {
-    backgroundColor: '$grayA2',
+  base: {
+    position: 'relative',
+    width: '100%',
+    aspectRatio: '1/1',
+    borderRadius: '6px',
+    flexShrink: 0,
+    userSelect: 'none',
+    backgroundColor: 'transparent',
+    outline: '0px solid transparent',
+    transition: 'background-color 0.16s ease-in-out, outline 0.16s ease-in-out',
+    '&:hover': { backgroundColor: 'var(--colors-grayA2)' },
+    '& img': {
+      display: 'block',
+      objectFit: 'cover',
+      maxWidth: '70%',
+      maxHeight: '70%',
+      transform: 'scale(1)',
+      transition: 'transform 0.16s ease-in-out',
+    },
   },
   variants: {
     expandable: {
       true: {
-        '&:hover': {
-          [`${ExpandButton}`]: {
-            opacity: 1,
-          },
-        },
+        '&:hover [data-expand-button]': { opacity: 1 },
       },
     },
-    mini: {
-      true: {
-        width: '$7',
-        height: '$7',
-        borderRadius: '$2',
-      },
-    },
+    mini: { true: { width: '28px', height: '28px', borderRadius: '4px' } },
     selected: {
       true: {
-        backgroundColor: '$grayA3',
-        '&:hover': {
-          backgroundColor: '$grayA3',
-        },
+        backgroundColor: 'var(--colors-grayA3)',
+        '&:hover': { backgroundColor: 'var(--colors-grayA3)' },
       },
     },
     dropping: {
       true: {
-        backgroundColor: '$blueA4',
-        outline: '2px solid $colors$blue10',
-        '&:hover': {
-          backgroundColor: '$blueA4',
-        },
-        '& img': {
-          transform: 'scale(1.06)',
-        },
+        backgroundColor: 'var(--colors-blueA4)',
+        outline: '2px solid var(--colors-blue10)',
+        '&:hover': { backgroundColor: 'var(--colors-blueA4)' },
+        '& img': { transform: 'scale(1.06)' },
       },
     },
-  },
-  '& img': {
-    display: 'block',
-    objectFit: 'cover',
-    maxWidth: '70%',
-    maxHeight: '70%',
-    transform: 'scale(1)',
-    transition: 'transform 0.16s ease-in-out',
   },
 })
 
@@ -94,7 +77,7 @@ export interface AssetThumbnailProps {
   expanded?: boolean
   expandable?: boolean
   onToggleExpanded?: () => void
-  css?: CSS
+  css?: SystemStyleObject
 }
 
 export const AssetThumbnail = forwardRef<HTMLDivElement, AssetThumbnailProps>(
@@ -137,7 +120,7 @@ export const AssetThumbnail = forwardRef<HTMLDivElement, AssetThumbnailProps>(
         )}
         {(loadingStatus === undefined || (thumbnail && loadingStatus === 'success')) && <img src={thumbnail} />}
         {expandable && (
-          <ExpandButton expanded={expanded} onClick={handleToggleExpand} size="xs" variant="subtle">
+          <ExpandButton data-expand-button expanded={expanded} onClick={handleToggleExpand} size="xs" variant="subtle">
             {expanded ? (
               <IconCaretLeftFilled size="24px" strokeWidth={3} />
             ) : (

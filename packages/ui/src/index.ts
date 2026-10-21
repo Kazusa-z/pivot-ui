@@ -43,7 +43,11 @@ export * from './HoverCard'
 
 export * from './ThemeProvider'
 
-export * from './design-system'
+export { styled } from '../styled-system/jsx'
+export { css, cva, cx } from '../styled-system/css'
+export { token } from '../styled-system/tokens'
+export type { SystemStyleObject as CSS, RecipeVariantProps as VariantProps } from '../styled-system/types'
+export type StitchesComponent<T extends import('react').ElementType> = import('react').ComponentProps<T>
 
 export * from './hooks'
 export * from './utils'

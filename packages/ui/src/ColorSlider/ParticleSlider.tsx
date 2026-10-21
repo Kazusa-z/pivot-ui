@@ -6,12 +6,10 @@ import { blendParticleStops } from '../ColorPicker/helper'
 import { Range } from './Range'
 import { ThumbGroup } from './Thumb'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledParticleSliderRoot = styled('div', {
-  width: '100%',
-  position: 'relative',
-  marginBottom: '$2',
+  base: { width: '100%', position: 'relative', marginBottom: '8px' },
 })
 
 interface ParticleSliderProps {

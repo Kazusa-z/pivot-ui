@@ -2,95 +2,87 @@ import React from 'react'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import type { ScrollAreaViewportProps, ScrollAreaProps as PrimitiveScrollAreaProps } from '@radix-ui/react-scroll-area'
 
-import { CSS, styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 
 const ScrollAreaRoot = styled(ScrollAreaPrimitive.Root, {
-  position: 'relative',
-  width: '100%',
-  overflow: 'hidden',
-  maxHeight: 'inherit',
+  base: {
+    position: 'relative',
+    width: '100%',
+    overflow: 'hidden',
+    maxHeight: 'inherit',
+  },
   variants: {
-    fullHeight: {
-      true: { height: '100%' },
-    },
+    fullHeight: { true: { height: '100%' } },
   },
-  defaultVariants: {
-    fullHeight: true,
-  },
+  defaultVariants: { fullHeight: true },
 })
 
 const ScrollAreaViewport = styled(ScrollAreaPrimitive.Viewport, {
-  width: '100%',
-  height: '100%',
-  maxHeight: 'inherit',
-  borderRadius: 'inherit',
-  // https://github.com/radix-ui/primitives/issues/926
-  '& > div[style]': {
-    display: 'block !important',
+  base: {
+    width: '100%',
+    height: '100%',
+    maxHeight: 'inherit',
+    borderRadius: 'inherit',
+    '& > div[style]': { display: 'block !important' },
   },
   variants: {
-    asContainer: {
-      true: {
-        padding: '$1',
-      },
-    },
+    asContainer: { true: { padding: '4px' } },
   },
 })
 
 const SCROLLBAR_SIZE = 4
 
 const ScrollAreaScrollbar = styled(ScrollAreaPrimitive.Scrollbar, {
-  display: 'flex',
-  userSelect: 'none',
-  touchAction: 'none',
-  margin: '$0_5',
-  background: '$scrollbarTrack',
-  '&[data-orientation="vertical"]': { width: SCROLLBAR_SIZE },
-  '&[data-orientation="horizontal"]': {
-    flexDirection: 'column',
-    height: SCROLLBAR_SIZE,
+  base: {
+    display: 'flex',
+    userSelect: 'none',
+    touchAction: 'none',
+    margin: '2px',
+    background: 'var(--colors-scrollbarTrack)',
+    '&[data-orientation="vertical"]': { width: SCROLLBAR_SIZE },
+    '&[data-orientation="horizontal"]': { flexDirection: 'column', height: SCROLLBAR_SIZE },
   },
   variants: {
     subtle: {
       true: {
-        padding: '$0_5 0 $0_5 $0_5',
+        padding: '2px 0 2px 2px',
         margin: 0,
         background: 'transparent',
-        '&:hover': { background: '$scrollbarTrackHover' },
+        '&:hover': { background: 'var(--colors-scrollbarTrackHover)' },
       },
     },
   },
-  defaultVariants: {
-    subtle: true,
-  },
+  defaultVariants: { subtle: true },
 })
 
 const ScrollAreaThumb = styled(ScrollAreaPrimitive.Thumb, {
-  flex: 1,
-  background: '$scrollbarThumb',
-  borderRadius: SCROLLBAR_SIZE,
-  // increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
-  position: 'relative',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '100%',
-    height: '100%',
-    minWidth: 8,
-    minHeight: 8,
+  base: {
+    flex: 1,
+    background: 'var(--colors-scrollbarThumb)',
+    borderRadius: SCROLLBAR_SIZE,
+    position: 'relative',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '100%',
+      height: '100%',
+      minWidth: 8,
+      minHeight: 8,
+    },
   },
 })
 
 const StyledCorner = styled(ScrollAreaPrimitive.Corner, {
-  backgroundColor: '$scrollbarTrackHover',
+  base: { backgroundColor: 'var(--colors-scrollbarTrackHover)' },
 })
 
 interface ScrollAreaProps extends PrimitiveScrollAreaProps {
   children: React.ReactNode
-  css?: CSS
+  css?: SystemStyleObject
   fullHeight?: boolean
   asContainer?: boolean
   subtle?: boolean

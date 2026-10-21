@@ -1,4 +1,4 @@
-import { resetCSS } from '../packages/ui/src/design-system/reset.css'
+import { resetCSS } from './reset'
 import {
   darkColors,
   fontSizes,

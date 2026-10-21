@@ -2,107 +2,78 @@ import { forwardRef, useCallback, useRef } from 'react'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledTrack = styled(SliderPrimitive.Track, {
-  display: 'flex',
-  position: 'relative',
-  flexGrow: 1,
-  borderRadius: '$2',
-  overflow: 'hidden',
-  '&[data-orientation="horizontal"]': {
-    height: '100%',
-  },
-
-  '&[data-orientation="vertical"]': {
-    width: '100%',
-  },
-
-  '&[data-disabled]': {
-    backgroundColor: '$gray2',
+  base: {
+    display: 'flex',
+    position: 'relative',
+    flexGrow: 1,
+    borderRadius: '4px',
+    overflow: 'hidden',
+    '&[data-orientation="horizontal"]': { height: '100%' },
+    '&[data-orientation="vertical"]': { width: '100%' },
+    '&[data-disabled]': { backgroundColor: 'var(--colors-gray2)' },
   },
 })
 
 const StyledThumb = styled(SliderPrimitive.Thumb, {
-  all: 'unset',
-  position: 'relative',
-  display: 'flex',
-  width: '1px',
-  height: '$sm',
-  backgroundColor: '$grayA3',
-  cursor: 'ew-resize',
-  transition: 'background-color .2s ease',
-  // expand the hit area
-  '&::after': {
-    content: '',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    width: '$2',
-    left: '-$1',
-  },
-  '&:focus': {
-    backgroundColor: '$grayA5',
-  },
-  '&:hover': {
-    backgroundColor: '$grayA5',
-  },
-  '&[data-orientation="vertical"]': {
-    width: '$6',
-    height: '$1_5',
-  },
-  '&[data-disabled"]': {
-    backgroundColor: '$grayA5',
+  base: {
+    all: 'unset',
+    position: 'relative',
+    display: 'flex',
+    width: '1px',
+    height: '24px',
+    backgroundColor: 'var(--colors-grayA3)',
+    cursor: 'ew-resize',
+    transition: 'background-color .2s ease',
+    '&::after': {
+      content: '',
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      width: '8px',
+      left: '-4px',
+    },
+    '&:focus': { backgroundColor: 'var(--colors-grayA5)' },
+    '&:hover': { backgroundColor: 'var(--colors-grayA5)' },
+    '&[data-orientation="vertical"]': { width: '24px', height: '6px' },
+    '&[data-disabled]': { backgroundColor: 'var(--colors-grayA5)' },
   },
 })
 
 const StyledSlider = styled(SliderPrimitive.Root, {
-  display: 'flex',
-  position: 'relative',
-  width: '100%',
-  backgroundColor: '$grayA3',
-  borderRadius: '$2',
-  '&[data-orientation="horizontal"]': {
-    height: '$sm',
-  },
-  '&[data-orientation="vertical"]': {
-    flexDirection: 'column',
-    width: '$sm',
+  base: {
+    display: 'flex',
+    position: 'relative',
+    width: '100%',
+    backgroundColor: 'var(--colors-grayA3)',
+    borderRadius: '4px',
+    '&[data-orientation="horizontal"]': { height: '24px' },
+    '&[data-orientation="vertical"]': { flexDirection: 'column', width: '24px' },
   },
 })
 
 const StyledColoredRange = styled('div', {
-  height: '100%',
-  display: 'flex',
-  fontSize: '10px',
-  alignItems: 'center',
-  justifyContent: 'center',
-  overflow: 'hidden',
-  color: '$grayA11',
-  cursor: 'default',
-  '&:hover': {
-    color: '$grayA12',
+  base: {
+    height: '100%',
+    display: 'flex',
+    fontSize: '10px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    color: 'var(--colors-grayA11)',
+    cursor: 'default',
+    '&:hover': { color: 'var(--colors-grayA12)' },
   },
   variants: {
     level: {
-      0: {
-        backgroundColor: '$blueA2',
-      },
-      1: {
-        backgroundColor: '$blueA3',
-      },
-      2: {
-        backgroundColor: '$blueA4',
-      },
-      3: {
-        backgroundColor: '$blueA5',
-      },
-      4: {
-        backgroundColor: '$blueA6',
-      },
-      5: {
-        backgroundColor: '$blueA7',
-      },
+      0: { backgroundColor: 'var(--colors-blueA2)' },
+      1: { backgroundColor: 'var(--colors-blueA3)' },
+      2: { backgroundColor: 'var(--colors-blueA4)' },
+      3: { backgroundColor: 'var(--colors-blueA5)' },
+      4: { backgroundColor: 'var(--colors-blueA6)' },
+      5: { backgroundColor: 'var(--colors-blueA7)' },
     },
   },
 })

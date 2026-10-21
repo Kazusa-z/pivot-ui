@@ -1,20 +1,13 @@
 import { SVGProps, forwardRef } from 'react'
-import { styled, keyframes } from '../../design-system'
-
-const Breathing = keyframes({
-  '0%': {
-    fill: 'rgb(221 234 248 / 8%)',
-  },
-  '50%': {
-    fill: 'rgb(221 234 248 / 15%)',
-  },
-  '100%': {
-    fill: 'rgb(221 234 248 / 8%)',
-  },
-})
+import { styled } from '../../../styled-system/jsx'
 
 const BreathingPath = styled('path', {
-  animation: `${Breathing} 2.6s ease infinite`,
+  base: {
+    animationName: 'breathing',
+    animationDuration: '2.6s',
+    animationTimingFunction: 'ease',
+    animationIterationCount: 'infinite',
+  },
 })
 
 const IconPendingFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(

@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 import { Flex } from './'
 
 const Item = styled(Flex, {
-  boxShadow: 'inset 0 0 0 1px $colors$border',
-  backgroundColor: '$blueA3',
-  borderRadius: '$3',
-  width: '48px',
-  height: '48px',
-  fontFamily: '$mono',
-  color: '$gray11',
-  '&:nth-child(odd)': {
-    height: '64px',
+  base: {
+    boxShadow: 'inset 0 0 0 1px var(--colors-border)',
+    backgroundColor: 'var(--colors-blueA3)',
+    borderRadius: '6px',
+    width: '48px',
+    height: '48px',
+    fontFamily: 'var(--fonts-mono)',
+    color: 'var(--colors-gray11)',
+    '&:nth-child(odd)': { height: '64px' },
   },
 })
 

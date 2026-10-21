@@ -1,189 +1,147 @@
 import React, { useState } from 'react'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 
-import { styled, type StitchesComponent } from '../design-system'
+import { styled } from '../../styled-system/jsx'
+import type { ComponentProps } from 'react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 // import { Tooltip } from "../Tooltip";
 
 const StyledTrack = styled(SliderPrimitive.Track, {
-  position: 'relative',
-  display: 'flex',
-  justifyContent: 'space-between',
-  flexGrow: 1,
-  borderRadius: '$2',
-  overflow: 'hidden',
-  color: '$text',
-  '&[data-orientation="horizontal"]': {
-    height: '100%',
-  },
-  '&[data-orientation="vertical"]': {
-    width: '100%',
-  },
-  '&[data-disabled]': {
-    backgroundColor: '$softBg',
+  base: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexGrow: 1,
+    borderRadius: '4px',
+    overflow: 'hidden',
+    color: 'var(--colors-text)',
+    '&[data-orientation="horizontal"]': { height: '100%' },
+    '&[data-orientation="vertical"]': { width: '100%' },
+    '&[data-disabled]': { backgroundColor: 'var(--colors-softBg)' },
   },
 })
 
 const StyledRange = styled(SliderPrimitive.Range, {
-  position: 'absolute',
-  backgroundColor: '$softBgHover',
-  height: '100%',
-  borderRadius: 'inherit',
-  transition: 'background-color .2s ease',
-  '&[data-orientation="vertical"]': {
-    width: '100%',
-  },
-  '&[data-disabled]': {
-    backgroundColor: '$surfaceSubtle',
-  },
-  '&::after': {
-    content: '""',
-    display: 'block',
+  base: {
     position: 'absolute',
-    right: '$1',
-    height: '60%',
-    width: '$0_5',
-    borderRadius: '$1',
-    backgroundColor: '$gray9',
-    top: '50%',
-    transition: 'background-color .2s ease, transform .2s ease',
-    transform: 'translateY(-50%) scale(1)',
+    backgroundColor: 'var(--colors-softBgHover)',
+    height: '100%',
+    borderRadius: 'inherit',
+    transition: 'background-color .2s ease',
+    '&[data-orientation="vertical"]': { width: '100%' },
+    '&[data-disabled]': { backgroundColor: 'var(--colors-surfaceSubtle)' },
+    '&::after': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      right: '4px',
+      height: '60%',
+      width: '2px',
+      borderRadius: '4px',
+      backgroundColor: 'var(--colors-gray9)',
+      top: '50%',
+      transition: 'background-color .2s ease, transform .2s ease',
+      transform: 'translateY(-50%) scale(1)',
+    },
   },
 })
 
 const StyledThumb = styled(SliderPrimitive.Thumb, {
-  all: 'unset',
-  position: 'relative',
-  display: 'block',
-  width: '$0_5',
-  height: '100%',
-  backgroundColor: '$borderStrong',
-  transition: 'opacity .2s ease, background-color .2s ease, width .2s ease',
-  '&[data-orientation="vertical"]': {
-    width: '$6',
-    height: '$0_5',
-  },
-  '&[data-disabled]': {
-    backgroundColor: '$border',
+  base: {
+    all: 'unset',
+    position: 'relative',
+    display: 'block',
+    width: '2px',
+    height: '100%',
+    backgroundColor: 'var(--colors-borderStrong)',
+    transition: 'opacity .2s ease, background-color .2s ease, width .2s ease',
+    '&[data-orientation="vertical"]': { width: '24px', height: '2px' },
+    '&[data-disabled]': { backgroundColor: 'var(--colors-border)' },
   },
 })
 
 const StyledSlider = styled(SliderPrimitive.Root, {
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  userSelect: 'none',
-  touchAction: 'none',
-  width: '100%',
-  '&[data-orientation="horizontal"]': {
-    height: '$sm',
-    backgroundColor: '$softBg',
-    borderRadius: '$2',
-  },
-  '&[data-orientation="vertical"]': {
-    flexDirection: 'column',
-    width: '$sm',
-  },
-  cursor: 'ew-resize',
-  '&:hover': {
-    [`& ${StyledRange}`]: {
-      backgroundColor: '$selectionBgHover',
+  base: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    userSelect: 'none',
+    touchAction: 'none',
+    width: '100%',
+    '&[data-orientation="horizontal"]': {
+      height: '24px',
+      backgroundColor: 'var(--colors-softBg)',
+      borderRadius: '4px',
     },
-    [`& ${StyledRange}::after`]: {
-      backgroundColor: '$white',
+    '&[data-orientation="vertical"]': { flexDirection: 'column', width: '24px' },
+    cursor: 'ew-resize',
+    '&:hover [data-part="range"]': { backgroundColor: 'var(--colors-selectionBgHover)' },
+    '&:hover [data-part="range"]::after': {
+      backgroundColor: 'var(--colors-white)',
       transform: 'translateY(-50%) scale(1.02)',
     },
-    [`& ${StyledThumb}`]: {
-      width: '3px',
-      backgroundColor: '$selectionText',
-    },
-  },
-  '&:active': {
-    [`& ${StyledRange}::after`]: {
-      backgroundColor: '$white',
+    '&:hover [data-part="thumb"]': { width: '3px', backgroundColor: 'var(--colors-selectionText)' },
+    '&:active [data-part="range"]::after': {
+      backgroundColor: 'var(--colors-white)',
       transform: 'translateY(-50%) scale(1.16)',
     },
-  },
-  '&[data-disabled]': {
-    pointerEvents: 'none',
-    color: '$textMuted',
+    '&[data-disabled]': { pointerEvents: 'none', color: 'var(--colors-textMuted)' },
   },
   variants: {
     compact: {
       true: {
-        [`& ${StyledTrack}`]: {
-          height: '3px',
-          borderRadius: '$2',
-        },
-        [`& ${StyledThumb}`]: {
+        '& [data-part="track"]': { height: '3px', borderRadius: '4px' },
+        '& [data-part="thumb"]': {
           width: '14px',
           height: '14px',
-          // backgroundColor: "$white",
-          borderRadius: '$round',
-          '&[data-disabled]': {
-            backgroundColor: '$textMuted',
-          },
+          borderRadius: '9999px',
+          '&[data-disabled]': { backgroundColor: 'var(--colors-textMuted)' },
         },
-        [`& ${StyledRange}`]: {
-          backgroundColor: '$selectionBg',
-          '&[data-disabled]': {
-            backgroundColor: '$focusRingMuted',
-          },
+        '& [data-part="range"]': {
+          backgroundColor: 'var(--colors-selectionBg)',
+          '&[data-disabled]': { backgroundColor: 'var(--colors-focusRingMuted)' },
         },
       },
     },
     size: {
       xs: {
-        '&[data-orientation="horizontal"]': {
-          height: '$xs',
-        },
-        [`& ${StyledTrack}`]: {
-          borderRadius: '$2',
-        },
+        '&[data-orientation="horizontal"]': { height: '20px' },
+        '& [data-part="track"]': { borderRadius: '4px' },
       },
     },
   },
 })
 
 const StyledSliderSlot = styled('div', {
-  position: 'absolute',
-  pointerEvents: 'none',
-  top: '50%',
-  fontSize: '9px',
-  fontFamily: '$mono',
-  color: '$textMuted',
+  base: {
+    position: 'absolute',
+    pointerEvents: 'none',
+    top: '50%',
+    fontSize: '9px',
+    fontFamily: 'var(--fonts-mono)',
+    color: 'var(--colors-textMuted)',
+  },
   variants: {
     position: {
-      start: {
-        left: '$1',
-        transform: 'translateY(-50%)',
-      },
-      center: {
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      },
-      end: {
-        right: '$1',
-        transform: 'translateY(-50%)',
-      },
+      start: { left: '4px', transform: 'translateY(-50%)' },
+      center: { left: '50%', transform: 'translate(-50%, -50%)' },
+      end: { right: '4px', transform: 'translateY(-50%)' },
     },
   },
-  defaultVariants: {
-    position: 'start',
-  },
+  defaultVariants: { position: 'start' },
 })
 
 const RulerContainer = styled('div', {
-  position: 'absolute',
-  inset: 0,
-  pointerEvents: 'none',
-  '& svg': {
+  base: {
     position: 'absolute',
     inset: 0,
-    width: '100%',
-    height: '100%',
     pointerEvents: 'none',
+    '& svg': { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' },
   },
+})
+
+const StyledLine = styled('line', {
+  base: { stroke: 'var(--colors-borderStrong)' },
 })
 
 interface RulerProps {
@@ -191,10 +149,6 @@ interface RulerProps {
   interval: number
   majorInterval?: number
 }
-
-const StyledLine = styled('line', {
-  stroke: '$borderStrong',
-})
 
 function Ruler({ length, interval, majorInterval }: RulerProps) {
   const ticks: number[] = []
@@ -222,7 +176,7 @@ function Ruler({ length, interval, majorInterval }: RulerProps) {
   )
 }
 
-export interface SliderProps extends StitchesComponent<typeof StyledSlider> {
+export interface SliderProps extends ComponentProps<typeof StyledSlider> {
   tooltip?: boolean
   /**
    * Whether to show the ruler, default is `false`
@@ -294,13 +248,13 @@ export function Slider(props: SliderProps) {
       disabled={disabled}
       {...rest}
       compact={compact}>
-      <StyledTrack className="slider-track">
-        <StyledRange className="slider-range" />
+      <StyledTrack data-part="track" className="slider-track">
+        <StyledRange data-part="range" className="slider-range" />
         {value![0] === min && <StyledSliderSlot position="start">MIN</StyledSliderSlot>}
         {value![value!.length - 1] === max && <StyledSliderSlot position="end">MAX</StyledSliderSlot>}
         {showRuler && <Ruler length={max} interval={1} majorInterval={Math.round(max / 10)} />}
         {value?.map((v, i) => (
-          <StyledThumb key={i} />
+          <StyledThumb data-part="thumb" key={i} />
         ))}
       </StyledTrack>
       {/* {tooltip ? (

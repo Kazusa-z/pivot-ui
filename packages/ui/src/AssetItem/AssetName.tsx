@@ -1,81 +1,77 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 export const StyledAssetNameRoot = styled('div', {
-  fontSize: '$sm',
-  whiteSpace: 'break-word',
-  minHeight: '$5',
-  flexShrink: 0,
-  overflowWrap: 'break-word',
-  textAlign: 'center',
-  maxWidth: '100%',
-  cursor: 'default',
-  userSelect: 'none',
-  backgroundColor: 'transparent',
-  borderRadius: '$2',
+  base: {
+    fontSize: '12px',
+    whiteSpace: 'break-word',
+    minHeight: '20px',
+    flexShrink: 0,
+    overflowWrap: 'break-word',
+    textAlign: 'center',
+    maxWidth: '100%',
+    cursor: 'default',
+    userSelect: 'none',
+    backgroundColor: 'transparent',
+    borderRadius: '4px',
+  },
 })
 
 const AssetNameDisplay = styled('span', {
-  display: 'block',
-  minHeight: '$5',
-  color: '$gray11',
-  padding: '0 $1_5',
+  base: {
+    display: 'block',
+    minHeight: '20px',
+    color: 'var(--colors-gray11)',
+    padding: '0 6px',
+  },
   variants: {
     selected: {
       true: {
-        height: '$5',
+        height: '20px',
         lineHeight: '19px',
-        borderRadius: '$2',
-        backgroundColor: '$blueA10',
-        color: '$white',
+        borderRadius: '4px',
+        backgroundColor: 'var(--colors-blueA10)',
+        color: 'var(--colors-white)',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
       },
     },
-    editing: {
-      true: {
-        padding: 0,
-        outline: '1px solid $blueA10',
-      },
-    },
+    editing: { true: { padding: 0, outline: '1px solid var(--colors-blueA10)' } },
   },
 })
 
 const AssetNameInput = styled('input', {
-  all: 'unset',
-  display: 'none',
-  backgroundColor: 'transparent',
-  fontSize: '$1',
-  color: '$grayA11',
-  lineHeight: '14px',
-  minHeight: '$5',
-  flexShrink: 0,
-  overflowWrap: 'break-word',
-  textAlign: 'center',
-  padding: '0 $1_5',
-  width: '100%',
-  maxWidth: '100%',
-  userSelect: 'none',
-  borderRadius: '$2',
-  '&:focus': {
-    boxShadow: '0 0 0 1px $colors$blueA10',
-    color: '$grayA12',
+  base: {
+    all: 'unset',
+    display: 'none',
+    backgroundColor: 'transparent',
+    fontSize: '12px',
+    color: 'var(--colors-grayA11)',
+    lineHeight: '14px',
+    minHeight: '20px',
+    flexShrink: 0,
+    overflowWrap: 'break-word',
+    textAlign: 'center',
+    padding: '0 6px',
+    width: '100%',
+    maxWidth: '100%',
+    userSelect: 'none',
+    borderRadius: '4px',
+    '&:focus': {
+      boxShadow: '0 0 0 1px var(--colors-blueA10)',
+      color: 'var(--colors-grayA12)',
+    },
   },
   variants: {
-    editing: {
-      true: {
-        display: 'block',
-        boxSizing: 'border-box',
-      },
-    },
+    editing: { true: { display: 'block', boxSizing: 'border-box' } },
     renaming: {
       true: {
         display: 'block',
         userSelect: 'none',
         pointerEvents: 'none',
-        backgroundColor: '$grayA3',
-        color: '$gray9',
+        backgroundColor: 'var(--colors-grayA3)',
+        color: 'var(--colors-gray9)',
         boxShadow: 'none',
       },
     },

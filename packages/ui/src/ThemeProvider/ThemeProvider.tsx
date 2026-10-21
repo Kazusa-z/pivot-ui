@@ -1,11 +1,9 @@
 import React, { createContext, useState, useEffect } from 'react'
 
-import { lightTheme, darkTheme } from '../design-system'
-
 const THEME_CACHE_KEY = 'pivot-ui-editor-theme'
 
 type Theme = string
-type MediaTheme = string
+type MediaTheme = 'light' | 'dark'
 
 type ColorModeListener = (c: string) => void
 
@@ -15,8 +13,8 @@ const isBrowser = () => typeof window !== 'undefined'
 const isNode = () => !isBrowser()
 
 export const defaultThemes = {
-  light: lightTheme.className,
-  dark: darkTheme.className,
+  light: 'light-theme',
+  dark: 'dark-theme',
   system: 'system',
 }
 
@@ -27,26 +25,20 @@ const getThemePreference = (): Theme => {
 
   try {
     const savedMode = window.localStorage.getItem(THEME_CACHE_KEY)
-    // If the user has explicitly chosen a theme, use it
     if (typeof savedMode === 'string') return savedMode
     return defaultTheme
   } catch (e) {
-    // When Chrome in incognito, localStorage cannot be accessed
     console.warn(e)
-    return null
+    return defaultTheme
   }
 }
 
 const getMediaTheme = (): MediaTheme => {
-  if (isNode()) return defaultTheme
-
-  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
-  if (darkQuery.matches) return 'dark'
-  return 'light'
+  if (isNode()) return 'dark'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 export function getDefaultTheme(): Theme {
-  // for SSR
   if (!isBrowser()) return 'dark'
 
   const html = document.documentElement
@@ -56,7 +48,8 @@ export function getDefaultTheme(): Theme {
     userThemePreference = getMediaTheme()
   }
 
-  html.classList.add(defaultThemes[userThemePreference])
+  const resolved = userThemePreference === 'system' ? getMediaTheme() : userThemePreference
+  html.classList.add(defaultThemes[resolved])
   return userThemePreference
 }
 
@@ -71,16 +64,18 @@ export function removeThemeChangeListener(cb: ColorModeListener) {
 const useTheme = () => {
   const [theme, _setTheme] = useState('')
 
-  const applyTheme = (next_theme: Theme) => {
+  const applyTheme = (nextTheme: Theme) => {
     const html = document.documentElement
-    html.classList.remove(defaultThemes[theme])
-    html.classList.add(defaultThemes[next_theme])
-    _setTheme(next_theme)
+    html.classList.remove(defaultThemes.light, defaultThemes.dark)
+
+    const resolved = nextTheme === 'system' ? getMediaTheme() : nextTheme
+    html.classList.add(defaultThemes[resolved])
+    _setTheme(nextTheme)
   }
 
-  const cacheTheme = (theme: Theme) => {
+  const cacheTheme = (nextTheme: Theme) => {
     try {
-      if (typeof theme === 'string') window.localStorage.setItem(THEME_CACHE_KEY, theme)
+      if (typeof nextTheme === 'string') window.localStorage.setItem(THEME_CACHE_KEY, nextTheme)
     } catch (e) {
       console.warn(e)
     }
@@ -108,21 +103,18 @@ const useTheme = () => {
     }
   }, [theme])
 
-  const setTheme = (theme: Theme) => {
-    applyTheme(theme)
-    cacheTheme(theme)
+  const setTheme = (nextTheme: Theme) => {
+    applyTheme(nextTheme)
+    cacheTheme(nextTheme)
 
-    if (theme && callbackList.size) {
+    if (nextTheme && callbackList.size) {
       callbackList.forEach((cb) => {
-        cb(theme)
+        cb(nextTheme)
       })
     }
   }
 
-  return {
-    theme,
-    setTheme,
-  }
+  return { theme, setTheme }
 }
 
 const ThemeContext = createContext<{

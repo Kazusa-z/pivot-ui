@@ -1,20 +1,23 @@
 import React, { Fragment } from 'react'
 import { IconSlash } from '@tabler/icons-react'
 
-import { styled, CSS } from '../design-system'
+import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 
 const StyledBreadcrumbs = styled('ol', {
-  display: 'flex',
-  alignItems: 'center',
-  margin: 0,
-  padding: 0,
-  fontSize: '$1',
-  color: '$text',
-  listStyle: 'none',
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    margin: 0,
+    padding: 0,
+    fontSize: '12px',
+    color: 'var(--colors-text)',
+    listStyle: 'none',
+  },
 })
 
 export interface BreadcrumbProps {
-  css?: CSS
+  css?: SystemStyleObject
   size?: 'sm' | 'md'
   items: { id: number | string; label: string }[]
   onNavigate?: (id: number | string) => void
@@ -47,58 +50,35 @@ function Breadcrumbs(props: BreadcrumbProps) {
 }
 
 const StyledBreadcrumbItem = styled('li', {
-  display: 'flex',
-  alignItems: 'center',
-  fontSize: '$1',
-  lineHeight: '$lineHeights$1',
-  outline: 'none',
-  cursor: 'pointer',
-  userSelect: 'none',
-  color: '$textMuted',
-  '&[data-current="true"]': {
-    color: '$textStrong',
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '12px',
+    lineHeight: '16px',
+    outline: 'none',
+    cursor: 'pointer',
+    userSelect: 'none',
+    color: 'var(--colors-textMuted)',
+    '&[data-current="true"]': { color: 'var(--colors-textStrong)' },
   },
   variants: {
     size: {
-      sm: {
-        minHeight: '$xs',
-        padding: '0 $1',
-        fontSize: '$1',
-        borderRadius: '$xs',
-      },
-      md: {
-        minHeight: '$sm',
-        padding: '0 $1_5',
-        fontSize: '$2',
-        lineHeight: '$lineHeights$2',
-        borderRadius: '$sm',
-      },
+      sm: { minHeight: '20px', padding: '0 4px', fontSize: '12px', borderRadius: '4px' },
+      md: { minHeight: '24px', padding: '0 6px', fontSize: '14px', lineHeight: '20px', borderRadius: '4px' },
     },
   },
-  defaultVariants: {
-    size: 'sm',
-  },
+  defaultVariants: { size: 'sm' },
 })
 
 const Slash = styled(IconSlash, {
-  color: '$textMuted',
+  base: { color: 'var(--colors-textMuted)' },
   variants: {
     size: {
-      sm: {
-        height: '$3',
-        width: '$3',
-        margin: '0 $0_5',
-      },
-      md: {
-        height: '$4',
-        width: '$4',
-        margin: '0 $1',
-      },
+      sm: { height: '12px', width: '12px', margin: '0 2px' },
+      md: { height: '16px', width: '16px', margin: '0 4px' },
     },
   },
-  defaultVariants: {
-    size: 'sm',
-  },
+  defaultVariants: { size: 'sm' },
 })
 
 export interface BreadcrumbItemProps extends React.HtmlHTMLAttributes<HTMLLIElement> {

@@ -7,7 +7,7 @@ import { Flex } from '../Flex'
 import { DropdownMenu, MenuItem } from '../Menu'
 
 import { Input } from './'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 export default {
   title: 'Inputs/Input',
@@ -128,15 +128,15 @@ export const Slot: StoryFn<typeof Input> = (args) => {
 }
 
 const CustomTrigger = styled(Flex, {
-  padding: '0 $2',
-  gap: '$1',
-  color: '$gray10',
-  alignItems: 'center',
-  borderRight: '1px solid $grayA3',
-  cursor: 'pointer',
-  userSelect: 'none',
-  '&:hover': {
-    color: '$gray11',
+  base: {
+    padding: '0 8px',
+    gap: '4px',
+    color: 'var(--colors-gray10)',
+    alignItems: 'center',
+    borderRight: '1px solid var(--colors-grayA3)',
+    cursor: 'pointer',
+    userSelect: 'none',
+    '&:hover': { color: 'var(--colors-gray11)' },
   },
 })
 

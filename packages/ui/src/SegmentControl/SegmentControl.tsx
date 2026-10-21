@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react'
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 // Context for SegmentControl
 type SegmentControlContextValue = {
@@ -21,95 +21,75 @@ const useSegmentControlContext = () => {
 }
 
 const StyledSegmentControlItem = styled(RadioGroupPrimitive.Item, {
-  all: 'unset',
-  textWrap: 'nowrap',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flex: 1,
-  height: '100%',
-  color: '$textMuted',
-  border: 'none',
-  backgroundColor: 'transparent',
-  outline: 'none',
-  cursor: 'pointer',
-  padding: '0 $1_5',
-  borderRadius: 'inherit',
-  gap: '$1',
-  transition: 'all .2s ease',
-  userSelect: 'none',
-  '& > svg': {
-    height: '$iconSm',
-    width: '$iconSm',
-  },
-  '&:hover': {
-    color: '$textStrong',
-  },
-  '&[data-state=checked]': {
-    backgroundColor: '$surfaceOverlay',
-    color: '$textStrong',
-    boxShadow: '$border',
-    '&:hover': {
-      color: '$textStrong',
+  base: {
+    all: 'unset',
+    textWrap: 'nowrap',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    height: '100%',
+    color: 'var(--colors-textMuted)',
+    border: 'none',
+    backgroundColor: 'transparent',
+    outline: 'none',
+    cursor: 'pointer',
+    padding: '0 6px',
+    borderRadius: 'inherit',
+    gap: '4px',
+    transition: 'all .2s ease',
+    userSelect: 'none',
+    '& > svg': { height: '14px', width: '14px' },
+    '&:hover': { color: 'var(--colors-textStrong)' },
+    '&[data-state=checked]': {
+      backgroundColor: 'var(--colors-surfaceOverlay)',
+      color: 'var(--colors-textStrong)',
+      boxShadow: '0 0 0 1px var(--colors-border)',
+      '&:hover': { color: 'var(--colors-textStrong)' },
     },
-  },
-  '&:focus-visible': {
-    position: 'relative',
-    boxShadow: 'inset 0 0 0 1px $colors$borderStrong',
+    '&:focus-visible': {
+      position: 'relative',
+      boxShadow: 'inset 0 0 0 1px var(--colors-borderStrong)',
+    },
   },
   variants: {
     variant: {
       subtle: {},
       solid: {
-        backgroundColor: '$softBg',
+        backgroundColor: 'var(--colors-softBg)',
         '&[data-state=checked]': {
-          backgroundColor: '$selectionBg',
-          color: '$selectionText',
+          backgroundColor: 'var(--colors-selectionBg)',
+          color: 'var(--colors-selectionText)',
           boxShadow: 'none',
-          '&:hover': {
-            color: '$selectionText',
-          },
+          '&:hover': { color: 'var(--colors-selectionText)' },
         },
       },
     },
   },
-  defaultVariants: {
-    variant: 'subtle',
-  },
+  defaultVariants: { variant: 'subtle' },
 })
 
 const StyledSegmentControlRoot = styled(RadioGroupPrimitive.Root, {
-  display: 'inline-grid',
-  backgroundColor: '$softBg',
-  gridAutoColumns: '1fr',
-  gridAutoFlow: 'column',
-  width: '100%',
-  alignItems: 'center',
-  borderRadius: '$2',
+  base: {
+    display: 'inline-grid',
+    backgroundColor: 'var(--colors-softBg)',
+    gridAutoColumns: '1fr',
+    gridAutoFlow: 'column',
+    width: '100%',
+    alignItems: 'center',
+    borderRadius: '4px',
+  },
   variants: {
     size: {
-      sm: {
-        height: '$sm',
-        fontSize: '$1',
-      },
-      md: {
-        height: '$md',
-        fontSize: '$2',
-        borderRadius: '$4',
-      },
+      sm: { height: '24px', fontSize: '12px' },
+      md: { height: '32px', fontSize: '14px', borderRadius: '8px' },
     },
     variant: {
       subtle: {},
-      solid: {
-        backgroundColor: 'transparent',
-        gap: '$1',
-      },
+      solid: { backgroundColor: 'transparent', gap: '4px' },
     },
   },
-  defaultVariants: {
-    size: 'sm',
-    variant: 'subtle',
-  },
+  defaultVariants: { size: 'sm', variant: 'subtle' },
 })
 
 type SegmentControlProps = React.ComponentProps<typeof StyledSegmentControlRoot> & {

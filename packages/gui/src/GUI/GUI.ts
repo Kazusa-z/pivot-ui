@@ -1,14 +1,13 @@
 import React from 'react'
 import { createRoot, Root } from 'react-dom/client'
 import { GUIItemConfig, GUIRoot, GUIItemTypeEnum, type GUIDefineItem } from '../components/GUIRoot'
-import { darkTheme, lightTheme } from '@pivot-ui/editor'
 
 export { type GUIItemConfig }
 export { GUIItemTypeEnum }
 
 const themeMap = {
-  light: lightTheme.className,
-  dark: darkTheme.className,
+  light: 'light-theme',
+  dark: 'dark-theme',
 } as const
 
 abstract class GUIBase {
@@ -156,7 +155,7 @@ class GUI implements GUIBase {
     }
   }
 
-  setTheme(theme?: keyof typeof themeMap) {
+  setTheme(theme: keyof typeof themeMap = 'dark') {
     this._theme = theme
     const html = document.documentElement
     html.classList.remove(themeMap.dark, themeMap.light)

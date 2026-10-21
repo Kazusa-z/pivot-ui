@@ -1,37 +1,26 @@
 import { forwardRef } from 'react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { AssetThumbnail, AssetThumbnailProps } from './AssetThumbnail'
 import AssetName, { AssetNameProps } from './AssetName'
 
 const StyledAssetItem = styled('div', {
-  display: 'flex',
-  flexWrap: 'nowrap',
-  gap: '$1',
-  alignItems: 'center',
-  '&[data-sub]': {
-    backgroundColor: '$grayA2',
-  },
-  '&[data-sub]:nth-child(1 of &[data-sub])': {
-    borderRadius: '$3',
-  },
-  '&[data-sub]:nth-last-child(1 of &[data-sub])': {
-    borderRadius: '$3',
+  base: {
+    display: 'flex',
+    flexWrap: 'nowrap',
+    gap: '4px',
+    alignItems: 'center',
+    '&[data-sub]': { backgroundColor: 'var(--colors-grayA2)' },
+    '&[data-sub]:nth-child(1 of &[data-sub])': { borderRadius: '6px' },
+    '&[data-sub]:nth-last-child(1 of &[data-sub])': { borderRadius: '6px' },
   },
   variants: {
     displayMode: {
-      grid: {
-        flexDirection: 'column',
-      },
-      list: {
-        flexDirection: 'row',
-        marginLeft: '$1',
-      },
+      grid: { flexDirection: 'column' },
+      list: { flexDirection: 'row', marginLeft: '4px' },
     },
   },
-  defaultVariants: {
-    displayMode: 'grid',
-  },
+  defaultVariants: { displayMode: 'grid' },
 })
 
 export interface AssetItemProps extends AssetThumbnailProps, AssetNameProps, React.HTMLAttributes<HTMLDivElement> {

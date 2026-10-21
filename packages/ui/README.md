@@ -22,7 +22,7 @@ function App() {
 }
 ```
 
-Note: keep a CSS reset in your application so the components render consistently. You can use `resetStyle()` exported from `@pivot-ui/editor` to reset the styles.
+Note: load the package's Panda CSS entry (`packages/ui/panda.css`) in the consuming application so the reset, tokens and utilities are available.
 
 > This package does not use the `z-index` style.
 
@@ -46,7 +46,6 @@ pnpm build-storybook
 
 This library would not have been possible without these excellent open-source projects:
 
-- `@stitches/react` for CSS-in-JS
 - `@radix-ui` for accessible component primitives
 - `@radix-ui/colors` for the color system
 - `react-colorful` for the color picker

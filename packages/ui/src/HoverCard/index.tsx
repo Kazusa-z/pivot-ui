@@ -1,32 +1,25 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
-import { styled } from '../design-system'
-import { keyframes } from '../design-system/keyframes'
+import { styled } from '../../styled-system/jsx'
 
 const StyledContent = styled(HoverCardPrimitive.Content, {
-  all: 'unset',
-  display: 'block',
-  borderRadius: '$4',
-  backgroundColor: '$gray2',
-  padding: '$1',
-  fontSize: '$1',
-  border: '1px solid $gray5',
-  animationName: `${keyframes.slideRightAndFade}`,
-  animationDuration: '400ms',
-  animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-  transformOrigin: 'var(--radix-hover-card-content-transform-origin)',
-  willChange: 'transform, opacity',
-  '&[data-side="top"]': {
-    animationName: `${keyframes.slideUpAndFade}`,
-  },
-  '&[data-side="bottom"]': {
-    animationName: `${keyframes.slideDownAndFade}`,
-  },
-  '&[data-side="left"]': {
-    animationName: `${keyframes.slideLeftAndFade}`,
-  },
-  '&[data-side="right"]': {
-    animationName: `${keyframes.slideRightAndFade}`,
+  base: {
+    all: 'unset',
+    display: 'block',
+    borderRadius: '8px',
+    backgroundColor: 'var(--colors-gray2)',
+    padding: '4px',
+    fontSize: '12px',
+    border: '1px solid var(--colors-gray5)',
+    animationName: 'slideRightAndFade',
+    animationDuration: '400ms',
+    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    transformOrigin: 'var(--radix-hover-card-content-transform-origin)',
+    willChange: 'transform, opacity',
+    '&[data-side="top"]': { animationName: 'slideUpAndFade' },
+    '&[data-side="bottom"]': { animationName: 'slideDownAndFade' },
+    '&[data-side="left"]': { animationName: 'slideLeftAndFade' },
+    '&[data-side="right"]': { animationName: 'slideRightAndFade' },
   },
 })
 

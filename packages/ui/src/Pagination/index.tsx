@@ -4,84 +4,69 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state'
 
 import { DOTS, usePagination } from './usePagination'
 
-import { styled, VariantProps } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledPaginationRoot = styled('ul', {
-  display: 'flex',
-  alignItems: 'center',
+  base: { display: 'flex', alignItems: 'center' },
 })
 
 const StyledPaginationItem = styled('li', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  border: '1px solid $border',
-  color: '$text',
-  userSelect: 'none',
-  cursor: 'pointer',
-  marginRight: '$2',
-  transition: '$borderColor, $backgroundColor, $color, $shadow',
-  '&:last-child': {
-    marginRight: 0,
-  },
-  '&:hover': {
-    borderColor: '$borderStrong',
-    backgroundColor: '$surfaceSubtle',
-  },
-  '&:focus-visible': {
-    borderColor: '$borderStrong',
-    boxShadow: '$focus',
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '1px solid var(--colors-border)',
+    color: 'var(--colors-text)',
+    userSelect: 'none',
+    cursor: 'pointer',
+    marginRight: '8px',
+    transition: 'border-color .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease',
+    '&:last-child': { marginRight: 0 },
+    '&:hover': { borderColor: 'var(--colors-borderStrong)', backgroundColor: 'var(--colors-surfaceSubtle)' },
+    '&:focus-visible': {
+      borderColor: 'var(--colors-borderStrong)',
+      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+    },
   },
   variants: {
     active: {
       true: {
-        backgroundColor: '$selectionBg',
-        borderColor: '$selectionBorder',
-        color: '$selectionText',
+        backgroundColor: 'var(--colors-selectionBg)',
+        borderColor: 'var(--colors-selectionBorder)',
+        color: 'var(--colors-selectionText)',
         '&:hover': {
-          borderColor: '$selectionBorder',
-          backgroundColor: '$selectionBgHover',
-          color: '$selectionText',
+          borderColor: 'var(--colors-selectionBorder)',
+          backgroundColor: 'var(--colors-selectionBgHover)',
+          color: 'var(--colors-selectionText)',
         },
       },
     },
     disabled: {
       true: {
-        backgroundColor: '$surface',
-        color: '$textMuted',
+        backgroundColor: 'var(--colors-surface)',
+        color: 'var(--colors-textMuted)',
         cursor: 'initial',
-        '&:hover': {
-          borderColor: '$border',
-          backgroundColor: '$surface',
-        },
+        '&:hover': { borderColor: 'var(--colors-border)', backgroundColor: 'var(--colors-surface)' },
       },
     },
     size: {
       sm: {
-        height: '$sm',
-        width: '$sm',
-        fontSize: '$1',
-        borderRadius: '$sm',
-        '& > svg': {
-          width: '$iconSm',
-          height: '$iconSm',
-        },
+        height: '24px',
+        width: '24px',
+        fontSize: '12px',
+        borderRadius: '4px',
+        '& > svg': { width: '14px', height: '14px' },
       },
       md: {
-        height: '$md',
-        width: '$md',
-        fontSize: '$2',
-        borderRadius: '$md',
-        '& > svg': {
-          width: '$iconMd',
-          height: '$iconMd',
-        },
+        height: '32px',
+        width: '32px',
+        fontSize: '14px',
+        borderRadius: '6px',
+        '& > svg': { width: '16px', height: '16px' },
       },
     },
   },
-  defaultVariants: {
-    size: 'sm',
-  },
+  defaultVariants: { size: 'sm' },
 })
 
 type IPaginationProps = {
@@ -90,7 +75,7 @@ type IPaginationProps = {
   siblingCount?: number
   currentPage?: number
   onPageChange?: (nextPage: number) => void
-  size?: Extract<VariantProps<typeof StyledPaginationItem>['size'], string>
+  size?: 'sm' | 'md'
 }
 
 function Pagination(props: IPaginationProps) {

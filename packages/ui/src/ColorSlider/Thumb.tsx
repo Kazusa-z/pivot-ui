@@ -4,7 +4,7 @@ import { extend } from 'colord'
 import minifyPlugin from 'colord/plugins/minify'
 import mixPlugin from 'colord/plugins/mix'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 import { isEqual, type GradientColor, type Color } from '../ColorPicker/helper'
 import { Flex } from '../Flex'
@@ -13,56 +13,61 @@ import { clamp } from '../utils'
 extend([minifyPlugin, mixPlugin])
 
 const StyledThumb = styled('div', {
-  position: 'relative',
-  top: 3,
-  height: '$4',
-  width: '$2',
-  borderRadius: '$1',
-  border: '1px solid CurrentColor',
-  transform: 'translateX(-$sizes$2)',
-  meshBackground: 5,
-  '&::after': {
-    content: "''",
-    display: 'block',
-    position: 'absolute',
-    bottom: '11.6px',
-    width: 0,
-    right: -1,
-    borderLeft: '4px solid transparent',
-    borderRight: '4px solid transparent',
-    borderBottom: '4px solid currentColor',
-    transform: 'translateY(-2px)',
-  },
-  '& > div': {
-    content: "''",
-    position: 'absolute',
-    inset: 0,
-    borderRadius: '$1',
-    backgroundSize: '100% 100%',
-  },
-  '& > div:first-child': {
-    meshBackground: 5,
+  base: {
+    position: 'relative',
+    top: 3,
+    height: '16px',
+    width: '8px',
+    borderRadius: '4px',
+    border: '1px solid CurrentColor',
+    transform: 'translateX(-8px)',
+    backgroundImage:
+      'linear-gradient(45deg, #b0b0b0 25%, transparent 25%), linear-gradient(-45deg, #b0b0b0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #b0b0b0 75%), linear-gradient(-45deg, #fff 75%, #b0b0b0 75%)',
+    backgroundSize: '5px 5px',
+    backgroundPosition: '0 0, 0 2.5px, 2.5px -2.5px, -2.5px 0px',
+    '&::after': {
+      content: "''",
+      display: 'block',
+      position: 'absolute',
+      bottom: '11.6px',
+      width: 0,
+      right: -1,
+      borderLeft: '4px solid transparent',
+      borderRight: '4px solid transparent',
+      borderBottom: '4px solid currentColor',
+      transform: 'translateY(-2px)',
+    },
+    '& > div': {
+      position: 'absolute',
+      inset: 0,
+      borderRadius: '4px',
+      backgroundSize: '100% 100%',
+    },
+    '& > div:first-child': {
+      backgroundImage:
+        'linear-gradient(45deg, #b0b0b0 25%, transparent 25%), linear-gradient(-45deg, #b0b0b0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #b0b0b0 75%), linear-gradient(-45deg, #fff 75%, #b0b0b0 75%)',
+      backgroundSize: '5px 5px',
+      backgroundPosition: '0 0, 0 2.5px, 2.5px -2.5px, -2.5px 0px',
+    },
   },
 })
 
 const StyledThumbRoot = styled(Flex, {
-  position: 'relative',
-  width: '14px',
-  color: '$gray12',
-  cursor: 'pointer',
-  transition: 'color 0.2s ease',
+  base: {
+    position: 'relative',
+    width: '14px',
+    color: 'var(--colors-gray12)',
+    cursor: 'pointer',
+    transition: 'color 0.2s ease',
+    '&:hover': { color: 'var(--colors-gray12)' },
+  },
   variants: {
     active: {
       true: {
-        color: '$gray12',
-        [`${StyledThumb}`]: {
-          transform: 'translateX(-$sizes$2) scale(1.1)',
-        },
+        color: 'var(--colors-gray12)',
+        '& [data-thumb]': { transform: 'translateX(-8px) scale(1.1)' },
       },
     },
-  },
-  '&:hover': {
-    color: '$gray12',
   },
 })
 
@@ -149,7 +154,7 @@ function Thumb(props: ThumbProps) {
         position: 'absolute',
         transform: `translateX(${translateX}px)`,
       }}>
-      <StyledThumb>
+      <StyledThumb data-thumb>
         <div />
         <div style={{ backgroundColor: colord(props.color).toHex() }} />
       </StyledThumb>
@@ -158,14 +163,9 @@ function Thumb(props: ThumbProps) {
 }
 
 const ThumbContainer = styled('div', {
-  width: '100%',
-  height: '$5',
+  base: { width: '100%', height: '20px' },
   variants: {
-    flipY: {
-      true: {
-        transform: 'scaleY(-1)',
-      },
-    },
+    flipY: { true: { transform: 'scaleY(-1)' } },
   },
 })
 

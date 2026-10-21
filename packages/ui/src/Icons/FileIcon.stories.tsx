@@ -15,7 +15,7 @@ import {
   IconVrReferenceImageFile,
 } from '.'
 import { Flex } from '../Flex'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import IconPending from './Files/Pending'
 
 export default {
@@ -32,26 +32,21 @@ export default {
 } as Meta
 
 const StyledIconItem = styled(Flex, {
-  marginBottom: '0 $6',
-  gap: '$3',
-  '& svg': {
-    height: '60px',
-    width: '60px',
-  },
+  base: { marginBottom: 0, gap: '12px', '& svg': { height: '60px', width: '60px' } },
 })
 
 const Grid = styled('div', {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(70px, 1fr))',
-  gap: '$3',
-  alignItems: 'self-start',
-  width: '600px',
+  base: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(70px, 1fr))',
+    gap: '12px',
+    alignItems: 'self-start',
+    width: '600px',
+  },
 })
 
 const Text = styled('p', {
-  fontSize: '$1',
-  color: '$gray10',
-  textAlign: 'center',
+  base: { fontSize: '12px', color: 'var(--colors-gray10)', textAlign: 'center' },
 })
 
 function IconItem(props) {

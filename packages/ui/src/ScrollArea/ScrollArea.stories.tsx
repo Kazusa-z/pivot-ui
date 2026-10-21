@@ -1,29 +1,33 @@
 import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 import { ScrollArea } from './'
 import { Flex } from '../'
 
 const Item = styled(Flex, {
-  boxShadow: 'inset 0 0 0 1px $colors$border',
-  backgroundColor: '$blueA3',
-  borderRadius: '$3',
-  width: '100%',
-  height: '48px',
-  fontFamily: '$mono',
-  color: '$gray11',
-  marginBottom: '$2',
+  base: {
+    boxShadow: 'inset 0 0 0 1px var(--colors-border)',
+    backgroundColor: 'var(--colors-blueA3)',
+    borderRadius: '6px',
+    width: '100%',
+    height: '48px',
+    fontFamily: 'var(--fonts-mono)',
+    color: 'var(--colors-gray11)',
+    marginBottom: '8px',
+  },
 })
 
 const TestContainer = styled('div', {
-  width: '200px',
-  height: '200px',
-  padding: '$0_5',
-  backgroundColor: '$gray2',
-  border: '1px solid $grayA5',
-  borderRadius: '$3',
+  base: {
+    width: '200px',
+    height: '200px',
+    padding: '2px',
+    backgroundColor: 'var(--colors-gray2)',
+    border: '1px solid var(--colors-grayA5)',
+    borderRadius: '6px',
+  },
 })
 
 export default {

@@ -185,7 +185,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 Built with these excellent open-source projects:
 
 - [@radix-ui](https://radix-ui.com/) - Accessible component primitives
-- [@stitches/react](https://stitches.dev/) - CSS-in-JS solution
 - [react-colorful](https://github.com/omgovich/react-colorful) - Color picker component
 - [colord](https://github.com/omgovich/colord) - Color manipulation utilities
 

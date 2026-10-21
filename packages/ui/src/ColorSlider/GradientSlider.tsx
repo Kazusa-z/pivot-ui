@@ -5,12 +5,10 @@ import type { GradientColor } from '../ColorPicker/helper'
 import { Range } from './Range'
 import { ThumbGroup } from './Thumb'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledGradientSliderRoot = styled('div', {
-  position: 'relative',
-  marginBottom: '$2',
-  width: '100%',
+  base: { position: 'relative', marginBottom: '8px', width: '100%' },
 })
 
 interface GradientSliderProps {

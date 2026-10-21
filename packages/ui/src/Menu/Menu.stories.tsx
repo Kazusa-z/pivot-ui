@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 import { IconMenu } from '@tabler/icons-react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { Flex } from '../Flex'
 import { Button } from '../Button'
 import { ActionButton } from '../ActionButton'
@@ -19,22 +19,26 @@ import {
 } from './'
 
 const File = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '$10',
-  width: '$10',
-  borderRadius: '$2',
-  backgroundColor: '$blue6',
-  color: '$blue11',
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '40px',
+    width: '40px',
+    borderRadius: '4px',
+    backgroundColor: 'var(--colors-blue6)',
+    color: 'var(--colors-blue11)',
+  },
 })
 
 const Area = styled(Flex, {
-  width: '200px',
-  height: '50px',
-  borderRadius: '$2',
-  color: '$gray8',
-  border: '1px dashed $gray8',
+  base: {
+    width: '200px',
+    height: '50px',
+    borderRadius: '4px',
+    color: 'var(--colors-gray8)',
+    border: '1px dashed var(--colors-gray8)',
+  },
 })
 
 export default {

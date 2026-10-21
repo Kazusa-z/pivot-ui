@@ -696,10 +696,20 @@ const gui = new GUI(data, items)
 gui.setTheme('dark') // or 'light'
 
 // For React components, wrap your app with ThemeProvider
-import { ThemeProvider, darkTheme } from '@pivot-ui/editor'
+import { ThemeProvider, useTheme } from '@pivot-ui/editor'
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  return <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>Toggle theme</button>
+}
 
 function App() {
-  return <ThemeProvider theme={darkTheme}>{/* Your components */}</ThemeProvider>
+  return (
+    <ThemeProvider>
+      <ThemeToggle />
+      {/* Your components */}
+    </ThemeProvider>
+  )
 }
 ```
 

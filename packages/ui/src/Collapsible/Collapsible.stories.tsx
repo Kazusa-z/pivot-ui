@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 import { Flex } from '../Flex'
 
 import { Collapsible } from './'
@@ -14,8 +14,7 @@ export default {
 } as Meta<typeof Collapsible>
 
 const StyledContent = styled('div', {
-  padding: '$2',
-  fontSize: '$sm',
+  base: { padding: '8px', fontSize: '12px' },
 })
 
 export const Overview: StoryFn<typeof Collapsible> = (args) => {

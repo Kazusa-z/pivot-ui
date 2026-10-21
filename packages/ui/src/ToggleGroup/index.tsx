@@ -6,109 +6,86 @@ import type {
   ToggleGroupMultipleProps,
 } from '@radix-ui/react-toggle-group'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledToggleGroup = styled(ToggleGroupPrimitive.Root, {
-  display: 'flex',
-  gap: '$1',
+  base: { display: 'flex', gap: '4px' },
 })
 
-const StyledItem = styled(
-  ToggleGroupPrimitive.Item,
-  {
+const StyledItem = styled(ToggleGroupPrimitive.Item, {
+  base: {
     all: 'unset',
     display: 'flex',
-    height: '$sm',
+    height: '24px',
     aspectRatio: '1/1',
-    borderRadius: '$sm',
+    borderRadius: '4px',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '$1',
-    color: '$text',
+    fontSize: '12px',
+    color: 'var(--colors-text)',
     backgroundColor: 'rgba(0, 0, 0, 0)',
-    transition: '$backgroundColor, $color, $shadow, transform 0.2s ease',
+    transition: 'background-color .2s ease, color .2s ease, box-shadow .2s ease, transform 0.2s ease',
     cursor: 'pointer',
     boxSizing: 'border-box',
-    variants: {
-      size: {
-        sm: {
-          height: '$sm',
-          borderRadius: '$sm',
-          fontSize: '$1',
-          '& > svg': {
-            width: '$iconSm',
-            height: '$iconSm',
-            strokeWidth: 1.5,
-          },
-        },
-        md: {
-          height: '$md',
-          borderRadius: '$md',
-          fontSize: '$2',
-          '& > svg': {
-            width: '$iconMd',
-            height: '$iconMd',
-          },
-        },
-        lg: {
-          height: '$lg',
-          borderRadius: '$xl',
-          fontSize: '$2',
-          '& > svg': {
-            width: '$iconLg',
-            height: '$iconLg',
-          },
-        },
-      },
-      fancy: {
-        true: {
-          '&:active': {
-            transform: 'scale(0.94)',
-          },
-        },
-      },
-      variant: {
-        primary: {
-          '&[data-state=on]': {
-            backgroundColor: '$selectionBg',
-            color: '$selectionText',
-            fontWeight: 500,
-          },
-          '&[data-state=on]:hover': {
-            backgroundColor: '$selectionBgHover',
-            color: '$selectionText',
-          },
-        },
-        subtle: {
-          backgroundColor: '$softBg',
-          '&[data-state=on]': {
-            backgroundColor: '$surface',
-            color: '$textStrong',
-            fontWeight: 500,
-            boxShadow: 'inset $border',
-          },
-          '&[data-state=on]:hover': {
-            backgroundColor: '$surface',
-            color: '$textStrong',
-          },
-        },
-      },
-    },
-    '&:hover': {
-      backgroundColor: '$softBgHover',
-    },
+    '&:hover': { backgroundColor: 'var(--colors-softBgHover)' },
     '&:focus-visible': {
       position: 'relative',
-      boxShadow: '$focus',
+      boxShadow: '0 0 0 2px var(--colors-focusRing)',
     },
   },
-  {
-    defaultVariants: {
-      size: 'sm',
-      variant: 'primary',
+  variants: {
+    size: {
+      sm: {
+        height: '24px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        '& > svg': { width: '14px', height: '14px', strokeWidth: 1.5 },
+      },
+      md: {
+        height: '32px',
+        borderRadius: '6px',
+        fontSize: '14px',
+        '& > svg': { width: '16px', height: '16px' },
+      },
+      lg: {
+        height: '36px',
+        borderRadius: '8px',
+        fontSize: '14px',
+        '& > svg': { width: '18px', height: '18px' },
+      },
     },
-  }
-)
+    fancy: {
+      true: { '&:active': { transform: 'scale(0.94)' } },
+    },
+    variant: {
+      primary: {
+        '&[data-state=on]': {
+          backgroundColor: 'var(--colors-selectionBg)',
+          color: 'var(--colors-selectionText)',
+          fontWeight: 500,
+        },
+        '&[data-state=on]:hover': {
+          backgroundColor: 'var(--colors-selectionBgHover)',
+          color: 'var(--colors-selectionText)',
+        },
+      },
+      subtle: {
+        backgroundColor: 'var(--colors-softBg)',
+        '&[data-state=on]': {
+          backgroundColor: 'var(--colors-surface)',
+          color: 'var(--colors-textStrong)',
+          fontWeight: 500,
+          boxShadow: 'inset 0 0 0 1px var(--colors-border)',
+        },
+        '&[data-state=on]:hover': {
+          backgroundColor: 'var(--colors-surface)',
+          color: 'var(--colors-textStrong)',
+        },
+      },
+    },
+  },
+  defaultVariants: { size: 'sm', variant: 'primary' },
+})
 
 type ToggleGroupPrimitiveProps = ToggleGroupSingleProps | ToggleGroupMultipleProps
 

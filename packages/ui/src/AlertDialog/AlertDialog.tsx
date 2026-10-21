@@ -1,66 +1,90 @@
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import { AlertDialogProps } from '@radix-ui/react-alert-dialog'
-import React, { PropsWithChildren } from 'react'
+import React, { type PropsWithChildren } from 'react'
 
-import { styled, animations } from '../design-system'
+import { css } from '../../styled-system/css'
 import { Button } from '../Button'
 import { Flex } from '../Flex'
-import { modalSurfaceStyle, overlayStyle } from '../design-system/recipes'
-import { CSS } from '../design-system'
 
 const { Root, Trigger, Portal, Overlay, Content, Title: AlertTitle, Description, Cancel, Action } = AlertDialogPrimitive
 
-const StyledOverlay = styled(Overlay, overlayStyle, {
-  animation: `${animations.overlayFadeIn} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
+const overlayClass = css({
+  position: 'fixed',
+  backgroundColor: 'var(--colors-overlayScrim)',
+  inset: 0,
+  zIndex: 50,
+  '@media (prefers-reduced-motion: no-preference)': {
+    '&[data-state="open"]': {
+      animationName: 'overlayFadeIn',
+      animationDuration: '.15s',
+      animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      animationFillMode: 'forwards',
+    },
+    '&[data-state="closed"]': {
+      animationName: 'overlayFadeOut',
+      animationDuration: '.15s',
+      animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      animationFillMode: 'forwards',
+    },
+  },
 })
-const StyledContent = styled(Content, modalSurfaceStyle, {
-  padding: '$4',
+
+const contentClass = css({
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  maxHeight: '85vh',
+  backgroundColor: 'var(--colors-surfaceOverlay)',
+  borderRadius: '8px',
+  border: '1px solid var(--colors-border)',
+  boxSizing: 'border-box',
+  boxShadow: 'var(--shadows-popContainer)',
+  outline: 'none',
+  padding: '16px',
   maxWidth: '26rem',
   width: 'min(26rem, calc(100vw - 32px))',
   zIndex: 50,
-  animation: `${animations.contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
-
+  animationName: 'contentShow',
+  animationDuration: '150ms',
+  animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
   '&:focus': { outline: 'none' },
-
   '&[data-state=open]': {
-    animation: `${animations.contentFadeIn} 250ms ease`,
+    animationName: 'contentFadeIn',
+    animationDuration: '250ms',
+    animationTimingFunction: 'ease',
   },
   '&[data-state=closed]': {
-    animation: `${animations.contentFadeOut} 250ms ease`,
+    animationName: 'contentFadeOut',
+    animationDuration: '250ms',
+    animationTimingFunction: 'ease',
   },
 })
 
-const headerStyle: CSS = {
-  display: 'grid',
-  gap: '$2',
-}
+const headerClass = css({ display: 'grid', gap: '8px' })
 
-const footerStyle: CSS = {
+const footerClass = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  gap: '$2',
-  marginTop: '$5',
-  paddingTop: '$4',
-}
+  gap: '8px',
+  marginTop: '20px',
+  paddingTop: '16px',
+})
 
-const StyledHeader = styled('div', headerStyle)
-
-const StyledFooter = styled(Flex, footerStyle)
-
-const StyledTitle = styled(AlertTitle, {
+const titleClass = css({
   margin: 0,
-  color: '$textStrong',
-  fontSize: '$4',
-  lineHeight: '$lineHeights$4',
+  color: 'var(--colors-textStrong)',
+  fontSize: '18px',
+  lineHeight: '26px',
   fontWeight: 600,
 })
 
-const StyledDescription = styled(Description, {
+const descriptionClass = css({
   margin: 0,
-  color: '$textMuted',
-  fontSize: '$2',
-  lineHeight: '$lineHeights$2',
+  color: 'var(--colors-textMuted)',
+  fontSize: '14px',
+  lineHeight: '20px',
   maxWidth: '56ch',
   whiteSpace: 'pre-line',
 })
@@ -90,18 +114,19 @@ function AlertDialog(props: PropsWithChildren<IAlertDialogProps & AlertDialogPro
     actionable = true,
     ...rest
   } = props
+
   return (
     <Root {...rest}>
       <Trigger asChild>{trigger}</Trigger>
       <Portal>
-        <StyledOverlay style={{ zIndex }} />
-        <StyledContent style={{ zIndex }}>
-          <StyledHeader>
-            <StyledTitle>{title}</StyledTitle>
-            {description && <StyledDescription>{description}</StyledDescription>}
-          </StyledHeader>
+        <Overlay className={overlayClass} style={{ zIndex }} />
+        <Content className={contentClass} style={{ zIndex }}>
+          <div className={headerClass}>
+            <AlertTitle className={titleClass}>{title}</AlertTitle>
+            {description && <Description className={descriptionClass}>{description}</Description>}
+          </div>
           {actionable && (
-            <StyledFooter gap="sm" justifyContent="end">
+            <Flex className={footerClass}>
               {onClose && (
                 <Cancel asChild>
                   <Button variant="soft" size="md" onClick={onClose}>
@@ -116,9 +141,9 @@ function AlertDialog(props: PropsWithChildren<IAlertDialogProps & AlertDialogPro
                   </Button>
                 </Action>
               )}
-            </StyledFooter>
+            </Flex>
           )}
-        </StyledContent>
+        </Content>
       </Portal>
     </Root>
   )

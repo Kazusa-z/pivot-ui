@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useRef } from 'react'
+import React, { Fragment, useMemo, useRef } from 'react'
 import { Panel } from '../Panel'
 
 import {
@@ -33,7 +33,7 @@ import {
 } from '..'
 import { FormItemRectProps } from '../FormItemRect/FormItemRect'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { ColorSpace, resetStyle } from '@pivot-ui/editor'
+import { ColorSpace } from '@pivot-ui/editor'
 import { styled } from '../../../styled-system/jsx'
 
 export const GUIItemTypeEnum = {
@@ -353,10 +353,6 @@ export function GUIRoot(props: GUIRootProps) {
       },
     }
   }, [guiItems])
-
-  useEffect(() => {
-    resetStyle()
-  }, [])
 
   return (
     <GUIProvider {...{ items, data, gui }}>

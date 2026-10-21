@@ -50,6 +50,19 @@ export const pandaBase = {
         from: { opacity: 0, transform: 'translateX(-2px)' },
         to: { opacity: 1, transform: 'translateX(0)' },
       },
+      breathing: {
+        '0%': { fill: 'rgb(221 234 248 / 8%)' },
+        '50%': { fill: 'rgb(221 234 248 / 15%)' },
+        '100%': { fill: 'rgb(221 234 248 / 8%)' },
+      },
+      accordionSlideDown: {
+        from: { height: 0, opacity: 0 },
+        to: { height: 'var(--radix-accordion-content-height)', opacity: 1 },
+      },
+      accordionSlideUp: {
+        from: { height: 'var(--radix-accordion-content-height)', opacity: 1 },
+        to: { height: 0, opacity: 0 },
+      },
       slideLeftAndFade: {
         from: { opacity: 0, transform: 'translateX(2px)' },
         to: { opacity: 1, transform: 'translateX(0)' },

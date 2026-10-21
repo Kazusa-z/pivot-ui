@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 import { AssetItem } from './'
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 export default {
   title: 'Display/AssetItem',
@@ -9,11 +9,13 @@ export default {
 } as Meta<typeof AssetItem>
 
 const Grid = styled('div', {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
-  gap: '$3',
-  alignItems: 'self-start',
-  width: '600px',
+  base: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+    gap: '12px',
+    alignItems: 'self-start',
+    width: '600px',
+  },
 })
 
 function wait(ms: number) {
