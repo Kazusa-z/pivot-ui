@@ -4,7 +4,9 @@ This folder holds the shared Panda CSS setup used by both packages during the mi
 
 ## Current strategy
 
-- **Tokens are aliases to the existing Stitches CSS variables.**
+- **Panda owns a generated token snapshot (`designTokens.ts`).**
+  - `panda/generate-tokens.mjs` regenerates it from the design-system sources when those values change.
+- **Runtime token aliases still point at the shared CSS variables during coexistence.**
   - Panda's prefix is `panda`, so a token resolves to `var(--panda-colors-gray3)`, whose value is `var(--colors-gray3)`.
   - This lets components migrate to Panda tokens before the light/dark theme implementation is migrated; the Stitches `ThemeProvider` still controls the underlying variables.
 - **Theme variables are emitted by Panda.**
