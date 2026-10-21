@@ -1,6 +1,7 @@
 import React, { type ComponentProps, type PropsWithChildren } from 'react'
 
 import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 
 const StyledFlex = styled('div', {
   base: {
@@ -70,9 +71,7 @@ const StyledFlex = styled('div', {
 
 type StyledFlexProps = ComponentProps<typeof StyledFlex>
 
-// TODO: narrow this to Panda's SystemStyleObject once all Flex css props are migrated.
-// TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
-export type FlexProps = PropsWithChildren<Omit<StyledFlexProps, 'css'> & { css?: any }>
+export type FlexProps = PropsWithChildren<Omit<StyledFlexProps, 'css'> & { css?: SystemStyleObject }>
 
 export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(function Flex(props: FlexProps, forwardedRef) {
   return (

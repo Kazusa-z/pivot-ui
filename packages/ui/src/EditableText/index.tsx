@@ -1,7 +1,7 @@
 import { IconEdit } from '@tabler/icons-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-import { styled, CSS } from '../design-system'
+import { styled } from '../design-system'
 import { Text } from '../Typography'
 import { Input } from '../Input'
 import { Flex } from '../Flex'
@@ -41,6 +41,7 @@ type IEditableText = {
   onFocus?: (val: string) => void
   onEdit?: () => void
   onBlur?: (val: string) => void
+  // TODO(TD-10): EditableText still uses a Stitches Container; narrow after it migrates.
   css?: any
 }
 

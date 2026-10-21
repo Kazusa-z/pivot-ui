@@ -1,7 +1,14 @@
-import { forwardRef, type ComponentProps, type PropsWithChildren, type ReactNode } from 'react'
+import {
+  forwardRef,
+  type ButtonHTMLAttributes,
+  type ComponentProps,
+  type PropsWithChildren,
+  type ReactNode,
+} from 'react'
 import { Slot, Slottable } from '@radix-ui/react-slot'
 
 import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 import { Spin } from '../Spin'
 import { useAsyncStatus } from '../hooks/useAsyncStatus'
 
@@ -469,8 +476,7 @@ type StyledButtonProps = ComponentProps<typeof StyledButton>
 
 export type ButtonProps = PropsWithChildren<
   Omit<StyledButtonProps, 'css'> & {
-    // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
-    css?: any
+    css?: SystemStyleObject
     startSlot?: ReactNode
     endSlot?: ReactNode
     async?: () => Promise<unknown>
@@ -479,7 +485,25 @@ export type ButtonProps = PropsWithChildren<
 >
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, forwardedRef) {
-  const { children, startSlot, endSlot, async, size, loading: propLoading, onClick, asChild, disabled, ...rest } = props
+  const {
+    children,
+    startSlot,
+    endSlot,
+    async,
+    size,
+    loading: propLoading,
+    onClick,
+    asChild,
+    disabled,
+    css,
+    variant,
+    critical,
+    positive,
+    round,
+    fullWidth,
+    uppercase,
+    ...rest
+  } = props
   const { loading, handleClick } = useAsyncStatus({
     asyncFunction: async,
     propLoading: propLoading as unknown as boolean,
@@ -488,22 +512,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props,
 
   const resolvedSize = size ?? 'sm'
   const spin = <Spin className="button-spin" color="inherit" size="xs" />
-  // Slot and the Panda button have different prop shapes; keep the public behavior unchanged.
-  // TODO(TD-08): replace this cast with a typed polymorphic wrapper.
-  const Comp = (asChild ? Slot : StyledButton) as any
   const leadingSlot = startSlot ? (loading ? spin : startSlot) : !endSlot && loading ? spin : null
   const trailingSlot = endSlot ? (loading ? spin : endSlot) : null
 
-  return (
-    <Comp
-      {...rest}
-      ref={forwardedRef}
-      loading={loading}
-      size={resolvedSize}
-      onClick={handleClick}
-      aria-busy={loading || undefined}
-      disabled={asChild ? undefined : disabled || loading}
-      aria-disabled={asChild ? disabled || loading || undefined : undefined}>
+  const content = (
+    <>
       {leadingSlot && (
         <SlotContainer position="start" data-position="start" size={resolvedSize} gap={resolvedSize}>
           {leadingSlot}
@@ -515,10 +528,42 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props,
           {trailingSlot}
         </SlotContainer>
       )}
-    </Comp>
+    </>
+  )
+
+  if (asChild) {
+    return (
+      <Slot
+        {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
+        ref={forwardedRef}
+        onClick={handleClick}
+        aria-busy={loading || undefined}
+        aria-disabled={disabled || loading || undefined}>
+        {content}
+      </Slot>
+    )
+  }
+
+  return (
+    <StyledButton
+      {...rest}
+      ref={forwardedRef}
+      css={css}
+      variant={variant}
+      critical={critical}
+      positive={positive}
+      round={round}
+      fullWidth={fullWidth}
+      uppercase={uppercase}
+      loading={loading}
+      size={resolvedSize}
+      onClick={handleClick}
+      aria-busy={loading || undefined}
+      disabled={disabled || loading}>
+      {content}
+    </StyledButton>
   )
 })
-
 Button.toString = () => '.editor-button-component'
 
 export { Button }

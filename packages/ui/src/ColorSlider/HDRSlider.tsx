@@ -162,7 +162,7 @@ export function HDRSlider(props: HDRSliderProps) {
   ]
 
   return (
-    <Flex gap="sm" direction="column" css={{ marginTop: '$3' }}>
+    <Flex gap="sm" direction="column" css={{ marginTop: '12px' }}>
       <StyledHDRSliderRoot>
         <InputNumber
           value={intensity}

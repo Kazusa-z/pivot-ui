@@ -25,7 +25,7 @@ This folder holds the shared Panda CSS setup used by both packages during the mi
 
 ## Verification
 
-- Button / Dialog / FormItemColor pilots: computed-style parity with Stitches.
+- Batch 1 components and the promoted Dialog/FormItemColor were checked for computed-style parity with their Stitches counterparts.
 - `css` prop probe: `marginLeft` applied correctly.
 - Generated token aliases verified, e.g.:
   - `--panda-colors-gray3: var(--colors-gray3)`

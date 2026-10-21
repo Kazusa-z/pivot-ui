@@ -133,7 +133,7 @@ export const Panel = forwardRef<HTMLDivElement, PanelProps>(function Panel(props
         <IconGripHorizontal size="18px" />
       </PanelHeader>
       <PanelContent ref={contentRef} collapsed={collapsed}>
-        <ScrollArea css={{ padding: '$1' }}>{props.children}</ScrollArea>
+        <ScrollArea css={{ padding: '4px' }}>{props.children}</ScrollArea>
       </PanelContent>
     </StyledPanel>
   )

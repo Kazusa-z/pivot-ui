@@ -1,6 +1,7 @@
 import { type ComponentProps } from 'react'
 import * as ProgressPrimitive from '@radix-ui/react-progress'
 import { cva, css, cx } from '../../styled-system/css'
+import type { SystemStyleObject } from '../../styled-system/types'
 
 const progressRoot = cva({
   base: {
@@ -42,8 +43,7 @@ type PrimitiveProgressProps = ComponentProps<typeof ProgressPrimitive.Root>
 
 export type ProgressProps = PrimitiveProgressProps & {
   size?: 'sm' | 'md' | 'lg'
-  // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
-  css?: any
+  css?: SystemStyleObject
 }
 
 function Progress(props: ProgressProps) {

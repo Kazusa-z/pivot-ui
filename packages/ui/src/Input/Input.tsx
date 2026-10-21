@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 
 const StyledInputSlot = styled('div', {
   base: {
@@ -316,8 +317,7 @@ export interface InputProps extends Omit<React.ComponentPropsWithoutRef<'input'>
   overrideEndSlotStyle?: boolean
   rootRef?: any
   disabled?: boolean
-  // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
-  css?: any
+  css?: SystemStyleObject
   size?: 'xs' | 'sm' | 'md' | 'lg'
   variant?: 'outline' | 'soft' | 'subtle'
   state?: 'valid' | 'invalid'

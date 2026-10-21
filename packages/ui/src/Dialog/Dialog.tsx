@@ -1,119 +1,144 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 import { IconX } from '@tabler/icons-react'
-import React from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
-import { CSS, animations, styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
+import { css, cx } from '../../styled-system/css'
+import type { SystemStyleObject } from '../../styled-system/types'
 
-export const basicStyle = styled(null, {
-  all: 'unset',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  lineHeight: 1,
-  border: '1px solid transparent',
-  boxSizing: 'border-box',
-  cursor: 'pointer',
-  '&:focus-visible': {
-    boxShadow: '0 0 0 2px $colors$blueA7',
-  },
-  '&:disabled': {
-    backgroundColor: '$grayA3',
-    color: '$grayA8',
-    cursor: 'not-allowed',
+export const basicStyle = styled('button', {
+  base: {
+    all: 'unset',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1,
+    border: '1px solid transparent',
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+    '&:focus-visible': {
+      boxShadow: '0 0 0 2px var(--colors-blueA7)',
+    },
+    '&:disabled': {
+      backgroundColor: 'var(--colors-grayA3)',
+      color: 'var(--colors-grayA8)',
+      cursor: 'not-allowed',
+    },
   },
 })
 
-const StyledOverlay = styled(DialogPrimitive.Overlay, {
+const overlayClass = css({
   position: 'fixed',
   inset: 0,
-  animation: `${animations.overlayFadeIn} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
+  animationName: 'overlayFadeIn',
+  animationDuration: '150ms',
+  animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
 })
 
-const StyledContent = styled(DialogPrimitive.Content, {
+const contentClass = css({
   position: 'fixed',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   minWidth: '440px',
   maxHeight: '85vh',
-  padding: '$3',
-  borderRadius: '$5',
+  padding: '12px',
+  borderRadius: '10px',
   overflow: 'hidden',
-  backgroundColor: '$subbg',
-  boxShadow: `$popContainer`,
-  // zIndex: 2,
-  animation: `${animations.contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
-
+  backgroundColor: 'var(--colors-subbg)',
+  boxShadow: 'var(--shadows-popContainer)',
+  animationName: 'contentShow',
+  animationDuration: '150ms',
+  animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
   '&:focus': { outline: 'none' },
-
   '&[data-state=open]': {
-    animation: `${animations.contentFadeIn} 250ms ease`,
+    animationName: 'contentFadeIn',
+    animationDuration: '250ms',
+    animationTimingFunction: 'ease',
   },
   '&[data-state=closed]': {
-    animation: `${animations.contentFadeOut} 250ms ease`,
+    animationName: 'contentFadeOut',
+    animationDuration: '250ms',
+    animationTimingFunction: 'ease',
   },
 })
 
-const StyledCloseButton = styled(DialogPrimitive.DialogClose, basicStyle, {
+const closeClass = css({
+  all: 'unset',
   position: 'absolute',
   appearance: 'none',
-  height: '$6',
-  width: '$6',
-  top: '$2',
-  right: '$2',
+  display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
+  height: '24px',
+  width: '24px',
+  top: '8px',
+  right: '8px',
   border: 'none',
-  borderRadius: '$3',
-  color: '$gray10',
+  borderRadius: '6px',
+  color: 'var(--colors-gray10)',
   zIndex: 2,
   backgroundColor: 'transparent',
+  cursor: 'pointer',
   '& > svg': {
     height: '18px',
     width: '18px',
   },
   '&:hover': {
-    color: '$gray12',
-    backgroundColor: '$gray4',
+    color: 'var(--colors-gray12)',
+    backgroundColor: 'var(--colors-gray4)',
   },
   '&:focus': {
-    boxShadow: '0 0 0 3px $colors$grayA7',
-  },
-  '&:focus-visble': {
-    boxShadow: '0 0 0 3px $colors$grayA7',
+    boxShadow: '0 0 0 3px var(--colors-grayA7)',
   },
 })
 
-function Content({ children, zIndex, css, ...props }) {
+function Content({
+  children,
+  zIndex,
+  css: cssProp,
+  className,
+  id,
+}: {
+  children?: ReactNode
+  zIndex?: number
+  css?: SystemStyleObject
+  className?: string
+  id?: string
+}) {
+  const style = { zIndex } as CSSProperties
+
   return (
     <DialogPrimitive.Portal>
-      <StyledOverlay className="DialogOverlay" style={{ zIndex }} />
-      <StyledContent className="DialogContent" {...props} css={{ ...css, zIndex: zIndex }}>
+      <DialogPrimitive.Overlay className={cx(overlayClass, 'DialogOverlay')} style={style} />
+      <DialogPrimitive.Content
+        id={id}
+        className={cx(contentClass, 'DialogContent', cssProp && css(cssProp), className)}
+        style={style}>
         {children}
-      </StyledContent>
+      </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
   )
 }
 
 const DialogRoot = DialogPrimitive.Root
-const DialogContent = Content
 
-export const DialogCloseTrigger = DialogPrimitive.DialogClose
+export const DialogCloseTrigger = DialogPrimitive.Close
 
-export function DialogTrigger(props: { children?: React.ReactNode }) {
+export function DialogTrigger(props: { children?: ReactNode }) {
   return <DialogPrimitive.Trigger asChild>{props.children}</DialogPrimitive.Trigger>
 }
 
 export interface DialogProps {
   open?: boolean
   disabled?: boolean
-  title?: React.ReactNode
-  trigger?: React.ReactNode
-  children?: React.ReactNode
+  title?: ReactNode
+  trigger?: ReactNode
+  children?: ReactNode
   closable?: boolean
   onOpenChange?: (open: boolean) => void
-  css?: CSS
+  css?: SystemStyleObject
   zIndex?: number
   className?: string
   id?: string
@@ -128,7 +153,7 @@ export function Dialog(props: DialogProps) {
     closable,
     onOpenChange,
     disabled,
-    css,
+    css: cssProp,
     zIndex,
     className,
     id,
@@ -143,18 +168,18 @@ export function Dialog(props: DialogProps) {
           {trigger}
         </DialogPrimitive.Trigger>
       )}
-      <DialogContent id={id} css={css} zIndex={zIndex} className={className}>
+      <Content id={id} css={cssProp} zIndex={zIndex} className={className}>
         <VisuallyHidden.Root>
           <DialogPrimitive.Title>{title}</DialogPrimitive.Title>
           <DialogPrimitive.Description />
         </VisuallyHidden.Root>
         {children}
         {closable && (
-          <StyledCloseButton>
+          <DialogPrimitive.Close className={closeClass}>
             <IconX />
-          </StyledCloseButton>
+          </DialogPrimitive.Close>
         )}
-      </DialogContent>
+      </Content>
     </DialogRoot>
   )
 }

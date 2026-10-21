@@ -62,10 +62,10 @@ export const CustomTitleContent: StoryFn<typeof Accordion> = () => {
         <AccordionItem
           value="bounds"
           title={
-            <Flex gap="xs" align="v" css={{ fontFamily: '$mono', color: '$textStrong' }}>
+            <Flex gap="xs" align="v" css={{ fontFamily: 'var(--fonts-mono)', color: 'var(--colors-textStrong)' }}>
               <IconBox size="14px" color="currentColor" />
               Bounding box
-              <Badge css={{ marginLeft: '$1' }} color="blue">
+              <Badge css={{ marginLeft: '4px' }} color="blue">
                 Active
               </Badge>
             </Flex>
@@ -77,7 +77,7 @@ export const CustomTitleContent: StoryFn<typeof Accordion> = () => {
         <AccordionItem
           value="sun"
           title={
-            <Flex gap="xs" align="v" css={{ fontFamily: '$mono', color: '$textStrong' }}>
+            <Flex gap="xs" align="v" css={{ fontFamily: 'var(--fonts-mono)', color: 'var(--colors-textStrong)' }}>
               <IconSun size="14px" color="currentColor" />
               Sun settings
             </Flex>

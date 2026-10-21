@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { colord } from 'colord'
 
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
-import {
-  ColorPicker,
-  Input,
-  InputNumber,
-  Text,
-  styled,
-  useColorSpaceConversion,
-  type ColorSpace,
-} from '@pivot-ui/editor'
+import { ColorPicker, Input, InputNumber, Text, useColorSpaceConversion, type ColorSpace } from '@pivot-ui/editor'
 import { normalizeColor, denormalizeColor, toNormalizeHexStr, type Color } from '@pivot-ui/editor'
 
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
+import { styled } from '../../../styled-system/jsx'
 
 export interface FormItemColorProps extends BaseFormItemProps<Color> {
   mode?: 'constant' | 'hdr'
@@ -22,22 +15,24 @@ export interface FormItemColorProps extends BaseFormItemProps<Color> {
 }
 
 const ColorSpaceBadge = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  height: '$3',
-  fontSize: '8px',
-  borderRadius: '$round',
-  padding: '$1',
-  backgroundColor: '$gray3',
-  boxShadow: '0 0 0 1px $colors$grayA5',
-  strokeWidth: 1.2,
-  color: '$grayA11',
-  cursor: 'pointer',
-  userSelect: 'none',
-  transition: 'background-color 0.2s ease',
-  '&:hover': {
-    backgroundColor: '$gray6',
-    color: '$grayA12',
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    height: '12px',
+    fontSize: '8px',
+    borderRadius: '9999px',
+    padding: '4px',
+    backgroundColor: 'var(--colors-gray3)',
+    boxShadow: '0 0 0 1px var(--colors-grayA5)',
+    strokeWidth: 1.2,
+    color: 'var(--colors-grayA11)',
+    cursor: 'pointer',
+    userSelect: 'none',
+    transition: 'background-color 0.2s ease',
+    '&:hover': {
+      backgroundColor: 'var(--colors-gray6)',
+      color: 'var(--colors-grayA12)',
+    },
   },
 })
 

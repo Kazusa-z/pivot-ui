@@ -26,6 +26,13 @@ Note: keep a CSS reset in your application so the components render consistently
 
 > This package does not use the `z-index` style.
 
+## Panda migration notes
+
+- `Text` / `Title` sizes are numeric variants: `size={2}`, not `size="2"`.
+- `Flex.wrap` is boolean (`true` / `false`) or `"reverse"`.
+- Migrated components accept Panda `css` props. Replace Stitches `$token` values with raw CSS variables (`var(--colors-...)`) or `token(...)` calls.
+- See [the migration ledger](../../panda/MIGRATION.md) for temporary compatibility notes.
+
 ## Development
 
 ```bash

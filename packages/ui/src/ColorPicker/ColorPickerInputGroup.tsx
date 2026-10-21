@@ -300,13 +300,13 @@ export function ColorPickerInputGroup(props: ColorPickerInputGroupProps) {
       {mode === 'HEX' && <HEXAColorInput alpha={alpha} value={hexa} onChange={handleInputChange('HEX')} />}
       {mode === 'HSLA' && <HSLAColorInput alpha={alpha} value={hsla} onChange={handleInputChange('HSLA')} />}
       {mode === 'RGBA' && <RGBAColorInput alpha={alpha} value={rgba} onChange={handleInputChange('RGBA')} />}
-      <ActionButton variant="subtle" onClick={() => switchMode()} css={{ alignSelf: 'baseline', borderRadius: '$3' }}>
+      <ActionButton variant="subtle" onClick={() => switchMode()} css={{ alignSelf: 'baseline', borderRadius: '6px' }}>
         <IconSelector />
       </ActionButton>
       {/* <DropdownMenu
         size="xs"
         trigger={
-          <ActionButton variant="subtle" css={{ alignSelf: 'baseline', borderRadius: '$3' }}>
+          <ActionButton variant="subtle" css={{ alignSelf: 'baseline', borderRadius: '6px' }}>
             <IconSettings />
           </ActionButton>
         }>

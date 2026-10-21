@@ -21,7 +21,7 @@ export const Overview: StoryFn<typeof Dialog> = (args) => {
         Open Dialog
       </Button>
       <Dialog open={open} closable onOpenChange={(open) => setOpen(false)}>
-        <Flex direction="column" gap="xs" css={{ marginBottom: '$6' }}>
+        <Flex direction="column" gap="xs" css={{ marginBottom: '24px' }}>
           <Title size={2}>Register</Title>
           <Text>Register use password or OAuth2.0</Text>
         </Flex>

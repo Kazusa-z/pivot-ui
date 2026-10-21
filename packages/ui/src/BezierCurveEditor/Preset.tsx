@@ -143,7 +143,7 @@ export function BezierCurvePresets(props: BezierCurveEditorProps) {
       <Flex
         align="v"
         justifyContent="between"
-        css={{ fontSize: '$1', marginTop: '$7', color: '$gray11', userSelect: 'none' }}>
+        css={{ fontSize: '12px', marginTop: '28px', color: 'var(--colors-gray11)', userSelect: 'none' }}>
         Presets
         {presets.length > 0 && (
           <Button variant="subtle" onClick={() => setDeletable(!deletable)}>

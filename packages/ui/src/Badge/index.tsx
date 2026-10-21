@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useState, type ComponentProps, type PropsWithC
 import { IconX } from '@tabler/icons-react'
 
 import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 
 const StyledBadgeInner = styled('span', {
   base: {
@@ -245,8 +246,7 @@ export type BadgeProps = PropsWithChildren<
   Omit<StyledBadgeProps, 'dot' | 'css'> & {
     closable?: boolean
     onClose?: (e: any) => void
-    // TODO(TD-01): narrow to SystemStyleObject after the consumer css audit.
-    css?: any
+    css?: SystemStyleObject
   }
 >
 
