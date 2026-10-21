@@ -49,11 +49,11 @@ function start() {
     engine.resourceManager
       .load([
         {
-          type: AssetType.Texture,
+          type: AssetType.Texture2D,
           url: 'https://gw.alipayobjects.com/mdn/rms_7c464e/afts/img/A*g_HIRqQdNUcAAAAAAAAAAAAAARQnAQ',
         },
         {
-          type: AssetType.Texture,
+          type: AssetType.Texture2D,
           url: 'https://gw.alipayobjects.com/mdn/rms_7c464e/afts/img/A*H7nMRY2SuWcAAAAAAAAAAAAAARQnAQ',
         },
         {

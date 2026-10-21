@@ -121,7 +121,7 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(function
   return (
     <StyledToggleGroup ref={forwardedRef} {...rest}>
       {children.map((child, key) => {
-        return cloneElement(child as ReactElement, { size, key, variant })
+        return cloneElement(child as ReactElement<Pick<ToggleGroupProps, 'size' | 'variant'>>, { size, key, variant })
       })}
     </StyledToggleGroup>
   )

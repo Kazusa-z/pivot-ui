@@ -44,7 +44,7 @@ const ColorSpaceBadge = styled('div', {
 const defaultColor: Color = denormalizeColor({ r: 0, g: 0, b: 0, a: 1 })
 
 export function FormItemColor(props: FormItemColorProps) {
-  const { value, disabled, onChange, mode = 'constant', colorSpace = 'Linear' } = props
+  const { value, defaultValue, disabled, onChange, mode = 'constant', colorSpace = 'Linear' } = props
 
   const [displayColorSpace, setDisplayColorSpace] = useState<ColorSpace>(colorSpace)
 
@@ -53,8 +53,8 @@ export function FormItemColor(props: FormItemColorProps) {
   }, [colorSpace])
 
   const [color, setColor] = useControllableState({
-    prop: denormalizeColor(value),
-    defaultProp: defaultColor,
+    prop: value === undefined ? undefined : denormalizeColor(value),
+    defaultProp: defaultValue === undefined ? defaultColor : denormalizeColor(defaultValue),
     onChange: (value) => {
       if (onChange) {
         onChange(normalizeColor(value))
@@ -64,11 +64,12 @@ export function FormItemColor(props: FormItemColorProps) {
 
   const { displayValue, convertInputToComponentSpace } = useColorSpaceConversion(color, colorSpace, displayColorSpace)
 
-  const [colorStr, setColorStr] = useState(toNormalizeHexStr(displayValue))
+  const displayColorStr = toNormalizeHexStr(displayValue)
+  const [colorStr, setColorStr] = useState(displayColorStr)
 
   useEffect(() => {
-    setColorStr(toNormalizeHexStr(displayValue))
-  }, [value, displayColorSpace])
+    setColorStr(displayColorStr)
+  }, [displayColorStr])
 
   const inputOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setColorStr(e.target.value)
@@ -82,9 +83,9 @@ export function FormItemColor(props: FormItemColorProps) {
     if (e.key === 'Enter') {
       const colordValue = colord(`#${colorStr.replace('#', '')}`)
       if (colordValue.isValid()) {
-        onChange && onChange(normalizeColor(convertInputToComponentSpace(colordValue.toRgb())))
+        setColor(convertInputToComponentSpace(colordValue.toRgb()))
       } else {
-        setColorStr(toNormalizeHexStr(color))
+        setColorStr(displayColorStr)
       }
     }
   }

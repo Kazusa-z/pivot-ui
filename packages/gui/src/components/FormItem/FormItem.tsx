@@ -1,4 +1,4 @@
-import React, { cloneElement, forwardRef, ReactElement, ReactNode } from 'react'
+import React, { cloneElement, forwardRef, ReactNode } from 'react'
 import { styled, type CSS, VariantProps } from '@galacean/editor-ui'
 import { Label } from './Label'
 import { nanoid } from 'nanoid'
@@ -141,8 +141,8 @@ const FormItem = forwardRef<HTMLDivElement, FormItemProps>(function FormItem(pro
   const withoutLabel = !propLabel
 
   const decorateChildren = React.Children.toArray(children).map((child) => {
-    if (React.isValidElement(child)) {
-      return cloneElement(child as ReactElement, {
+    if (React.isValidElement<{ id?: string; size?: 'sm' | 'md'; label?: string }>(child)) {
+      return cloneElement(child, {
         id: labelId,
         size,
         label: name,

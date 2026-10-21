@@ -1,4 +1,1 @@
-export {
-  Panel,
-  type PanelProps
-} from './Panel'
+export { Panel, type PanelProps } from './Panel'

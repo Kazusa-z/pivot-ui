@@ -48,10 +48,7 @@ interface HDRColorPickerProps {
 }
 
 export type ColorPickerRootProps =
-  | ConstantColorPickerProps
-  | GradientColorPickerProps
-  | ParticleColorPickerProps
-  | HDRColorPickerProps
+  ConstantColorPickerProps | GradientColorPickerProps | ParticleColorPickerProps | HDRColorPickerProps
 
 const ColorPickerRoot = function ColorPickerRoot(
   props: ColorPickerRootProps & {

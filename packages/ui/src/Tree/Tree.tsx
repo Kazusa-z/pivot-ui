@@ -181,7 +181,7 @@ interface TreeItemContentProps {
 }
 
 export function TreeItemContent(props: TreeItemContentProps) {
-  const input = useRef<HTMLInputElement>()
+  const input = useRef<HTMLInputElement>(undefined)
   const {
     isHovered,
     id,
@@ -297,7 +297,7 @@ export function TreeItemContent(props: TreeItemContentProps) {
 }
 
 type IconPolicy<T> = {
-  icon: JSX.Element
+  icon: React.JSX.Element
   policy: (item?: T) => boolean
   color?: string
 }[]

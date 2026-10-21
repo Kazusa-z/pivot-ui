@@ -1,22 +1,23 @@
-import React from "react";
+import React from 'react'
 
-import { Flex, Collapsible, type CollapsibleProps } from "@galacean/editor-ui";
-import { BaseFormItemProps } from "../FormItem/FormItem";
+import { Flex, Collapsible, type CollapsibleProps } from '@galacean/editor-ui'
+import { BaseFormItemProps } from '../FormItem/FormItem'
 
-export interface FormItemGroupProps extends Omit<CollapsibleProps, 'defaultValue'> , Omit<BaseFormItemProps<any>, 'value' | 'onChange'> {
-  customTitle?: React.ReactNode;
-  defaultOpen?: boolean;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  collapsible?: boolean;
-  nesting?: boolean;
+export interface FormItemGroupProps
+  extends Omit<CollapsibleProps, 'defaultValue'>, Omit<BaseFormItemProps<any>, 'value' | 'onChange'> {
+  customTitle?: React.ReactNode
+  defaultOpen?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  collapsible?: boolean
+  nesting?: boolean
   // children: React.ReactNode;
-  children: any;
-  transparent?: boolean;
+  children: any
+  transparent?: boolean
 }
 
 function FormItemGroup(props: FormItemGroupProps) {
-  const { label, nesting, collapsible, customTitle, defaultOpen = true, open, onOpenChange, transparent, } = props;
+  const { label, nesting, collapsible, customTitle, defaultOpen = true, open, onOpenChange, transparent } = props
 
   return (
     <Collapsible
@@ -28,15 +29,14 @@ function FormItemGroup(props: FormItemGroupProps) {
       onOpenChange={onOpenChange}
       collapsible={collapsible}
       css={{
-        marginBottom:'$0_5',
-        "&:last-child": {
+        marginBottom: '$0_5',
+        '&:last-child': {
           marginBottom: 0,
         },
-      }}
-    >
+      }}>
       {props.children}
     </Collapsible>
-  );
+  )
 }
 
-export { FormItemGroup };
+export { FormItemGroup }

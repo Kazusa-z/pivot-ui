@@ -218,6 +218,7 @@ export function FormItemGradient(props: FormItemGradientProps) {
   const { label, labelFirst, info, value, hdr = false } = props
   const [valueMap, setValueMap] = useControllableState({
     prop: denormalizeGradientValue(value),
+    defaultProp: [],
     onChange: (state) => {
       if (props.onValueChange) {
         props.onValueChange(normalizeGradientValue(state), propType as GradientPropertyType)

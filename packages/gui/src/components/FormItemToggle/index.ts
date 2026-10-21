@@ -1,4 +1,1 @@
-export {
-  FormItemToggle,
-  type FormItemToggleProps
-} from './FormItemToggle'
+export { FormItemToggle, type FormItemToggleProps } from './FormItemToggle'

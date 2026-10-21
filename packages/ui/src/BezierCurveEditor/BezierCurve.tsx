@@ -57,7 +57,7 @@ export function BezierCurve(props: BezierCurveProps) {
       ? `M ${extendMinX} ${first.y} L ${first.x} ${first.y} M ${last.x} ${last.y} L ${extendMaxX} ${last.y}`
       : undefined
   const [hovered, setHovered] = useState(false)
-  const pointerRef = React.useRef<DOMPoint>()
+  const pointerRef = React.useRef<DOMPoint>(undefined)
   const [matrixedPoint, setMatrixedPoint] = useState<IPoint | null>(null)
 
   useEffect(() => {

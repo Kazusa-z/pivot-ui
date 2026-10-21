@@ -4,25 +4,16 @@ import type { Preview } from '@storybook/react'
 resetStyle()
 
 const preview: Preview = {
+  initialGlobals: { backgrounds: { value: 'dark' } },
   parameters: {
     controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/,
-      },
+      matchers: { color: /(background|color)$/i, date: /Date$/ },
     },
     backgrounds: {
-      default: 'dark',
-      values: [
-        {
-          name: 'dark',
-          value: '#111',
-        },
-        {
-          name: 'light',
-          value: '#fff',
-        },
-      ],
+      options: {
+        dark: { name: 'dark', value: '#111' },
+        light: { name: 'light', value: '#fff' },
+      },
     },
     layout: 'centered',
   },

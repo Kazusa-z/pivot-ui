@@ -1,1 +1,1 @@
-export { type FormItemGroupProps, FormItemGroup} from './FormItemGroup'
+export { type FormItemGroupProps, FormItemGroup } from './FormItemGroup'

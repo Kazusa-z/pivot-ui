@@ -121,7 +121,20 @@ export interface DialogProps {
 }
 
 export function Dialog(props: DialogProps) {
-  const { title, trigger, children, closable, onOpenChange, disabled, css, zIndex, className, id, modal = true, ...rest } = props
+  const {
+    title,
+    trigger,
+    children,
+    closable,
+    onOpenChange,
+    disabled,
+    css,
+    zIndex,
+    className,
+    id,
+    modal = true,
+    ...rest
+  } = props
 
   return (
     <DialogRoot onOpenChange={onOpenChange} modal={modal} {...rest}>

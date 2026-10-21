@@ -310,7 +310,7 @@ export interface InputProps extends Omit<React.ComponentPropsWithoutRef<'input'>
   startSlot?: React.ReactNode
   endSlot?: React.ReactNode
   overrideStartSlotStyle?: boolean
-  ellipsis?: boolean;
+  ellipsis?: boolean
   overrideEndSlotStyle?: boolean
   rootRef?: any
   disabled?: boolean

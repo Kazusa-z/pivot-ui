@@ -1,6 +1,6 @@
 # @galacean/gui
 
-An opinionated GUI library designed to create engaging and functional online tools with ease. Built on top of React and [@galacean/editor-ui](https://github.com/galacean/editor-ui), it provides both imperative GUI controls (similar to dat.gui) and declarative React components for building interactive 3D editors and tools.
+An opinionated GUI library designed to create engaging and functional online tools with ease. Built on top of React and [@galacean/editor-ui](../ui/README.md), it provides both imperative GUI controls (similar to dat.gui) and declarative React components for building interactive 3D editors and tools.
 
 ## Features
 
@@ -11,92 +11,18 @@ An opinionated GUI library designed to create engaging and functional online too
 - ♿ **Accessibility First** - Built with accessibility in mind
 - 🔧 **TypeScript Support** - Full type safety and IntelliSense
 
-## Installation
+## Local usage
 
-### For React Projects
-
-```bash
-npm install @galacean/gui
-# or
-yarn add @galacean/gui
-# or
-pnpm add @galacean/gui
-```
-
-### For Non-React Projects
-
-Even if you're not using React in your project, you still need to install React as a dependency since the GUI class uses React internally:
+This package is part of the local `editor-ui` pnpm workspace and is **not published to npm**. It is consumed through `workspace:*` or linked directly:
 
 ```bash
-npm install @galacean/gui react react-dom
+# From another local project
+pnpm link ../editor-ui/packages/gui
 ```
+
+React and React DOM 19 are peer dependencies. If you use the `GUI` class outside a React project, React is still required because the class renders its UI with React internally.
 
 ## Quick Start
-
-### CDN Usage (Recommended for Non-React Projects)
-
-```html
-<!doctype html>
-<html>
-  <head>
-    <title>Galacean GUI Example</title>
-    <script src="https://unpkg.com/@galacean/gui/dist/index.umd.js"></script>
-  </head>
-  <body>
-    <canvas id="canvas"></canvas>
-
-    <script>
-      const { GUI } = window.GalaceanGUI
-
-      // Your 3D scene data
-      const sceneData = {
-        camera: {
-          position: { x: 0, y: 10, z: 30 },
-          fov: 45,
-        },
-        light: {
-          color: { r: 1, g: 1, b: 1, a: 1 },
-          intensity: 1.0,
-        },
-      }
-
-      // Create GUI
-      const gui = new GUI(sceneData, [
-        {
-          label: 'Camera Position',
-          bindPath: 'camera.position',
-          type: 'Vector3',
-          onChange(value) {
-            // Update your 3D scene
-            console.log('Camera position changed:', value)
-          },
-        },
-        {
-          label: 'Light Color',
-          bindPath: 'light.color',
-          type: 'Color',
-          onChange(value) {
-            // Update your 3D scene
-            console.log('Light color changed:', value)
-          },
-        },
-        {
-          label: 'Light Intensity',
-          bindPath: 'light.intensity',
-          type: 'Slider',
-          min: 0,
-          max: 2,
-          step: 0.1,
-          onChange(value) {
-            // Update your 3D scene
-            console.log('Light intensity changed:', value)
-          },
-        },
-      ])
-    </script>
-  </body>
-</html>
-```
 
 ### Use the individual components
 
@@ -891,10 +817,6 @@ const gui = new GUI(sceneData, guiConfig)
 - Safari 14+
 - Edge 88+
 
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](../../LICENSE) for details.

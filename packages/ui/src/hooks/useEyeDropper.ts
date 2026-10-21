@@ -56,7 +56,7 @@ const createHelpers = () => {
 export const useEyeDropper = () => {
   const openPicker = useMemo(() => createHelpers(), [])
   const [mounted, isSupported] = useIsSupported()
-  const controller = useRef<AbortController>()
+  const controller = useRef<AbortController>(undefined)
   const close = useCallback(() => {
     if (typeof controller.current === 'undefined') return
     controller.current.abort()

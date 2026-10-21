@@ -25,7 +25,7 @@ export function FormItemVector3(props: FormItemVector3Props) {
   const [constrainMode, setConstrainMode] = useState(false)
 
   const masterAxisRef = useRef<keyof Vector3>('x')
-  const originalValueRef = useRef<Vector3>()
+  const originalValueRef = useRef<Vector3>(undefined)
 
   const handleFocus = (prefix: keyof Vector3) => () => {
     originalValueRef.current = { x: value.x, y: value.y, z: value.z }

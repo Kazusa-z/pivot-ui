@@ -1,4 +1,4 @@
-import { SVGProps, forwardRef } from "react"
+import { SVGProps, forwardRef } from 'react'
 
 const IconAnimationControllerFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
   function IconAnimationControllerFile(props, forwardedRef) {
@@ -10,8 +10,7 @@ const IconAnimationControllerFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGEle
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         {...props}
-        ref={forwardedRef}
-      >
+        ref={forwardedRef}>
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -21,14 +20,13 @@ const IconAnimationControllerFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGEle
         <mask
           id="mask0_14_251"
           style={{
-            maskType: "luminance",
+            maskType: 'luminance',
           }}
           maskUnits="userSpaceOnUse"
           x={0}
           y={0}
           width={100}
-          height={120}
-        >
+          height={120}>
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -49,6 +47,7 @@ const IconAnimationControllerFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGEle
         />
       </svg>
     )
-})
+  }
+)
 
-export default IconAnimationControllerFile;
+export default IconAnimationControllerFile

@@ -1,4 +1,1 @@
-export {
-  FormItemArray,
-  type FormItemArrayProps
-} from './FormItemArray'
+export { FormItemArray, type FormItemArrayProps } from './FormItemArray'

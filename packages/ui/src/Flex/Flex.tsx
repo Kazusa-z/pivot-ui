@@ -60,7 +60,7 @@ const StyledFlex = styled('div', {
       true: {
         width: '100%',
       },
-    }
+    },
   },
   defaultVariants: {
     direction: 'row',

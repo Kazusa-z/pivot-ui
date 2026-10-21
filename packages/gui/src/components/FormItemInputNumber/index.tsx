@@ -6,7 +6,8 @@ import { Button, InputNumber, clamp, type InputNumberProps } from '@galacean/edi
 import { BaseFormItemProps, extractFormItemProps } from '../FormItem'
 
 export interface FormItemInputNumberProps
-  extends BaseFormItemProps<number>,
+  extends
+    BaseFormItemProps<number>,
     Pick<InputNumberProps, 'step' | 'dragStep' | 'min' | 'max' | 'endSlot' | 'startSlot'> {
   additionalControl?: boolean
   onChange?: (value: number) => void

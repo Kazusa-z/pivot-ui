@@ -6,8 +6,7 @@ import { Input, InputProps } from '@galacean/editor-ui'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 
 export interface FormItemInputProps
-  extends BaseFormItemProps<string>,
-    Omit<InputProps, 'defaultValue' | 'value' | 'onChange'> {}
+  extends BaseFormItemProps<string>, Omit<InputProps, 'defaultValue' | 'value' | 'onChange'> {}
 
 export function FormItemInput(props: FormItemInputProps) {
   const { value, defaultValue, onChange, ...rest } = props

@@ -1,4 +1,1 @@
-export {
-  SegmentControl,
-  SegmentControlItem,
-} from './SegmentControl'
+export { SegmentControl, SegmentControlItem } from './SegmentControl'

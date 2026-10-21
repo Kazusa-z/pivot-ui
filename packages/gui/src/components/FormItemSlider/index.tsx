@@ -1,4 +1,1 @@
-export {
-  FormItemSlider,
-  type FormItemSliderProps
-} from './FormItemSlider';
+export { FormItemSlider, type FormItemSliderProps } from './FormItemSlider'

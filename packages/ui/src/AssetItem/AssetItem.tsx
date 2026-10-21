@@ -41,8 +41,8 @@ export interface AssetItemProps extends AssetThumbnailProps, AssetNameProps, Rea
   expandable?: boolean
   expanded?: boolean
   defaultExpanded?: boolean
-  children?: React.ReactNode;
-  displayMode?: "grid" | "list";
+  children?: React.ReactNode
+  displayMode?: 'grid' | 'list'
 }
 
 export const AssetItem = forwardRef<HTMLDivElement, AssetItemProps>(function AssetItem(
@@ -79,8 +79,7 @@ export const AssetItem = forwardRef<HTMLDivElement, AssetItemProps>(function Ass
       aria-selected={selected}
       onClick={onSelectedChange}
       {...rest}
-      ref={forwardedRef}
-    >
+      ref={forwardedRef}>
       <AssetThumbnail
         thumbnail={thumbnail}
         mini={rest.displayMode === 'list'}

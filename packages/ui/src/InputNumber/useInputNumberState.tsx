@@ -19,7 +19,7 @@ interface InputNumberProps {
 }
 
 export function useInputNumberState(props: InputNumberStateOptions): InputNumberProps {
-  const ref = React.useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>
+  const ref = React.useRef<HTMLInputElement>(undefined) as MutableRefObject<HTMLInputElement>
   const initialValue = props.value ?? props.defaultValue ?? props.fallbackValue ?? 0
   const [value, setVal] = React.useState(`${initialValue}`)
   const { fallbackValue = 0, onChange: onChangeProps, min = -Infinity, max = Infinity } = props

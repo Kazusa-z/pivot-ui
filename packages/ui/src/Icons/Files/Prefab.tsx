@@ -1,13 +1,6 @@
-import { SVGProps } from "react"
+import { SVGProps } from 'react'
 const IconPrefab = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 120"
-    width={100}
-    height={120}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width={100} height={120} fill="none" {...props}>
     <path
       fill="#0090FF"
       fillRule="evenodd"
@@ -22,9 +15,8 @@ const IconPrefab = (props: SVGProps<SVGSVGElement>) => (
       y={0}
       maskUnits="userSpaceOnUse"
       style={{
-        maskType: "luminance",
-      }}
-    >
+        maskType: 'luminance',
+      }}>
       <path
         fill="#fff"
         fillRule="evenodd"

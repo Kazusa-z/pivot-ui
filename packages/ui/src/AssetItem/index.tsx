@@ -1,4 +1,1 @@
-export {
-  AssetItem,
-  type AssetItemProps
-} from './AssetItem'
+export { AssetItem, type AssetItemProps } from './AssetItem'

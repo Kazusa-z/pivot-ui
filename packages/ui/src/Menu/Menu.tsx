@@ -166,9 +166,7 @@ type ISubMenuItemProps = {
 }
 
 interface MenuContentProps
-  extends ContextMenuContentProps,
-    DropdownMenuContentProps,
-    MenubarPrimitive.MenubarContentProps {
+  extends ContextMenuContentProps, DropdownMenuContentProps, MenubarPrimitive.MenubarContentProps {
   hidden?: boolean
 }
 
@@ -314,14 +312,24 @@ type IDropdownMenuProps = Pick<DropdownMenuContentProps, PickedContentProps> &
   }
 
 function DropdownMenu(props: PropsWithChildren<IDropdownMenuProps>) {
-  const { children, portal = true, size = 'sm', side, sideOffset = 4, align = 'start', alignOffset, disabled = false, ...rest } = props
+  const {
+    children,
+    portal = true,
+    size = 'sm',
+    side,
+    sideOffset = 4,
+    align = 'start',
+    alignOffset,
+    disabled = false,
+    ...rest
+  } = props
 
-  let Portal: any = Fragment;
-  let container: Element;
+  let Portal: any = Fragment
+  let container: Element
 
   if (portal) {
     Portal = DropdownMenuPrimitive.Portal
-    if(typeof portal === 'object') {
+    if (typeof portal === 'object') {
       container = portal
     }
   }
@@ -357,14 +365,24 @@ type IContextMenuProps = ContextMenuProps & {
 }
 
 function ContextMenu(props: IContextMenuProps) {
-  const { trigger, size = 'sm', children, onOpenChange, onPointerDownOutside, portal = true, asChild, disabled = false, hidden } = props
+  const {
+    trigger,
+    size = 'sm',
+    children,
+    onOpenChange,
+    onPointerDownOutside,
+    portal = true,
+    asChild,
+    disabled = false,
+    hidden,
+  } = props
 
-  let Portal: any = Fragment;
-  let container: Element;
+  let Portal: any = Fragment
+  let container: Element
 
   if (portal) {
     Portal = ContextMenuPrimitive.Portal
-    if(typeof portal === 'object') {
+    if (typeof portal === 'object') {
       container = portal
     }
   }

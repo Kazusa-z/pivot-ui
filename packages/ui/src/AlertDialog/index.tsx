@@ -1,2 +1,2 @@
-export { AlertDialog } from './AlertDialog';
-export { showAlert } from './utilities';
+export { AlertDialog } from './AlertDialog'
+export { showAlert } from './utilities'

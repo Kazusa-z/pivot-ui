@@ -1,4 +1,4 @@
-import { SVGProps, forwardRef } from "react"
+import { SVGProps, forwardRef } from 'react'
 
 const IconAnimatorClipFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>((props, forwardedRef) => (
   <svg
@@ -8,8 +8,7 @@ const IconAnimatorClipFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
     viewBox="0 0 100 120"
     fill="none"
     {...props}
-    ref={forwardedRef}
-  >
+    ref={forwardedRef}>
     <path
       fill="#6E56CF"
       fillRule="evenodd"
@@ -24,9 +23,8 @@ const IconAnimatorClipFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
       y={0}
       maskUnits="userSpaceOnUse"
       style={{
-        maskType: "luminance",
-      }}
-    >
+        maskType: 'luminance',
+      }}>
       <path
         fill="#fff"
         fillRule="evenodd"
@@ -52,9 +50,8 @@ const IconAnimatorClipFile = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
       y={46}
       maskUnits="userSpaceOnUse"
       style={{
-        maskType: "alpha",
-      }}
-    >
+        maskType: 'alpha',
+      }}>
       <path fill="#6550B9" d="m2 46 23.382 45L49 46H2Z" />
     </mask>
     <g fill="#6550B9" mask="url(#b)">

@@ -1,33 +1,33 @@
-import React from "react";
+import React from 'react'
 
-import { styled } from "@galacean/editor-ui";
+import { styled } from '@galacean/editor-ui'
 
-const StyledBorder = styled("div", {
-  borderBottom: "1px solid transparent",
-  boxShadow: "0 3px 8px rgba(0, 0, 0, 0.3)"
-});
+const StyledBorder = styled('div', {
+  borderBottom: '1px solid transparent',
+  boxShadow: '0 3px 8px rgba(0, 0, 0, 0.3)',
+})
 
 function SearchBarBorder({ scrollingRef }: { scrollingRef: React.RefObject<HTMLDivElement> }) {
-  const [visible, setVisible] = React.useState(scrollingRef.current && scrollingRef.current.scrollTop > 0);
+  const [visible, setVisible] = React.useState(scrollingRef.current && scrollingRef.current.scrollTop > 0)
 
   React.useEffect(() => {
     if (scrollingRef.current) {
-      const scrollElement = scrollingRef.current;
+      const scrollElement = scrollingRef.current
       const scrollHandler = () => {
         if (scrollElement && scrollElement.scrollTop > 0) {
-          setVisible(true);
+          setVisible(true)
         } else {
-          setVisible(false);
+          setVisible(false)
         }
-      };
-      scrollElement.addEventListener("scroll", scrollHandler);
+      }
+      scrollElement.addEventListener('scroll', scrollHandler)
       return () => {
-        scrollElement.removeEventListener("scroll", scrollHandler);
-      };
+        scrollElement.removeEventListener('scroll', scrollHandler)
+      }
     }
-  }, [scrollingRef]);
+  }, [scrollingRef])
 
-  return visible ? <StyledBorder /> : null;
+  return visible ? <StyledBorder /> : null
 }
 
-export { SearchBarBorder };
+export { SearchBarBorder }

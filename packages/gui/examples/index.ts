@@ -1,20 +1,20 @@
-async function start() {
-  const Galacean = (window as any).Galacean
-  const {
-    AssetType,
-    Color,
-    BlinnPhongMaterial,
-    Camera,
-    DirectLight,
-    GLTFResource,
-    MeshRenderer,
-    RenderFace,
-    Texture2D,
-    Vector3,
-    WebGLEngine,
-  } = Galacean
-  const { OrbitControl } = Galacean.Toolkit
+import {
+  AssetType,
+  BlinnPhongMaterial,
+  Camera,
+  DirectLight,
+  Entity,
+  GLTFResource,
+  MeshRenderer,
+  RenderFace,
+  Texture2D,
+  Vector3,
+  WebGLEngine,
+} from '@galacean/engine'
+import { OrbitControl } from '@galacean/engine-toolkit'
+import { GUI } from '../src'
 
+async function start() {
   // Create engine
   const engine = await WebGLEngine.create({ canvas: document.getElementById('canvas') as HTMLCanvasElement })
   engine.canvas.resizeByClientSize()
@@ -41,11 +41,11 @@ async function start() {
 
   const resources = await engine.resourceManager.load([
     {
-      type: AssetType.Texture,
+      type: AssetType.Texture2D,
       url: 'https://gw.alipayobjects.com/mdn/rms_7c464e/afts/img/A*g_HIRqQdNUcAAAAAAAAAAAAAARQnAQ',
     },
     {
-      type: AssetType.Texture,
+      type: AssetType.Texture2D,
       url: 'https://gw.alipayobjects.com/mdn/rms_7c464e/afts/img/A*H7nMRY2SuWcAAAAAAAAAAAAAARQnAQ',
     },
     {
@@ -53,13 +53,13 @@ async function start() {
       url: 'https://gw.alipayobjects.com/os/bmw-prod/72a8e335-01da-4234-9e81-5f8b56464044.gltf',
     },
   ])
-  const baseTexture = resources[0]
-  const normalTexture = resources[1]
-  const gltf = resources[2]
+  const baseTexture = resources[0] as Texture2D
+  const normalTexture = resources[1] as Texture2D
+  const gltf = resources[2] as GLTFResource
 
   const { defaultSceneRoot } = gltf
-  const rendererArray = new Array()
-  const materials = new Array()
+  const rendererArray: MeshRenderer[] = []
+  const materials: BlinnPhongMaterial[] = []
 
   rootEntity.addChild(defaultSceneRoot)
   defaultSceneRoot.getComponentsIncludeChildren(MeshRenderer, rendererArray)
@@ -77,7 +77,7 @@ async function start() {
   addGUI(cameraEntity, materials)
 }
 
-function addGUI(cameraEntity, materials: any[]): void {
+function addGUI(cameraEntity: Entity, materials: BlinnPhongMaterial[]): void {
   const data = {
     baseColor: { r: 1, g: 1, b: 1, a: 1 },
     specularColor: { r: 1, g: 1, b: 1, a: 1 },
@@ -101,7 +101,7 @@ function addGUI(cameraEntity, materials: any[]): void {
       },
     ],
   }
-  const gui = new GalaceanGUI(data, [
+  const gui = new GUI(data, [
     {
       label: 'baseColor',
       bindPath: 'baseColor',

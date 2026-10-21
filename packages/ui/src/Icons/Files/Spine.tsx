@@ -1,14 +1,7 @@
-import { SVGProps } from "react"
+import { SVGProps } from 'react'
 
 const IconSpineFile = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 120"
-    width={100}
-    height={120}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width={100} height={120} fill="none" {...props}>
     <path
       fill="#E54D2E"
       fillRule="evenodd"

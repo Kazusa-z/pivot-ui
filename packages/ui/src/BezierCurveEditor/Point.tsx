@@ -91,7 +91,7 @@ export function Point(props: PointProps) {
   onPointChangeRef.current = onPointChange
   const getRootRef = useRef(getRoot)
   getRootRef.current = getRoot
-  const pointerRef = useRef<DOMPoint>()
+  const pointerRef = useRef<DOMPoint>(undefined)
   const [moving, setMoving] = useState(false)
   const [hovered, setHovered] = useState(false)
 

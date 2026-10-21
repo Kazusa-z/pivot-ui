@@ -1,6 +1,6 @@
-import { forwardRef } from "react";
+import { forwardRef } from 'react'
 
-export const TransparentPattern = forwardRef<SVGSVGElement,React.SVGProps<SVGSVGElement>>(
+export const TransparentPattern = forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
   function TransparentPattern(props, forwardedRef) {
     return (
       <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" {...props} ref={forwardedRef}>
@@ -13,6 +13,6 @@ export const TransparentPattern = forwardRef<SVGSVGElement,React.SVGProps<SVGSVG
         </defs>
         <rect width="100%" height="100%" fill="url(#transparentPattern)" />
       </svg>
-    );
+    )
   }
 )

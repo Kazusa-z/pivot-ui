@@ -1,7 +1,4 @@
-export {
-  FormItemToggleGroup,
-  type FormItemToggleGroupProps,
-} from './FormItemToggleGroup';
+export { FormItemToggleGroup, type FormItemToggleGroupProps } from './FormItemToggleGroup'
 
 // export interface FormItemToggleGroupProps {}
 

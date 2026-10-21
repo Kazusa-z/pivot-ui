@@ -4,5 +4,5 @@ export {
   ThemeProvider,
   ThemeContext,
   addThemeChangeListener,
-  removeThemeChangeListener
+  removeThemeChangeListener,
 } from './ThemeProvider'

@@ -4,7 +4,7 @@
 
 A comprehensive UI component library designed for building professional 3D editors and interactive tools in the browser. This monorepo contains two complementary packages that work together to provide both low-level UI components and high-level GUI solutions.
 
-Checkout the [storybook](https://main--66ceb847fb9e976339fd906e.chromatic.com/) for more information.
+This repository is a local-only pnpm workspace. Both packages are consumed through the workspace or `pnpm link`; they are not published to npm. The packages are source-only, so there is no `dist` / UMD build step in this repository.
 
 ## @galacean/editor-ui
 
@@ -70,32 +70,28 @@ function ScenePanel() {
 
 ## Quick Start
 
-### Installation
+This repository is a local pnpm workspace. Start with:
 
 ```bash
-# For basic UI components
-npm install @galacean/editor-ui
+pnpm install
 
-# For GUI controls (includes editor-ui)
-npm install @galacean/gui
+# Storybook for @galacean/editor-ui
+pnpm dev
+
+# Storybook for @galacean/gui
+pnpm dev:gui
+
+# Demo app
+pnpm dev:demo
 ```
 
-### CDN Usage (Non-React Projects)
+To consume a package from another local project, link it instead of installing from a registry:
 
-```html
-<script src="https://unpkg.com/@galacean/gui/dist/index.umd.js"></script>
-<script>
-  const gui = new GUI(data, [
-    {
-      label: 'Camera Position',
-      bindPath: 'camera.position',
-      type: 'Vector3',
-      onChange(value) {
-        // Update your 3D scene
-      },
-    },
-  ])
-</script>
+```bash
+# In the consuming project
+pnpm link ../editor-ui/packages/ui
+# or, for the GUI package
+pnpm link ../editor-ui/packages/gui
 ```
 
 ## Use Cases
@@ -165,9 +161,12 @@ const gui = new GUI({ camera: { position: { x: 0, y: 0, z: 5 } } }, [
 
 - [Editor UI Documentation](./packages/ui/README.md)
 - [GUI Documentation](./packages/gui/README.md)
-- [Storybook Examples](https://galacean.github.io/editor-ui)
+
+Run `pnpm dev` or `pnpm dev:gui` to browse the component documentation and examples locally.
 
 ## 🛠️ Development
+
+Use Node.js 26.12.0 (see `.node-version`) and pnpm 12.14.0. The supported Node.js ranges are 22.18+, 24.11+, or 26+. React 19.3.1 or newer within React 19 is required by both libraries.
 
 ```bash
 # Install dependencies
@@ -179,9 +178,29 @@ pnpm dev
 # Start development server for gui
 pnpm dev:gui
 
-# Build packages
-pnpm build && pnpm build:gui
+# Start the demo app
+pnpm dev:demo
+
+# Check source types
+pnpm typecheck
+
+# Build the demo app
+pnpm build:app
+
+# Build both component documentation sites
+pnpm build:storybook
+
+# Quick local check (formatting + types)
+pnpm verify:quick
+
+# Full local check (formatting + types + demo + Storybook builds)
+pnpm verify
+
+# Remove generated build files and caches
+pnpm clean
 ```
+
+`pnpm verify:quick` runs automatically as a pre-push hook.
 
 ## License
 

@@ -46,8 +46,10 @@ const StyledInputNumberRoot = styled('div', {
   borderRadius: 'inherit',
 })
 
-export interface InputNumberProps
-  extends Omit<React.ComponentProps<typeof Input>, 'onChange' | 'value' | 'defaultValue' | 'type'> {
+export interface InputNumberProps extends Omit<
+  React.ComponentProps<typeof Input>,
+  'onChange' | 'value' | 'defaultValue' | 'type'
+> {
   min?: number
   max?: number
   step?: number

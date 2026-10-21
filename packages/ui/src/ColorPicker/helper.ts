@@ -95,7 +95,10 @@ function mergeStopPositions(colorStops: GradientColor, alphaStops: GradientColor
   return Array.from(posSet).sort((a, b) => a - b)
 }
 
-export function blendParticleStops(colorStops: GradientColor, alphaStops: GradientColor): { colors: Color[]; positions: number[] } {
+export function blendParticleStops(
+  colorStops: GradientColor,
+  alphaStops: GradientColor
+): { colors: Color[]; positions: number[] } {
   const positions = mergeStopPositions(colorStops, alphaStops)
   const colors = positions.map((pos): Color => {
     const c = interpolateColor(colorStops, pos)

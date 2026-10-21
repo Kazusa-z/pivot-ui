@@ -1,14 +1,7 @@
-import { SVGProps } from "react"
+import { SVGProps } from 'react'
 
 const SpriteAtlas = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 120"
-    width={100}
-    height={120}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width={100} height={120} fill="none" {...props}>
     <path
       fill="#30A46C"
       fillRule="evenodd"
@@ -36,24 +29,15 @@ const SpriteAtlas = (props: SVGProps<SVGSVGElement>) => (
         x={29}
         y={46}
         colorInterpolationFilters="sRGB"
-        filterUnits="userSpaceOnUse"
-      >
+        filterUnits="userSpaceOnUse">
         <feFlood floodOpacity={0} result="BackgroundImageFix" />
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        />
+        <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
         <feOffset dx={2} dy={3} />
         <feGaussianBlur stdDeviation={2} />
         <feComposite in2="hardAlpha" operator="out" />
         <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0" />
         <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_18_316" />
-        <feBlend
-          in="SourceGraphic"
-          in2="effect1_dropShadow_18_316"
-          result="shape"
-        />
+        <feBlend in="SourceGraphic" in2="effect1_dropShadow_18_316" result="shape" />
       </filter>
     </defs>
   </svg>

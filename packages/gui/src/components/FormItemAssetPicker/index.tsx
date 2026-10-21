@@ -112,8 +112,7 @@ const TextureAssetNameText = styled('span', {
 })
 
 export interface FormItemAssetPickerProps<T extends BasicAssetType>
-  extends AssetPickerPopoverProps<T>,
-    BaseFormItemProps<string> {
+  extends AssetPickerPopoverProps<T>, BaseFormItemProps<string> {
   onDelete?: () => void
   onLocate?: (value: string) => void
   placeholder?: string

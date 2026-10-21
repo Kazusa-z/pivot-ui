@@ -1,4 +1,1 @@
-export {
-  FormItemSegmentControl,
-  type FormItemSegmentControlProps,
-} from "./FormItemSegmentControl";
+export { FormItemSegmentControl, type FormItemSegmentControlProps } from './FormItemSegmentControl'

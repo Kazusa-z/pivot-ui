@@ -1,13 +1,29 @@
-export function mergeRefs<T = any>(
-  refs: Array<React.MutableRefObject<T> | React.LegacyRef<T> | undefined | null>
-): React.RefCallback<T> {
+import type { Ref, RefCallback } from 'react'
+
+export function mergeRefs<T = any>(refs: Array<Ref<T> | undefined>): RefCallback<T> {
   return (value) => {
-    refs.forEach((ref) => {
+    const cleanups = refs.map((ref) => {
       if (typeof ref === 'function') {
-        ref(value)
+        return ref(value)
       } else if (ref != null) {
-        ;(ref as React.MutableRefObject<T | null>).current = value
+        ref.current = value
       }
     })
+
+    // React 19 calls the returned cleanup instead of invoking the ref with null.
+    if (cleanups.some((cleanup) => typeof cleanup === 'function')) {
+      return () => {
+        refs.forEach((ref, index) => {
+          const cleanup = cleanups[index]
+          if (typeof cleanup === 'function') {
+            cleanup()
+          } else if (typeof ref === 'function') {
+            ref(null)
+          } else if (ref != null) {
+            ref.current = null
+          }
+        })
+      }
+    }
   }
 }

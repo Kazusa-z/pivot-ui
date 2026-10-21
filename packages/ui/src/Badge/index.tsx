@@ -82,7 +82,7 @@ const StyledBadge = styled('span', {
     closable: {
       true: {
         paddingRight: '$1',
-      }
+      },
     },
 
     pill: {
@@ -90,7 +90,7 @@ const StyledBadge = styled('span', {
         [`& ${StyledBadgeInner}`]: {
           borderRadius: '$round',
           padding: '0 $2',
-        }
+        },
       },
     },
     active: {

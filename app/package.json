@@ -7,17 +7,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "analyze": "vite build --mode analyze"
+    "analyze": "vite build --mode analyze",
+    "clean": "rimraf dist .cache tsconfig.node.tsbuildinfo node_modules/.cache node_modules/.vite node_modules/.vite-temp",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json"
   },
   "dependencies": {
     "@galacean/editor-ui": "workspace:*",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^4.0.3",
-    "typescript": "^5.0.2"
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "typescript": "^7.0.2"
   }
 }

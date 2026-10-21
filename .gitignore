@@ -141,3 +141,5 @@ types/
 
 .DS_Store
 temp
+# Storybook static builds
+storybook-static/

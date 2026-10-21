@@ -581,7 +581,7 @@ export function Combobox(props: ComboboxProps) {
   const options = React.useMemo(() => {
     const options: string[] = []
     React.Children.forEach(children, (child) => {
-      if (React.isValidElement(child) && child.props.value) {
+      if (React.isValidElement<{ value?: string }>(child) && child.props.value) {
         options.push(child.props.value)
       }
     })

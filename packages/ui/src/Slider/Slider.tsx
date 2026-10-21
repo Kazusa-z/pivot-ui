@@ -299,7 +299,9 @@ export function Slider(props: SliderProps) {
         {value![0] === min && <StyledSliderSlot position="start">MIN</StyledSliderSlot>}
         {value![value!.length - 1] === max && <StyledSliderSlot position="end">MAX</StyledSliderSlot>}
         {showRuler && <Ruler length={max} interval={1} majorInterval={Math.round(max / 10)} />}
-        {value?.map((v, i) => <StyledThumb key={i} />)}
+        {value?.map((v, i) => (
+          <StyledThumb key={i} />
+        ))}
       </StyledTrack>
       {/* {tooltip ? (
         <Tooltip content={value[0]} arrow open={showTooltip}>
