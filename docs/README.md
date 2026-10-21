@@ -15,7 +15,7 @@ These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0` and `@piv
 
 ## Project archive
 
-The completed design-system migration is retained as a traceable project record:
+The completed styling migration is retained as a traceable project record:
 
 - [Release archive](./RELEASE_ARCHIVE.md)
 - [Migration ledger](./migration/LEDGER.md)
