@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import * as LabelPrimitive from '@radix-ui/react-label'
 
-import { HoverCard, styled, type CSS } from '@galacean/editor-ui'
+import { HoverCard, styled, type CSS } from '@pivot-ui/editor'
 
 const StyledLabelRoot = styled('div', {
   all: 'unset',

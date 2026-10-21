@@ -33,7 +33,7 @@ import {
 } from '..'
 import { FormItemRectProps } from '../FormItemRect/FormItemRect'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { ColorSpace, resetStyle, styled } from '@galacean/editor-ui'
+import { ColorSpace, resetStyle, styled } from '@pivot-ui/editor'
 
 export const GUIItemTypeEnum = {
   Input: 'Input',

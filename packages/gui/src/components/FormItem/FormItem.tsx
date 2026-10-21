@@ -1,5 +1,5 @@
 import React, { cloneElement, forwardRef, ReactNode } from 'react'
-import { styled, type CSS, VariantProps } from '@galacean/editor-ui'
+import { styled, type CSS, VariantProps } from '@pivot-ui/editor'
 import { Label } from './Label'
 import { nanoid } from 'nanoid'
 

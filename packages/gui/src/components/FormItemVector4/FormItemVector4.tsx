@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { FormItem } from '../FormItem'
-import { InputNumber } from '@galacean/editor-ui'
+import { InputNumber } from '@pivot-ui/editor'
 import { type BaseFormItemProps, extractFormItemProps } from '../FormItem'
 
 export type Vector4 = { x: number; y: number; z: number; w: number }

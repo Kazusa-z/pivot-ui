@@ -1,5 +1,5 @@
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
-import { InputNumber } from '@galacean/editor-ui'
+import { InputNumber } from '@pivot-ui/editor'
 
 export type Rect = { x: number; y: number; width: number; height: number }
 

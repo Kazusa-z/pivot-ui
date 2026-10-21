@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Flex, Collapsible, type CollapsibleProps } from '@galacean/editor-ui'
+import { Flex, Collapsible, type CollapsibleProps } from '@pivot-ui/editor'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 
 export interface FormItemGroupProps

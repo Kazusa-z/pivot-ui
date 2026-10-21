@@ -1,4 +1,3 @@
-export { GalaceanLogo } from './GalaceanLogo'
 export { EyeDropperIcon } from './EyeDropperIcon'
 export { MouseDoubleDownIcon } from './MouseDoubleDownIcon'
 export { MouseLeftDownIcon } from './MouseLeftDownIcon'

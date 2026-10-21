@@ -1,4 +1,4 @@
-import { resetStyle } from '@galacean/editor-ui'
+import { resetStyle } from '@pivot-ui/editor'
 import type { Preview } from '@storybook/react'
 
 resetStyle()

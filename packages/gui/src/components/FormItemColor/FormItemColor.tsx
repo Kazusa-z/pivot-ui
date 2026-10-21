@@ -10,8 +10,8 @@ import {
   styled,
   useColorSpaceConversion,
   type ColorSpace,
-} from '@galacean/editor-ui'
-import { normalizeColor, denormalizeColor, toNormalizeHexStr, type Color } from '@galacean/editor-ui'
+} from '@pivot-ui/editor'
+import { normalizeColor, denormalizeColor, toNormalizeHexStr, type Color } from '@pivot-ui/editor'
 
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 

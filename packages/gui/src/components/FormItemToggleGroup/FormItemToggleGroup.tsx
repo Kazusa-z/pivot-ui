@@ -1,5 +1,5 @@
 import { FormItem, extractFormItemProps, type FormItemSelectableProps } from '../FormItem'
-import { ToggleGroupItem, ToggleGroup } from '@galacean/editor-ui'
+import { ToggleGroupItem, ToggleGroup } from '@pivot-ui/editor'
 
 type SingleProps = {
   type: 'single'

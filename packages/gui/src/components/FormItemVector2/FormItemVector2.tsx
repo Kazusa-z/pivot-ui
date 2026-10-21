@@ -1,4 +1,4 @@
-import { InputNumber } from '@galacean/editor-ui'
+import { InputNumber } from '@pivot-ui/editor'
 import { type ReactNode } from 'react'
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
 

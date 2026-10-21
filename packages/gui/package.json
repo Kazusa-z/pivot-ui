@@ -1,18 +1,17 @@
 {
-  "name": "@galacean/gui",
+  "name": "@pivot-ui/gui",
   "version": "1.2.1",
   "private": true,
-  "description": "An opinionated UI library designed to create engaging and functional online tools with ease.",
+  "description": "High-level GUI controls built on top of @pivot-ui/editor.",
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "example": "vite examples",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.examples.json",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.stories.json",
     "clean": "rimraf es lib dist types .cache storybook-static node_modules/.cache node_modules/.vite node_modules/.vite-temp"
   },
   "sideEffects": false,
@@ -39,7 +38,7 @@
     "storybook": "^10.6.3"
   },
   "dependencies": {
-    "@galacean/editor-ui": "workspace:*",
+    "@pivot-ui/editor": "workspace:*",
     "@radix-ui/react-use-controllable-state": "^1.3.0",
     "@tabler/icons-react": "^3.49.0",
     "nanoid": "^6.0.2"

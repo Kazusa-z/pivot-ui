@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import { ActionButton, InputNumber } from '@galacean/editor-ui'
+import { ActionButton, InputNumber } from '@pivot-ui/editor'
 import { ConstrainIcon } from '../../Icons/ConstrainIcon'
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
 

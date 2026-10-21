@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 import { FormItemVector4 } from '.'
-import { Flex } from '@galacean/editor-ui'
+import { Flex } from '@pivot-ui/editor'
 
 export default {
   component: FormItemVector4,

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
-import { SegmentControl, SegmentControlItem } from '@galacean/editor-ui'
+import { SegmentControl, SegmentControlItem } from '@pivot-ui/editor'
 
 export interface FormItemSegmentControlProps extends BaseFormItemProps<any> {
   options: { value: any; label: React.ReactNode; disabled?: boolean }[]

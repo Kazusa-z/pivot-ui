@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 import { FormItem } from './FormItem'
-import { Input, Button, Textarea, CascadeSlider, CSS } from '@galacean/editor-ui'
+import { Input, Button, Textarea, CascadeSlider, CSS } from '@pivot-ui/editor'
 import { BaseFormItemProps } from './FormItem/FormItem'
 
 function generateGUI<T>() {
@@ -33,7 +33,7 @@ export { FormItemInput, type FormItemInputProps } from './FormItemInput'
 export { FormItemSelect, type FormItemSelectProps } from './FormItemSelect'
 
 export { FormItemColor, type FormItemColorProps } from './FormItemColor'
-export { type Color } from '@galacean/editor-ui'
+export { type Color } from '@pivot-ui/editor'
 export { FormItemGroup, type FormItemGroupProps } from './FormItemGroup'
 export { FormItemInputNumber, type FormItemInputNumberProps } from './FormItemInputNumber'
 export { FormItemTextarea, type FormItemTextareaProps } from './FormItemTextarea'

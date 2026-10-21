@@ -2,7 +2,7 @@ import type { SVGProps } from 'react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { IconGripHorizontal } from '@tabler/icons-react'
 import { useDraggablePanel } from './useDraggablePanel'
-import { Flex, ActionButton, styled, ScrollArea } from '@galacean/editor-ui'
+import { Flex, ActionButton, styled, ScrollArea } from '@pivot-ui/editor'
 
 function mergeRefs<T = any>(
   refs: Array<React.MutableRefObject<T> | React.LegacyRef<T> | undefined | null>

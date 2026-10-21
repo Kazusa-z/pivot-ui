@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Checkbox } from '@galacean/editor-ui'
+import { Checkbox } from '@pivot-ui/editor'
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
 
 export interface FormItemToggleProps extends BaseFormItemProps<boolean> {

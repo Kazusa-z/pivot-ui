@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { IconTrash, IconPlus, IconEdit } from '@tabler/icons-react'
-import { Flex, ActionButton, Accordion, AccordionItem, Button, styled } from '@galacean/editor-ui'
+import { Flex, ActionButton, Accordion, AccordionItem, Button, styled } from '@pivot-ui/editor'
 
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
 

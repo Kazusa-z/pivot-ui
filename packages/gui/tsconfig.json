@@ -28,7 +28,6 @@
     "es",
     "dist",
     ".storybook",
-    "examples",
     "**/*.stories.tsx",
     "tsconfig.json",
     "vite.config.ts",

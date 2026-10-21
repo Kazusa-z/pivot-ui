@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { AssetItem, PopoverCloseTrigger, type AssetItemProps } from '@galacean/editor-ui'
+import { AssetItem, PopoverCloseTrigger, type AssetItemProps } from '@pivot-ui/editor'
 
 export interface BasicAssetType {
   id: string

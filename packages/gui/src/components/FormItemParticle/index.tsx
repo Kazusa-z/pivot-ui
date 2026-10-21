@@ -2,8 +2,8 @@ import React from 'react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { IconEaseIn, IconEqual, IconVectorBezier2, IconPlusMinus } from '@tabler/icons-react'
 
-import { InputNumber, Select, SelectItem, BezierCurveEditor } from '@galacean/editor-ui'
-import type { BezierCurveEditorProps } from '@galacean/editor-ui'
+import { InputNumber, Select, SelectItem, BezierCurveEditor } from '@pivot-ui/editor'
+import type { BezierCurveEditorProps } from '@pivot-ui/editor'
 import { FormItem } from '../FormItem'
 import { FormItemProps } from '../FormItem/FormItem'
 

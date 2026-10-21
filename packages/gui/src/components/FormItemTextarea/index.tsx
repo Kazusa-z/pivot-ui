@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Textarea } from '@galacean/editor-ui'
+import { Textarea } from '@pivot-ui/editor'
 import { FormItem, extractFormItemProps } from '../FormItem'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 

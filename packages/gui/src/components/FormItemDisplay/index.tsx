@@ -1,5 +1,5 @@
 import { FormItem, extractFormItemProps } from '../FormItem'
-import { Text } from '@galacean/editor-ui'
+import { Text } from '@pivot-ui/editor'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 
 export interface FormItemDisplayProps extends Omit<BaseFormItemProps<string>, 'onChange'> {

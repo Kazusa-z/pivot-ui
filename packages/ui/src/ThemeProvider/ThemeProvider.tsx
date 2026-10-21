@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from 'react'
 
 import { lightTheme, darkTheme } from '../design-system'
 
-const THEME_CACHE_KEY = 'galacean-editor-theme'
+const THEME_CACHE_KEY = 'pivot-ui-editor-theme'
 
 type Theme = string
 type MediaTheme = string

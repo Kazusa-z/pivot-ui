@@ -2,7 +2,7 @@ import { Fragment, useCallback } from 'react'
 import { IconPlus, IconMinus } from '@tabler/icons-react'
 
 import { FormItem, extractFormItemProps } from '../FormItem'
-import { Input, InputProps } from '@galacean/editor-ui'
+import { Input, InputProps } from '@pivot-ui/editor'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 
 export interface FormItemInputProps

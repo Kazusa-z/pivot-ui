@@ -1,6 +1,6 @@
-# @galacean/gui
+# @pivot-ui/gui
 
-An opinionated GUI library designed to create engaging and functional online tools with ease. Built on top of React and [@galacean/editor-ui](../ui/README.md), it provides both imperative GUI controls (similar to dat.gui) and declarative React components for building interactive 3D editors and tools.
+An opinionated GUI library designed to create engaging and functional online tools with ease. Built on top of React and [@pivot-ui/editor](../ui/README.md), it provides both imperative GUI controls (similar to dat.gui) and declarative React components for building interactive 3D editors and tools.
 
 ## Features
 
@@ -13,7 +13,7 @@ An opinionated GUI library designed to create engaging and functional online too
 
 ## Local usage
 
-This package is part of the local `editor-ui` pnpm workspace and is **not published to npm**. It is consumed through `workspace:*` or linked directly:
+This package is part of the local Pivot UI pnpm workspace and is **not published to npm**. It is consumed through `workspace:*` or linked directly:
 
 ```bash
 # From another local project
@@ -28,7 +28,7 @@ React and React DOM 19 are peer dependencies. If you use the `GUI` class outside
 
 ```tsx
 import React, { useState } from 'react'
-import { FormItemInput, FormItemColor, FormItemVector3, FormItemSlider, Panel } from '@galacean/gui'
+import { FormItemInput, FormItemColor, FormItemVector3, FormItemSlider, Panel } from '@pivot-ui/gui'
 
 function App() {
   const [sceneData, setSceneData] = useState({
@@ -696,76 +696,10 @@ const gui = new GUI(data, items)
 gui.setTheme('dark') // or 'light'
 
 // For React components, wrap your app with ThemeProvider
-import { ThemeProvider, darkTheme } from '@galacean/editor-ui'
+import { ThemeProvider, darkTheme } from '@pivot-ui/editor'
 
 function App() {
   return <ThemeProvider theme={darkTheme}>{/* Your components */}</ThemeProvider>
-}
-```
-
-## Integration with 3D Engines
-
-This library works great with various 3D engines. Here's an example with Galacean Engine:
-
-```javascript
-// Galacean Engine integration
-import { WebGLEngine, Camera, DirectLight, BlinnPhongMaterial } from '@galacean/engine'
-
-async function createScene() {
-  const engine = await WebGLEngine.create({ canvas: 'canvas' })
-  const scene = engine.sceneManager.activeScene
-  const camera = scene.createRootEntity().addComponent(Camera)
-  const light = scene.createRootEntity().addComponent(DirectLight)
-
-  const sceneData = {
-    camera: {
-      position: { x: 0, y: 10, z: 30 },
-      fov: 45,
-    },
-    light: {
-      color: { r: 1, g: 1, b: 1, a: 1 },
-      intensity: 1.0,
-    },
-  }
-
-  const gui = new GUI(sceneData, [
-    {
-      label: 'Camera Position',
-      bindPath: 'camera.position',
-      type: 'Vector3',
-      onChange(value) {
-        camera.entity.transform.setPosition(value.x, value.y, value.z)
-      },
-    },
-    {
-      label: 'Camera FOV',
-      bindPath: 'camera.fov',
-      type: 'Slider',
-      min: 10,
-      max: 120,
-      onChange(value) {
-        camera.fieldOfView = value
-      },
-    },
-    {
-      label: 'Light Color',
-      bindPath: 'light.color',
-      type: 'Color',
-      onChange(value) {
-        light.color.set(value.r, value.g, value.b, value.a)
-      },
-    },
-    {
-      label: 'Light Intensity',
-      bindPath: 'light.intensity',
-      type: 'Slider',
-      min: 0,
-      max: 2,
-      onChange(value) {
-        light.intensity = value
-      },
-    },
-  ])
 }
 ```
 
@@ -774,7 +708,7 @@ async function createScene() {
 The library is written in TypeScript and provides full type definitions:
 
 ```typescript
-import { GUI, GUIItemConfig, GUIItemTypeEnum } from '@galacean/gui'
+import { GUI, GUIItemConfig, GUIItemTypeEnum } from '@pivot-ui/gui'
 
 interface SceneData {
   camera: {

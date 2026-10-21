@@ -2,9 +2,9 @@ import React from 'react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { IconEaseIn, IconEqual, IconVectorBezier2, IconPlusMinus, IconHexagonLetterEFilled } from '@tabler/icons-react'
 
-import { Button, ColorPicker, type ParticleColor, Select, SelectItem } from '@galacean/editor-ui'
+import { Button, ColorPicker, type ParticleColor, Select, SelectItem } from '@pivot-ui/editor'
 import { FormItem } from '../FormItem'
-import { type Color, type HDRColor, normalizeColor, denormalizeColor } from '@galacean/editor-ui'
+import { type Color, type HDRColor, normalizeColor, denormalizeColor } from '@pivot-ui/editor'
 
 export type GradientPropertyType = 'constant' | 'gradient' | 'two-constant' | 'two-gradient'
 

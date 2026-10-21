@@ -1,12 +1,10 @@
-# Galacean Editor UI
-
-![banner.png](https://mdn.alipayobjects.com/huamei_rbbfv7/afts/img/A*qQt9SpKrSEIAAAAAgBAAAAgAeknZAQ/fmt.webp)
+# Pivot UI
 
 A comprehensive UI component library designed for building professional 3D editors and interactive tools in the browser. This monorepo contains two complementary packages that work together to provide both low-level UI components and high-level GUI solutions.
 
 This repository is a local-only pnpm workspace. Both packages are consumed through the workspace or `pnpm link`; they are not published to npm. The packages are source-only, so there is no `dist` / UMD build step in this repository.
 
-## @galacean/editor-ui
+## @pivot-ui/editor
 
 A dedicated React component library for building 3D editor interfaces, featuring:
 
@@ -18,27 +16,27 @@ A dedicated React component library for building 3D editor interfaces, featuring
 - **Controllable State**: Most components support both controlled and uncontrolled modes
 
 ```tsx
-import { Button, ColorPicker } from '@galacean/editor-ui'
+import { Button, ColorPicker } from '@pivot-ui/editor'
 
 function App() {
   return (
     <div>
-      <Button>Galacean Editor</Button>
+      <Button>Pivot Editor</Button>
       <ColorPicker mode="solid" value={color} onValueChange={setColor} />
     </div>
   )
 }
 ```
 
-## @galacean/gui
+## @pivot-ui/gui
 
-An opinionated GUI library built on top of `@galacean/editor-ui`, providing:
+An opinionated GUI library built on top of `@pivot-ui/editor`, providing:
 
 - **Imperative API**: dat.gui-like interface for quick prototyping
 - **Declarative Components**: React form components for complex UIs
 - **Rich Input Types**: Vector inputs, color pickers, sliders, and more
 - **Group Management**: Organize controls into collapsible groups
-- **3D Engine Integration**: Perfect for 3D scene manipulation
+- **Engine Agnostic**: Works with SceneGraph data from any 3D engine or plain objects
 
 ```javascript
 // Imperative API (similar to dat.gui)
@@ -56,7 +54,7 @@ const gui = new GUI(sceneData, [
 
 ```tsx
 // Declarative React Components
-import { FormItemVector3, FormItemColor } from '@galacean/gui'
+import { FormItemVector3, FormItemColor } from '@pivot-ui/gui'
 
 function ScenePanel() {
   return (
@@ -75,10 +73,10 @@ This repository is a local pnpm workspace. Start with:
 ```bash
 pnpm install
 
-# Storybook for @galacean/editor-ui
+# Storybook for @pivot-ui/editor
 pnpm dev
 
-# Storybook for @galacean/gui
+# Storybook for @pivot-ui/gui
 pnpm dev:gui
 
 # Demo app
@@ -100,7 +98,7 @@ pnpm link ../editor-ui/packages/gui
 - **Game Development Tools**: Create level editors and asset management interfaces
 - **Data Visualization**: Interactive controls for complex visualizations
 - **Prototyping**: Quickly add GUI controls to 3D experiments
-- **Galacean Editor Plugins**: Extend the official Galacean Editor
+- **Editor Plugins**: Extend your own editor tools and panels
 
 ## Key Features
 
@@ -114,34 +112,11 @@ pnpm link ../editor-ui/packages/gui
 
 ## Integration Examples
 
-### With Galacean Engine
-
-```javascript
-import { WebGLEngine, Camera } from '@galacean/engine'
-import { GUI } from '@galacean/gui'
-
-const engine = await WebGLEngine.create({ canvas: 'canvas' })
-const camera = scene.createRootEntity().addComponent(Camera)
-
-const gui = new GUI({ camera: { fov: 45 } }, [
-  {
-    label: 'Field of View',
-    bindPath: 'camera.fov',
-    type: 'Slider',
-    min: 10,
-    max: 120,
-    onChange(value) {
-      camera.fieldOfView = value
-    },
-  },
-])
-```
-
 ### With Three.js
 
 ```javascript
 import * as THREE from 'three'
-import { GUI } from '@galacean/gui'
+import { GUI } from '@pivot-ui/gui'
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
@@ -177,7 +152,6 @@ pnpm dev
 
 # Start development server for gui
 pnpm dev:gui
-
 # Start the demo app
 pnpm dev:demo
 

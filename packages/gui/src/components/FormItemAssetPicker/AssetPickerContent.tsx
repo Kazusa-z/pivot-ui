@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Input, Flex, styled, ActionButton, Breadcrumbs } from '@galacean/editor-ui'
+import { Input, Flex, styled, ActionButton, Breadcrumbs } from '@pivot-ui/editor'
 
 import { BasicAssetType, PickableAssetItem } from './PickableAssetItem'
 
@@ -74,7 +74,7 @@ function groupAssets<T extends BasicAssetType>(assets: T[], groupBy?: (asset: T)
   return grouped
 }
 
-const key = 'galacean-gui-asset-picker-display-mode'
+const key = 'pivot-ui-gui-asset-picker-display-mode'
 
 function stripImageExtension(name: string) {
   return name.replace(/\.(png|jpe?g|webp|hdr)$/i, '')

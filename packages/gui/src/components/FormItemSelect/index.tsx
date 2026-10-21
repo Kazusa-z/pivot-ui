@@ -1,4 +1,4 @@
-import { Select, SelectItem } from '@galacean/editor-ui'
+import { Select, SelectItem } from '@pivot-ui/editor'
 import { ReactNode } from 'react'
 import { FormItem, extractFormItemProps, type FormItemSelectableProps } from '../FormItem'
 

@@ -19,7 +19,7 @@ type ColorPickerProps = ColorPickerRootProps & {
  * ColorPicker is a comperhensive color picker component that support you to pick color in different `mode`:
  * - solid: pick a single color
  * - gradient: pick a linear gradient color
- * - particle: pick a particle color. for more information about that mode you could check the [Color Module](https://galacean.antgroup.com/engine/en/docs/graphics/particle/renderer-color-module/) part of the Partical System in Galacean Engine
+ * - particle: pick a particle color. This mode is suitable for particle color modules in 3D engines.
  *
  * This component only provide **controlled** mode, which means that you have to control the color value by passing the `value` and `onValueChange` props.
  */

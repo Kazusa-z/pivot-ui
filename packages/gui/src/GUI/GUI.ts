@@ -1,7 +1,7 @@
 import React from 'react'
 import { createRoot, Root } from 'react-dom/client'
 import { GUIItemConfig, GUIRoot, GUIItemTypeEnum, type GUIDefineItem } from '../components/GUIRoot'
-import { darkTheme, lightTheme } from '@galacean/editor-ui'
+import { darkTheme, lightTheme } from '@pivot-ui/editor'
 
 export { type GUIItemConfig }
 export { GUIItemTypeEnum }
@@ -25,7 +25,7 @@ const initContainerStyle = {
 } as const
 
 class GUI implements GUIBase {
-  private _containerId = 'galacean-gui-container'
+  private _containerId = 'pivot-ui-gui-container'
   private _container: HTMLDivElement = null
   private _root: Root = null
   private _data: Record<string, any> = null

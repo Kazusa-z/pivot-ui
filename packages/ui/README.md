@@ -1,6 +1,6 @@
-# @galacean/editor-ui
+# @pivot-ui/editor
 
-`@galacean/editor-ui` is a set of React components for building 3D editor interfaces in the browser. It is developed and consumed inside this local pnpm workspace and is **not published to npm**.
+`@pivot-ui/editor` is a set of React components for building 3D editor interfaces in the browser. It is developed and consumed inside the local Pivot UI pnpm workspace and is **not published to npm**.
 
 The package includes basic components such as `<Button>` and `<Input />`, editor-specific components such as `<ColorPicker />`, `<GradientSlider />`, `<ParticleSlider />` and `AssetPicker`, and hooks for building custom editor UIs.
 
@@ -15,14 +15,14 @@ pnpm link ../editor-ui/packages/ui
 ## Usage
 
 ```tsx
-import { Button } from '@galacean/editor-ui'
+import { Button } from '@pivot-ui/editor'
 
 function App() {
-  return <Button>Galacean Editor</Button>
+  return <Button>Pivot UI</Button>
 }
 ```
 
-Note: keep a CSS reset in your application so the components render consistently. You can use `resetStyle()` exported from `@galacean/editor-ui` to reset the styles.
+Note: keep a CSS reset in your application so the components render consistently. You can use `resetStyle()` exported from `@pivot-ui/editor` to reset the styles.
 
 > This package does not use the `z-index` style.
 

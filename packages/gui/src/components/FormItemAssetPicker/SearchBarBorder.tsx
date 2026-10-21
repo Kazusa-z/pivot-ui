@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { styled } from '@galacean/editor-ui'
+import { styled } from '@pivot-ui/editor'
 
 const StyledBorder = styled('div', {
   borderBottom: '1px solid transparent',

@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json"
   },
   "dependencies": {
-    "@galacean/editor-ui": "workspace:*",
+    "@pivot-ui/editor": "workspace:*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

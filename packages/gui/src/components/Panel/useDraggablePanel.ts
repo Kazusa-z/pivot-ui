@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { clamp } from '@galacean/editor-ui'
+import { clamp } from '@pivot-ui/editor'
 
 // You could use different cache key for different panels if you have multiple GUI instances in your app
-export function useDraggablePanel(panelRef: React.RefObject<HTMLDivElement>, cacheKey = 'galacean-gui-panel-position') {
+export function useDraggablePanel(panelRef: React.RefObject<HTMLDivElement>, cacheKey = 'pivot-ui-gui-panel-position') {
   const panelSize = useRef({ width: 0, height: 0 })
   const windowSize = useRef({ width: 0, height: 0 })
   const transformOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 })

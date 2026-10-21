@@ -5,7 +5,7 @@ import { BasicAssetType, AssetPickerPopoverProps } from './AssetPickerPopover'
 import { AssetPickerContent } from './AssetPickerContent'
 
 import { FormItem, extractFormItemProps } from '../FormItem'
-import { ActionButton, Button, styled, Popover, PopoverCloseTrigger, useDrop } from '@galacean/editor-ui'
+import { ActionButton, Button, styled, Popover, PopoverCloseTrigger, useDrop } from '@pivot-ui/editor'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 
 const PreviewFallbackIcon = styled(IconFileFilled, {

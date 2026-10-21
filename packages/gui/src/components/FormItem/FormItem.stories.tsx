@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 import { FormItem } from './'
-import { Button, Flex } from '@galacean/editor-ui'
+import { Button, Flex } from '@pivot-ui/editor'
 
 export default {
   component: FormItem,

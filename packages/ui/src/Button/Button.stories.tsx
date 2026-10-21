@@ -41,7 +41,7 @@ const meta = {
     },
   },
   args: {
-    children: 'Galacean Button',
+    children: 'Pivot Button',
     size: 'sm',
     variant: 'soft',
     onClick: fn(),

@@ -1,5 +1,5 @@
 import { FormItem, extractFormItemProps } from '../FormItem'
-import { InputNumber, Slider } from '@galacean/editor-ui'
+import { InputNumber, Slider } from '@pivot-ui/editor'
 import { FormItemRangeProps } from '../FormItem/FormItem'
 
 export interface FormItemSliderProps extends FormItemRangeProps {
