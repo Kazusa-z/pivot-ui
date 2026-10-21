@@ -2,6 +2,13 @@
 
 An opinionated GUI library designed to create engaging and functional online tools with ease. Built on top of React and [@pivot-ui/editor](../ui/README.md), it provides both imperative GUI controls (similar to dat.gui) and declarative React components for building interactive 3D editors and tools.
 
+## Documentation
+
+- [Documentation index](../../docs/README.md)
+- [Consuming Pivot UI](../../docs/CONSUMING.md)
+- [Development](../../docs/DEVELOPMENT.md)
+- [Editor package](../ui/README.md)
+
 ## Features
 
 - 🎛️ **Imperative GUI Controls** - dat.gui-like API for quick prototyping
@@ -21,6 +28,17 @@ pnpm link ../editor-ui/packages/gui
 ```
 
 React and React DOM 19 are peer dependencies. If you use the `GUI` class outside a React project, React is still required because the class renders its UI with React internally.
+
+### Styling prerequisite
+
+Components use Panda CSS. Configure Panda's PostCSS plugin in the consumer and include both `packages/gui/src` and `packages/ui/src` in the Panda config. The `panda.css` file declares layer order only.
+
+```ts
+// application entry
+import '@pivot-ui/gui/panda.css'
+```
+
+See [Consuming Pivot UI](../../docs/CONSUMING.md) for the complete configuration. The GUI Storybook is the reference integration.
 
 ## Quick Start
 
@@ -765,7 +783,11 @@ const gui = new GUI(sceneData, guiConfig)
 
 MIT License. See [LICENSE](../../LICENSE) for details.
 
-## Panda migration notes
+## Migration archive
 
-- GUI component styles now use Panda; see [the migration ledger](../../panda/MIGRATION.md).
-- `FormItem.fieldColumn` numeric variants use numbers: `fieldColumn={1}`, not `fieldColumn="1"`.
+The package was migrated from Stitches to Panda CSS. The completed migration record is archived in:
+
+- [Release archive](../../docs/RELEASE_ARCHIVE.md)
+- [Migration ledger](../../docs/migration/LEDGER.md)
+
+`FormItem.fieldColumn` numeric variants use numbers: `fieldColumn={1}`, not `fieldColumn="1"`.

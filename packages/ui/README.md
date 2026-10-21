@@ -1,38 +1,87 @@
 # @pivot-ui/editor
 
-`@pivot-ui/editor` is a set of React components for building 3D editor interfaces in the browser. It is developed and consumed inside the local Pivot UI pnpm workspace and is **not published to npm**.
+`@pivot-ui/editor` provides React components for building 3D editor interfaces in the browser. It includes basic controls, overlays, color tools, asset and tree views, and editor-specific components such as `ColorPicker`, `BezierCurveEditor` and `GradientSlider`.
 
-The package includes basic components such as `<Button>` and `<Input />`, editor-specific components such as `<ColorPicker />`, `<GradientSlider />`, `<ParticleSlider />` and `AssetPicker`, and hooks for building custom editor UIs.
+The package is local-only and source-only. It is consumed through the Pivot UI workspace or a local `pnpm link`; it is not published to npm.
 
 ## Local usage
 
-The package is available to other packages in this workspace through `workspace:*`. From another local project, link it directly:
-
 ```bash
+# From another local project
 pnpm link ../editor-ui/packages/ui
+```
+
+React and React DOM 19 are peer dependencies.
+
+## Styling prerequisite
+
+Components use Panda CSS. The consuming application must run Panda's PostCSS plugin and include this package's source in its Panda config. The `panda.css` file declares layer order only; it is not a prebuilt stylesheet.
+
+See [Consuming Pivot UI](../../docs/CONSUMING.md) for the full configuration. The demo app in `app/` is the reference integration.
+
+```ts
+// application entry, after Panda/PostCSS is configured
+import '@pivot-ui/editor/panda.css'
 ```
 
 ## Usage
 
 ```tsx
-import { Button } from '@pivot-ui/editor'
+import React from 'react'
+import { Button, ColorPicker, Flex, Text } from '@pivot-ui/editor'
 
-function App() {
-  return <Button>Pivot UI</Button>
+export function Toolbar() {
+  const [color, setColor] = React.useState({ r: 30, g: 99, b: 238, a: 1 })
+
+  return (
+    <Flex gap="sm" align="v">
+      <Button>Save</Button>
+      <Text muted>Local-first UI</Text>
+      <ColorPicker mode="constant" value={color} onValueChange={setColor} />
+    </Flex>
+  )
 }
 ```
 
-Note: load the package's Panda CSS entry (`packages/ui/panda.css`) in the consuming application so the reset, tokens and utilities are available.
+## Theming
 
-> This package does not use the `z-index` style.
+Wrap the application in `ThemeProvider`:
 
-## Panda migration notes
+```tsx
+import { ThemeProvider, useTheme } from '@pivot-ui/editor'
 
-- `Text` / `Title` sizes are numeric variants: `size={2}`, not `size="2"`.
-- `Flex.wrap` is boolean (`true` / `false`) or `"reverse"`.
-- Migrated components accept Panda `css` props. Replace Stitches `$token` values with raw CSS variables (`var(--colors-...)`) or `token(...)` calls.
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  return <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>Toggle theme</button>
+}
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <ThemeToggle />
+      {/* application */}
+    </ThemeProvider>
+  )
+}
+```
+
+`ThemeProvider` switches the `light-theme` / `dark-theme` class on the document. Colors come from the Panda CSS variables emitted by the package's Panda pipeline.
+
+## Component API notes
+
+- `Text` and `Title` sizes are numeric variants: `size={2}`, not `size="2"`.
+- `Flex.wrap` accepts `true`, `false` or `"reverse"`.
+- Migrated components accept a Panda `css` prop typed as `SystemStyleObject`.
+- Use raw CSS variables (`var(--colors-...)`) or Panda `token(...)` calls in `css` values; do not use legacy Stitches `$token` strings.
 - `ActionButton` no longer exposes the unused `as` prop.
-- See [the migration ledger](../../panda/MIGRATION.md) for temporary compatibility notes.
+- `resetStyle()` was removed; load the Panda CSS pipeline instead.
+
+## Documentation
+
+- [Documentation index](../../docs/README.md)
+- [Consuming Pivot UI](../../docs/CONSUMING.md)
+- [Migration archive](../../docs/RELEASE_ARCHIVE.md)
+- [GUI package](../gui/README.md)
 
 ## Development
 
@@ -42,11 +91,15 @@ pnpm typecheck    # Type checking
 pnpm build-storybook
 ```
 
-## Acknowledgement
+## License
 
-This library would not have been possible without these excellent open-source projects:
+MIT License. See the repository [LICENSE](../../LICENSE).
 
-- `@radix-ui` for accessible component primitives
+## Acknowledgements
+
+Built with:
+
+- `@radix-ui` for accessible primitives
 - `@radix-ui/colors` for the color system
 - `react-colorful` for the color picker
 - `colord` for color manipulation

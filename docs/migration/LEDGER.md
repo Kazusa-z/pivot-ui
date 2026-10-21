@@ -1,9 +1,11 @@
-# Panda Migration Ledger
+# Panda CSS migration ledger
 
-Last updated: 2026-10-21  
+Last updated: 2026-10-22
+
+Status: **Closed**
 Branch: `feat/panda-css-migration`
 
-This file tracks migration progress, temporary compromises, and the exit criteria for each batch. A temporary compromise is only acceptable if it has an ID, a resolution target, and a verifiable exit criterion here.
+This file records the completed migration batches, the debt register and the exit criteria used for each batch. The register is closed; every tracked item has a resolution note.
 
 ## Status
 
@@ -17,7 +19,7 @@ This file tracks migration progress, temporary compromises, and the exit criteri
 | Batch 4 | GUI components and native Panda theme/tokens                                                                      | Done  |
 | Batch 5 | Remove Stitches, `resetStyle`, theme/provider and remaining compatibility code                                    | Done  |
 
-## Temporary Compromises
+## Debt register (closed)
 
 | ID    | Compromise                                                                         | Location                                                          | Why it exists                                                                     | Exit criterion                                                                                                                               | Resolve by                   |
 | ----- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
@@ -33,8 +35,6 @@ This file tracks migration progress, temporary compromises, and the exit criteri
 | TD-10 | `EditableText` still types `css` as `any`                                          | EditableText                                                      | It still wrapped a Stitches `Container`                                           | EditableText migrated; `css` is `SystemStyleObject`                                                                                          | **Resolved**                 |
 | TD-11 | Menu/Select style configs cast to `any`                                            | `Menu/Menu.tsx`, `Select/Combobox.tsx`, `Select/SingleSelect.tsx` | Panda custom-component `styled` overload rejects config objects held in variables | **Resolved:** configs were inlined at the call sites; no `as any` remains; static extraction and all Select/Menu stories are pixel-identical | **Resolved**                 |
 | TD-12 | ColorPicker injects react-colorful overrides at runtime                            | `panda/global.ts`                                                 | Third-party CSS must beat the unlayered library styles                            | **Resolved:** overrides live in Panda global CSS with `!important`; runtime injector removed; picker measures 220x180                        | **Resolved**                 |
-
-## Resolution Schedule
 
 ## Resolution notes
 
@@ -54,7 +54,7 @@ This file tracks migration progress, temporary compromises, and the exit criteri
 
 - All 111 stories shared by the Stitches baseline and the Panda branch were captured and compared.
 - 94 pixel-identical; 15 subpixel/text-antialias-only differences (<= 0.2%); 2 reviewed exceptions.
-- Full details: `panda/VISUAL_REGRESSION.md` and `panda/visual-regression-report.json`.
+- Full details: [VISUAL_REGRESSION.md](./VISUAL_REGRESSION.md) and [visual-regression-report.json](./visual-regression-report.json).
 
 ## Batch Definition of Done
 

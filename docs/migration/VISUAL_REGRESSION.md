@@ -1,5 +1,7 @@
 # Full visual regression
 
+**Archive status:** final. Migration baseline: `4c8b588`; candidate: Panda branch at `925a7bf`.
+
 ## Method
 
 - Baseline: `4c8b588` (the last Stitches version), built as a separate git worktree.
@@ -54,4 +56,4 @@ The Tree story was intentionally enriched during Batch 3 (folder/file tree, expa
 
 ## Raw report
 
-See `panda/visual-regression-report.json` for every compared story, diff percentage and status.
+See [visual-regression-report.json](./visual-regression-report.json) for every compared story, diff percentage and status.
