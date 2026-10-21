@@ -1,27 +1,28 @@
 import { ReactNode } from 'react'
 import * as LabelPrimitive from '@radix-ui/react-label'
 
-import { HoverCard, styled, type CSS } from '@pivot-ui/editor'
+import { HoverCard } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
+import type { SystemStyleObject } from '../../../styled-system/types'
 
 const StyledLabelRoot = styled('div', {
-  all: 'unset',
-  display: 'flex',
-  minHeight: '$6',
-  alignItems: 'center',
-  fontSize: '$sm',
-  fontWeight: 500,
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  color: '$gray10',
-  textOverflow: 'ellipsis',
-  userSelect: 'none',
+  base: {
+    all: 'unset',
+    display: 'flex',
+    minHeight: '24px',
+    alignItems: 'center',
+    fontSize: '12px',
+    fontWeight: 500,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    color: 'var(--colors-gray10)',
+    textOverflow: 'ellipsis',
+    userSelect: 'none',
+  },
 })
 
 const StyledLabel = styled(LabelPrimitive.Root, {
-  display: 'block',
-  width: '100%',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
+  base: { display: 'block', width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' },
 })
 
 export interface LabelProps {
@@ -30,7 +31,7 @@ export interface LabelProps {
   startSlot?: ReactNode
   endSlot?: ReactNode
   htmlFor?: string
-  css?: CSS
+  css?: SystemStyleObject
 }
 
 export function Label(props: LabelProps) {

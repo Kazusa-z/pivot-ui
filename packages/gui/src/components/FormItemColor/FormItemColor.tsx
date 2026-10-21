@@ -88,7 +88,7 @@ export function FormItemColor(props: FormItemColorProps) {
   const isHdrMode = mode === 'hdr'
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={isHdrMode ? '1' : 'color'}>
+    <FormItem {...extractFormItemProps(props)} fieldColumn={isHdrMode ? 1 : 'color'}>
       <ColorPicker
         mode={mode as 'constant'}
         fullsize={isHdrMode}

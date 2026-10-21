@@ -2,7 +2,8 @@ import type { SVGProps } from 'react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { IconGripHorizontal } from '@tabler/icons-react'
 import { useDraggablePanel } from './useDraggablePanel'
-import { Flex, ActionButton, styled, ScrollArea } from '@pivot-ui/editor'
+import { Flex, ActionButton, ScrollArea } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
 
 function mergeRefs<T = any>(
   refs: Array<React.MutableRefObject<T> | React.LegacyRef<T> | undefined | null>
@@ -32,64 +33,52 @@ const IconTriangleRightFilled = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement
 )
 
 const StyledPanel = styled('div', {
-  position: 'fixed',
-  display: 'flex',
-  top: 20,
-  right: 20,
-  maxHeight: '100vh',
-  flexDirection: 'column',
-  borderRadius: '$4',
-  border: '1px solid $grayA4',
-  backgroundColor: '$gray2',
-  width: '300px',
-  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-  overflow: 'hidden',
-  '&:hover': {},
+  base: {
+    position: 'fixed',
+    display: 'flex',
+    top: 20,
+    right: 20,
+    maxHeight: '100vh',
+    flexDirection: 'column',
+    borderRadius: '8px',
+    border: '1px solid var(--colors-grayA4)',
+    backgroundColor: 'var(--colors-gray2)',
+    width: '300px',
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+    overflow: 'hidden',
+  },
 })
 
 const PanelHeader = styled(Flex, {
-  padding: '$1_5 $1',
-  flexShrink: 0,
-  backgroundColor: '$grayA4',
-  color: '$grayA10',
-  transition: 'background-color 0.3s',
-  '& > svg': {
-    transition: 'transform 0.2s',
-  },
-  cursor: 'grab',
-  '&:active': {
-    cursor: 'grabbing',
-    '& > svg': {
-      transform: 'scale(0.85)',
+  base: {
+    padding: '6px 4px',
+    flexShrink: 0,
+    backgroundColor: 'var(--colors-grayA4)',
+    color: 'var(--colors-grayA10)',
+    transition: 'background-color 0.3s',
+    '& > svg': { transition: 'transform 0.2s' },
+    cursor: 'grab',
+    '&:active': {
+      cursor: 'grabbing',
+      '& > svg': { transform: 'scale(0.85)' },
     },
-  },
-  '&:hover': {
-    backgroundColor: '$grayA6',
+    '&:hover': { backgroundColor: 'var(--colors-grayA6)' },
   },
 })
 
 const PanelContent = styled('div', {
-  transition: 'height 0.3s, padding 0.3s',
+  base: { transition: 'height 0.3s, padding 0.3s' },
   variants: {
     collapsed: {
-      true: {
-        height: '0 !important',
-        padding: '0 $1',
-        opacity: 0,
-      },
+      true: { height: '0 !important', padding: '0 4px', opacity: 0 },
     },
   },
 })
 
 const CollapsedIcon = styled(IconTriangleRightFilled, {
-  transition: 'transform 0.3s',
-  transform: 'rotate(-90deg)',
+  base: { transition: 'transform 0.3s', transform: 'rotate(-90deg)' },
   variants: {
-    collapsed: {
-      true: {
-        transform: 'rotate(0deg)',
-      },
-    },
+    collapsed: { true: { transform: 'rotate(0deg)' } },
   },
 })
 

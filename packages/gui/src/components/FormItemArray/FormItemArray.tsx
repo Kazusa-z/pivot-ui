@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { IconTrash, IconPlus, IconEdit } from '@tabler/icons-react'
-import { Flex, ActionButton, Accordion, AccordionItem, Button, styled } from '@pivot-ui/editor'
+import { Flex, ActionButton, Accordion, AccordionItem, Button } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
 
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
 
@@ -13,20 +14,20 @@ interface AccordionTitleProps {
 }
 
 const AddItemButton = styled(Button, {
-  width: '100%',
-  border: 'none',
-  position: 'relative',
-  borderRadius: 0,
-  '& > svg': {
-    marginRight: '$1',
-  },
-  '&::after': {
-    content: "''",
-    position: 'absolute',
-    top: 0,
-    left: 0,
+  base: {
     width: '100%',
-    borderTop: '1px solid $grayA2',
+    border: 'none',
+    position: 'relative',
+    borderRadius: 0,
+    '& > svg': { marginRight: '4px' },
+    '&::after': {
+      content: "''",
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      borderTop: '1px solid var(--colors-grayA2)',
+    },
   },
 })
 

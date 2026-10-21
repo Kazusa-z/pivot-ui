@@ -1,10 +1,9 @@
 import React from 'react'
 
-import { styled } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
 
 const StyledBorder = styled('div', {
-  borderBottom: '1px solid transparent',
-  boxShadow: '0 3px 8px rgba(0, 0, 0, 0.3)',
+  base: { borderBottom: '1px solid transparent', boxShadow: '0 3px 8px rgba(0, 0, 0, 0.3)' },
 })
 
 function SearchBarBorder({ scrollingRef }: { scrollingRef: React.RefObject<HTMLDivElement> }) {

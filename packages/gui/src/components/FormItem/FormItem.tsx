@@ -1,71 +1,45 @@
 import React, { cloneElement, forwardRef, ReactNode } from 'react'
-import { styled, type CSS, VariantProps } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
+import type { SystemStyleObject } from '../../../styled-system/types'
 import { Label } from './Label'
 import { nanoid } from 'nanoid'
 
 const StyledField = styled('div', {
-  display: 'grid',
-  columnGap: '$1',
-  gridColumn: '2 / -1',
-  alignItems: 'flex-start',
+  base: {
+    display: 'grid',
+    columnGap: '4px',
+    gridColumn: '2 / -1',
+    alignItems: 'flex-start',
+  },
   variants: {
-    withoutLabel: {
-      true: {
-        gridColumn: '1 / -1',
-      },
-    },
+    withoutLabel: { true: { gridColumn: '1 / -1' } },
     column: {
-      1: {
-        gridTemplateColumns: '1fr',
-      },
-      2: {
-        gridTemplateColumns: 'repeat(2, 1fr)',
-      },
-      3: {
-        gridTemplateColumns: 'repeat(3, 1fr)',
-      },
-      4: {
-        gridTemplateColumns: 'repeat(4, 1fr)',
-      },
-      color: {
-        gridTemplateColumns: '24px 1fr 52px',
-      },
-      number: {
-        gridTemplateColumns: 'minmax(0, 8fr) repeat(2, 1fr)',
-      },
-      asset: {
-        gridTemplateColumns: 'minmax(0, 8fr) $sm $sm',
-        alignItems: 'center',
-      },
-      assetPreview: {
-        gridTemplateColumns: 'minmax(0, 1fr)',
-        alignItems: 'center',
-      },
+      1: { gridTemplateColumns: '1fr' },
+      2: { gridTemplateColumns: 'repeat(2, 1fr)' },
+      3: { gridTemplateColumns: 'repeat(3, 1fr)' },
+      4: { gridTemplateColumns: 'repeat(4, 1fr)' },
+      color: { gridTemplateColumns: '24px 1fr 52px' },
+      number: { gridTemplateColumns: 'minmax(0, 8fr) repeat(2, 1fr)' },
+      asset: { gridTemplateColumns: 'minmax(0, 8fr) 24px 24px', alignItems: 'center' },
+      assetPreview: { gridTemplateColumns: 'minmax(0, 1fr)', alignItems: 'center' },
     },
   },
 })
 
 const StyledFormItem = styled('div', {
-  display: 'grid',
-  width: '100%',
-  padding: '$0_5',
-  gridTemplateColumns: 'minmax(0px, 1.3fr) repeat(3, minmax(0px, 1fr))',
-  gridTemplateRows: 'auto',
-  columnGap: '$1',
-  alignItems: 'center',
+  base: {
+    display: 'grid',
+    width: '100%',
+    padding: '2px',
+    gridTemplateColumns: 'minmax(0px, 1.3fr) repeat(3, minmax(0px, 1fr))',
+    gridTemplateRows: 'auto',
+    columnGap: '4px',
+    alignItems: 'center',
+  },
   variants: {
-    withoutLabel: {
-      true: {
-        gridTemplateColumns: '1fr',
-      },
-    },
+    withoutLabel: { true: { gridTemplateColumns: '1fr' } },
     direction: {
-      column: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'normal',
-        gap: '$1',
-      },
+      column: { display: 'flex', flexDirection: 'column', alignItems: 'normal', gap: '4px' },
       row: {},
     },
   },
@@ -96,11 +70,11 @@ export interface FormItemSelectableProps<T> extends BaseFormItemProps<T> {
 
 export interface FormItemProps<T = any> extends BaseFormItemProps<T> {
   children?: React.ReactNode
-  css?: CSS
-  labelCss?: CSS
-  fieldCss?: CSS
+  css?: SystemStyleObject
+  labelCss?: SystemStyleObject
+  fieldCss?: SystemStyleObject
   size?: 'sm' | 'md'
-  fieldColumn?: VariantProps<typeof StyledField>['column']
+  fieldColumn?: 1 | 2 | 3 | 4 | 'color' | 'number' | 'asset' | 'assetPreview'
 }
 
 export function extractFormItemProps<T>(props: Record<any, any>): FormItemProps<T> {

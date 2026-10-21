@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Input, Flex, styled, ActionButton, Breadcrumbs } from '@pivot-ui/editor'
+import { Input, Flex, ActionButton, Breadcrumbs } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
 
 import { BasicAssetType, PickableAssetItem } from './PickableAssetItem'
 
@@ -7,44 +8,37 @@ import { SearchBarBorder } from './SearchBarBorder'
 import { IconLayoutGrid, IconLayoutList, IconSearch } from '@tabler/icons-react'
 
 const StyledAssetPickerContent = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  width: '322px',
-  maxHeight: '360px',
+  base: { display: 'flex', flexDirection: 'column', width: '322px', maxHeight: '360px' },
 })
 
 const AssetGroups = styled('div', {
-  flex: 1,
-  overflow: 'auto',
-  padding: '$1 $2 $2',
+  base: { flex: 1, overflow: 'auto', padding: '4px 8px 8px' },
 })
 
 const AssetGroupSection = styled('div', {
-  '& + &': {
-    marginTop: '$2',
-    paddingTop: '$2',
-    borderTop: '1px solid $gray5',
+  base: {
+    '& + &': { marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--colors-gray5)' },
   },
 })
 
 const AssetList = styled('div', {
-  display: 'grid',
-  flexWrap: 'wrap',
-  gridTemplateColumns: 'repeat(5, minmax(60px, 1fr))',
-  gridTemplateRows: 'auto',
-  gap: '$1',
+  base: {
+    display: 'grid',
+    flexWrap: 'wrap',
+    gridTemplateColumns: 'repeat(5, minmax(60px, 1fr))',
+    gridTemplateRows: 'auto',
+    gap: '4px',
+  },
   variants: {
     displayMode: {
-      list: {
-        display: 'block',
-      },
+      list: { display: 'block' },
       grid: {},
     },
   },
 })
 
 const StyledHeader = styled(Flex, {
-  padding: '$2 $2 0',
+  base: { padding: '8px 8px 0' },
 })
 
 export interface AssetPickerPopoverProps<T extends BasicAssetType> {

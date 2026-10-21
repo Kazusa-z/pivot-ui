@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 import { FormItem } from './FormItem'
-import { Input, Button, Textarea, CascadeSlider, CSS } from '@pivot-ui/editor'
+import { Input, Button, Textarea, CascadeSlider } from '@pivot-ui/editor'
 import { BaseFormItemProps } from './FormItem/FormItem'
 
 function generateGUI<T>() {

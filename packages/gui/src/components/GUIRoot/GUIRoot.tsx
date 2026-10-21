@@ -33,7 +33,8 @@ import {
 } from '..'
 import { FormItemRectProps } from '../FormItemRect/FormItemRect'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { ColorSpace, resetStyle, styled } from '@pivot-ui/editor'
+import { ColorSpace, resetStyle } from '@pivot-ui/editor'
+import { styled } from '../../../styled-system/jsx'
 
 export const GUIItemTypeEnum = {
   Input: 'Input',
@@ -147,9 +148,7 @@ export type KeyOrBindPath = string
 export type GUIDefineItem = [SourceData, KeyOrBindPath, GUIItemConfig]
 
 const StyledGroupWrapper = styled('div', {
-  margin: '$0_5',
-  borderRadius: '$3',
-  boxShadow: '$border',
+  base: { margin: '2px', borderRadius: '6px', boxShadow: 'var(--shadows-border)' },
 })
 
 function renderGUIItem(item: GUIDefineItem, index: number) {

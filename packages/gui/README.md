@@ -754,3 +754,8 @@ const gui = new GUI(sceneData, guiConfig)
 ## License
 
 MIT License. See [LICENSE](../../LICENSE) for details.
+
+## Panda migration notes
+
+- GUI component styles now use Panda; see [the migration ledger](../../panda/MIGRATION.md).
+- `FormItem.fieldColumn` numeric variants use numbers: `fieldColumn={1}`, not `fieldColumn="1"`.

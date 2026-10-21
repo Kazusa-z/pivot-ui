@@ -174,20 +174,11 @@ const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(function 
   }, [])
 
   useEffect(() => {
-    if (handler.current) {
-      handler.current.addEventListener('mousedown', handleMouseDown)
-    }
     if (resizing) {
       window.addEventListener('mousemove', handleMouseMove)
       window.addEventListener('mouseup', handleMouseUp)
-    } else {
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('mouseup', handleMouseUp)
     }
     return () => {
-      if (handler.current) {
-        handler.current.removeEventListener('mousedown', handleMouseDown)
-      }
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
     }
@@ -204,6 +195,7 @@ const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(function 
         ref={handler}
         direction={direction}
         position={handlerPosition}
+        onMouseDown={handleMouseDown}
       />
     )
 
@@ -225,7 +217,13 @@ const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(function 
   return (
     <div ref={mergeRefs([forwardedRef, ref])} style={{ position: 'relative' }}>
       {children}
-      <StyledResizeHandler variant={variant} ref={handler} direction={direction} position={handlerPosition} />
+      <StyledResizeHandler
+        variant={variant}
+        ref={handler}
+        direction={direction}
+        position={handlerPosition}
+        onMouseDown={handleMouseDown}
+      />
     </div>
   )
 })
