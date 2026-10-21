@@ -31,6 +31,7 @@ Note: keep a CSS reset in your application so the components render consistently
 - `Text` / `Title` sizes are numeric variants: `size={2}`, not `size="2"`.
 - `Flex.wrap` is boolean (`true` / `false`) or `"reverse"`.
 - Migrated components accept Panda `css` props. Replace Stitches `$token` values with raw CSS variables (`var(--colors-...)`) or `token(...)` calls.
+- `ActionButton` no longer exposes the unused `as` prop.
 - See [the migration ledger](../../panda/MIGRATION.md) for temporary compatibility notes.
 
 ## Development

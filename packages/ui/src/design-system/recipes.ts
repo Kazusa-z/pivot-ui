@@ -2,25 +2,6 @@ import { styled, css, keyframes } from './stitches.config'
 
 type CSS = Parameters<typeof css>[0]
 
-export const button = styled('button', {
-  all: 'unset',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  lineHeight: 1,
-  border: '1px solid transparent',
-  boxSizing: 'border-box',
-  cursor: 'pointer',
-  '&:focus-visible': {
-    boxShadow: '$focus',
-  },
-  '&:disabled': {
-    backgroundColor: '$surfaceSubtle',
-    color: '$textMuted',
-    cursor: 'not-allowed',
-  },
-})
-
 const slideDownAndFade = keyframes({
   from: {
     opacity: 0,

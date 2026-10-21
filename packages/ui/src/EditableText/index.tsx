@@ -1,35 +1,38 @@
 import { IconEdit } from '@tabler/icons-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-import { styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
+import type { SystemStyleObject } from '../../styled-system/types'
 import { Text } from '../Typography'
 import { Input } from '../Input'
 import { Flex } from '../Flex'
 
 const Icon = styled('span', {
-  visibility: 'hidden',
-  position: 'relative',
-  cursor: 'pointer',
-  color: '$gray10',
-  '& > svg': {
-    height: '14px',
-    width: '14px',
-    strokeWidth: 1.8,
+  base: {
+    visibility: 'hidden',
+    position: 'relative',
+    cursor: 'pointer',
+    color: 'var(--colors-gray10)',
+    '& > svg': {
+      height: '14px',
+      width: '14px',
+      strokeWidth: 1.8,
+    },
   },
 })
 
 const Container = styled('div', {
-  maxWidth: '100%',
-  display: 'inline-block',
-  '&:hover': {
-    [`${Icon}`]: {
+  base: {
+    maxWidth: '100%',
+    display: 'inline-block',
+    '&:hover [data-icon]': {
       visibility: 'visible',
     },
   },
   variants: {
     focused: {
       true: {
-        backgroundColor: '$gray1',
+        backgroundColor: 'var(--colors-gray1)',
       },
     },
   },
@@ -41,8 +44,7 @@ type IEditableText = {
   onFocus?: (val: string) => void
   onEdit?: () => void
   onBlur?: (val: string) => void
-  // TODO(TD-10): EditableText still uses a Stitches Container; narrow after it migrates.
-  css?: any
+  css?: SystemStyleObject
 }
 
 function EditableText(props: IEditableText) {
@@ -120,7 +122,7 @@ function EditableText(props: IEditableText) {
             {draft}
           </Text>
           {showIcon && (
-            <Icon onClick={edit}>
+            <Icon data-icon onClick={edit}>
               <IconEdit />
             </Icon>
           )}

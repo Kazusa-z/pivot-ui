@@ -1,28 +1,40 @@
-import { PropsWithChildren, ComponentProps, forwardRef } from 'react'
+import { forwardRef, type ComponentProps, type PropsWithChildren } from 'react'
 
-import { StitchesComponent, styled } from '../design-system'
+import { styled } from '../../styled-system/jsx'
+import { css } from '../../styled-system/css'
 import { useAsyncStatus } from '../hooks/useAsyncStatus'
 import { Spin } from '../Spin'
-import { button } from '../design-system/recipes'
 import { IconRightBottomCorner } from '../Icons/IconRightBottomCorner'
 
-const StyledActionButton = styled('button', button, {
-  boxShadow: '$prepend',
-  transition: '$shadow, $borderColor, $backgroundColor, $color, transform 0.2s ease',
-  borderRadius: '$sm',
-  color: '$text',
-  flexShrink: 0,
-  flexGrow: 0,
-  padding: 0,
-  '&:focus-visible': {
-    boxShadow: '$focus',
-  },
-  '&:disabled': {
-    color: '$textMuted',
-    boxShadow: 'none',
-    cursor: 'not-allowed',
-    '&:hover': {
-      color: '$textMuted',
+const StyledActionButton = styled('button', {
+  base: {
+    all: 'unset',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1,
+    border: '1px solid transparent',
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+    boxShadow: 'var(--shadows-prepend)',
+    transition:
+      'box-shadow .2s ease, border-color .2s ease, background-color .2s ease, color .2s ease, transform .2s ease',
+    borderRadius: '4px',
+    color: 'var(--colors-text)',
+    flexShrink: 0,
+    flexGrow: 0,
+    padding: 0,
+    '&:focus-visible': {
+      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+    },
+    '&:disabled': {
+      backgroundColor: 'var(--colors-surfaceSubtle)',
+      color: 'var(--colors-textMuted)',
+      cursor: 'not-allowed',
+      boxShadow: 'none',
+      '&:hover': {
+        color: 'var(--colors-textMuted)',
+      },
     },
   },
   variants: {
@@ -33,94 +45,94 @@ const StyledActionButton = styled('button', button, {
     },
     size: {
       xs: {
-        height: '$xs',
-        width: '$xs',
-        borderRadius: '$xs',
+        height: '20px',
+        width: '20px',
+        borderRadius: '4px',
         '& > svg': {
-          height: '$iconXs',
-          width: '$iconXs',
+          height: '12px',
+          width: '12px',
           strokeWidth: 1.5,
         },
-        [`& ${Spin}`]: {
-          height: '$2',
-          width: '$2',
+        '& .action-button-spin': {
+          height: '8px',
+          width: '8px',
         },
       },
       sm: {
-        height: '$sm',
-        width: '$sm',
-        borderRadius: '$sm',
-        fontSize: '$1',
+        height: '24px',
+        width: '24px',
+        borderRadius: '4px',
+        fontSize: '12px',
         '& svg': {
-          height: '$iconSm',
-          width: '$iconSm',
+          height: '14px',
+          width: '14px',
           strokeWidth: 1.5,
         },
-        [`& ${Spin}`]: {
-          height: '$iconSm',
-          width: '$iconSm',
+        '& .action-button-spin': {
+          height: '14px',
+          width: '14px',
         },
       },
       md: {
-        height: '$md',
-        width: '$md',
-        borderRadius: '$md',
+        height: '32px',
+        width: '32px',
+        borderRadius: '6px',
         '& svg': {
-          height: '$iconMd',
-          width: '$iconMd',
+          height: '16px',
+          width: '16px',
         },
-        [`& ${Spin}`]: {
-          height: '$iconMd',
-          width: '$iconMd',
+        '& .action-button-spin': {
+          height: '16px',
+          width: '16px',
         },
       },
       lg: {
-        height: '$lg',
-        width: '$lg',
-        borderRadius: '$md',
+        height: '36px',
+        width: '36px',
+        borderRadius: '6px',
         '& svg': {
-          height: '$iconLg',
-          width: '$iconLg',
+          height: '18px',
+          width: '18px',
         },
-        [`& ${Spin}`]: {
-          height: '$iconLg',
-          width: '$iconLg',
+        '& .action-button-spin': {
+          height: '18px',
+          width: '18px',
         },
       },
     },
     variant: {
       outline: {
-        border: '1px solid $border',
+        border: '1px solid var(--colors-border)',
         borderWidth: '1px',
         borderStyle: 'solid',
-        color: '$text',
-        fontSize: '$1',
+        color: 'var(--colors-text)',
+        fontSize: '12px',
         backgroundColor: 'transparent',
         '&:hover': {
-          color: '$textStrong',
-          borderColor: '$borderStrong',
-          backgroundColor: '$surfaceSubtle',
+          color: 'var(--colors-textStrong)',
+          borderColor: 'var(--colors-borderStrong)',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
         },
         '&:disabled': {
-          color: '$textMuted',
-          borderColor: '$border',
-          backgroundColor: '$surfaceSubtle',
+          color: 'var(--colors-textMuted)',
+          borderColor: 'var(--colors-border)',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
           cursor: 'not-allowed',
         },
       },
       soft: {
-        color: '$text',
-        backgroundColor: '$softBg',
+        color: 'var(--colors-text)',
+        backgroundColor: 'var(--colors-softBg)',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$textStrong',
-          backgroundColor: '$softBgHover',
+          color: 'var(--colors-textStrong)',
+          backgroundColor: 'var(--colors-softBgHover)',
           borderColor: 'transparent',
         },
         '&:disabled': {
-          color: '$textMuted',
+          color: 'var(--colors-textMuted)',
           borderColor: 'transparent',
-          backgroundColor: '$surfaceSubtle',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
           cursor: 'not-allowed',
         },
       },
@@ -129,28 +141,28 @@ const StyledActionButton = styled('button', button, {
         backgroundColor: 'transparent',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$textStrong',
-          backgroundColor: '$surfaceSubtle',
+          color: 'var(--colors-textStrong)',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
         },
         '&:disabled': {
-          color: '$textMuted',
+          color: 'var(--colors-textMuted)',
           borderColor: 'transparent',
           backgroundColor: 'transparent',
           '&:hover': {
-            color: '$textMuted',
+            color: 'var(--colors-textMuted)',
             backgroundColor: 'transparent',
           },
         },
       },
       ghost: {
-        color: '$text',
+        color: 'var(--colors-text)',
         backgroundColor: 'transparent',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$textStrong',
+          color: 'var(--colors-textStrong)',
         },
         '&:disabled': {
-          color: '$textMuted',
+          color: 'var(--colors-textMuted)',
           borderColor: 'transparent',
           backgroundColor: 'transparent',
         },
@@ -158,12 +170,12 @@ const StyledActionButton = styled('button', button, {
     },
     active: {
       true: {
-        backgroundColor: '$selectionBg',
-        borderColor: '$selectionBorder',
-        color: '$selectionText',
+        backgroundColor: 'var(--colors-selectionBg)',
+        borderColor: 'var(--colors-selectionBorder)',
+        color: 'var(--colors-selectionText)',
         '&:hover': {
-          backgroundColor: '$selectionBgHover',
-          borderColor: '$selectionBorder',
+          backgroundColor: 'var(--colors-selectionBgHover)',
+          borderColor: 'var(--colors-selectionBorder)',
         },
       },
     },
@@ -184,18 +196,18 @@ const StyledActionButton = styled('button', button, {
       variant: 'outline',
       active: true,
       css: {
-        color: '$selectionText',
-        backgroundColor: '$selectionBg',
-        borderColor: '$selectionBorder',
+        color: 'var(--colors-selectionText)',
+        backgroundColor: 'var(--colors-selectionBg)',
+        borderColor: 'var(--colors-selectionBorder)',
         '&:hover': {
-          color: '$selectionText',
-          backgroundColor: '$selectionBgHover',
-          borderColor: '$selectionBorder',
+          color: 'var(--colors-selectionText)',
+          backgroundColor: 'var(--colors-selectionBgHover)',
+          borderColor: 'var(--colors-selectionBorder)',
         },
         '&:disabled': {
-          color: '$textMuted',
-          backgroundColor: '$surfaceSubtle',
-          borderColor: '$border',
+          color: 'var(--colors-textMuted)',
+          backgroundColor: 'var(--colors-surfaceSubtle)',
+          borderColor: 'var(--colors-border)',
         },
       },
     },
@@ -203,16 +215,16 @@ const StyledActionButton = styled('button', button, {
       variant: 'subtle',
       active: true,
       css: {
-        color: '$selectionText',
-        backgroundColor: '$selectionBg',
+        color: 'var(--colors-selectionText)',
+        backgroundColor: 'var(--colors-selectionBg)',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$selectionText',
-          backgroundColor: '$selectionBgHover',
+          color: 'var(--colors-selectionText)',
+          backgroundColor: 'var(--colors-selectionBgHover)',
           borderColor: 'transparent',
         },
         '&:disabled': {
-          color: '$textMuted',
+          color: 'var(--colors-textMuted)',
           backgroundColor: 'transparent',
           borderColor: 'transparent',
         },
@@ -222,16 +234,16 @@ const StyledActionButton = styled('button', button, {
       variant: 'ghost',
       active: true,
       css: {
-        color: '$selectionText',
-        backgroundColor: '$selectionBg',
+        color: 'var(--colors-selectionText)',
+        backgroundColor: 'var(--colors-selectionBg)',
         borderColor: 'transparent',
         '&:hover': {
-          color: '$selectionText',
-          backgroundColor: '$selectionBgHover',
+          color: 'var(--colors-selectionText)',
+          backgroundColor: 'var(--colors-selectionBgHover)',
           borderColor: 'transparent',
         },
         '&:disabled': {
-          color: '$textMuted',
+          color: 'var(--colors-textMuted)',
           backgroundColor: 'transparent',
           borderColor: 'transparent',
         },
@@ -241,46 +253,48 @@ const StyledActionButton = styled('button', button, {
 })
 
 const StyledActionButtonGroup = styled('div', {
-  display: 'flex',
+  base: {
+    display: 'flex',
+  },
   variants: {
     direction: {
       horizontal: {
-        [`& ${StyledActionButton}`]: {
+        '& [data-action-button]': {
           borderRadius: 0,
         },
-        [`& ${StyledActionButton}:not(:first-child)`]: {
+        '& [data-action-button]:not(:first-child)': {
           marginLeft: '-1px',
         },
-        [`& ${StyledActionButton}:hover, & ${StyledActionButton}:focus-visible, & ${StyledActionButton}[data-state="open"]`]:
+        '& [data-action-button]:hover, & [data-action-button]:focus-visible, & [data-action-button][data-state="open"]':
           {
             position: 'relative',
             zIndex: 1,
           },
-        [`& ${StyledActionButton}:nth-child(1)`]: {
-          borderRadius: '$sm 0 0 $sm',
+        '& [data-action-button]:nth-child(1)': {
+          borderRadius: '4px 0 0 4px',
         },
-        [`& ${StyledActionButton}:nth-last-child(1)`]: {
-          borderRadius: '0 $sm $sm 0',
+        '& [data-action-button]:nth-last-child(1)': {
+          borderRadius: '0 4px 4px 0',
         },
       },
       vertical: {
         flexDirection: 'column',
-        [`& ${StyledActionButton}`]: {
+        '& [data-action-button]': {
           borderRadius: 0,
         },
-        [`& ${StyledActionButton}:not(:first-child)`]: {
+        '& [data-action-button]:not(:first-child)': {
           marginTop: '-1px',
         },
-        [`& ${StyledActionButton}:hover, & ${StyledActionButton}:focus-visible, & ${StyledActionButton}[data-state="open"]`]:
+        '& [data-action-button]:hover, & [data-action-button]:focus-visible, & [data-action-button][data-state="open"]':
           {
             position: 'relative',
             zIndex: 1,
           },
-        [`& ${StyledActionButton}:nth-child(1)`]: {
-          borderRadius: '$sm $sm 0 0',
+        '& [data-action-button]:nth-child(1)': {
+          borderRadius: '4px 4px 0 0',
         },
-        [`& ${StyledActionButton}:nth-last-child(1)`]: {
-          borderRadius: '0 0 $sm $sm',
+        '& [data-action-button]:nth-last-child(1)': {
+          borderRadius: '0 0 4px 4px',
         },
       },
     },
@@ -290,9 +304,7 @@ const StyledActionButtonGroup = styled('div', {
   },
 })
 
-StyledActionButtonGroup.displayName = 'ActionButtonGroup'
-
-const CornerIcon = styled(IconRightBottomCorner, {
+const cornerIconClass = css({
   position: 'absolute',
   width: '4px !important',
   height: '4px !important',
@@ -301,13 +313,12 @@ const CornerIcon = styled(IconRightBottomCorner, {
   right: 3,
 })
 
-export interface ActionButtonProps extends StitchesComponent<typeof StyledActionButton> {
+export interface ActionButtonProps extends ComponentProps<typeof StyledActionButton> {
   /**
    * An async function or a function which should return a Promise
    */
   async?: () => Promise<unknown>
   loading?: boolean
-  as?: string
   /**
    * Sometimes the ActionButton is acting as a trigger like opening a modal, in this case, you could set the `corner` prop to `true` to show a corner icon.
    */
@@ -315,7 +326,7 @@ export interface ActionButtonProps extends StitchesComponent<typeof StyledAction
 }
 
 export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(function ActionButton(props, forwardedRf) {
-  const { loading: propLoading, async, onClick, size, corner, disabled, type = 'button', ...rest } = props
+  const { loading: propLoading, async, onClick, size, corner, disabled, type = 'button', children, ...rest } = props
   const { handleClick, loading } = useAsyncStatus({
     asyncFunction: async,
     propLoading,
@@ -325,6 +336,7 @@ export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(fun
   return (
     <StyledActionButton
       {...rest}
+      data-action-button
       size={size}
       onClick={handleClick}
       ref={forwardedRf}
@@ -332,13 +344,13 @@ export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(fun
       type={type}
       aria-busy={loading || undefined}
       disabled={loading || disabled}>
-      {loading ? <Spin size="xs" color="inherit" /> : rest.children}
-      {corner && <CornerIcon />}
+      {loading ? <Spin className="action-button-spin" size="xs" color="inherit" /> : children}
+      {corner && <IconRightBottomCorner className={cornerIconClass} />}
     </StyledActionButton>
   )
 })
 
-ActionButton.toString = () => StyledActionButton.toString()
+ActionButton.toString = () => '.action-button'
 
 export type ActionButtonGroupProps = ComponentProps<typeof StyledActionButtonGroup>
 
