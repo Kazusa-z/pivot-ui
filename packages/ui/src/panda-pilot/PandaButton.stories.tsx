@@ -1,4 +1,5 @@
 import type { Meta, StoryFn } from '@storybook/react'
+import { token } from '../../styled-system/tokens'
 import { Button } from '../Button'
 import { PandaButton } from './PandaButton'
 
@@ -48,5 +49,11 @@ export const Comparison: StoryFn = () => (
         <PandaButton round>Panda round</PandaButton>
       </div>
     </div>
+  </div>
+)
+
+export const CssProp: StoryFn = () => (
+  <div>
+    <PandaButton css={{ marginLeft: 12, color: token('colors.textMuted') }}>CSS + token</PandaButton>
   </div>
 )
