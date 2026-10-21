@@ -1,6 +1,0 @@
-@layer reset, base, tokens, recipes, utilities;
-
-/* Temporary Phase 0 bridge: Stitches' reset is unlayered, while Panda utilities live in layers. */
-.panda-pilot-dialog-content {
-  padding: 12px;
-}

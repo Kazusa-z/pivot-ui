@@ -1,7 +1,5 @@
-import { resetStyle } from '../src/design-system'
+import '../panda.css'
 import type { Preview } from '@storybook/react'
-
-resetStyle()
 
 const preview: Preview = {
   initialGlobals: { backgrounds: { value: 'dark' } },

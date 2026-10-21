@@ -25,8 +25,8 @@ The pilot stories were checked with computed-style comparison against the Stitch
 - Dialog: identical content, 0 computed-style differences.
 - FormItemColor: color badge and controls matched (see the GUI pilot).
 
-## Temporary reset bridge
+## Reset migration
 
-Stitches' reset is unlayered while Panda utilities are emitted in CSS layers. This means the Stitches `div` reset can win over Panda utility classes for properties like `padding` and `font-size`. The pilot contains a small unlayered bridge class in `panda.css` so the comparison is meaningful; this disappears once the reset is migrated to Panda.
+Storybook now loads Panda's global reset/font faces instead of the Stitches `resetStyle()` call. Panda utilities therefore sit above the reset layer and the temporary bridge classes used during the first pilot round have been removed.
 
-Next phase: migrate the design-system tokens/theme and reset to Panda, then promote the pilots into the real components.
+Next phase: migrate the design-system tokens and light/dark theme to Panda, then promote the pilots into the real components.

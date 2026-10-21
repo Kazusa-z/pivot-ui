@@ -1,7 +1,6 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import { Button } from '../Button'
 import { PandaButton } from './PandaButton'
-import './panda.css'
 
 export default {
   title: 'Panda Pilot/Button',

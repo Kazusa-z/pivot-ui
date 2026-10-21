@@ -69,7 +69,7 @@ function Content({ children, zIndex, ...props }: { children?: ReactNode; zIndex?
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className={overlayClass} style={style} />
-      <DialogPrimitive.Content className={`${contentClass} panda-pilot-dialog-content`} {...props} style={style}>
+      <DialogPrimitive.Content className={contentClass} {...props} style={style}>
         {children}
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>

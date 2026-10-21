@@ -2,7 +2,6 @@ import type { Meta, StoryFn } from '@storybook/react'
 import { Flex } from '@pivot-ui/editor'
 import { FormItemColor } from '../components/FormItemColor'
 import { PandaFormItemColor } from './FormItemColor'
-import './panda.css'
 
 export default {
   title: 'Panda Pilot/FormItemColor',

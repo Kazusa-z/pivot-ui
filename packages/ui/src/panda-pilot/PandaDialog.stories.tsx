@@ -4,7 +4,6 @@ import { Button } from '../Button'
 import { Dialog } from '../Dialog'
 import { Text, Title } from '../Typography'
 import { PandaDialog } from './PandaDialog'
-import './panda.css'
 
 export default {
   title: 'Panda Pilot/Dialog',

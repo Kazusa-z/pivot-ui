@@ -111,7 +111,6 @@ export function PandaFormItemColor(props: PandaFormItemColorProps) {
             css={{ fontFamily: '$mono' }}
             endSlot={
               <PandaColorSpaceBadge
-                className="panda-pilot-color-badge"
                 onClick={() => {
                   setDisplayColorSpace(displayColorSpace === 'sRGB' ? 'Linear' : 'sRGB')
                 }}>
