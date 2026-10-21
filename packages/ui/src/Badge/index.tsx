@@ -1,184 +1,187 @@
-import React, { forwardRef, useEffect, useState, useCallback, PropsWithChildren, Fragment } from 'react'
+import { forwardRef, useCallback, useState, type ComponentProps, type PropsWithChildren } from 'react'
 import { IconX } from '@tabler/icons-react'
 
-import { styled, StitchesComponent } from '../design-system'
+import { styled } from '../../styled-system/jsx'
 
 const StyledBadgeInner = styled('span', {
-  all: 'unset',
-  display: 'flex',
-  height: '100%',
-  alignItems: 'center',
-  color: '$$color',
-  backgroundColor: '$$bgColor',
-  padding: '$0_5 $1_5',
-  gap: '$1',
-  borderRadius: '$2',
-  border: '$$border',
+  base: {
+    all: 'unset',
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    color: 'var(--badge-color)',
+    backgroundColor: 'var(--badge-bg-color)',
+    padding: '2px 6px',
+    gap: '4px',
+    borderRadius: '4px',
+    border: 'var(--badge-border)',
+  },
   variants: {
     closable: {
       true: {
-        borderRadius: '$2 0 0 $2',
-        padding: '0 $1',
+        borderRadius: '4px 0 0 4px',
+        padding: '0 4px',
       },
     },
   },
 })
 
 const StyledCloseButton = styled('span', {
-  all: 'unset',
-  display: 'flex',
-  alignItems: 'center',
-  height: '100%',
-  padding: '0 $0_5',
-  lineHeight: '14px',
-  borderRadius: '0 $2 $2 0',
-  marginLeft: '0.5px',
-  textAlign: 'center',
-  color: '$$color',
-  backgroundColor: '$$bgColor',
-  border: '$$border',
-  backdropFilter: '$$backdropFilter',
-  cursor: 'pointer',
-  '&:hover': {
-    color: '$$highlightColor',
-    backgroundColor: '$$highlightBgColor',
+  base: {
+    all: 'unset',
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    padding: '0 2px',
+    lineHeight: '14px',
+    borderRadius: '0 4px 4px 0',
+    marginLeft: '0.5px',
+    textAlign: 'center',
+    color: 'var(--badge-color)',
+    backgroundColor: 'var(--badge-bg-color)',
+    border: 'var(--badge-border)',
+    backdropFilter: 'var(--badge-backdrop-filter)',
+    cursor: 'pointer',
+    '&:hover': {
+      color: 'var(--badge-highlight-color)',
+      backgroundColor: 'var(--badge-highlight-bg-color)',
+    },
   },
   variants: {
     pill: {
       true: {
-        borderRadius: '$round',
+        borderRadius: '9999px',
       },
     },
   },
 })
 
 const StyledBadge = styled('span', {
-  display: 'inline-flex',
-  alignItems: 'center',
-
-  lineHeight: '16px',
-  userSelect: 'none',
-  whiteSpace: 'nowrap',
-  fontWeight: 500,
-  fontSize: '$sm',
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    lineHeight: '16px',
+    userSelect: 'none',
+    whiteSpace: 'nowrap',
+    fontWeight: 500,
+    fontSize: 'var(--fontSizes-sm)',
+  },
   variants: {
     size: {
       xs: {
-        fontSize: '$0_5',
-        height: '$4',
-        [`& ${StyledBadgeInner}`]: {
-          padding: '0 $1',
+        fontSize: 'var(--fontSizes-0_5)',
+        height: '16px',
+        '& [data-part="inner"]': {
+          padding: '0 4px',
         },
       },
       sm: {
-        height: '$5',
-        fontSize: '$1',
-        [`& ${StyledBadgeInner}`]: {
-          padding: '0 $1_5',
+        height: '20px',
+        fontSize: 'var(--fontSizes-1)',
+        '& [data-part="inner"]': {
+          padding: '0 6px',
         },
       },
     },
-
     closable: {
       true: {
-        paddingRight: '$1',
+        paddingRight: '4px',
       },
     },
-
     pill: {
       true: {
-        [`& ${StyledBadgeInner}`]: {
-          borderRadius: '$round',
-          padding: '0 $2',
+        '& [data-part="inner"]': {
+          borderRadius: '9999px',
+          padding: '0 8px',
         },
       },
     },
     active: {
       true: {
-        $$bgColor: '$colors$blue10',
-        $$color: '$colors$white',
-        $$highlightColor: '$colors$blueA12',
+        '--badge-bg-color': 'var(--colors-blue10)',
+        '--badge-color': 'var(--colors-white)',
+        '--badge-highlight-color': 'var(--colors-blueA12)',
       },
     },
     dot: {
       true: {
-        height: '$2',
-        width: '$2',
-        borderRadius: '$round',
+        height: '8px',
+        width: '8px',
+        borderRadius: '9999px',
         padding: 0,
       },
     },
     code: {
       true: {
-        fontFamily: '$mono',
+        fontFamily: 'var(--fonts-mono)',
       },
     },
     variant: {
       solid: {
-        $$border: 'none',
-        $$backdropFilter: 'none',
+        '--badge-border': 'none',
+        '--badge-backdrop-filter': 'none',
       },
       surface: {
-        $$border: '1px solid $$borderColor',
-        $$backdropFilter: 'blur(8px)',
+        '--badge-border': '1px solid var(--badge-border-color)',
+        '--badge-backdrop-filter': 'blur(8px)',
       },
     },
     color: {
       gray: {
-        $$color: '$colors$grayA11',
-        $$bgColor: '$colors$grayA3',
-        $$highlightColor: '$colors$grayA12',
-        $$highlightBgColor: '$colors$grayA5',
-        $$borderColor: '$colors$grayA9',
+        '--badge-color': 'var(--colors-grayA11)',
+        '--badge-bg-color': 'var(--colors-grayA3)',
+        '--badge-highlight-color': 'var(--colors-grayA12)',
+        '--badge-highlight-bg-color': 'var(--colors-grayA5)',
+        '--badge-border-color': 'var(--colors-grayA9)',
       },
       green: {
-        $$color: '$colors$greenA11',
-        $$bgColor: '$colors$greenA3',
-        $$highlightColor: '$colors$greenA12',
-        $$highlightBgColor: '$colors$greenA5',
-        $$borderColor: '$colors$greenA9',
+        '--badge-color': 'var(--colors-greenA11)',
+        '--badge-bg-color': 'var(--colors-greenA3)',
+        '--badge-highlight-color': 'var(--colors-greenA12)',
+        '--badge-highlight-bg-color': 'var(--colors-greenA5)',
+        '--badge-border-color': 'var(--colors-greenA9)',
       },
       red: {
-        $$color: '$colors$redA11',
-        $$bgColor: '$colors$redA3',
-        $$highlightColor: '$colors$redA12',
-        $$highlightBgColor: '$colors$redA5',
-        $$borderColor: '$colors$redA9',
+        '--badge-color': 'var(--colors-redA11)',
+        '--badge-bg-color': 'var(--colors-redA3)',
+        '--badge-highlight-color': 'var(--colors-redA12)',
+        '--badge-highlight-bg-color': 'var(--colors-redA5)',
+        '--badge-border-color': 'var(--colors-redA9)',
       },
       blue: {
-        $$color: '$colors$blueA11',
-        $$bgColor: '$colors$blueA3',
-        $$highlightColor: '$colors$blueA12',
-        $$highlightBgColor: '$colors$blueA5',
-        $$borderColor: '$colors$blueA9',
+        '--badge-color': 'var(--colors-blueA11)',
+        '--badge-bg-color': 'var(--colors-blueA3)',
+        '--badge-highlight-color': 'var(--colors-blueA12)',
+        '--badge-highlight-bg-color': 'var(--colors-blueA5)',
+        '--badge-border-color': 'var(--colors-blueA9)',
       },
       orange: {
-        $$color: '$colors$orangeA11',
-        $$bgColor: '$colors$orangeA3',
-        $$highlightColor: '$colors$orangeA12',
-        $$highlightBgColor: '$colors$orangeA5',
-        $$borderColor: '$colors$orangeA9',
+        '--badge-color': 'var(--colors-orangeA11)',
+        '--badge-bg-color': 'var(--colors-orangeA3)',
+        '--badge-highlight-color': 'var(--colors-orangeA12)',
+        '--badge-highlight-bg-color': 'var(--colors-orangeA5)',
+        '--badge-border-color': 'var(--colors-orangeA9)',
       },
       amber: {
-        $$color: '$colors$amberA11',
-        $$bgColor: '$colors$amberA3',
-        $$highlightColor: '$colors$amberA12',
-        $$highlightBgColor: '$colors$amberA5',
-        $$borderColor: '$colors$amberA9',
+        '--badge-color': 'var(--colors-amberA11)',
+        '--badge-bg-color': 'var(--colors-amberA3)',
+        '--badge-highlight-color': 'var(--colors-amberA12)',
+        '--badge-highlight-bg-color': 'var(--colors-amberA5)',
+        '--badge-border-color': 'var(--colors-amberA9)',
       },
       gold: {
-        $$color: '$colors$goldA11',
-        $$bgColor: '$colors$goldA3',
-        $$highlightColor: '$colors$goldA12',
-        $$highlightBgColor: '$colors$goldA5',
-        $$borderColor: '$colors$goldA9',
+        '--badge-color': 'var(--colors-goldA11)',
+        '--badge-bg-color': 'var(--colors-goldA3)',
+        '--badge-highlight-color': 'var(--colors-goldA12)',
+        '--badge-highlight-bg-color': 'var(--colors-goldA5)',
+        '--badge-border-color': 'var(--colors-goldA9)',
       },
       violet: {
-        $$color: '$colors$violetA11',
-        $$bgColor: '$colors$violetA3',
-        $$highlightColor: '$colors$violetA12',
-        $$highlightBgColor: '$colors$violetA5',
-        $$borderColor: '$colors$violetA9',
+        '--badge-color': 'var(--colors-violetA11)',
+        '--badge-bg-color': 'var(--colors-violetA3)',
+        '--badge-highlight-color': 'var(--colors-violetA12)',
+        '--badge-highlight-bg-color': 'var(--colors-violetA5)',
+        '--badge-border-color': 'var(--colors-violetA9)',
       },
     },
   },
@@ -192,8 +195,8 @@ const StyledBadge = styled('span', {
       pill: true,
       size: 'xs',
       css: {
-        [`& ${StyledBadgeInner}`]: {
-          padding: '0 $1_5',
+        '& [data-part="inner"]': {
+          padding: '0 6px',
         },
       },
     },
@@ -202,11 +205,11 @@ const StyledBadge = styled('span', {
       closable: true,
       size: 'sm',
       css: {
-        [`& ${StyledBadgeInner}`]: {
-          borderRadius: '$round 0 0 $round',
+        '& [data-part="inner"]': {
+          borderRadius: '9999px 0 0 9999px',
         },
-        [`& ${StyledCloseButton}`]: {
-          borderRadius: '0 $round $round 0',
+        '& [data-part="close"]': {
+          borderRadius: '0 9999px 9999px 0',
         },
       },
     },
@@ -215,31 +218,34 @@ const StyledBadge = styled('span', {
       closable: true,
       size: 'xs',
       css: {
-        [`& ${StyledBadgeInner}`]: {
-          borderRadius: '$round 0 0 $round',
+        '& [data-part="inner"]': {
+          borderRadius: '9999px 0 0 9999px',
         },
-        [`& ${StyledCloseButton}`]: {
-          borderRadius: '0 $round $round 0',
+        '& [data-part="close"]': {
+          borderRadius: '0 9999px 9999px 0',
         },
       },
     },
   ],
 })
 
-type BadgeCloseButtonProps = React.ComponentProps<typeof StyledCloseButton>
+type BadgeCloseButtonProps = ComponentProps<typeof StyledCloseButton>
 
 function BadgeCloseButton(props: BadgeCloseButtonProps) {
   return (
-    <StyledCloseButton {...props}>
+    <StyledCloseButton data-part="close" {...props}>
       <IconX size="10px" />
     </StyledCloseButton>
   )
 }
 
+type StyledBadgeProps = ComponentProps<typeof StyledBadge>
+
 export type BadgeProps = PropsWithChildren<
-  Omit<StitchesComponent<typeof StyledBadge>, 'dot'> & {
+  Omit<StyledBadgeProps, 'dot' | 'css'> & {
     closable?: boolean
-    onClose?: (e) => void
+    onClose?: (e: any) => void
+    css?: any
   }
 >
 
@@ -265,7 +271,9 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 
   return (
     <StyledBadge ref={ref} {...rest} closable={closable}>
-      <StyledBadgeInner closable={closable}>{children}</StyledBadgeInner>
+      <StyledBadgeInner data-part="inner" closable={closable}>
+        {children}
+      </StyledBadgeInner>
       {closable && <BadgeCloseButton onClick={handleClose} pill={rest.pill} />}
     </StyledBadge>
   )
