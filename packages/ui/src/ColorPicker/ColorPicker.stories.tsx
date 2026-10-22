@@ -5,6 +5,7 @@ import { Flex } from '../Flex'
 import { Textarea } from '../Textarea'
 
 import { ColorPicker } from './'
+import type { ColorSpace } from './helper'
 
 const argTypes = {
   disabled: {
@@ -28,14 +29,10 @@ export default {
 
 export const Overview = (args) => {
   const [color, setColor] = useState({ r: 200, g: 150, b: 35, a: 0.5 })
-  const [colorSpace, setColorSpace] = useState('sRGB')
+  const [displayColorSpace, setDisplayColorSpace] = useState<ColorSpace>('sRGB')
 
   function handleOnChange(nextColor) {
     setColor(nextColor)
-  }
-
-  function handleColorSpaceChange(newColorSpace) {
-    setColorSpace(newColorSpace)
   }
 
   return (
@@ -44,11 +41,12 @@ export const Overview = (args) => {
         mode="constant"
         value={color}
         onValueChange={handleOnChange}
-        colorSpace={colorSpace}
-        onColorSpaceChange={handleColorSpaceChange}
+        colorSpace="sRGB"
+        displayColorSpace={displayColorSpace}
+        onDisplayColorSpaceChange={setDisplayColorSpace}
         {...args}
       />
-      <Textarea value={JSON.stringify({ color, colorSpace }, null, 2)} readOnly />
+      <Textarea value={JSON.stringify({ color, colorSpace: 'sRGB', displayColorSpace }, null, 2)} readOnly />
     </Flex>
   )
 }
@@ -99,7 +97,7 @@ export const ParticleMode = (args) => {
   )
 }
 
-GradientMode.argTypes = argTypes
+ParticleMode.argTypes = argTypes
 
 export const HDRMode = (args) => {
   const [color, setColor] = useState({
@@ -126,14 +124,10 @@ HDRMode.argTypes = argTypes
 
 export const ColorSpaceMode = (args) => {
   const [color, setColor] = useState({ r: 200, g: 150, b: 35, a: 0.5 })
-  const [colorSpace, setColorSpace] = useState('sRGB')
+  const [displayColorSpace, setDisplayColorSpace] = useState<ColorSpace>('sRGB')
 
   function handleOnChange(nextColor) {
     setColor(nextColor)
-  }
-
-  function handleColorSpaceChange(newColorSpace) {
-    setColorSpace(newColorSpace)
   }
 
   return (
@@ -145,18 +139,20 @@ export const ColorSpaceMode = (args) => {
         mode="constant"
         value={color}
         onValueChange={handleOnChange}
-        colorSpace={colorSpace}
-        onColorSpaceChange={handleColorSpaceChange}
+        colorSpace="sRGB"
+        displayColorSpace={displayColorSpace}
+        onDisplayColorSpaceChange={setDisplayColorSpace}
         {...args}
       />
       <div style={{ fontSize: '12px', color: '#666' }}>
-        Current Color Space: <strong>{colorSpace}</strong>
+        Display Color Space: <strong>{displayColorSpace}</strong>
       </div>
       <Textarea
         value={JSON.stringify(
           {
             color,
-            colorSpace,
+            colorSpace: 'sRGB',
+            displayColorSpace,
             note: 'Values are always stored as sRGB (0-255), but displayed/edited in the selected color space',
           },
           null,

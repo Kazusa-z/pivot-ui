@@ -126,6 +126,7 @@ export function AssetPickerContent<T extends BasicAssetType>(props: AssetPickerP
           {grouped[path].map((asset) => {
             return (
               <PickableAssetItem
+                displayMode={displayMode}
                 selected={selectedAssetId === asset.id}
                 key={asset.id}
                 name={getAssetDisplayName(asset)}
@@ -160,10 +161,20 @@ export function AssetPickerContent<T extends BasicAssetType>(props: AssetPickerP
           }}
         />
         <Flex spacing="xs" wrap={false} align="both">
-          <ActionButton fancy variant="ghost" active={displayMode === 'grid'} onClick={handleChangeDisplayMode('grid')}>
+          <ActionButton
+            aria-label="Grid view"
+            fancy
+            variant="ghost"
+            active={displayMode === 'grid'}
+            onClick={handleChangeDisplayMode('grid')}>
             <IconLayoutGrid />
           </ActionButton>
-          <ActionButton variant="ghost" fancy active={displayMode === 'list'} onClick={handleChangeDisplayMode('list')}>
+          <ActionButton
+            aria-label="List view"
+            variant="ghost"
+            fancy
+            active={displayMode === 'list'}
+            onClick={handleChangeDisplayMode('list')}>
             <IconLayoutList />
           </ActionButton>
         </Flex>

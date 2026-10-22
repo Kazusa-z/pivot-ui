@@ -1,5 +1,6 @@
 import React from 'react'
 import { createRoot, Root } from 'react-dom/client'
+import { nanoid } from 'nanoid'
 import { GUIItemConfig, GUIRoot, GUIItemTypeEnum, type GUIDefineItem } from '../components/GUIRoot'
 
 export { type GUIItemConfig }
@@ -23,8 +24,12 @@ const initContainerStyle = {
   right: '32px',
 } as const
 
+type ContainerRoot = { root: Root; owner: GUI | null }
+const containerRoots = new WeakMap<HTMLDivElement, ContainerRoot>()
+const ownedContainers = new WeakSet<HTMLDivElement>()
+
 class GUI implements GUIBase {
-  private _containerId = 'pivot-ui-gui-container'
+  private _containerId = `pivot-ui-gui-container-${nanoid()}`
   private _container: HTMLDivElement = null
   private _root: Root = null
   private _data: Record<string, any> = null
@@ -63,31 +68,41 @@ class GUI implements GUIBase {
   }
 
   private _prepareContainer() {
-    const checkContainer = document.getElementById(this._containerId)
-    if (checkContainer) {
-      return checkContainer as HTMLDivElement
-    }
+    if (this._container) return this._container
     const container = document.createElement('div')
     container.id = this._containerId
     Object.assign(container.style, initContainerStyle)
+    this._container = container
+    ownedContainers.add(container)
     if (document.body) {
-      document.body.appendChild((this._container = container))
+      document.body.appendChild(container)
     }
     return container
   }
 
   render(container = this.container) {
-    let root = this.root
-    if (!container) {
-      container = this._prepareContainer()
+    container ??= this._prepareContainer()
+    const registered = containerRoots.get(container)
+    if (registered?.owner && registered.owner !== this) {
+      throw new Error(
+        'This container already belongs to another GUI instance. Dispose it before reusing the container.'
+      )
+    }
+    if (container !== this.container) {
+      this.dispose()
       this._container = container
     }
     if (!this.root) {
-      root = createRoot(container)
-      this._root = root
+      if (registered) {
+        registered.owner = this
+        this._root = registered.root
+      } else {
+        this._root = createRoot(container)
+        containerRoots.set(container, { root: this.root, owner: this })
+      }
     }
 
-    this.root.render(React.createElement(GUIRoot, { data: this.data, items: this.items }))
+    this.root.render(React.createElement(GUIRoot, { key: this._containerId, data: this.data, items: this.items }))
   }
 
   add(keyName: string, item: GUIItemConfig): void
@@ -140,19 +155,32 @@ class GUI implements GUIBase {
   }
 
   private _update() {
-    this.dispose()
     this.render()
   }
 
   dispose() {
-    this._container = null
-    if (this.root) {
-      this.root.unmount()
-    }
+    const container = this.container
+    const registered = container && containerRoots.get(container)
+    if (registered?.owner === this) registered.owner = null
     this._root = null
-    if (this.container) {
-      document.body.removeChild(this.container)
-    }
+    this._container = null
+    if (!container) return
+
+    // A GUI is often disposed from a React effect cleanup. Unmount outside that commit;
+    // an immediately recreated instance can reclaim the same external container's root.
+    queueMicrotask(() => {
+      if (registered) {
+        if (registered.owner || containerRoots.get(container) !== registered) return
+        registered.root.unmount()
+        containerRoots.delete(container)
+      } else if (containerRoots.has(container)) {
+        return
+      }
+      if (ownedContainers.has(container)) {
+        container.remove()
+        ownedContainers.delete(container)
+      }
+    })
   }
 
   setTheme(theme: keyof typeof themeMap = 'dark') {

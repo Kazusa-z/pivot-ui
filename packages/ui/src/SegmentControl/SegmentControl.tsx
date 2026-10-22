@@ -28,6 +28,8 @@ const StyledSegmentControlItem = styled(RadioGroupPrimitive.Item, {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    minWidth: 0,
+    boxSizing: 'border-box',
     height: '100%',
     color: 'var(--colors-textMuted)',
     border: 'none',
@@ -39,7 +41,7 @@ const StyledSegmentControlItem = styled(RadioGroupPrimitive.Item, {
     gap: '4px',
     transition: 'all .2s ease',
     userSelect: 'none',
-    '& > svg': { height: '14px', width: '14px' },
+    '& svg': { height: '14px', width: '14px', verticalAlign: 'middle' },
     '&:hover': { color: 'var(--colors-textStrong)' },
     '&[data-state=checked]': {
       backgroundColor: 'var(--colors-surfaceOverlay)',
@@ -73,9 +75,10 @@ const StyledSegmentControlRoot = styled(RadioGroupPrimitive.Root, {
   base: {
     display: 'inline-grid',
     backgroundColor: 'var(--colors-softBg)',
-    gridAutoColumns: '1fr',
+    gridAutoColumns: 'minmax(0, 1fr)',
     gridAutoFlow: 'column',
     width: '100%',
+    minWidth: 0,
     alignItems: 'center',
     borderRadius: '4px',
   },
@@ -90,6 +93,10 @@ const StyledSegmentControlRoot = styled(RadioGroupPrimitive.Root, {
     },
   },
   defaultVariants: { size: 'sm', variant: 'subtle' },
+})
+
+const SegmentControlLabel = styled('span', {
+  base: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
 })
 
 type SegmentControlProps = React.ComponentProps<typeof StyledSegmentControlRoot> & {
@@ -118,8 +125,17 @@ const SegmentControlItem = React.forwardRef<
   React.ComponentProps<typeof StyledSegmentControlItem>
 >((props, ref) => {
   const { variant } = useSegmentControlContext()
+  const { children, title, ...rest } = props
 
-  return <StyledSegmentControlItem ref={ref} variant={variant} {...props} />
+  return (
+    <StyledSegmentControlItem
+      ref={ref}
+      variant={variant}
+      title={title ?? (typeof children === 'string' ? children : undefined)}
+      {...rest}>
+      <SegmentControlLabel>{children}</SegmentControlLabel>
+    </StyledSegmentControlItem>
+  )
 })
 
 SegmentControlItem.displayName = 'SegmentControlItem'

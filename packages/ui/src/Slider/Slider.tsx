@@ -30,19 +30,6 @@ const StyledRange = styled(SliderPrimitive.Range, {
     transition: 'background-color .2s ease',
     '&[data-orientation="vertical"]': { width: '100%' },
     '&[data-disabled]': { backgroundColor: 'var(--colors-surfaceSubtle)' },
-    '&::after': {
-      content: '""',
-      display: 'block',
-      position: 'absolute',
-      right: '4px',
-      height: '60%',
-      width: '2px',
-      borderRadius: '4px',
-      backgroundColor: 'var(--colors-gray9)',
-      top: '50%',
-      transition: 'background-color .2s ease, transform .2s ease',
-      transform: 'translateY(-50%) scale(1)',
-    },
   },
 })
 
@@ -52,7 +39,7 @@ const StyledThumb = styled(SliderPrimitive.Thumb, {
     position: 'relative',
     display: 'block',
     width: '2px',
-    height: '100%',
+    height: 'var(--slider-thumb-height, 24px)',
     backgroundColor: 'var(--colors-borderStrong)',
     transition: 'opacity .2s ease, background-color .2s ease, width .2s ease',
     '&[data-orientation="vertical"]': { width: '24px', height: '2px' },
@@ -76,15 +63,7 @@ const StyledSlider = styled(SliderPrimitive.Root, {
     '&[data-orientation="vertical"]': { flexDirection: 'column', width: '24px' },
     cursor: 'ew-resize',
     '&:hover [data-part="range"]': { backgroundColor: 'var(--colors-selectionBgHover)' },
-    '&:hover [data-part="range"]::after': {
-      backgroundColor: 'var(--colors-white)',
-      transform: 'translateY(-50%) scale(1.02)',
-    },
     '&:hover [data-part="thumb"]': { width: '3px', backgroundColor: 'var(--colors-selectionText)' },
-    '&:active [data-part="range"]::after': {
-      backgroundColor: 'var(--colors-white)',
-      transform: 'translateY(-50%) scale(1.16)',
-    },
     '&[data-disabled]': { pointerEvents: 'none', color: 'var(--colors-textMuted)' },
   },
   variants: {
@@ -105,6 +84,7 @@ const StyledSlider = styled(SliderPrimitive.Root, {
     },
     size: {
       xs: {
+        '--slider-thumb-height': '20px',
         '&[data-orientation="horizontal"]': { height: '20px' },
         '& [data-part="track"]': { borderRadius: '4px' },
       },
@@ -253,10 +233,10 @@ export function Slider(props: SliderProps) {
         {value![0] === min && <StyledSliderSlot position="start">MIN</StyledSliderSlot>}
         {value![value!.length - 1] === max && <StyledSliderSlot position="end">MAX</StyledSliderSlot>}
         {showRuler && <Ruler length={max} interval={1} majorInterval={Math.round(max / 10)} />}
-        {value?.map((v, i) => (
-          <StyledThumb data-part="thumb" key={i} />
-        ))}
       </StyledTrack>
+      {value?.map((v, i) => (
+        <StyledThumb data-part="thumb" key={i} />
+      ))}
       {/* {tooltip ? (
         <Tooltip content={value[0]} arrow open={showTooltip}>
           <StyledThumb />

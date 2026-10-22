@@ -118,6 +118,8 @@ ContextMenuDemo.storyName = 'ContextMenu'
 ContextMenuDemo.argTypes = {}
 
 export const ContextMenuInList = (args) => {
+  const [options, setOptions] = useState<Record<number, string>>({})
+  const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({})
   return (
     <Flex gap="sm">
       {Array.from(Array(20).keys()).map((item) => (
@@ -130,8 +132,8 @@ export const ContextMenuInList = (args) => {
             <MenuItem name="Spine Animation" />
           </SubMenuItem>
           <MenuRadioGroup
-            value="1"
-            onChange={(value) => console.log(`Radio group changed to ${value}`)}
+            value={options[item] ?? '1'}
+            onValueChange={(value) => setOptions((current) => ({ ...current, [item]: value }))}
             items={[
               { value: '1', name: 'Option 1' },
               { value: '2', name: 'Option 2' },
@@ -153,7 +155,11 @@ export const ContextMenuInList = (args) => {
               <MenuItem name="Sprite Renderer" />
               <MenuItem name="Mars" />
               <MenuItem name="Spine Animation" />
-              <MenuCheckboxItem checked={true} name="Check me" />
+              <MenuCheckboxItem
+                checked={checkedItems[item] ?? true}
+                onCheckedChange={(checked) => setCheckedItems((current) => ({ ...current, [item]: checked === true }))}
+                name="Check me"
+              />
             </MenuGroup>
             <MenuGroup label="Collider" divider>
               <MenuItem name="Box Collider" />

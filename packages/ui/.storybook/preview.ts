@@ -1,18 +1,14 @@
 import '../panda.css'
 import type { Preview } from '@storybook/react'
+import { themePreview } from '../../../storybook/theme'
 
 const preview: Preview = {
-  initialGlobals: { backgrounds: { value: 'dark' } },
+  ...themePreview,
   parameters: {
     controls: {
       matchers: { color: /(background|color)$/i, date: /Date$/ },
     },
-    backgrounds: {
-      options: {
-        dark: { name: 'dark', value: '#111' },
-        light: { name: 'light', value: '#fff' },
-      },
-    },
+    backgrounds: { disable: true },
     layout: 'centered',
   },
 }

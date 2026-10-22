@@ -1,5 +1,5 @@
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { IconCheck, IconChevronDown, IconSearch, IconX } from '@tabler/icons-react'
+import { IconCheck, IconChevronDown, IconSearch } from '@tabler/icons-react'
 import React, { createContext, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -7,7 +7,7 @@ import { Badge } from '../Badge'
 import { Checkbox } from '../Checkbox'
 import { styled } from '../../styled-system/jsx'
 import { Flex } from '../Flex'
-import { Popover, PopoverCloseTrigger } from '../Popover'
+import { Popover } from '../Popover'
 import { Text } from '../Typography'
 
 const SELECT_ALL_VALUE = '$$SELECT_ALL$$'
@@ -26,6 +26,10 @@ const StyledComboboxTrigger = styled('button', {
     border: '1px solid transparent',
     transition: 'border-color .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease',
     cursor: 'pointer',
+    '&:focus-visible': {
+      outline: '2px solid var(--colors-focusRing)',
+      outlineOffset: '1px',
+    },
   },
   variants: {
     size: {
@@ -191,9 +195,9 @@ const StyledComboBoxItem = styled('button', {
       color: 'var(--colors-textMuted)',
       pointerEvents: 'none',
     },
-    '&:focus': {
-      backgroundColor: 'transparent',
-      color: 'var(--colors-text)',
+    '&:focus-visible': {
+      outline: '2px solid var(--colors-focusRing)',
+      outlineOffset: '-2px',
     },
     width: '100%',
     flexShrink: 0,
@@ -297,7 +301,7 @@ const StyledSelectAllWrapper = styled('div', {
   },
 })
 
-const SelectAllText = styled('span', {
+const SelectAllText = styled('label', {
   base: {
     fontSize: '12px',
     color: 'var(--colors-text)',
@@ -400,7 +404,7 @@ const ComboboxContext = createContext<ComboboxContextProps>({
   options: [],
 })
 
-export interface ComboboxTriggerProps {
+export interface ComboboxTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   placeholder?: string
   children?: React.ReactNode
   valueRenderer?: (value: string) => React.ReactNode
@@ -423,7 +427,7 @@ export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProp
     const summaryText = maxDisplayText.replace('{count}', valueArray.length.toString())
 
     return (
-      <StyledComboboxTrigger {...rest} ref={forwardedRef} size={size} variant={variant}>
+      <StyledComboboxTrigger type="button" {...rest} ref={forwardedRef} size={size} variant={variant}>
         <StyledComboboxTriggerContent>
           {startSlot && <StyledComboboxSlot size={size}>{startSlot}</StyledComboboxSlot>}
           <StyledComboboxValueNode spacing="xxs" wrap={false} ref={onValueNodeChange}>
@@ -448,11 +452,12 @@ export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProp
 
 export interface ComboboxSearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onSearch?: (value: string) => void
+  inputRef?: React.Ref<HTMLInputElement>
 }
 
 function ComboboxSearchInput(props: ComboboxSearchInputProps) {
-  const { close, searchValue, setSearchValue, selectValue, focusedIndex, setFocusedIndex } = useContext(ComboboxContext)
-  const { onSearch, ...rest } = props
+  const { searchValue, setSearchValue } = useContext(ComboboxContext)
+  const { onSearch, inputRef, ...rest } = props
 
   const handleOnChange = (e) => {
     if (setSearchValue) {
@@ -466,8 +471,14 @@ function ComboboxSearchInput(props: ComboboxSearchInputProps) {
   return (
     <Flex wrap={false} align="v" style={{ flex: 1 }}>
       <SearchIcon />
-      <StyledComboboxSearchInput {...rest} value={searchValue} onChange={handleOnChange} />
-      <IconX size="12px" />
+      <StyledComboboxSearchInput
+        aria-label="Search options"
+        type="search"
+        {...rest}
+        ref={inputRef}
+        value={searchValue}
+        onChange={handleOnChange}
+      />
     </Flex>
   )
 }
@@ -482,7 +493,7 @@ export interface ComboboxItemProps extends React.HTMLAttributes<HTMLButtonElemen
 }
 
 export function ComboboxItem(props: ComboboxItemProps) {
-  const { value, children, index, ...rest } = props
+  const { value, children, index, label, textValue, disabled, onClick, onFocus, ...rest } = props
   const {
     value: selectedValue,
     maxDisplayCount,
@@ -498,7 +509,8 @@ export function ComboboxItem(props: ComboboxItemProps) {
   } = useContext(ComboboxContext)
   const selectedValueArray = Array.isArray(selectedValue) ? selectedValue : selectedValue ? [selectedValue] : []
   const isSelected = selectedValue.indexOf(value) !== -1
-  const ivVisible = searchValue ? value.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 : true
+  const searchableText = textValue ?? label ?? (typeof children === 'string' ? children : value)
+  const isVisible = !searchValue || searchableText.toLowerCase().includes(searchValue.toLowerCase())
   const optionIndex = options.indexOf(value)
   const prevValue = optionIndex > 0 ? options[optionIndex - 1] : undefined
   const nextValue = optionIndex >= 0 && optionIndex < options.length - 1 ? options[optionIndex + 1] : undefined
@@ -517,10 +529,11 @@ export function ComboboxItem(props: ComboboxItemProps) {
   }
 
   function handleSelect(e) {
+    onClick?.(e)
+    if (disabled || e.defaultPrevented) return
     e.preventDefault()
     e.stopPropagation()
     selectValue && selectValue(value)
-    e.currentTarget.blur()
     autoClose && close && close()
   }
 
@@ -529,16 +542,27 @@ export function ComboboxItem(props: ComboboxItemProps) {
 
   return (
     <>
-      {ivVisible && (
+      {isVisible && (
         <StyledComboBoxItem
+          type="button"
           role="option"
-          tabIndex={-1}
           {...rest}
+          disabled={disabled}
+          data-disabled={disabled ? '' : undefined}
+          data-option-index={optionIndex}
+          data-text-value={searchableText}
+          aria-selected={isSelected}
+          aria-disabled={disabled || undefined}
+          tabIndex={!disabled && focusedIndex === optionIndex ? 0 : -1}
           selected={isSelected}
           selectedStart={isSelected && !hasPrevSelected}
           selectedEnd={isSelected && !hasNextSelected}
-          onPointerUp={handleSelect}
-          focused={focusedIndex === index}>
+          onClick={handleSelect}
+          onFocus={(event) => {
+            setFocusedIndex?.(optionIndex)
+            onFocus?.(event)
+          }}
+          focused={focusedIndex === optionIndex}>
           {valueRenderer ? valueRenderer(value) : children}
           {isSelected && <IconCheck size="12px" />}
         </StyledComboBoxItem>
@@ -649,8 +673,11 @@ export function Combobox(props: ComboboxProps) {
     selectAllText = 'Select All',
   } = props
   const [open, setOpen] = useState(false)
-  const closeRef = useRef<HTMLButtonElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+  const openingFocusRef = useRef<'first' | 'last' | undefined>(undefined)
+  const typeaheadRef = useRef({ text: '', time: 0 })
+  const selectAllId = React.useId()
   const [valueNode, setValueNode] = React.useState(null)
   const [focusedIndex, setFocusedIndex] = React.useState(-1)
   const [searchValue, setSearchValue] = React.useState('')
@@ -671,16 +698,25 @@ export function Combobox(props: ComboboxProps) {
     })
     return options
   }, [children])
+  const enabledOptions = React.useMemo(() => {
+    const options: string[] = []
+    React.Children.forEach(children, (child) => {
+      if (React.isValidElement<ComboboxItemProps>(child) && child.props.value && !child.props.disabled) {
+        options.push(child.props.value)
+      }
+    })
+    return options
+  }, [children])
+  const allSelected = enabledOptions.length > 0 && enabledOptions.every((option) => value.includes(option))
 
   const selectValue = (val) => {
     if (!value) return
     if (val === SELECT_ALL_VALUE) {
       // If all options are selected, unselect all
-      if (value.length === options.length) {
-        setValue([])
+      if (allSelected) {
+        setValue(value.filter((option) => !enabledOptions.includes(option)))
       } else {
-        // Otherwise select all options
-        setValue([...options])
+        setValue(Array.from(new Set([...value, ...enabledOptions])))
       }
     } else {
       if (value.includes(val)) {
@@ -692,8 +728,72 @@ export function Combobox(props: ComboboxProps) {
   }
 
   function close() {
-    closeRef.current && closeRef.current.click()
+    setOpen(false)
   }
+
+  function getEnabledItems() {
+    return Array.from(contentRef.current?.querySelectorAll<HTMLButtonElement>('[role="option"]:not(:disabled)') ?? [])
+  }
+
+  function handleOpenAutoFocus(event: Event) {
+    event.preventDefault()
+    const items = getEnabledItems()
+    const edge = openingFocusRef.current
+    openingFocusRef.current = undefined
+    const selectedItem = items.find((item) => item.getAttribute('aria-selected') === 'true')
+    const item = edge === 'last' ? items[items.length - 1] : edge === 'first' ? items[0] : (selectedItem ?? items[0])
+    if (!edge && searchable) searchRef.current?.focus()
+    else if (item) item.focus()
+    else contentRef.current?.focus()
+    if (item) setFocusedIndex(Number(item.dataset.optionIndex))
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent) {
+    if (event.defaultPrevented || event.nativeEvent.isComposing) return
+    const items = getEnabledItems()
+    const target = event.target as HTMLElement
+    const isSearchInput = target === searchRef.current
+    const currentIndex = items.indexOf(target as HTMLButtonElement)
+    // Keep text editing and the select-all checkbox's native keys intact.
+    if (!isSearchInput && currentIndex === -1 && target !== contentRef.current) return
+    let nextItem: HTMLButtonElement | undefined
+    if (event.key === 'ArrowDown') nextItem = items[(currentIndex + 1) % items.length]
+    else if (event.key === 'ArrowUp')
+      nextItem = currentIndex < 0 ? items[items.length - 1] : items[(currentIndex - 1 + items.length) % items.length]
+    else if (!isSearchInput && event.key === 'Home') nextItem = items[0]
+    else if (!isSearchInput && event.key === 'End') nextItem = items[items.length - 1]
+    else if (isSearchInput && event.key === 'Enter') {
+      event.preventDefault()
+      items[0]?.click()
+      return
+    } else if (
+      !isSearchInput &&
+      event.key.length === 1 &&
+      event.key !== ' ' &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.altKey
+    ) {
+      const now = Date.now()
+      const previous = now - typeaheadRef.current.time < 700 ? typeaheadRef.current.text : ''
+      const text = previous + event.key.toLowerCase()
+      typeaheadRef.current = { text, time: now }
+      const query = Array.from(text).every((character) => character === text[0]) ? text[0] : text
+      const candidates = [...items.slice(currentIndex + 1), ...items.slice(0, currentIndex + 1)]
+      nextItem = candidates.find((item) => item.dataset.textValue?.toLowerCase().startsWith(query))
+    } else return
+
+    event.preventDefault()
+    nextItem?.focus()
+    nextItem?.scrollIntoView({ block: 'nearest' })
+  }
+
+  useEffect(() => {
+    const items = getEnabledItems()
+    if (!items.some((item) => Number(item.dataset.optionIndex) === focusedIndex)) {
+      setFocusedIndex(items.length ? Number(items[0].dataset.optionIndex) : -1)
+    }
+  }, [searchValue, children, open, focusedIndex])
 
   useEffect(() => {
     if (contentRef.current) {
@@ -731,6 +831,7 @@ export function Combobox(props: ComboboxProps) {
         options,
       }}>
       <Popover
+        open={open}
         compact
         sideOffset={4}
         forceRender
@@ -741,8 +842,23 @@ export function Combobox(props: ComboboxProps) {
           flexDirection: 'column',
         }}
         trigger={
-          <ComboboxTrigger placeholder={placeholder} startSlot={props.startSlot} size={size} variant={variant} />
+          <ComboboxTrigger
+            placeholder={placeholder}
+            startSlot={props.startSlot}
+            size={size}
+            variant={variant}
+            aria-haspopup="listbox"
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.preventDefault()
+                openingFocusRef.current = event.key === 'ArrowUp' ? 'last' : 'first'
+                setOpen(true)
+              }
+            }}
+          />
         }
+        onOpenAutoFocus={handleOpenAutoFocus}
+        onKeyDown={handleKeyDown}
         onOpenChange={setOpen}>
         <div
           style={{
@@ -752,32 +868,35 @@ export function Combobox(props: ComboboxProps) {
             maxHeight: 'inherit',
           }}>
           <div style={{ flexShrink: 0 }}>
-            {searchable ||
-              (options.length > 0 && showSelectAll && (
-                <StyledComboboxHeader wrap={false} align="v">
-                  {searchable && <ComboboxSearchInput onSearch={onSearch} />}
-                  {options.length > 0 && showSelectAll && (
-                    <StyledSelectAllWrapper
-                      onClick={() => {
+            {(searchable || (options.length > 0 && showSelectAll)) && (
+              <StyledComboboxHeader wrap={false} align="v">
+                {searchable && <ComboboxSearchInput onSearch={onSearch} inputRef={searchRef} />}
+                {options.length > 0 && showSelectAll && (
+                  <StyledSelectAllWrapper>
+                    <Checkbox
+                      id={selectAllId}
+                      checked={allSelected}
+                      disabled={enabledOptions.length === 0}
+                      onCheckedChange={() => {
                         selectValue(SELECT_ALL_VALUE)
-                      }}>
-                      <Checkbox
-                        checked={value.length === options.length}
-                        onCheckedChange={() => {
-                          selectValue(SELECT_ALL_VALUE)
-                        }}
-                      />
-                      <SelectAllText>{selectAllText}</SelectAllText>
-                    </StyledSelectAllWrapper>
-                  )}
-                </StyledComboboxHeader>
-              ))}
+                      }}
+                    />
+                    <SelectAllText htmlFor={selectAllId}>{selectAllText}</SelectAllText>
+                  </StyledSelectAllWrapper>
+                )}
+              </StyledComboboxHeader>
+            )}
           </div>
-          <StyledComboboxContent ref={contentRef} orientation="column" role="listbox">
+          <StyledComboboxContent
+            ref={contentRef}
+            orientation="column"
+            role="listbox"
+            aria-label={placeholder || 'Options'}
+            aria-multiselectable={multiple || undefined}
+            tabIndex={-1}>
             {children}
           </StyledComboboxContent>
         </div>
-        <PopoverCloseTrigger ref={closeRef} style={{ display: 'none' }} />
       </Popover>
     </ComboboxContext.Provider>
   )

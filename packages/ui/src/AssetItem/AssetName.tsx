@@ -119,6 +119,7 @@ export const AssetName = function AssetName(props: AssetNameProps) {
   async function handleOnBlur() {
     if (!name) {
       setName(props.name)
+      setEditing(false)
       return
     }
     if (!onRename) {

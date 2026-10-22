@@ -7,11 +7,12 @@ import { DOTS, usePagination } from './usePagination'
 import { styled } from '../../styled-system/jsx'
 
 const StyledPaginationRoot = styled('ul', {
-  base: { display: 'flex', alignItems: 'center' },
+  base: { display: 'flex', alignItems: 'center', gap: '8px', '& > li': { display: 'flex' } },
 })
 
-const StyledPaginationItem = styled('li', {
+const StyledPaginationItem = styled('button', {
   base: {
+    all: 'unset',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -19,13 +20,17 @@ const StyledPaginationItem = styled('li', {
     color: 'var(--colors-text)',
     userSelect: 'none',
     cursor: 'pointer',
-    marginRight: '8px',
     transition: 'border-color .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease',
-    '&:last-child': { marginRight: 0 },
     '&:hover': { borderColor: 'var(--colors-borderStrong)', backgroundColor: 'var(--colors-surfaceSubtle)' },
     '&:focus-visible': {
       borderColor: 'var(--colors-borderStrong)',
       boxShadow: '0 0 0 2px var(--colors-focusRing)',
+    },
+    '&:disabled': {
+      backgroundColor: 'var(--colors-surface)',
+      color: 'var(--colors-textMuted)',
+      cursor: 'initial',
+      '&:hover': { borderColor: 'var(--colors-border)', backgroundColor: 'var(--colors-surface)' },
     },
   },
   variants: {
@@ -39,14 +44,6 @@ const StyledPaginationItem = styled('li', {
           backgroundColor: 'var(--colors-selectionBgHover)',
           color: 'var(--colors-selectionText)',
         },
-      },
-    },
-    disabled: {
-      true: {
-        backgroundColor: 'var(--colors-surface)',
-        color: 'var(--colors-textMuted)',
-        cursor: 'initial',
-        '&:hover': { borderColor: 'var(--colors-border)', backgroundColor: 'var(--colors-surface)' },
       },
     },
     size: {
@@ -112,27 +109,51 @@ function Pagination(props: IPaginationProps) {
   }
 
   return (
-    <StyledPaginationRoot>
-      <StyledPaginationItem size={size} onClick={onPrev} disabled={current === 1}>
-        <IconChevronLeft />
-      </StyledPaginationItem>
+    <StyledPaginationRoot aria-label="Pagination">
+      <li>
+        <StyledPaginationItem
+          type="button"
+          aria-label="Previous page"
+          size={size}
+          onClick={onPrev}
+          disabled={current === 1}>
+          <IconChevronLeft />
+        </StyledPaginationItem>
+      </li>
       {range.map((item, idx) => {
         if (item === DOTS) {
           return (
-            <StyledPaginationItem size={size} key={`${DOTS}_${idx}`}>
-              <IconDots />
-            </StyledPaginationItem>
+            <li key={`${DOTS}_${idx}`}>
+              <StyledPaginationItem as="span" size={size} aria-hidden="true" style={{ cursor: 'default' }}>
+                <IconDots />
+              </StyledPaginationItem>
+            </li>
           )
         }
         return (
-          <StyledPaginationItem key={item} onClick={() => onItemClick(item)} active={item === current} size={size}>
-            {item}
-          </StyledPaginationItem>
+          <li key={item}>
+            <StyledPaginationItem
+              type="button"
+              aria-label={`Page ${item}`}
+              aria-current={item === current ? 'page' : undefined}
+              onClick={() => onItemClick(item)}
+              active={item === current}
+              size={size}>
+              {item}
+            </StyledPaginationItem>
+          </li>
         )
       })}
-      <StyledPaginationItem size={size} onClick={onNext} disabled={current === lastPage}>
-        <IconChevronRight />
-      </StyledPaginationItem>
+      <li>
+        <StyledPaginationItem
+          type="button"
+          aria-label="Next page"
+          size={size}
+          onClick={onNext}
+          disabled={current === lastPage}>
+          <IconChevronRight />
+        </StyledPaginationItem>
+      </li>
     </StyledPaginationRoot>
   )
 }

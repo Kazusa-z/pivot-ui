@@ -15,6 +15,12 @@ export default {
     },
   },
   component: Pagination,
+  args: {
+    totalCount: 10,
+    pageSize: 1,
+    siblingCount: 3,
+    size: 'sm',
+  },
 } as Meta<typeof Pagination>
 
 export const Overview: StoryFn<typeof Pagination> = (args) => {
@@ -28,11 +34,4 @@ export const Sizes: StoryFn<typeof Pagination> = (args) => {
       <Pagination {...args} size="md" />
     </div>
   )
-}
-
-Overview.args = {
-  totalCount: 10,
-  pageSize: 1,
-  siblingCount: 3,
-  size: 'sm',
 }

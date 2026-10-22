@@ -108,7 +108,11 @@ export function FormItemColor(props: FormItemColorProps) {
             value={colorStr}
             onChange={inputOnChange}
             onKeyDown={onKeyDown}
-            css={{ fontFamily: 'var(--fonts-mono)' }}
+            css={{
+              fontFamily: 'var(--fonts-mono)',
+              '& [data-part="input"]': { paddingRight: 0 },
+              '& [data-part="slot"]': { padding: '0 4px' },
+            }}
             endSlot={
               <ColorSpaceBadge
                 onClick={() => {
@@ -122,6 +126,10 @@ export function FormItemColor(props: FormItemColorProps) {
             name="color alpha"
             disabled={disabled}
             size="sm"
+            css={{
+              '& [data-part="input"]': { padding: '0 4px' },
+              '& [data-part="slot"]': { padding: '0 4px' },
+            }}
             endSlot={<Text size="0_5">%</Text>}
             value={Math.round(color.a * 100)}
             onValueChange={handleAlphaChange}

@@ -150,7 +150,9 @@ export const Overview: StoryFn = () => {
           Reset
         </Button>
       </Flex>
-      <TreeGroup>{renderNodes(tree, 0)}</TreeGroup>
+      <TreeGroup role="tree" aria-label="Scene hierarchy">
+        {renderNodes(tree, 0)}
+      </TreeGroup>
     </Flex>
   )
 }

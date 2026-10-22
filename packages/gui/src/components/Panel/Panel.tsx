@@ -1,5 +1,5 @@
 import type { SVGProps } from 'react'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { forwardRef, useId, useRef, useState } from 'react'
 import { IconGripHorizontal } from '@tabler/icons-react'
 import { useDraggablePanel } from './useDraggablePanel'
 import { Flex, ActionButton, ScrollArea } from '@pivot-ui/editor'
@@ -67,12 +67,7 @@ const PanelHeader = styled(Flex, {
 })
 
 const PanelContent = styled('div', {
-  base: { transition: 'height 0.3s, padding 0.3s' },
-  variants: {
-    collapsed: {
-      true: { height: '0 !important', padding: '0 4px', opacity: 0 },
-    },
-  },
+  base: { minHeight: 0, overflow: 'hidden', '&[hidden]': { display: 'none' } },
 })
 
 const CollapsedIcon = styled(IconTriangleRightFilled, {
@@ -88,40 +83,37 @@ export interface PanelProps {
 
 export const Panel = forwardRef<HTMLDivElement, PanelProps>(function Panel(props, forwardedRef) {
   const panelRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const { dragging, handleMouseDown } = useDraggablePanel(panelRef)
+  const contentId = useId()
+  const { handleMouseDown } = useDraggablePanel(panelRef)
   const [collapsed, setCollapsed] = useState(false)
-  const heightRef = useRef(0)
 
-  function handleCollapse(e: React.MouseEvent) {
+  function handleCollapse(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation()
     e.preventDefault()
-    setCollapsed(!collapsed)
+    e.currentTarget.focus()
+    setCollapsed((value) => !value)
   }
-
-  useEffect(() => {
-    if (contentRef.current) {
-      heightRef.current = contentRef.current.clientHeight
-      contentRef.current.style.height = `${heightRef.current}px`
-    }
-  }, [])
 
   return (
     <StyledPanel ref={mergeRefs([forwardedRef, panelRef])}>
       <PanelHeader align="both" onMouseDown={handleMouseDown} justify="around">
         <ActionButton
+          aria-label={collapsed ? 'Expand panel' : 'Collapse panel'}
+          aria-expanded={!collapsed}
+          aria-controls={contentId}
           size="xs"
           variant="ghost"
           css={{
             position: 'absolute',
             right: 4,
           }}
+          onMouseDown={(event) => event.stopPropagation()}
           onClick={handleCollapse}>
           <CollapsedIcon height="10px" width="10px" collapsed={collapsed} />
         </ActionButton>
         <IconGripHorizontal size="18px" />
       </PanelHeader>
-      <PanelContent ref={contentRef} collapsed={collapsed}>
+      <PanelContent id={contentId} hidden={collapsed} inert={collapsed}>
         <ScrollArea css={{ padding: '4px' }}>{props.children}</ScrollArea>
       </PanelContent>
     </StyledPanel>

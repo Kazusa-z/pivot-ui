@@ -126,3 +126,14 @@ export const Controlled: StoryFn<typeof SegmentControl> = (args) => {
     </Flex>
   )
 }
+
+export const Narrow: StoryFn<typeof SegmentControl> = (args) => (
+  <div style={{ width: 200 }}>
+    <SegmentControl defaultValue="label1" {...args}>
+      <SegmentControlItem value="label1">label12222</SegmentControlItem>
+      <SegmentControlItem value="label2">label2</SegmentControlItem>
+      <SegmentControlItem value="label3">label3</SegmentControlItem>
+      <SegmentControlItem value="label4">label4</SegmentControlItem>
+    </SegmentControl>
+  </div>
+)

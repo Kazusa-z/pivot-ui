@@ -6,7 +6,7 @@ import mixPlugin from 'colord/plugins/mix'
 
 import { styled } from '../../styled-system/jsx'
 
-import { isEqual, type GradientColor, type Color } from '../ColorPicker/helper'
+import { type GradientColor, type Color } from '../ColorPicker/helper'
 import { Flex } from '../Flex'
 import { clamp } from '../utils'
 
@@ -184,29 +184,21 @@ function ThumbGroup(props: ThumbGroupProps) {
   const { colors, positions, onSelect, onChange, selectedIndex, flipY, width } = props
 
   const handlePositionChange = (position: number, index: number) => {
-    const nextPositions = [...positions]
-    nextPositions[index] = position
+    // Keep each color attached to its stop, including stops at the same position.
+    const nextStops = colors
+      .map((value, originalIndex) => ({
+        value,
+        position: originalIndex === index ? position : positions[originalIndex],
+        originalIndex,
+      }))
+      .sort((a, b) => a.position - b.position)
+    const nextIndex = nextStops.findIndex((stop) => stop.originalIndex === selectedIndex)
 
-    // resort if needed
-    const nextColors = colors.map((item) => ({ ...item }))
-    const nextPositionsCopy = [...nextPositions]
-    nextPositionsCopy.sort((a, b) => a - b)
-    nextPositionsCopy.forEach((p, i) => {
-      const currentIndex = nextPositions.indexOf(p)
-      nextColors[i] = colors[currentIndex]
-    })
-
-    // If currentSelectedIndex's color position changed, update the selectedIndex
-    const nextIndex = nextColors.findIndex((c) => {
-      return isEqual(c, colors[selectedIndex])
-    })
-
-    if (nextIndex !== selectedIndex && nextIndex !== -1) {
+    if (nextIndex !== -1) {
       onSelect(nextIndex)
     }
 
-    const result = nextPositionsCopy.map((p, i) => ({ value: nextColors[i], position: p }))
-    onChange(result)
+    onChange(nextStops.map(({ value, position }) => ({ value, position })))
   }
 
   const handleAddThumb = (e) => {

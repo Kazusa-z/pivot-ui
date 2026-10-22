@@ -90,6 +90,9 @@ const guidelineClass = css({
 })
 
 const titleClass = css({
+  border: 'none',
+  fontFamily: 'inherit',
+  textAlign: 'left',
   display: 'flex',
   width: '100%',
   alignItems: 'center',
@@ -101,6 +104,7 @@ const titleClass = css({
   fontSize: '12px',
   userSelect: 'none',
   backgroundColor: 'var(--colors-panelBg)',
+  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '-2px' },
 })
 
 const titleContentClass = css({ flex: 1 })
@@ -157,15 +161,12 @@ function Collapsible(props: CollapsibleProps) {
   const [open, setOpen] = useControllableState({
     prop: props.open,
     onChange: props.onOpenChange,
-    defaultProp: props.defaultOpen,
+    defaultProp: props.defaultOpen ?? false,
   })
 
   const handleOnOpenChange = (nextOpen) => {
     if (!collapsible) return
     setOpen(nextOpen)
-    if (props.onOpenChange) {
-      props.onOpenChange(nextOpen)
-    }
   }
 
   return (
@@ -185,11 +186,9 @@ function Collapsible(props: CollapsibleProps) {
       onOpenChange={handleOnOpenChange}
       disabled={!collapsible}>
       {triggerTitle ? (
-        <CollapsiblePrimitive.Trigger asChild disabled={!collapsible}>
-          <div data-part="title" className={titleClass}>
-            {collapsible && <IconTriangleInvertedFilled className={cx(chevronClass, open && chevronOpenClass)} />}
-            <div className={titleContentClass}>{title}</div>
-          </div>
+        <CollapsiblePrimitive.Trigger data-part="title" className={titleClass} disabled={!collapsible}>
+          {collapsible && <IconTriangleInvertedFilled className={cx(chevronClass, open && chevronOpenClass)} />}
+          <span className={titleContentClass}>{title}</span>
         </CollapsiblePrimitive.Trigger>
       ) : (
         <div data-part="title" className={titleClass}>

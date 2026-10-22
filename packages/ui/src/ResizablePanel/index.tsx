@@ -14,7 +14,7 @@ const StyledResizeHandler = styled('div', {
   variants: {
     variant: {
       solid: {
-        borderColor: 'var(--colors-border)',
+        '&::after': { borderColor: 'var(--colors-border)' },
         '&:hover': {
           '&::after': { borderColor: 'var(--colors-blue10)' },
         },

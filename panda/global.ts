@@ -108,7 +108,8 @@ export const globalCss = {
   ...(convert(resetCSS) as Record<string, unknown>),
   ...(colorPickerCss as any),
   ':root': commonVars as any,
-  '.light-theme': lightVars as any,
+  '.dark-theme': { ...cssVars('colors', darkColors), colorScheme: 'dark' } as any,
+  '.light-theme': { ...lightVars, colorScheme: 'light' } as any,
   html: {
     fontFamily:
       'geist, InterVariable, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol',

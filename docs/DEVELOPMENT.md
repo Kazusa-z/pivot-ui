@@ -40,6 +40,8 @@ Both component packages are source packages. They are consumed through `workspac
 
 The Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`.
 
+Both explorers share the **Theme** toolbar in `storybook/theme.tsx`. It switches the actual document theme, including portaled menus and dialogs. The editor's **Foundations / Design System / Overview** story compares light and dark surfaces and documents colors, sizes, spacing, typography, radii and shadows using the current Panda tokens.
+
 Both explorers share `storybook/vite.ts`. Their prebundled preview and docs runtimes use a 1200 kB chunk warning budget; the demo keeps Vite's default budget. Only the irrelevant `use client` module-directive warnings are filtered in these browser-only explorers. Other build warnings remain enabled.
 
 ## Panda CSS pipeline

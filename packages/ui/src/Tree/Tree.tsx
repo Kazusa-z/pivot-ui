@@ -47,6 +47,7 @@ const TreeItemContentRoot = styled('div', {
     borderRadius: '4px',
     gap: '4px',
     '&:hover': { boxShadow: '0 0 0 1px var(--colors-blue11)' },
+    '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '-2px' },
   },
   variants: {
     isHovered: { true: { boxShadow: '0 0 0 1px var(--colors-blue11)' } },
@@ -142,6 +143,8 @@ interface TreeItemContentProps {
 
 export function TreeItemContent(props: TreeItemContentProps) {
   const input = useRef<HTMLInputElement>(undefined)
+  const content = useRef<HTMLDivElement>(null)
+  const restoreFocus = useRef(false)
   const {
     isHovered,
     id,
@@ -168,19 +171,61 @@ export function TreeItemContent(props: TreeItemContentProps) {
     onExpand(id)
   }
 
-  const handleContextMenu = (e: React.MouseEvent) => {
+  const handleSelect = () => {
     onSelect(id)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onSelect(id)
+      return
+    }
+    if (e.key === 'F2' && renamable) {
+      e.preventDefault()
+      setEditing(true)
+      return
+    }
+    if (isExpandable && ((e.key === 'ArrowRight' && !isExpanded) || (e.key === 'ArrowLeft' && isExpanded))) {
+      e.preventDefault()
+      onExpand(id)
+      return
+    }
+    let group = e.currentTarget.closest('[data-tree-group]')
+    while (group?.parentElement?.closest('[data-tree-group]')) {
+      group = group.parentElement.closest('[data-tree-group]')
+    }
+    const rows = Array.from(group?.querySelectorAll<HTMLElement>('[data-part="content"][role="treeitem"]') ?? [])
+    const index = rows.indexOf(e.currentTarget)
+    const nextIndex =
+      e.key === 'ArrowDown'
+        ? index + 1
+        : e.key === 'ArrowUp'
+          ? index - 1
+          : e.key === 'Home'
+            ? 0
+            : e.key === 'End'
+              ? rows.length - 1
+              : -1
+    if (nextIndex >= 0 && nextIndex < rows.length) {
+      e.preventDefault()
+      rows[nextIndex].focus()
+    }
   }
 
   const handleInputKeyDown = (e: React.KeyboardEvent) => {
     e.stopPropagation()
     if (e.key === 'Enter') {
+      e.preventDefault()
+      restoreFocus.current = true
       setEditing(false)
       if (onRename) {
         onRename(id, name)
       }
     }
     if (e.key === 'Escape') {
+      restoreFocus.current = true
       setEditing(false)
       setName(propName)
     }
@@ -192,6 +237,7 @@ export function TreeItemContent(props: TreeItemContentProps) {
 
   const handleInputBlur = (e) => {
     e.stopPropagation()
+    if (restoreFocus.current) return
     setEditing(false)
     if (onRename) {
       onRename(id, name)
@@ -209,6 +255,9 @@ export function TreeItemContent(props: TreeItemContentProps) {
     if (editing) {
       input.current?.focus()
       input.current?.select()
+    } else if (restoreFocus.current) {
+      restoreFocus.current = false
+      content.current?.focus()
     }
   }, [editing])
 
@@ -218,9 +267,18 @@ export function TreeItemContent(props: TreeItemContentProps) {
 
   return (
     <TreeItemContentRoot
+      ref={content}
       data-part="content"
+      role="treeitem"
+      tabIndex={0}
+      aria-label={name}
+      aria-level={level + 1}
+      aria-selected={isSelected}
+      aria-expanded={isExpandable ? isExpanded : undefined}
       style={{ paddingLeft: `${(isExpandable ? 0 : 16) + 6 + level * 6}px` }}
-      onContextMenu={handleContextMenu}
+      onClick={handleSelect}
+      onContextMenu={handleSelect}
+      onKeyDown={handleKeyDown}
       onMouseEnter={props.handleMouseEnter}
       onMouseLeave={props.handleMouseLeave}
       selected={isSelected}

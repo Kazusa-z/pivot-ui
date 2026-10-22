@@ -28,9 +28,12 @@ export function useInputNumberState(props: InputNumberStateOptions): InputNumber
 
   const result: InputNumberProps = { ref, value, defaultValue: undefined }
 
-  function triggerOnChange(value: number) {
-    if (value !== props.value && onChangeProps) onChangeProps(value)
-  }
+  const triggerOnChange = useCallback(
+    (value: number) => {
+      if (value !== props.value && onChangeProps) onChangeProps(value)
+    },
+    [props.value, onChangeProps]
+  )
 
   useEffect(() => {
     if (!isControlled) return
@@ -57,26 +60,17 @@ export function useInputNumberState(props: InputNumberStateOptions): InputNumber
 
       triggerOnChange(clamp(parsedValue, min, max))
     },
-    [onChangeProps, min, max]
+    [triggerOnChange, min, max]
   )
 
   const onBlur = useCallback(
     (e) => {
-      if (e.target.value === '') {
-        triggerOnChange(fallbackValue)
-        setVal(fallbackValue.toString())
-        return
-      }
-      const value = clamp(Number(e.target.value), min, max)
-      if (!Number.isNaN(value)) {
-        setVal(`${value}`)
-        triggerOnChange(value)
-      } else {
-        setVal(fallbackValue.toString())
-        triggerOnChange(fallbackValue)
-      }
+      const parsedValue = e.target.value === '' ? NaN : Number(e.target.value)
+      const nextValue = clamp(Number.isNaN(parsedValue) ? fallbackValue : parsedValue, min, max)
+      setVal(`${nextValue}`)
+      triggerOnChange(nextValue)
     },
-    [onChangeProps, min, max]
+    [triggerOnChange, fallbackValue, min, max]
   )
 
   result.onChange = onChange

@@ -26,6 +26,7 @@ const StyledLabel = styled(LabelPrimitive.Root, {
 })
 
 export interface LabelProps {
+  id?: string
   info?: ReactNode
   label: string
   startSlot?: ReactNode
@@ -35,12 +36,14 @@ export interface LabelProps {
 }
 
 export function Label(props: LabelProps) {
-  const { info, startSlot, endSlot, label, htmlFor, css } = props
+  const { id, info, startSlot, endSlot, label, htmlFor, css } = props
 
   const LabelRoot = (
     <StyledLabelRoot css={css}>
       {startSlot}
-      <StyledLabel htmlFor={htmlFor}>{label}</StyledLabel>
+      <StyledLabel id={id} htmlFor={htmlFor}>
+        {label}
+      </StyledLabel>
       {endSlot}
     </StyledLabelRoot>
   )
