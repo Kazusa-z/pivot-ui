@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Meta } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { Flex } from '../Flex'
 import { Button } from '../Button'
 
-import { CascadeSlider } from './'
+import { CascadeSlider, type CascadeSliderProps } from './'
 
 export default {
   title: 'Inputs/CascadeSlider',
@@ -17,7 +17,7 @@ export default {
     defaultValue: {
       control: false,
     },
-    onValueChange: {
+    onChange: {
       control: false,
     },
     step: {
@@ -36,7 +36,7 @@ export default {
   },
 } satisfies Meta<typeof CascadeSlider>
 
-export const Overview = (args) => {
+export const Overview: StoryFn<typeof CascadeSlider> = (args) => {
   return (
     <Flex css={{ width: '300px' }}>
       <CascadeSlider defaultValue={[20, 50, 100]} {...args} />
@@ -44,7 +44,7 @@ export const Overview = (args) => {
   )
 }
 
-export const Uncontrollable = (args) => {
+export const Uncontrollable: StoryFn<typeof CascadeSlider> = (args) => {
   return (
     <Flex css={{ width: '300px' }}>
       <CascadeSlider {...args} defaultValue={[20, 50, 100]} />
@@ -52,7 +52,7 @@ export const Uncontrollable = (args) => {
   )
 }
 
-export const Controllable = (args) => {
+function ControlledCascadeSliderExample(args: CascadeSliderProps) {
   const [value, setValue] = useState([50, 50, 100])
 
   const handleChange = () => {
@@ -61,10 +61,12 @@ export const Controllable = (args) => {
 
   return (
     <Flex gap="sm" css={{ width: '300px' }} direction="column">
-      <CascadeSlider value={value} onValueChange={setValue} unit="m" />
+      <CascadeSlider unit="m" {...args} defaultValue={undefined} value={value} onChange={setValue} />
       <Button size="sm" variant="soft" onClick={handleChange}>
         click
       </Button>
     </Flex>
   )
 }
+
+export const Controllable: StoryFn<typeof CascadeSlider> = (args) => <ControlledCascadeSliderExample {...args} />

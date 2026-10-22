@@ -15,7 +15,7 @@
     "build-storybook": "storybook build",
     "prebuild-storybook": "panda codegen",
     "panda": "panda codegen",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.stories.json",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.stories.json && tsc -p tsconfig.tooling.json",
     "pretypecheck": "panda codegen",
     "clean": "rimraf es lib dist types .cache storybook-static styled-system node_modules/.cache node_modules/.vite node_modules/.vite-temp"
   },

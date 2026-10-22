@@ -2,6 +2,8 @@
 
 Pivot UI is distributed from this repository as source packages. An application can consume it through the pnpm workspace or by linking a package directory.
 
+During the Blender alignment refactor, existing components continue to use the packages described below. The new [`@pivot-ui/react`](../packages/interface/README.md) package currently exports pure property contracts and value types through `@pivot-ui/react/contracts` and `@pivot-ui/react/values`. It does not yet replace the component imports or provide a Qt bridge. Its Mock is Storybook-only support, not a production package export.
+
 ## Requirements
 
 - Node.js `^22.18.0`, `^24.11.0` or `>=26.0.0`

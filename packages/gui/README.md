@@ -92,7 +92,7 @@ pnpm --filter @pivot-ui/gui typecheck
 pnpm verify
 ```
 
-The GUI typecheck includes all component stories. The workspace verification also checks formatting and builds the demo and both Storybooks.
+The GUI typecheck includes all component stories and tooling. The workspace verification also checks formatting and builds the demo and all three Storybooks.
 
 ## Related documents
 

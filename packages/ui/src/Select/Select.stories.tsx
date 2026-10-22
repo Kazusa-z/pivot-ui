@@ -6,6 +6,8 @@ import { Flex } from '../Flex'
 import { Button } from '../Button'
 
 import { Select, SelectItem } from './'
+import type { SelectProps as SingleSelectProps } from './SingleSelect'
+import type { ComboboxProps } from './Combobox'
 
 export default {
   title: 'Inputs/Select',
@@ -29,7 +31,7 @@ export default {
     size: 'sm',
     variant: 'soft',
   },
-} as Meta<typeof Select>
+} satisfies Meta<typeof Select>
 
 const mock_data = [
   { value: 'apple', label: 'Apple' },
@@ -46,7 +48,7 @@ const mock_data = [
  *
  * The component supports controlled and uncontrolled usage.
  */
-export const Overview: StoryFn<typeof Select> = (args) => {
+export const Overview: StoryFn<SingleSelectProps> = (args) => {
   return (
     <Flex css={{ width: '260px' }} direction="column" gap="sm">
       <Select {...args} defaultValue="apple" placeholder="Select Fruits..." startSlot={<IconFilterUp size="12px" />}>
@@ -60,7 +62,7 @@ export const Overview: StoryFn<typeof Select> = (args) => {
   )
 }
 
-export const Sizes: StoryFn<typeof Select> = (args) => {
+export const Sizes: StoryFn<SingleSelectProps> = (args) => {
   return (
     <Flex css={{ width: '260px' }} direction="column" gap="sm">
       <Select
@@ -103,7 +105,7 @@ export const Sizes: StoryFn<typeof Select> = (args) => {
   )
 }
 
-export const Variants: StoryFn<typeof Select> = (args) => {
+export const Variants: StoryFn<SingleSelectProps> = (args) => {
   return (
     <Flex css={{ width: '260px' }} direction="column" gap="sm">
       <Select {...args} variant="outline" defaultValue="apple" placeholder="Outline select">
@@ -147,7 +149,9 @@ export const Uncontrolled: StoryFn<typeof Select> = () => {
   )
 }
 
-export const Controlled: StoryFn<typeof Select> = () => {
+export const Controlled: StoryFn<SingleSelectProps> = () => <ControlledSelectExample />
+
+function ControlledSelectExample() {
   const [value, setValue] = React.useState('apple')
 
   return (
@@ -169,7 +173,9 @@ export const Controlled: StoryFn<typeof Select> = () => {
 /**
  * `Select` support both `string` and `number` value types. It will detect the type of the value by default, but we suggest to explicitly define the `valueType` prop for better control.
  */
-export const ValueType: StoryFn<typeof Select> = () => {
+export const ValueType: StoryFn<SingleSelectProps> = () => <SelectValueTypeExample />
+
+function SelectValueTypeExample() {
   const [value0, setValue0] = React.useState(0)
   const [value1, setValue1] = React.useState('apple')
 
@@ -237,10 +243,10 @@ export const CustomValueRenderer: StoryFn<typeof Select> = () => {
   )
 }
 
-export const Multiple: StoryFn<typeof Select> = (args: any) => {
+export const Multiple: StoryFn<ComboboxProps> = (args) => {
   return (
     <Flex style={{ width: '300px' }}>
-      <Select valueRenderer={(val) => val} defaultValue={['apple']} placeholder="Select Fruits..." multiple {...args}>
+      <Select valueRenderer={(val) => val} defaultValue={['apple']} placeholder="Select Fruits..." {...args} multiple>
         <SelectItem value="apple">Apple</SelectItem>
         <SelectItem value="banana">Banana</SelectItem>
         <SelectItem value="blueberry">Blueberry</SelectItem>

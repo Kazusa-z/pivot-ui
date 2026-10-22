@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": [],
+    "skipLibCheck": false
+  },
+  "include": ["src/contracts/**/*.ts", "src/values/**/*.ts"],
+  "exclude": ["node_modules", "src/**/*.stories.ts"]
+}

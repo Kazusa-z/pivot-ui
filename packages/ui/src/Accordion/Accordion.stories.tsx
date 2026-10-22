@@ -9,13 +9,16 @@ import { Input } from '../Input'
 import { Select, SelectItem } from '../Select'
 import { Text } from '../Typography'
 
-import { Accordion, AccordionItem } from '.'
+import { Accordion, AccordionItem, type AccordionProps } from '.'
 
 export default {
   title: 'Container/Accordion',
   tags: ['autodocs'],
   component: Accordion,
-} as Meta<typeof Accordion>
+} satisfies Meta<typeof Accordion>
+
+type SingleAccordionProps = Extract<AccordionProps, { type: 'single' }>
+type SharedAccordionProps = Omit<AccordionProps, 'type' | 'value' | 'defaultValue' | 'onValueChange' | 'collapsible'>
 
 const Panel = ({ children }: { children: ReactNode }) => (
   <Flex direction="column" gap="sm" css={{ width: '360px' }}>
@@ -23,11 +26,11 @@ const Panel = ({ children }: { children: ReactNode }) => (
   </Flex>
 )
 
-export const Overview: StoryFn<typeof Accordion> = (args) => {
+export const Overview: StoryFn<SingleAccordionProps> = (args) => {
   return (
     <Panel>
       <Text muted>Accordion works best as an inspector-style grouping surface instead of a floating card.</Text>
-      <Accordion type="single" defaultValue="transform" collapsible {...args}>
+      <Accordion defaultValue="transform" collapsible {...args} type="single">
         <AccordionItem value="transform" title="Transform">
           <Flex direction="column" gap="sm">
             <Input size="sm" variant="soft" placeholder="Position X" defaultValue="0" />
@@ -92,10 +95,10 @@ export const CustomTitleContent: StoryFn<typeof Accordion> = () => {
   )
 }
 
-export const Uncontrolled: StoryFn<typeof Accordion> = (args) => {
+export const Uncontrolled: StoryFn<SharedAccordionProps> = (args) => {
   return (
     <Panel>
-      <Badge status="info">Single</Badge>
+      <Badge color="blue">Single</Badge>
       <Accordion {...args} type="single" defaultValue="first" collapsible>
         <AccordionItem value="first" title="Scene">
           <Text muted size={2}>
@@ -109,7 +112,7 @@ export const Uncontrolled: StoryFn<typeof Accordion> = (args) => {
         </AccordionItem>
       </Accordion>
 
-      <Badge status="info">Multiple</Badge>
+      <Badge color="blue">Multiple</Badge>
       <Accordion {...args} type="multiple" defaultValue={['first']}>
         <AccordionItem value="first" title="Meshes">
           <Text muted size={2}>
@@ -126,13 +129,13 @@ export const Uncontrolled: StoryFn<typeof Accordion> = (args) => {
   )
 }
 
-export const Controlled = () => {
+function ControlledAccordionExample() {
   const [singleValue, setSingleValue] = useState('first')
   const [multipleValue, setMultipleValue] = useState(['first'])
 
   return (
     <Panel>
-      <Badge status="info">Controlled Single</Badge>
+      <Badge color="blue">Controlled Single</Badge>
       <Button variant="soft" size="sm" onClick={() => setSingleValue('second')}>
         Open Rendering
       </Button>
@@ -149,7 +152,7 @@ export const Controlled = () => {
         </AccordionItem>
       </Accordion>
 
-      <Badge status="info">Controlled Multiple</Badge>
+      <Badge color="blue">Controlled Multiple</Badge>
       <Button variant="soft" size="sm" onClick={() => setMultipleValue(['first', 'second'])}>
         Open All
       </Button>
@@ -168,3 +171,5 @@ export const Controlled = () => {
     </Panel>
   )
 }
+
+export const Controlled: StoryFn<typeof Accordion> = () => <ControlledAccordionExample />

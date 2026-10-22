@@ -13,11 +13,12 @@ Pivot UI is a React component library for building 3D editor interfaces, inspect
 
 ## Packages
 
-| Package                                       | Role                                                         |
-| --------------------------------------------- | ------------------------------------------------------------ |
-| [`@pivot-ui/editor`](./packages/ui/README.md) | Base components, overlays, color tools, asset and tree views |
-| [`@pivot-ui/gui`](./packages/gui/README.md)   | Composable React form items for property editors             |
-| [`@pivot-ui/demo`](./app)                     | Vite demo application                                        |
+| Package                                             | Role                                                                  |
+| --------------------------------------------------- | --------------------------------------------------------------------- |
+| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views          |
+| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                      |
+| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package under refactor; B01 property contracts and playground |
+| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                 |
 
 ## Getting started
 
@@ -39,17 +40,20 @@ pnpm dev
 # GUI component explorer
 pnpm dev:gui
 
+# Unified package contract playground
+pnpm dev:interface
+
 # Demo application
 pnpm dev:demo
 ```
 
-Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`. See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
+Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the new unified package runs on `6009`. Components remain in the existing packages until their migration batch is complete. See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
 
 ### Build and verify
 
 ```bash
 pnpm build:demo         # Production demo build
-pnpm build:storybook    # Both Storybook sites
+pnpm build:storybook    # All three Storybook sites
 pnpm verify             # Formatting, types, demo build and Storybook builds
 ```
 
@@ -105,7 +109,7 @@ Form items work with local state before a backend exists. The application owns d
 
 ## Technology
 
-Pivot UI is organized as a pnpm monorepo. Components are written in React 19 and TypeScript, styled with Panda CSS, and built on Radix UI primitives. Both component packages are TypeScript source packages.
+Pivot UI is organized as a pnpm monorepo. Components are written in React 19 and TypeScript, styled with Panda CSS, and built on Radix UI primitives. Library packages are TypeScript source packages. The [active refactor ledger](./docs/refactor/blender-5.2/LEDGER.md) tracks migration into `@pivot-ui/react`.
 
 ## License
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 import { GradientSlider as GradientSliderPrimitive } from './'
 import { ParticleSlider as ParticleSliderPrimitive } from './'
@@ -17,9 +17,9 @@ export default {
       },
     },
   },
-} as Meta
+} satisfies Meta
 
-export const Overview: StoryFn = (args) => {
+function ColorSliderOverviewExample() {
   const [hdrColor, setHdrColor] = useState({
     r: 255,
     g: 100,
@@ -30,12 +30,14 @@ export const Overview: StoryFn = (args) => {
 
   return (
     <Flex gap="md" direction="column" style={{ width: '300px' }}>
-      <GradientSlider />
-      <ParticleSlider />
+      <GradientSliderPrimitive />
+      <ParticleSliderPrimitive />
       <HDRSliderPrimitive HDRColor={hdrColor} onChange={setHdrColor} />
     </Flex>
   )
 }
+
+export const Overview: StoryFn = () => <ColorSliderOverviewExample />
 
 /**
  * The `<GradientSlider />` component is designed to handle displaying color thumbs and gradients in a slider. Most of the time this component is used to handle gradients in a color picker.
@@ -47,7 +49,7 @@ export const Overview: StoryFn = (args) => {
  *
  * > If you want to use the GradientSlider in a controlled mode, you have to keep in mind that the `colors` property must contain at least two `GradientColor` colors.
  */
-export const GradientSlider: StoryFn = (args) => {
+export const GradientSlider: StoryFn = () => {
   return (
     <Flex gap="md" style={{ width: '300px' }}>
       <GradientSliderPrimitive />
@@ -65,7 +67,7 @@ export const GradientSlider: StoryFn = (args) => {
  *
  * > If you want to use the GradientSlider in a controlled mode, you have to keep in mind that the `colors` property must contain at least two `ParticleColor` colors.
  */
-export const ParticleSlider: StoryFn = (args) => {
+export const ParticleSlider: StoryFn = () => {
   return (
     <Flex gap="md" style={{ width: '300px' }}>
       <ParticleSliderPrimitive />
@@ -91,7 +93,9 @@ export const ParticleSlider: StoryFn = (args) => {
  *
  * > When using HDRSlider in controlled mode, you need to provide both the base color and intensity values through the `HDRColor` prop.
  */
-export const HDRSlider: StoryFn = (args) => {
+export const HDRSlider: StoryFn = () => <HDRSliderExample />
+
+function HDRSliderExample() {
   const [hdrColor, setHdrColor] = useState({
     r: 255,
     g: 100,

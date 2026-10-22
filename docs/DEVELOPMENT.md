@@ -18,31 +18,33 @@ pnpm install
 app/                 @pivot-ui/demo Vite application
 packages/ui/         @pivot-ui/editor
 packages/gui/        @pivot-ui/gui
+packages/interface/  @pivot-ui/react (unified package under refactor)
 panda/               shared Panda configuration, tokens and reset
 docs/                integration, development and archive documentation
 ```
 
-Both component packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release.
+Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. The new `@pivot-ui/react` package starts with contracts and a mock playground; existing components remain in `ui` and `gui` until their migration batch.
 
 ## Commands
 
-| Command                | Purpose                                                           |
-| ---------------------- | ----------------------------------------------------------------- |
-| `pnpm dev`             | Editor Storybook                                                  |
-| `pnpm dev:gui`         | GUI Storybook                                                     |
-| `pnpm dev:demo`        | Demo application                                                  |
-| `pnpm typecheck`       | Type-check all packages and the app                               |
-| `pnpm build:demo`      | Build the demo application                                        |
-| `pnpm build:storybook` | Build both Storybook sites                                        |
-| `pnpm verify:quick`    | Prettier check + typecheck                                        |
-| `pnpm verify`          | Full verification: formatting, types, demo build, both Storybooks |
-| `pnpm clean`           | Remove generated builds and caches                                |
+| Command                | Purpose                                                          |
+| ---------------------- | ---------------------------------------------------------------- |
+| `pnpm dev`             | Editor Storybook                                                 |
+| `pnpm dev:gui`         | GUI Storybook                                                    |
+| `pnpm dev:interface`   | Unified package contract Storybook                               |
+| `pnpm dev:demo`        | Demo application                                                 |
+| `pnpm typecheck`       | Type-check all packages and the app                              |
+| `pnpm build:demo`      | Build the demo application                                       |
+| `pnpm build:storybook` | Build all three Storybook sites                                  |
+| `pnpm verify:quick`    | Prettier check + typecheck                                       |
+| `pnpm verify`          | Full verification: formatting, types, demo build, all Storybooks |
+| `pnpm clean`           | Remove generated builds and caches                               |
 
-The Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`.
+The Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package Storybook runs on `6009`.
 
-Both explorers share the **Theme** toolbar in `storybook/theme.tsx`. It switches the actual document theme, including portaled menus and dialogs. The editor's **Foundations / Design System / Overview** story compares light and dark surfaces and documents colors, sizes, spacing, typography, radii and shadows using the current Panda tokens.
+All explorers share the **Theme** toolbar in `storybook/theme.tsx`. It switches the actual document theme, including portaled menus and dialogs. The editor's **Foundations / Design System / Overview** story compares light and dark surfaces and documents colors, sizes, spacing, typography, radii and shadows using the current Panda tokens.
 
-Both explorers share `storybook/vite.ts`. Their prebundled preview and docs runtimes use a 1200 kB chunk warning budget; the demo keeps Vite's default budget. Only the irrelevant `use client` module-directive warnings are filtered in these browser-only explorers. Other build warnings remain enabled.
+All explorers share `storybook/vite.ts`. Their prebundled preview and docs runtimes use a 1200 kB chunk warning budget; the demo keeps Vite's default budget. Only the irrelevant `use client` module-directive warnings are filtered in these browser-only explorers. Other build warnings remain enabled.
 
 ## Panda CSS pipeline
 
@@ -61,6 +63,7 @@ After changing Panda configuration, regenerate the package types:
 ```bash
 pnpm --filter @pivot-ui/editor panda
 pnpm --filter @pivot-ui/gui panda
+pnpm --filter @pivot-ui/react panda
 ```
 
 ### Token snapshot
@@ -92,9 +95,9 @@ pnpm install --frozen-lockfile
 pnpm dedupe --check
 ```
 
-`pnpm verify` runs Prettier, TypeScript, the demo build and both Storybook builds.
+`pnpm verify` runs Prettier, TypeScript, the demo build and all three Storybook builds. The unified package checks production sources, stories/support, tooling and a pure ES2022 project for contracts/values without React, DOM or Node ambient types.
 
-Git and Prettier use LF line endings on every platform. Temporary verification scripts and outputs belong in the ignored `temp/` directory and are excluded from formatting checks.
+Git and Prettier use LF line endings on every platform. Refactor verification scripts and outputs belong in the operating system's temporary directory and are not committed as standalone tests.
 
 ## Documentation conventions
 

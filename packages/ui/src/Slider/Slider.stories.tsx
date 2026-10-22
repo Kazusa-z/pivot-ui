@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 
-import { Slider } from './'
+import { Slider, type SliderProps } from './'
 import { Flex } from '../Flex'
 import { Button } from '..'
 
@@ -11,10 +11,12 @@ export default {
   tags: ['autodocs'],
   argTypes: {
     size: {
-      type: {
-        name: 'enum',
-        value: ['xs', 'sm'],
+      options: ['default', 'xs'],
+      mapping: {
+        default: undefined,
+        xs: 'xs',
       },
+      control: { type: 'inline-radio' },
     },
     defaultValue: {
       description: 'The default value of the slider. Use this if you want an uncontrolled component.',
@@ -38,11 +40,10 @@ export default {
     step: 1,
     showRuler: false,
     max: 100,
-    size: 'sm',
   },
-} as Meta<typeof Slider>
+} satisfies Meta<typeof Slider>
 
-export const Overview = (args) => {
+export const Overview: StoryFn<typeof Slider> = (args) => {
   return (
     <Flex css={{ width: '300px' }}>
       <Slider {...args} />
@@ -50,7 +51,7 @@ export const Overview = (args) => {
   )
 }
 
-export const MultiValue = (args) => {
+export const MultiValue: StoryFn<typeof Slider> = (args) => {
   return (
     <Flex css={{ width: '300px' }}>
       <Slider {...args} defaultValue={[30, 60]} />
@@ -58,7 +59,7 @@ export const MultiValue = (args) => {
   )
 }
 
-export const Uncontrolled = (args) => {
+export const Uncontrolled: StoryFn<typeof Slider> = (args) => {
   return (
     <Flex css={{ width: '300px' }}>
       <Slider {...args} />
@@ -66,21 +67,23 @@ export const Uncontrolled = (args) => {
   )
 }
 
-export const Controlled = (args) => {
+function ControlledSliderExample(args: SliderProps) {
   const [value, setValue] = useState([30])
   return (
     <Flex css={{ width: '300px' }} gap="sm">
       <Button onClick={() => setValue([50])}>Set to 50</Button>
-      <Slider {...args} value={value} onValueChange={setValue} />
+      <Slider {...args} defaultValue={undefined} value={value} onValueChange={setValue} />
     </Flex>
   )
 }
 
-export const Sizes = (args) => {
+export const Controlled: StoryFn<typeof Slider> = (args) => <ControlledSliderExample {...args} />
+
+export const Sizes: StoryFn<typeof Slider> = (args) => {
   return (
     <Flex css={{ width: '300px' }} direction="column" gap="sm">
       <Slider {...args} size="xs" />
-      <Slider {...args} size="sm" />
+      <Slider {...args} size={undefined} />
     </Flex>
   )
 }
