@@ -2,7 +2,7 @@
   "name": "@pivot-ui/gui",
   "version": "1.2.1",
   "private": true,
-  "description": "High-level GUI controls built on top of @pivot-ui/editor.",
+  "description": "Composable React form items for editor interfaces, built on @pivot-ui/editor.",
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -46,8 +46,7 @@
   "dependencies": {
     "@pivot-ui/editor": "workspace:*",
     "@radix-ui/react-use-controllable-state": "^1.3.0",
-    "@tabler/icons-react": "^3.49.0",
-    "nanoid": "^6.0.2"
+    "@tabler/icons-react": "^3.49.0"
   },
   "peerDependencies": {
     "react": "^19.3.1",

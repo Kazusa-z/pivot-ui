@@ -158,9 +158,10 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
 
   const dropRef = useDrop({
     accept: dropLayer,
+    disable: disabled || !onSelect,
     onDrop(_, item: any, dropElement) {
       setIsDraggingOver(false)
-      onSelect(item)
+      onSelect?.(item)
       dropElement.blur()
     },
     onEnter(_, __, dropElement) {
@@ -175,9 +176,9 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
 
   const handleLocate = useCallback(
     function handleLocate() {
-      onLocate && onLocate(value)
+      if (!actionDisabled) onLocate?.(value)
     },
-    [value]
+    [actionDisabled, value, onLocate]
   )
 
   if (useLargePreview) {
@@ -210,10 +211,20 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
               </Popover>
             </TextureAssetNamePopover>
             <TextureAssetActions>
-              <ActionButton size="sm" disabled={!value} onClick={handleLocate} variant="soft">
+              <ActionButton
+                aria-label="Locate asset"
+                size="sm"
+                disabled={actionDisabled || !onLocate}
+                onClick={handleLocate}
+                variant="soft">
                 <IconCurrentLocation />
               </ActionButton>
-              <ActionButton size="sm" disabled={actionDisabled || !onDelete} onClick={onDelete} variant="soft">
+              <ActionButton
+                aria-label="Clear asset"
+                size="sm"
+                disabled={actionDisabled || !onDelete}
+                onClick={onDelete}
+                variant="soft">
                 <IconUnlink />
               </ActionButton>
             </TextureAssetActions>
@@ -250,10 +261,20 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
           groupBy={groupBy}
         />
       </Popover>
-      <ActionButton size="sm" disabled={!value} onClick={handleLocate} variant="soft">
+      <ActionButton
+        aria-label="Locate asset"
+        size="sm"
+        disabled={actionDisabled || !onLocate}
+        onClick={handleLocate}
+        variant="soft">
         <IconCurrentLocation />
       </ActionButton>
-      <ActionButton size="sm" disabled={actionDisabled || !onDelete} onClick={onDelete} variant="soft">
+      <ActionButton
+        aria-label="Clear asset"
+        size="sm"
+        disabled={actionDisabled || !onDelete}
+        onClick={onDelete}
+        variant="soft">
         <IconUnlink />
       </ActionButton>
     </FormItem>

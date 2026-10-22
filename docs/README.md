@@ -1,6 +1,6 @@
 # Pivot UI Documentation
 
-Pivot UI is a React component and GUI toolkit for building browser-based 3D editors, inspectors and content tools. The workspace contains two complementary packages: `@pivot-ui/editor` for reusable interface components and `@pivot-ui/gui` for form controls and the imperative GUI layer.
+Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. The workspace contains two complementary packages: `@pivot-ui/editor` for reusable interface components and `@pivot-ui/gui` for composable form items.
 
 These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0` and `@pivot-ui/gui` `1.2.1`.
 
@@ -11,7 +11,7 @@ These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0` and `@piv
 | [Integrating Pivot UI](./CONSUMING.md)     | Package integration, Panda CSS setup, theming and first usage |
 | [Development](./DEVELOPMENT.md)            | Repository setup, commands, architecture and verification     |
 | [Editor package](../packages/ui/README.md) | Component package reference                                   |
-| [GUI package](../packages/gui/README.md)   | GUI class and React form API                                  |
+| [GUI package](../packages/gui/README.md)   | Controlled React form items and their Storybook examples      |
 
 ## Project archive
 

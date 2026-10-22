@@ -124,8 +124,12 @@ const FormItem = forwardRef<HTMLDivElement, FormItemProps>(function FormItem(pro
     const firstControl = fieldRef.current?.querySelector<HTMLElement>(
       'button, input:not([type="hidden"]), select, textarea, meter, output, progress'
     )
-    // Groups keep their options' own names instead of relabeling the first radio or accordion trigger.
+    const toolbar = firstControl?.closest('[role="toolbar"]')
+    const isToggleGroupItem =
+      firstControl?.hasAttribute('aria-pressed') && toolbar && fieldRef.current?.contains(toolbar)
+    // Groups keep their options' own names instead of relabeling the first toggle, radio or accordion trigger.
     const control =
+      isToggleGroupItem ||
       firstControl?.getAttribute('role') === 'radio' ||
       (firstControl?.hasAttribute('aria-expanded') &&
         firstControl.getAttribute('role') !== 'combobox' &&

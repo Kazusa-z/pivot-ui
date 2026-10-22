@@ -13,6 +13,7 @@ interface InputNumberStateOptions {
 interface InputNumberProps {
   ref: React.MutableRefObject<HTMLInputElement>
   onChange?(e: ChangeEvent<HTMLInputElement>): void
+  onFocus?: FocusEventHandler<HTMLInputElement>
   onBlur?: FocusEventHandler<HTMLInputElement>
   value: string
   defaultValue?: undefined
@@ -73,7 +74,13 @@ export function useInputNumberState(props: InputNumberStateOptions): InputNumber
     [triggerOnChange, fallbackValue, min, max]
   )
 
+  const onFocus = useCallback(() => {
+    // A new editing session starts from the accepted controlled value, not a rejected draft.
+    if (isControlled) setVal(`${props.value ?? fallbackValue}`)
+  }, [isControlled, props.value, fallbackValue])
+
   result.onChange = onChange
+  result.onFocus = onFocus
   result.onBlur = onBlur
   result.value = showNumber
 

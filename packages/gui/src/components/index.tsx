@@ -1,11 +1,11 @@
 import { PropsWithChildren } from 'react'
 import { FormItem } from './FormItem'
-import { Input, Button, Textarea, CascadeSlider } from '@pivot-ui/editor'
+import { Button, CascadeSlider } from '@pivot-ui/editor'
 import { BaseFormItemProps } from './FormItem/FormItem'
 
-function generateGUI<T>() {
+function wrapFormItem<T>() {
   return <C extends React.JSXElementConstructor<any>>(Component: C, defaultProps?: React.ComponentProps<C>) => {
-    return function GUIComponent(props: React.ComponentProps<C> & BaseFormItemProps<T>) {
+    return function FormItemComponent(props: React.ComponentProps<C> & BaseFormItemProps<T>) {
       const { label, info, formStartSlot, formEndSlot, direction, ...rest } = props
       return (
         <FormItem
@@ -22,12 +22,12 @@ function generateGUI<T>() {
 }
 
 export type FormItemButtonProps = PropsWithChildren<Omit<BaseFormItemProps<string>, 'value' | 'onChange'>>
-export const FormItemButton = generateGUI<string>()(Button, {
+export const FormItemButton = wrapFormItem<string>()(Button, {
   variant: 'soft',
 })
 
 export type FormItemCascadeSliderProps = BaseFormItemProps<number[]>
-export const FormItemCascadeSlider = generateGUI<number[]>()(CascadeSlider)
+export const FormItemCascadeSlider = wrapFormItem<number[]>()(CascadeSlider)
 
 export { FormItemInput, type FormItemInputProps } from './FormItemInput'
 export { FormItemSelect, type FormItemSelectProps } from './FormItemSelect'

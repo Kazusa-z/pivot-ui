@@ -115,22 +115,26 @@ export function Toolbar() {
 }
 ```
 
-## Imperative GUI
+## Controlled form items
 
-```ts
-import { GUI } from '@pivot-ui/gui'
+```tsx
+import { useState } from 'react'
+import { FormItemInput, FormItemVector3 } from '@pivot-ui/gui'
 
-const gui = new GUI(sceneData, [
-  {
-    label: 'Camera Position',
-    bindPath: 'camera.position',
-    type: 'Vector3',
-    onChange(value) {
-      camera.position.set(value.x, value.y, value.z)
-    },
-  },
-])
+export function Inspector() {
+  const [name, setName] = useState('Camera')
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
+
+  return (
+    <div style={{ width: 360 }}>
+      <FormItemInput label="Name" value={name} onChange={setName} />
+      <FormItemVector3 label="Position" value={position} onChange={setPosition} />
+    </div>
+  )
+}
 ```
+
+The application owns layout and state. Update each control's `value` in its change callback; passing a fixed value makes the control read-only. Use local state while developing the UI, then connect the same callbacks to application commands and supply backend snapshots through props.
 
 ## Custom styling
 

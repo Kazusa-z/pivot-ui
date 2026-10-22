@@ -1,22 +1,22 @@
 # Pivot UI
 
-Pivot UI is a React component and GUI toolkit for building browser-based 3D editors, inspectors and content tools. It provides production-ready controls for scene properties, assets, colors, curves and hierarchical data, together with an imperative GUI layer for rapid tool development.
+Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. It provides controls for scene properties, assets, colors, curves and hierarchical data, plus composable form items for application-owned state.
 
 ## Highlights
 
 - **Editor-focused components** — color pickers, gradient and HDR sliders, bezier curve editing, asset views, trees, tables and inspector panels.
-- **Two APIs** — use declarative React components for application UI, or the dat.gui-style `GUI` class for compact tooling and prototypes.
+- **Composable forms** — combine individual `FormItem` components with application state and layout.
 - **Consistent theming** — light and dark themes are driven by a shared design-token system.
 - **Accessible foundations** — interactive primitives are built on Radix UI and support keyboard navigation.
-- **Engine agnostic** — bind controls to any scene graph, store or plain JavaScript object.
-- **TypeScript first** — public component props and GUI configuration are fully typed.
+- **Engine agnostic** — connect controlled inputs to local state or an application adapter for an engine backend.
+- **TypeScript first** — public component props are typed.
 
 ## Packages
 
 | Package                                       | Role                                                         |
 | --------------------------------------------- | ------------------------------------------------------------ |
 | [`@pivot-ui/editor`](./packages/ui/README.md) | Base components, overlays, color tools, asset and tree views |
-| [`@pivot-ui/gui`](./packages/gui/README.md)   | Form controls, panels and the imperative `GUI` class         |
+| [`@pivot-ui/gui`](./packages/gui/README.md)   | Composable React form items for property editors             |
 | [`@pivot-ui/demo`](./app)                     | Vite demo application                                        |
 
 ## Getting started
@@ -74,42 +74,26 @@ export function Toolbar() {
 }
 ```
 
-### Imperative GUI
+### Form items
 
-```ts
-import { GUI } from '@pivot-ui/gui'
+```tsx
+import { useState } from 'react'
+import { FormItemGroup, FormItemInput, FormItemVector3 } from '@pivot-ui/gui'
 
-const gui = new GUI(sceneData, [
-  {
-    label: 'Camera Position',
-    bindPath: 'camera.position',
-    type: 'Vector3',
-    onChange(value) {
-      camera.position.set(value.x, value.y, value.z)
-    },
-  },
-])
+export function Inspector() {
+  const [name, setName] = useState('Camera')
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
+
+  return (
+    <FormItemGroup label="Camera">
+      <FormItemInput label="Name" value={name} onChange={setName} />
+      <FormItemVector3 label="Position" value={position} onChange={setPosition} />
+    </FormItemGroup>
+  )
+}
 ```
 
-### Three.js integration
-
-```ts
-import * as THREE from 'three'
-import { GUI } from '@pivot-ui/gui'
-
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-
-const gui = new GUI({ camera: { position: { x: 0, y: 0, z: 5 } } }, [
-  {
-    label: 'Camera Position',
-    bindPath: 'camera.position',
-    type: 'Vector3',
-    onChange(value) {
-      camera.position.set(value.x, value.y, value.z)
-    },
-  },
-])
-```
+Form items work with local state before a backend exists. The application owns data loading, commands and synchronization with a future engine or C++/Qt adapter.
 
 ## Documentation
 

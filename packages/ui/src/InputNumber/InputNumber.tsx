@@ -8,6 +8,7 @@ import { Input } from '../Input'
 import { mergeRefs } from '../utils/merge-refs'
 
 const CLICK_THRESHOLD = 150
+const DRAG_DISTANCE_THRESHOLD = 3
 
 function round(value, precision = 2) {
   const power = Math.pow(10, precision)
@@ -59,6 +60,8 @@ export interface InputNumberProps extends Omit<
   step?: number
   dragStep?: number
   onValueChange?: (v: number) => void
+  /** Called before dragging changes the value, for controls that need a gesture's initial state. */
+  onValueDragStart?: () => void
   value?: number
   defaultValue?: number
 }
@@ -83,6 +86,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
     disabled,
     onFocus,
     onValueChange,
+    onValueDragStart,
     ...rest
   } = props
 
@@ -91,8 +95,17 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
   const [focused, setFocused] = useState(false)
   const downTimeRef = useRef<number>(0)
   const dragStartXRef = useRef(0)
+  const dragStartYRef = useRef(0)
+  const hasDraggedRef = useRef(false)
   const dragStartValueRef = useRef(0)
-  const { ref, value, defaultValue, onBlur, onChange } = useInputNumberState({
+  const {
+    ref,
+    value,
+    defaultValue,
+    onBlur,
+    onFocus: syncValueOnFocus,
+    onChange,
+  } = useInputNumberState({
     onChange: onValueChange,
     value: props.value,
     defaultValue: props.defaultValue,
@@ -105,6 +118,10 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
     e.stopPropagation()
     e.preventDefault()
     if (!dragging) return
+    if (Math.hypot(e.clientX - dragStartXRef.current, e.clientY - dragStartYRef.current) > DRAG_DISTANCE_THRESHOLD) {
+      hasDraggedRef.current = true
+    }
+    if (!hasDraggedRef.current) return
     const nextAccurateMode = e.ctrlKey || e.metaKey
     setAccurateMode(nextAccurateMode)
     const currentStep = nextAccurateMode ? dragStep / 10 : dragStep
@@ -137,15 +154,18 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
     setAccurateMode(e.ctrlKey || e.metaKey)
     setDragging(true)
     dragStartXRef.current = e.clientX
+    dragStartYRef.current = e.clientY
+    hasDraggedRef.current = false
     const currentValue = Number(ref.current?.value ?? props.value ?? props.defaultValue ?? 0)
     dragStartValueRef.current = Number.isNaN(currentValue) ? 0 : currentValue
+    onValueDragStart?.()
   }
 
   const handleMouseUp = () => {
     const upTime = Date.now()
     const interval = upTime - downTimeRef.current
 
-    if (interval < CLICK_THRESHOLD) {
+    if (interval < CLICK_THRESHOLD && !hasDraggedRef.current) {
       setDragging(false)
       if (ref.current) {
         ref.current.focus()
@@ -176,7 +196,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
         defaultValue={defaultValue}
         onChange={onChange}
         disabled={disabled}
-        onFocus={compound(onFocus, handleFocus)}
+        onFocus={compound(syncValueOnFocus, compound(onFocus, handleFocus))}
         onBlur={compound(onBlur, handleBlur)}
         size={size}
         min={min}
@@ -186,7 +206,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
         startSlot={startSlot}
         endSlot={endSlot}
       />
-      {!disabled && !focused && <StyledNumController onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} />}
+      {!disabled && !focused && <StyledNumController onMouseDown={handleMouseDown} />}
     </StyledInputNumberRoot>
   )
 })

@@ -1,5 +1,1 @@
-{
-  "extends": "./tsconfig.json",
-  "include": ["src/GUI/GUI.stories.tsx"],
-  "exclude": ["node_modules"]
-}
+{ "extends": "./tsconfig.json", "include": ["src/**/*.stories.tsx", "stories/**/*.tsx"], "exclude": ["node_modules"] }

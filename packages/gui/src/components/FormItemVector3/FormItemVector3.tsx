@@ -45,7 +45,9 @@ export function FormItemVector3(props: FormItemVector3Props) {
           return [key, v]
         }
 
-        const ratio = originalValueRef.current[key] / originalValueRef.current[masterAxisRef.current]
+        const originalMasterValue = originalValueRef.current[masterAxisRef.current]
+        if (originalMasterValue === 0) return [key, originalValueRef.current[key]]
+        const ratio = originalValueRef.current[key] / originalMasterValue
         const newValue = v * ratio
         return [key, newValue]
       })
@@ -82,6 +84,7 @@ export function FormItemVector3(props: FormItemVector3Props) {
           startSlot={axis.toUpperCase()}
           value={value[axis]}
           onFocus={handleFocus(axis)}
+          onValueDragStart={handleFocus(axis)}
           onValueChange={handleOnChange(axis)}
         />
       ))}

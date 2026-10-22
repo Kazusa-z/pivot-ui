@@ -1,797 +1,102 @@
 # @pivot-ui/gui
 
-An opinionated GUI library designed to create engaging and functional online tools with ease. Built on top of React and [@pivot-ui/editor](../ui/README.md), it provides both imperative GUI controls (similar to dat.gui) and declarative React components for building interactive 3D editors and tools.
+Composable React form items for scene inspectors, material editors and other property editors. Built on [@pivot-ui/editor](../ui/README.md), this package supplies fields and field groups. The application owns layout, state and backend integration.
 
-## Documentation
+## Setup
 
-- [Documentation index](../../docs/README.md)
-- [Integrating Pivot UI](../../docs/CONSUMING.md)
-- [Development](../../docs/DEVELOPMENT.md)
-- [Editor package](../ui/README.md)
-
-## Features
-
-- 🎛️ **Imperative GUI Controls** - dat.gui-like API for quick prototyping
-- ⚛️ **React Components** - Full-featured form components for complex UIs
-- 🎨 **Rich Input Types** - Color pickers, sliders, vectors, and more
-- 🌗 **Theme Support** - Light and dark themes out of the box
-- ♿ **Accessibility First** - Built with accessibility in mind
-- 🔧 **TypeScript Support** - Full type safety and IntelliSense
-
-## Installation
-
-This package is part of the Pivot UI workspace and can be integrated through the workspace or a package link:
+This is a TypeScript source package in the Pivot UI workspace. React and React DOM 19 are peer dependencies. Add it through `workspace:*` or link the directory:
 
 ```bash
 pnpm link ../pivot-ui/packages/gui
 ```
 
-React and React DOM 19 are peer dependencies. If you use the `GUI` class outside a React project, React is still required because the class renders its UI with React internally.
-
-### Styling prerequisite
-
-Components use Panda CSS. Configure Panda's PostCSS plugin in the consumer and include both `packages/gui/src` and `packages/ui/src` in the Panda config. The `panda.css` file declares layer order only.
+Configure Panda's PostCSS plugin and include both `packages/gui/src` and `packages/ui/src` in the application's Panda configuration. Import the layer entry once:
 
 ```ts
-// application entry
 import '@pivot-ui/gui/panda.css'
 ```
 
-See [Integrating Pivot UI](../../docs/CONSUMING.md) for the complete configuration. The GUI Storybook is the reference integration.
+The CSS entry declares layer order; Panda generates the styles during the application build. See [Integrating Pivot UI](../../docs/CONSUMING.md) for the full configuration.
 
-## Quick Start
-
-### Use the individual components
+## Controlled form items
 
 ```tsx
-import React, { useState } from 'react'
-import { FormItemInput, FormItemColor, FormItemVector3, FormItemSlider, Panel } from '@pivot-ui/gui'
+import { useState } from 'react'
+import { FormItemGroup, FormItemInput, FormItemSlider, FormItemVector3 } from '@pivot-ui/gui'
 
-function App() {
-  const [sceneData, setSceneData] = useState({
-    name: 'My Scene',
-    camera: { position: { x: 0, y: 10, z: 30 } },
-    light: {
-      color: { r: 1, g: 1, b: 1, a: 1 },
-      intensity: 1.0,
-    },
-  })
+export function Inspector() {
+  const [name, setName] = useState('Object')
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 0 })
+  const [opacity, setOpacity] = useState(1)
 
   return (
-    <Panel>
-      <FormItemInput
-        label="Scene Name"
-        value={sceneData.name}
-        onChange={(value) => setSceneData((prev) => ({ ...prev, name: value }))}
-      />
-
-      <FormItemVector3
-        label="Camera Position"
-        value={sceneData.camera.position}
-        onChange={(value) =>
-          setSceneData((prev) => ({
-            ...prev,
-            camera: { ...prev.camera, position: value },
-          }))
-        }
-      />
-
-      <FormItemColor
-        label="Light Color"
-        value={sceneData.light.color}
-        onChange={(value) =>
-          setSceneData((prev) => ({
-            ...prev,
-            light: { ...prev.light, color: value },
-          }))
-        }
-      />
-
-      <FormItemSlider
-        label="Light Intensity"
-        value={sceneData.light.intensity}
-        min={0}
-        max={2}
-        step={0.1}
-        onChange={(value) =>
-          setSceneData((prev) => ({
-            ...prev,
-            light: { ...prev.light, intensity: value },
-          }))
-        }
-      />
-    </Panel>
-  )
-}
-
-export default App
-```
-
-## GUI Class API
-
-The `GUI` class provides a dat.gui-like imperative API for quick prototyping and non-React environments.
-
-### Constructor
-
-```typescript
-new GUI(data: Record<string, any>, items?: GUIItemConfig[])
-```
-
-### Basic Example
-
-```javascript
-const data = {
-  position: { x: 0, y: 0, z: 0 },
-  color: { r: 1, g: 0, b: 0, a: 1 },
-  intensity: 1.0,
-  enabled: true,
-  name: 'My Object',
-}
-
-const gui = new GUI(data, [
-  {
-    label: 'Object Name',
-    bindPath: 'name',
-    type: 'Input',
-    onChange(value) {
-      console.log('Name changed:', value)
-    },
-  },
-  {
-    label: 'Position',
-    bindPath: 'position',
-    type: 'Vector3',
-    onChange(value) {
-      console.log('Position changed:', value)
-    },
-  },
-  {
-    label: 'Color',
-    bindPath: 'color',
-    type: 'Color',
-    onChange(value) {
-      console.log('Color changed:', value)
-    },
-  },
-  {
-    label: 'Intensity',
-    bindPath: 'intensity',
-    type: 'Slider',
-    min: 0,
-    max: 2,
-    step: 0.1,
-    onChange(value) {
-      console.log('Intensity changed:', value)
-    },
-  },
-  {
-    label: 'Enabled',
-    bindPath: 'enabled',
-    type: 'Toggle',
-    onChange(value) {
-      console.log('Enabled changed:', value)
-    },
-  },
-])
-```
-
-### Adding Groups
-
-You can organize GUI controls into collapsible groups for better organization:
-
-```javascript
-const data = {
-  transform: {
-    position: { x: 0, y: 0, z: 0 },
-    rotation: { x: 0, y: 0, z: 0 },
-    scale: { x: 1, y: 1, z: 1 },
-  },
-  material: {
-    color: { r: 1, g: 1, b: 1, a: 1 },
-    metallic: 0.0,
-    roughness: 0.5,
-  },
-  lighting: {
-    intensity: 1.0,
-    shadows: true,
-  },
-}
-
-const gui = new GUI(data)
-
-// Add Transform group
-gui.addGroup('Transform', [
-  {
-    label: 'Position',
-    bindPath: 'transform.position',
-    type: 'Vector3',
-    onChange(value) {
-      // Update object position
-      object.position.set(value.x, value.y, value.z)
-    },
-  },
-  {
-    label: 'Rotation',
-    bindPath: 'transform.rotation',
-    type: 'Vector3',
-    onChange(value) {
-      // Update object rotation
-      object.rotation.set(value.x, value.y, value.z)
-    },
-  },
-  {
-    label: 'Scale',
-    bindPath: 'transform.scale',
-    type: 'Vector3',
-    onChange(value) {
-      // Update object scale
-      object.scale.set(value.x, value.y, value.z)
-    },
-  },
-])
-
-// Add Material group
-gui.addGroup('Material', [
-  {
-    label: 'Base Color',
-    bindPath: 'material.color',
-    type: 'Color',
-    onChange(value) {
-      material.color.set(value.r, value.g, value.b, value.a)
-    },
-  },
-  {
-    label: 'Metallic',
-    bindPath: 'material.metallic',
-    type: 'Slider',
-    min: 0,
-    max: 1,
-    step: 0.01,
-    onChange(value) {
-      material.metallic = value
-    },
-  },
-  {
-    label: 'Roughness',
-    bindPath: 'material.roughness',
-    type: 'Slider',
-    min: 0,
-    max: 1,
-    step: 0.01,
-    onChange(value) {
-      material.roughness = value
-    },
-  },
-])
-
-// Add Lighting group
-gui.addGroup('Lighting', [
-  {
-    label: 'Intensity',
-    bindPath: 'lighting.intensity',
-    type: 'Slider',
-    min: 0,
-    max: 3,
-    step: 0.1,
-    onChange(value) {
-      light.intensity = value
-    },
-  },
-  {
-    label: 'Cast Shadows',
-    bindPath: 'lighting.shadows',
-    type: 'Toggle',
-    onChange(value) {
-      light.castShadow = value
-    },
-  },
-])
-```
-
-### Group Configuration Options
-
-Groups support additional configuration options:
-
-```javascript
-gui.addGroup(
-  'Advanced Settings',
-  [
-    // ... items
-  ],
-  {
-    defaultOpen: false, // Start collapsed
-    collapsible: true, // Allow collapse/expand
-    nesting: true, // Enable nested styling
-  }
-)
-```
-
-### Nested Groups
-
-You can create nested groups for complex hierarchies:
-
-```javascript
-const data = {
-  scene: {
-    environment: {
-      skybox: { color: { r: 0.5, g: 0.7, b: 1, a: 1 } },
-      fog: { density: 0.1, color: { r: 0.8, g: 0.8, b: 0.9, a: 1 } },
-    },
-    postProcessing: {
-      bloom: { intensity: 1.0, threshold: 0.9 },
-      colorGrading: { exposure: 1.0, contrast: 1.0 },
-    },
-  },
-}
-
-const gui = new GUI(data)
-
-// Main Scene group
-gui.addGroup('Scene', [
-  // Environment subgroup
-  {
-    type: 'Group',
-    label: 'Environment',
-    items: [
-      {
-        label: 'Skybox Color',
-        bindPath: 'scene.environment.skybox.color',
-        type: 'Color',
-        onChange(value) {
-          skybox.color.set(value.r, value.g, value.b, value.a)
-        },
-      },
-      {
-        label: 'Fog Density',
-        bindPath: 'scene.environment.fog.density',
-        type: 'Slider',
-        min: 0,
-        max: 1,
-        step: 0.01,
-        onChange(value) {
-          scene.fog.density = value
-        },
-      },
-      {
-        label: 'Fog Color',
-        bindPath: 'scene.environment.fog.color',
-        type: 'Color',
-        onChange(value) {
-          scene.fog.color.set(value.r, value.g, value.b, value.a)
-        },
-      },
-    ],
-  },
-  // Post Processing subgroup
-  {
-    type: 'Group',
-    label: 'Post Processing',
-    items: [
-      {
-        label: 'Bloom Intensity',
-        bindPath: 'scene.postProcessing.bloom.intensity',
-        type: 'Slider',
-        min: 0,
-        max: 3,
-        step: 0.1,
-        onChange(value) {
-          bloomPass.intensity = value
-        },
-      },
-      {
-        label: 'Bloom Threshold',
-        bindPath: 'scene.postProcessing.bloom.threshold',
-        type: 'Slider',
-        min: 0,
-        max: 2,
-        step: 0.1,
-        onChange(value) {
-          bloomPass.threshold = value
-        },
-      },
-      {
-        label: 'Exposure',
-        bindPath: 'scene.postProcessing.colorGrading.exposure',
-        type: 'Slider',
-        min: 0,
-        max: 3,
-        step: 0.1,
-        onChange(value) {
-          colorGradingPass.exposure = value
-        },
-      },
-    ],
-  },
-])
-```
-
-### Dynamic Groups
-
-You can add and remove groups dynamically:
-
-```javascript
-const gui = new GUI(data)
-
-// Add initial groups
-gui.addGroup('Basic', basicControls)
-
-// Add group conditionally
-if (advancedMode) {
-  gui.addGroup('Advanced', advancedControls)
-}
-
-// Remove a group (if needed)
-// gui.removeGroup('Advanced');
-```
-
-### Group Events
-
-Groups support open/close events:
-
-```javascript
-gui.addGroup('Animation', animationControls, {
-  defaultOpen: true,
-  onOpenChange: (isOpen) => {
-    console.log(`Animation group ${isOpen ? 'opened' : 'closed'}`)
-
-    // Pause animations when group is closed
-    if (!isOpen) {
-      pauseAnimations()
-    } else {
-      resumeAnimations()
-    }
-  },
-})
-```
-
-### Complete Example with Groups
-
-```javascript
-const sceneData = {
-  object: {
-    transform: {
-      position: { x: 0, y: 0, z: 0 },
-      rotation: { x: 0, y: 0, z: 0 },
-      scale: { x: 1, y: 1, z: 1 },
-    },
-    material: {
-      color: { r: 1, g: 1, b: 1, a: 1 },
-      metallic: 0.0,
-      roughness: 0.5,
-      emissive: false,
-    },
-  },
-  camera: {
-    position: { x: 0, y: 5, z: 10 },
-    target: { x: 0, y: 0, z: 0 },
-    fov: 45,
-  },
-  lighting: {
-    ambient: { color: { r: 0.2, g: 0.2, b: 0.2, a: 1 }, intensity: 0.5 },
-    directional: { color: { r: 1, g: 1, b: 1, a: 1 }, intensity: 1.0 },
-  },
-}
-
-const gui = new GUI(sceneData)
-
-// Object controls
-gui.addGroup(
-  'Object',
-  [
-    {
-      type: 'Group',
-      label: 'Transform',
-      items: [
-        {
-          label: 'Position',
-          bindPath: 'object.transform.position',
-          type: 'Vector3',
-          onChange: updateObjectPosition,
-        },
-        {
-          label: 'Rotation',
-          bindPath: 'object.transform.rotation',
-          type: 'Vector3',
-          onChange: updateObjectRotation,
-        },
-        {
-          label: 'Scale',
-          bindPath: 'object.transform.scale',
-          type: 'Vector3',
-          onChange: updateObjectScale,
-        },
-      ],
-    },
-    {
-      type: 'Group',
-      label: 'Material',
-      items: [
-        {
-          label: 'Color',
-          bindPath: 'object.material.color',
-          type: 'Color',
-          onChange: updateMaterialColor,
-        },
-        {
-          label: 'Metallic',
-          bindPath: 'object.material.metallic',
-          type: 'Slider',
-          min: 0,
-          max: 1,
-          onChange: updateMaterialMetallic,
-        },
-        {
-          label: 'Roughness',
-          bindPath: 'object.material.roughness',
-          type: 'Slider',
-          min: 0,
-          max: 1,
-          onChange: updateMaterialRoughness,
-        },
-        {
-          label: 'Emissive',
-          bindPath: 'object.material.emissive',
-          type: 'Toggle',
-          onChange: updateMaterialEmissive,
-        },
-      ],
-    },
-  ],
-  {
-    defaultOpen: true,
-  }
-)
-
-// Camera controls
-gui.addGroup(
-  'Camera',
-  [
-    {
-      label: 'Position',
-      bindPath: 'camera.position',
-      type: 'Vector3',
-      onChange: updateCameraPosition,
-    },
-    {
-      label: 'Target',
-      bindPath: 'camera.target',
-      type: 'Vector3',
-      onChange: updateCameraTarget,
-    },
-    {
-      label: 'Field of View',
-      bindPath: 'camera.fov',
-      type: 'Slider',
-      min: 10,
-      max: 120,
-      onChange: updateCameraFOV,
-    },
-  ],
-  {
-    defaultOpen: false,
-  }
-)
-
-// Lighting controls
-gui.addGroup(
-  'Lighting',
-  [
-    {
-      type: 'Group',
-      label: 'Ambient Light',
-      items: [
-        {
-          label: 'Color',
-          bindPath: 'lighting.ambient.color',
-          type: 'Color',
-          onChange: updateAmbientColor,
-        },
-        {
-          label: 'Intensity',
-          bindPath: 'lighting.ambient.intensity',
-          type: 'Slider',
-          min: 0,
-          max: 2,
-          onChange: updateAmbientIntensity,
-        },
-      ],
-    },
-    {
-      type: 'Group',
-      label: 'Directional Light',
-      items: [
-        {
-          label: 'Color',
-          bindPath: 'lighting.directional.color',
-          type: 'Color',
-          onChange: updateDirectionalColor,
-        },
-        {
-          label: 'Intensity',
-          bindPath: 'lighting.directional.intensity',
-          type: 'Slider',
-          min: 0,
-          max: 3,
-          onChange: updateDirectionalIntensity,
-        },
-      ],
-    },
-  ],
-  {
-    defaultOpen: false,
-    onOpenChange: (isOpen) => {
-      console.log(`Lighting controls ${isOpen ? 'opened' : 'closed'}`)
-    },
-  }
-)
-```
-
-### Supported Input Types
-
-| Type       | Description     | Example Value                             |
-| ---------- | --------------- | ----------------------------------------- |
-| `Input`    | Text input      | `"Hello World"`                           |
-| `Number`   | Number input    | `42`                                      |
-| `Slider`   | Range slider    | `0.5`                                     |
-| `Color`    | Color picker    | `{ r: 1, g: 0, b: 0, a: 1 }`              |
-| `Toggle`   | Boolean toggle  | `true`                                    |
-| `Vector2`  | 2D vector       | `{ x: 1, y: 2 }`                          |
-| `Vector3`  | 3D vector       | `{ x: 1, y: 2, z: 3 }`                    |
-| `Vector4`  | 4D vector       | `{ x: 1, y: 2, z: 3, w: 4 }`              |
-| `Rect`     | Rectangle       | `{ x: 0, y: 0, width: 100, height: 100 }` |
-| `Select`   | Dropdown select | `"option1"`                               |
-| `Textarea` | Multi-line text | `"Long text..."`                          |
-| `Button`   | Action button   | N/A                                       |
-| `Array`    | Array of items  | `[item1, item2, ...]`                     |
-
-### Configuration Options
-
-Each GUI item supports various configuration options:
-
-```javascript
-{
-  label: 'Custom Label',           // Display label
-  bindPath: 'object.property',     // Data binding path
-  type: 'Slider',                  // Input type
-  min: 0,                          // Minimum value (for sliders/numbers)
-  max: 100,                        // Maximum value (for sliders/numbers)
-  step: 0.1,                       // Step size (for sliders/numbers)
-  options: [                       // Options for select
-    { label: 'Option 1', value: 'opt1' },
-    { label: 'Option 2', value: 'opt2' }
-  ],
-  onChange(value) {                // Change callback
-    console.log('Value changed:', value);
-  },
-  info: 'Helpful tooltip text',    // Tooltip information
-  disabled: false                  // Disable the input
-}
-```
-
-## React Components
-
-For React applications, you can use individual form components for more control:
-
-### Available Components
-
-- `FormItemInput` - Text input
-- `FormItemInputNumber` - Number input
-- `FormItemSlider` - Range slider
-- `FormItemColor` - Color picker
-- `FormItemToggle` - Boolean toggle
-- `FormItemVector2` - 2D vector input
-- `FormItemVector3` - 3D vector input
-- `FormItemVector4` - 4D vector input
-- `FormItemRect` - Rectangle input
-- `FormItemSelect` - Dropdown select
-- `FormItemTextarea` - Multi-line text input
-- `FormItemButton` - Action button
-- `FormItemArray` - Array input
-
-`FormItemArray` supports inline renaming for items with `renameable: true` when an `onRename` handler is provided.
-The pencil opens a text field; Enter or blur commits the new name, and Escape cancels. Handle
-`onRename(item, name)` by updating that item's `name` in the controlled `items` array. Deleting an item remains a
-separate `onDelete(item)` action.
-
-### Component Props
-
-All form components share common props:
-
-```typescript
-interface BaseFormItemProps<T> {
-  label?: string // Display label
-  value?: T // Current value
-  onChange?: (value: T) => void // Change handler
-  info?: string // Tooltip text
-  disabled?: boolean // Disable state
-  direction?: 'row' | 'column' // Layout direction
-}
-```
-
-## Theming
-
-The library supports both light and dark themes:
-
-```javascript
-// For GUI class
-const gui = new GUI(data, items)
-gui.setTheme('dark') // or 'light'
-
-// For React components, wrap your app with ThemeProvider
-import { ThemeProvider, useTheme } from '@pivot-ui/editor'
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  return <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>Toggle theme</button>
-}
-
-function App() {
-  return (
-    <ThemeProvider>
-      <ThemeToggle />
-      {/* Your components */}
-    </ThemeProvider>
+    <div style={{ width: 360 }}>
+      <FormItemGroup label="Object">
+        <FormItemInput label="Name" value={name} onChange={setName} />
+        <FormItemVector3 label="Position" value={position} onChange={setPosition} />
+        <FormItemSlider label="Opacity" value={opacity} onChange={setOpacity} min={0} max={1} step={0.01} />
+      </FormItemGroup>
+    </div>
   )
 }
 ```
 
-## TypeScript Support
+Pass an accepted value back into the field after each edit. A fixed `value` without an updating callback does not provide an editable form. Replacing application state also updates the fields, so local mock data can later be replaced by backend snapshots.
 
-The library is written in TypeScript and provides full type definitions:
+The component library does not own data fetching, object binding, command dispatch or backend synchronization. Those belong in the application. For a C++/Qt integration, application callbacks can send commands through an adapter and supply returned state through component props.
 
-```typescript
-import { GUI, GUIItemConfig, GUIItemTypeEnum } from '@pivot-ui/gui'
+## Available form items
 
-interface SceneData {
-  camera: {
-    position: { x: number; y: number; z: number }
-    fov: number
-  }
-  light: {
-    color: { r: number; g: number; b: number; a: number }
-    intensity: number
-  }
-}
+Every form item has a dedicated Storybook entry under `FormItem`.
 
-const sceneData: SceneData = {
-  camera: {
-    position: { x: 0, y: 10, z: 30 },
-    fov: 45,
-  },
-  light: {
-    color: { r: 1, g: 1, b: 1, a: 1 },
-    intensity: 1.0,
-  },
-}
+| Component                                               | Purpose                                                      |
+| ------------------------------------------------------- | ------------------------------------------------------------ |
+| `FormItem`                                              | Label, help text and field layout for custom controls        |
+| `FormItemInput`                                         | Text input                                                   |
+| `FormItemTextarea`                                      | Multiline input                                              |
+| `FormItemInputNumber`                                   | Numeric input with dragging and increment/decrement controls |
+| `FormItemSlider`                                        | Numeric slider and input                                     |
+| `FormItemCascadeSlider`                                 | Editable distribution across segments                        |
+| `FormItemVector2`, `FormItemVector3`, `FormItemVector4` | Vector fields; Vector3 supports proportional edits           |
+| `FormItemRect`                                          | Rectangle coordinates and dimensions                         |
+| `FormItemToggle`                                        | Boolean field                                                |
+| `FormItemToggleGroup`                                   | Single or multiple selections                                |
+| `FormItemSegmentControl`                                | Segmented selection                                          |
+| `FormItemSelect`                                        | Dropdown selection                                           |
+| `FormItemColor`                                         | Color and alpha input                                        |
+| `FormItemGradient`                                      | Constant colors and gradient modes                           |
+| `FormItemParticleCurve`                                 | Constant values and curve modes                              |
+| `FormItemParticle`                                      | Alias of `FormItemParticleCurve`                             |
+| `FormItemAssetPicker`                                   | Asset selection, location and clearing                       |
+| `FormItemDisplay`                                       | Read-only text or image                                      |
+| `FormItemButton`                                        | Action with a form label                                     |
+| `FormItemGroup`                                         | Collapsible field group                                      |
+| `FormItemArray`                                         | Collection with add, delete and rename callbacks             |
 
-const guiConfig: GUIItemConfig[] = [
-  {
-    label: 'Camera Position',
-    bindPath: 'camera.position',
-    type: GUIItemTypeEnum.Vector3,
-    onChange(value: { x: number; y: number; z: number }) {},
-  },
-]
+Most editable items use `value` and `onChange`. Gradient and particle fields use `onValueChange(value, type)`; keep the selected mode in state when supplying a controlled `type`. Asset selection uses `onSelect(asset)` and `onDelete()`. Arrays receive `items` plus `onAdd`, `onDelete` and `onRename`; update the item list in those callbacks.
 
-const gui = new GUI(sceneData, guiConfig)
+## Storybook
+
+```bash
+pnpm dev:gui
 ```
 
-## Browser Support
+Open the component explorer on port `6008`. Editable stories maintain local React state, show the current value and provide Reset. Additional stories demonstrate supported ranges, disabled states, selection modes, collection editing and specialized color/curve modes.
 
-- Chrome 88+
-- Firefox 85+
-- Safari 14+
-- Edge 88+
+The toolbar switches between light and dark themes. In an application, use `ThemeProvider` from `@pivot-ui/editor`.
 
-## License
+## Validation
 
-MIT License. See [LICENSE](../../LICENSE) for details.
+```bash
+pnpm --filter @pivot-ui/gui typecheck
+pnpm verify
+```
 
-## Project documentation
+The GUI typecheck includes all component stories. The workspace verification also checks formatting and builds the demo and both Storybooks.
+
+## Related documents
 
 - [Documentation index](../../docs/README.md)
-- [Integration guide](../../docs/CONSUMING.md)
-- [Development guide](../../docs/DEVELOPMENT.md)
+- [Integrating Pivot UI](../../docs/CONSUMING.md)
+- [Development](../../docs/DEVELOPMENT.md)
 - [Editor package](../ui/README.md)
-
-`FormItem.fieldColumn` numeric variants use numbers: `fieldColumn={1}`, not `fieldColumn="1"`.
