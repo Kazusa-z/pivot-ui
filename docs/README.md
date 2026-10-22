@@ -13,6 +13,16 @@ These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0` and `@piv
 | [Editor package](../packages/ui/README.md) | Component package reference                                   |
 | [GUI package](../packages/gui/README.md)   | Controlled React form items and their Storybook examples      |
 
+## Active refactor
+
+The Blender 5.2 LTS alignment refactor runs on `feat-blender-5-2-refactor`. Its plan and live ledger are separate from the completed Panda migration archive.
+
+| Document                                                                                              | Purpose                                                                               |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [Refactor architecture](D:/QtProject/editor-ui-custom/docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md) | Shared terminology, responsibilities, dependencies and complete component disposition |
+| [Implementation batches](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/BATCHES.md)          | Batch scope, prerequisites and acceptance criteria                                    |
+| [Implementation ledger](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/LEDGER.md)            | Inherited baseline, component progress, validation evidence and Git status            |
+
 ## Project archive
 
 The completed styling migration is retained as a traceable project record:
