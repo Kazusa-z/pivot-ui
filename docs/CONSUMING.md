@@ -2,7 +2,7 @@
 
 Pivot UI is distributed from this repository as source packages. An application can consume it through the pnpm workspace or by linking a package directory.
 
-During the Blender alignment refactor, existing components continue to use the packages described below. The new [`@pivot-ui/react`](../packages/interface/README.md) package currently exports pure property contracts and value types through `@pivot-ui/react/contracts` and `@pivot-ui/react/values`. It does not yet replace the component imports or provide a Qt bridge. Its Mock is Storybook-only support, not a production package export.
+Use [`@pivot-ui/react`](../packages/interface/README.md) for migrated foundations: theme, buttons, feedback, typography, icons and shortcut presentation. Pure property contracts and value types are available through `/contracts` and `/values`. The transitional `@pivot-ui/editor` and `@pivot-ui/gui` packages still provide unmigrated controls and form items. The unified package has no Qt bridge; its Mock is Storybook-only support.
 
 ## Requirements
 
@@ -15,12 +15,15 @@ During the Blender alignment refactor, existing components continue to use the p
 Inside the workspace, reference the packages with `workspace:*`. For an application outside the workspace, link the package directory:
 
 ```bash
+pnpm link ../pivot-ui/packages/interface
+# Transitional packages for components not migrated yet:
 pnpm link ../pivot-ui/packages/ui
-# Optional high-level GUI package
 pnpm link ../pivot-ui/packages/gui
 ```
 
 React remains a peer dependency and must be installed by the application.
+
+Generate the unified package's styling modules before using a source link: `pnpm --filter @pivot-ui/react panda`. Workspace app and Storybook pre-scripts already do this, including after cleaning generated files.
 
 ## Configure Panda CSS
 
@@ -43,6 +46,8 @@ export default defineConfig({
   ...pandaBase,
   include: [
     './src/**/*.{ts,tsx}',
+    '../pivot-ui/packages/interface/src/**/*.{ts,tsx}',
+    // Include this when using transitional @pivot-ui/editor controls:
     '../pivot-ui/packages/ui/src/**/*.{ts,tsx}',
     // Include this when using @pivot-ui/gui:
     '../pivot-ui/packages/gui/src/**/*.{ts,tsx}',
@@ -65,25 +70,25 @@ module.exports = {
 Import the matching layer entry once in the application entry:
 
 ```ts
-// @pivot-ui/editor
-import '@pivot-ui/editor/panda.css'
+// Unified components:
+import '@pivot-ui/react/panda.css'
 
 // or, when using @pivot-ui/gui
 import '@pivot-ui/gui/panda.css'
 ```
 
-Use the entry that matches the package being consumed; do not import both in one application.
+Use one layer entry per application, including applications combining migrated and transitional components. All entries share the same layer order and Panda preset; source scanning determines the emitted component styles.
 
 ## Theme provider
 
 Wrap the application so light and dark mode are applied to the document:
 
 ```tsx
-import { ThemeProvider, useTheme } from '@pivot-ui/editor'
+import { ThemeProvider, useTheme } from '@pivot-ui/react'
 
 function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  return <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>Toggle theme</button>
+  const { resolvedTheme, setPreference } = useTheme()
+  return <button onClick={() => setPreference(resolvedTheme === 'dark' ? 'light' : 'dark')}>Toggle theme</button>
 }
 
 export function App() {
@@ -96,13 +101,14 @@ export function App() {
 }
 ```
 
-`ThemeProvider` manages the `light-theme` / `dark-theme` class. The color values are emitted by the Panda CSS pipeline.
+`ThemeProvider` manages the `light-theme` / `dark-theme` class through an appearance adapter. `preference` is `light`, `dark` or `system`; `resolvedTheme` is always `light` or `dark`. Set `system` to follow OS changes without overwriting the stored preference. Consumers share a store, including nested Providers that do not supply another store. Storage, system detection and appearance adapters can be injected separately for mocks or a future host. The color values come from the shared Panda preset.
 
 ## First component
 
 ```tsx
 import { useState } from 'react'
-import { Button, ColorPicker, Flex, Text } from '@pivot-ui/editor'
+import { Button, Text } from '@pivot-ui/react'
+import { ColorPicker, Flex } from '@pivot-ui/editor'
 
 export function Toolbar() {
   const [color, setColor] = useState({ r: 30, g: 99, b: 238, a: 1 })
@@ -110,7 +116,7 @@ export function Toolbar() {
   return (
     <Flex gap="sm" align="v">
       <Button>Save</Button>
-      <Text muted>Scene settings</Text>
+      <Text tone="muted">Scene settings</Text>
       <ColorPicker mode="constant" value={color} onValueChange={setColor} />
     </Flex>
   )
@@ -147,6 +153,8 @@ Components accept a Panda `css` prop typed as `SystemStyleObject`:
 ```
 
 Use CSS variables such as `var(--colors-textMuted)` or Panda `token('colors.textMuted')` in style values.
+
+For custom layouts, import `css`/`cva`/`cx` from `@pivot-ui/react/styling/css`, `styled` from `/styling/jsx`, and `token` from `/styling/tokens`. These package subpaths resolve directly to generated modules and are registered in `pandaBase.importMap`; do not wrap `styled` in another re-export facade. Import `SystemStyleObject` or `RecipeVariantProps` as types from `/styling/types`.
 
 ## Related documents
 

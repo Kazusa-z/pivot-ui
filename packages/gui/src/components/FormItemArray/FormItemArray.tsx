@@ -5,7 +5,7 @@ import { styled } from '../../../styled-system/jsx'
 
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
 
-interface AccordionTitleProps {
+interface AccordionActionsProps {
   title: string
   onDelete?: () => void
   onRename?: (name: string) => void
@@ -32,23 +32,29 @@ const AddItemButton = styled(Button, {
   },
 })
 
-function AccordionTitle(props: AccordionTitleProps) {
+function AccordionActions(props: AccordionActionsProps) {
   const { title, renameable, onDelete, onRename, removable } = props
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(title)
   const editingRef = useRef(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const renameButtonRef = useRef<HTMLButtonElement>(null)
+  const restoreRenameFocus = useRef(false)
 
   useEffect(() => {
     if (editing) {
       inputRef.current?.focus()
       inputRef.current?.select()
+    } else if (restoreRenameFocus.current) {
+      restoreRenameFocus.current = false
+      renameButtonRef.current?.focus()
     }
   }, [editing])
 
   const finishRename = (commit: boolean) => {
     if (!editingRef.current) return
     editingRef.current = false
+    restoreRenameFocus.current = true
     setEditing(false)
     if (commit && draft !== title) {
       onRename?.(draft)
@@ -56,11 +62,12 @@ function AccordionTitle(props: AccordionTitleProps) {
   }
 
   return (
-    <Flex align="v" css={{ flex: 1, justifyContent: 'space-between' }}>
-      {editing ? (
+    <Flex align="v" gap="xxs" css={{ minWidth: 0 }}>
+      {editing && (
         <Input
           ref={inputRef}
-          aria-label="Item name"
+          aria-label={`Rename ${title}`}
+          css={{ width: '140px', minWidth: 0, maxWidth: '100%' }}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onClick={(e) => e.stopPropagation()}
@@ -74,16 +81,13 @@ function AccordionTitle(props: AccordionTitleProps) {
           onKeyUp={(e) => e.stopPropagation()}
           onBlur={() => finishRename(true)}
         />
-      ) : (
-        <span>{title}</span>
       )}
       <Flex gap="xxs">
         {renameable && onRename && !editing && (
           <ActionButton
-            as="div"
+            ref={renameButtonRef}
             variant="subtle"
-            aria-hidden
-            tabIndex={-1}
+            aria-label={`Rename ${title}`}
             size="xs"
             onClick={(e) => {
               e.preventDefault()
@@ -97,10 +101,8 @@ function AccordionTitle(props: AccordionTitleProps) {
         )}
         {removable && (
           <ActionButton
-            as="div"
             variant="subtle"
-            aria-hidden
-            tabIndex={-1}
+            aria-label={`Delete ${title}`}
             size="xs"
             onClick={(e) => {
               e.preventDefault()
@@ -165,8 +167,9 @@ export function FormItemArray(props: FormItemArrayProps) {
           <AccordionItem
             key={item.id}
             value={`${item.id}`}
-            title={
-              <AccordionTitle
+            title={item.name}
+            actions={
+              <AccordionActions
                 title={item.name}
                 onDelete={handleItemDelete(item)}
                 onRename={onRename ? (name) => onRename(item, name) : undefined}

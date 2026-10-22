@@ -1,3 +1,4 @@
+import type { Config } from '@pandacss/dev'
 import { globalCss, globalFontface } from './global'
 import { tokens } from './theme'
 
@@ -5,6 +6,15 @@ export const pandaBase = {
   preflight: false,
   prefix: 'panda',
   jsxFramework: 'react',
+  // Keep direct generated imports and the public styling subpaths statically extractable.
+  importMap: [
+    'styled-system',
+    {
+      css: '@pivot-ui/react/styling/css',
+      jsx: '@pivot-ui/react/styling/jsx',
+      tokens: '@pivot-ui/react/styling/tokens',
+    },
+  ],
   globalCss,
   globalFontface,
   theme: {
@@ -13,6 +23,11 @@ export const pandaBase = {
       spin: {
         from: { transform: 'rotate(0deg)' },
         to: { transform: 'rotate(360deg)' },
+      },
+      iconPendingPulse: {
+        from: { opacity: 0.4 },
+        '50%': { opacity: 1 },
+        to: { opacity: 0.4 },
       },
       overlayFadeIn: {
         '0%': { opacity: 0 },
@@ -70,4 +85,4 @@ export const pandaBase = {
     },
     extend: {},
   },
-} as const
+} satisfies Config

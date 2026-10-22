@@ -3,7 +3,7 @@ import { pandaBase } from '../panda/base'
 
 export default defineConfig({
   ...pandaBase,
-  include: ['./src/**/*.{ts,tsx}', '../packages/ui/src/**/*.{ts,tsx}'],
+  include: ['./src/**/*.{ts,tsx}', '../packages/interface/src/**/*.{ts,tsx}'],
   exclude: ['**/*.stories.tsx', '**/*.stories.ts'],
   outdir: 'styled-system',
 })

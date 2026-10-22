@@ -4,7 +4,7 @@ import { IconVideo, IconApps, IconCircleCheckFilled, IconDownload } from '@table
 
 import { Flex } from '../Flex'
 
-import { ActionButton, ActionButtonGroup as PrimitiveActionButtonGroup } from './'
+import { ActionButton, ActionButtonGroup as PrimitiveActionButtonGroup, type ActionButtonProps } from './'
 
 /**
  * `<ActionButton />` is an icon-only button. It accepts standard HTML button attributes plus the `size`, `variant` and `fancy` props.
@@ -18,6 +18,7 @@ const meta: Meta<typeof ActionButton> = {
     },
   },
   args: {
+    'aria-label': 'Example action',
     children: <IconApps />,
     variant: 'soft',
     size: 'md',
@@ -90,7 +91,7 @@ export const Sizes: StoryFn<typeof ActionButton> = (args) => {
 /**
  * Use the `async: () => Promise<unknown>` prop when the button triggers asynchronous work. The component then manages the pending and loading states.
  */
-export const WithAsyncFunction: StoryFn = (args) => {
+function AsyncActionButtonExample(args: ActionButtonProps) {
   const [done, setDone] = useState(false)
   async function upload() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
@@ -105,6 +106,8 @@ export const WithAsyncFunction: StoryFn = (args) => {
     </Flex>
   )
 }
+
+export const WithAsyncFunction: StoryFn<typeof ActionButton> = (args) => <AsyncActionButtonExample {...args} />
 
 /**
  * `<ActionButtonGroup />` is a styled wrapper component to group multiple ActionButton components. This component could handle `radius` prop correctly so that you can set multi ActionButton Component in a group.

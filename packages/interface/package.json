@@ -24,7 +24,28 @@
       "import": "./src/values/index.ts",
       "default": "./src/values/index.ts"
     },
-    "./panda.css": "./panda.css"
+    "./theme": {
+      "types": "./src/foundation/theme/index.ts",
+      "import": "./src/foundation/theme/index.ts",
+      "default": "./src/foundation/theme/index.ts"
+    },
+    "./panda.css": "./panda.css",
+    "./styling/css": {
+      "types": "./styled-system/css/index.d.ts",
+      "import": "./styled-system/css/index.js",
+      "default": "./styled-system/css/index.js"
+    },
+    "./styling/jsx": {
+      "types": "./styled-system/jsx/index.d.ts",
+      "import": "./styled-system/jsx/index.js",
+      "default": "./styled-system/jsx/index.js"
+    },
+    "./styling/tokens": {
+      "types": "./styled-system/tokens/index.d.ts",
+      "import": "./styled-system/tokens/index.js",
+      "default": "./styled-system/tokens/index.js"
+    },
+    "./styling/types": "./styled-system/types/index.d.ts"
   },
   "sideEffects": [
     "**/*.css"
@@ -60,5 +81,9 @@
   "peerDependencies": {
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.5.0",
+    "@tabler/icons-react": "^3.49.0"
   }
 }

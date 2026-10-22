@@ -1,18 +1,18 @@
 # Pivot UI Documentation
 
-Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. Existing components live in `@pivot-ui/editor` and `@pivot-ui/gui`. The active refactor adds the unified `@pivot-ui/react` source package; B01 provides contracts and a mock playground before component migration.
+Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. The unified `@pivot-ui/react` source package provides property contracts and visual foundations, including theme, buttons, feedback, typography and icons. Unmigrated components remain in `@pivot-ui/editor` and `@pivot-ui/gui`; migrated legacy entries forward to the unified implementation.
 
 These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0`, `@pivot-ui/gui` `1.2.1` and `@pivot-ui/react` `0.1.0`.
 
 ## Guides
 
-| Document                                           | Purpose                                                       |
-| -------------------------------------------------- | ------------------------------------------------------------- |
-| [Integrating Pivot UI](./CONSUMING.md)             | Package integration, Panda CSS setup, theming and first usage |
-| [Development](./DEVELOPMENT.md)                    | Repository setup, commands, architecture and verification     |
-| [Editor package](../packages/ui/README.md)         | Component package reference                                   |
-| [GUI package](../packages/gui/README.md)           | Controlled React form items and their Storybook examples      |
-| [Unified package](../packages/interface/README.md) | Property contracts, edit sessions and the mock playground     |
+| Document                                           | Purpose                                                        |
+| -------------------------------------------------- | -------------------------------------------------------------- |
+| [Integrating Pivot UI](./CONSUMING.md)             | Package integration, Panda CSS setup, theming and first usage  |
+| [Development](./DEVELOPMENT.md)                    | Repository setup, commands, architecture and verification      |
+| [Editor package](../packages/ui/README.md)         | Component package reference                                    |
+| [GUI package](../packages/gui/README.md)           | Controlled React form items and their Storybook examples       |
+| [Unified package](../packages/interface/README.md) | Visual foundations, property contracts and the mock playground |
 
 ## Active refactor
 

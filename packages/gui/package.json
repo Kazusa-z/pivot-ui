@@ -9,14 +9,14 @@
   "types": "src/index.ts",
   "scripts": {
     "dev": "storybook dev -p 6008",
-    "predev": "panda codegen",
+    "predev": "pnpm --filter @pivot-ui/react panda && pnpm --filter @pivot-ui/editor panda && panda codegen",
     "storybook": "storybook dev -p 6008",
-    "prestorybook": "panda codegen",
+    "prestorybook": "pnpm --filter @pivot-ui/react panda && pnpm --filter @pivot-ui/editor panda && panda codegen",
     "build-storybook": "storybook build",
-    "prebuild-storybook": "panda codegen",
+    "prebuild-storybook": "pnpm --filter @pivot-ui/react panda && pnpm --filter @pivot-ui/editor panda && panda codegen",
     "panda": "panda codegen",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.stories.json && tsc -p tsconfig.tooling.json",
-    "pretypecheck": "panda codegen",
+    "pretypecheck": "pnpm --filter @pivot-ui/react panda && pnpm --filter @pivot-ui/editor panda && panda codegen",
     "clean": "rimraf es lib dist types .cache storybook-static styled-system node_modules/.cache node_modules/.vite node_modules/.vite-temp"
   },
   "sideEffects": false,
@@ -44,6 +44,7 @@
     "storybook": "^10.6.3"
   },
   "dependencies": {
+    "@pivot-ui/react": "workspace:*",
     "@pivot-ui/editor": "workspace:*",
     "@radix-ui/react-use-controllable-state": "^1.3.0",
     "@tabler/icons-react": "^3.49.0"

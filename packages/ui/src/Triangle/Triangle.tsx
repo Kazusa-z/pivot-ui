@@ -1,32 +1,35 @@
-import { styled } from '../../styled-system/jsx'
+import { forwardRef } from 'react'
+import { Arrow, type ArrowDirection, type ArrowProps } from '@pivot-ui/react'
 
-const StyledTriangle = styled('div', {
-  base: {
-    position: 'relative',
-    width: 0,
-    height: 0,
-    borderLeft: '6px solid transparent',
-    borderRight: '6px solid transparent',
-    borderRadius: '2px',
-    borderTop: '6px solid CurrentColor',
-    transformOrigin: 'center',
-  },
-  variants: {
-    animate: { true: { transition: 'transform .2s' } },
-    size: {
-      xs: { borderLeftWidth: '4px', borderRightWidth: '4px', borderTopWidth: '4px' },
-    },
-    direction: {
-      rightbottom: { transform: 'rotate(-45deg)' },
-      leftbottom: { transform: 'rotate(45deg)' },
-      righttop: { transform: 'rotate(135deg)' },
-      lefttop: { transform: 'rotate(-135deg)' },
-      right: { transform: 'rotate(90deg)' },
-      left: { transform: 'rotate(-90deg)' },
-      top: { transform: 'rotate(180deg)' },
-      bottom: { transform: 'rotate(0deg)' },
-    },
-  },
+const directions = {
+  top: 'up',
+  bottom: 'down',
+  left: 'left',
+  right: 'right',
+  lefttop: 'up-left',
+  righttop: 'up-right',
+  leftbottom: 'down-left',
+  rightbottom: 'down-right',
+} satisfies Record<string, ArrowDirection>
+
+export interface TriangleProps extends Omit<ArrowProps, 'direction'> {
+  direction?: keyof typeof directions
+}
+
+/** @deprecated Use Arrow from @pivot-ui/react. */
+export const Triangle = forwardRef<SVGSVGElement, TriangleProps>(function Triangle(
+  { direction = 'bottom', size, ...props },
+  ref
+) {
+  return (
+    <Arrow
+      viewBox="0 3 12 6"
+      width={size === 'xs' ? 8 : 12}
+      height={size === 'xs' ? 4 : 6}
+      size={size}
+      {...props}
+      direction={directions[direction]}
+      ref={ref}
+    />
+  )
 })
-
-export { StyledTriangle as Triangle }

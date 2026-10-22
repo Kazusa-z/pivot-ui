@@ -9,10 +9,14 @@
     "build": "vite build",
     "analyze": "vite build --mode analyze",
     "clean": "rimraf dist .cache tsconfig.node.tsbuildinfo node_modules/.cache node_modules/.vite node_modules/.vite-temp",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json && tsc -p tsconfig.tooling.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json && tsc -p tsconfig.tooling.json",
+    "predev": "pnpm --filter @pivot-ui/react panda",
+    "prebuild": "pnpm --filter @pivot-ui/react panda",
+    "preanalyze": "pnpm --filter @pivot-ui/react panda",
+    "pretypecheck": "pnpm --filter @pivot-ui/react panda"
   },
   "dependencies": {
-    "@pivot-ui/editor": "workspace:*",
+    "@pivot-ui/react": "workspace:*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

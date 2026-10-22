@@ -279,3 +279,56 @@ Multiple.args = {
 
   maxDisplayText: '已选择{count}项',
 }
+
+function MultipleTagRemovalExample() {
+  const [value, setValue] = React.useState(['apple', 'banana', 'blueberry'])
+  const [lastRequest, setLastRequest] = React.useState<string[] | null>(null)
+  const [rejectChanges, setRejectChanges] = React.useState(false)
+  const [disabled, setDisabled] = React.useState(false)
+  return (
+    <Flex direction="column" gap="sm" style={{ width: 'min(440px, 100%)' }}>
+      <p>Tab 到标签的移除按钮，按 Enter 或 Space 删除。Banana 被禁用；父级拒绝更新时，标签必须保留。</p>
+      <Flex gap="sm">
+        <label>
+          <input type="checkbox" checked={rejectChanges} onChange={(event) => setRejectChanges(event.target.checked)} />{' '}
+          Reject changes
+        </label>
+        <label>
+          <input type="checkbox" checked={disabled} onChange={(event) => setDisabled(event.target.checked)} /> Disabled
+        </label>
+        <Button
+          onClick={() => {
+            setValue(['apple', 'banana', 'blueberry'])
+            setLastRequest(null)
+            setRejectChanges(false)
+            setDisabled(false)
+          }}>
+          Reset
+        </Button>
+      </Flex>
+      <Select
+        multiple
+        searchable
+        value={value}
+        disabled={disabled}
+        placeholder="Choose fruits"
+        onValueChange={(nextValue) => {
+          setLastRequest(nextValue)
+          if (!rejectChanges) setValue(nextValue)
+        }}>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana" disabled>
+          Banana
+        </SelectItem>
+        <SelectItem value="blueberry">Blueberry</SelectItem>
+        <SelectItem value="grapes">Grapes</SelectItem>
+        <SelectItem value="pineapple">Pineapple</SelectItem>
+      </Select>
+      <pre style={{ whiteSpace: 'pre-wrap' }}>
+        {JSON.stringify({ value, lastRequest, rejectChanges, disabled }, null, 2)}
+      </pre>
+    </Flex>
+  )
+}
+
+export const MultipleTagRemoval: StoryFn<ComboboxProps> = () => <MultipleTagRemovalExample />

@@ -11,7 +11,7 @@
     "dev:demo": "pnpm --filter @pivot-ui/demo dev",
     "clean": "pnpm -r run clean && rimraf .cache node_modules/.cache node_modules/.vite node_modules/.vite-temp",
     "clear": "rimraf node_modules packages/*/node_modules app/node_modules",
-    "typecheck": "pnpm -r --if-present typecheck",
+    "typecheck": "pnpm -r --workspace-concurrency=1 --if-present typecheck",
     "build:storybook": "pnpm --filter @pivot-ui/editor build-storybook && pnpm --filter @pivot-ui/gui build-storybook && pnpm --filter @pivot-ui/react build-storybook",
     "verify:quick": "pnpm exec prettier --check . && pnpm typecheck",
     "verify": "pnpm run verify:quick && pnpm build:demo && pnpm build:storybook",

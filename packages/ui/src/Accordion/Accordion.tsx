@@ -53,7 +53,23 @@ const StyledChevron = styled(IconChevronRight, {
 })
 
 const StyledHeader = styled(AccordionPrimitive.Header, {
-  base: { all: 'unset', display: 'block' },
+  base: { all: 'unset', display: 'block', minWidth: 0, flex: 1 },
+})
+
+const StyledHeaderRow = styled('div', {
+  base: { display: 'flex', alignItems: 'center' },
+})
+
+const StyledActions = styled('div', {
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    flexShrink: 0,
+    paddingRight: '8px',
+    maxWidth: '65%',
+    backgroundColor: 'var(--colors-grayA2)',
+  },
 })
 
 const StyledTrigger = styled(AccordionPrimitive.Trigger, {
@@ -145,19 +161,24 @@ export const Accordion = function Accordion(props: AccordionProps) {
 export type AccordionItemProps = Omit<PrimitiveItemProps, 'title'> & {
   title: ReactNode
   arrow?: boolean
+  /** Interactive header actions must be siblings of the disclosure button. */
+  actions?: ReactNode
 }
 
 export function AccordionItem(props: AccordionItemProps) {
   const { size } = React.useContext(AccordionContext)
-  const { children, title, arrow = true, ...rest } = props
+  const { children, title, arrow = true, actions, ...rest } = props
   return (
     <StyledItem {...rest}>
-      <StyledHeader>
-        <StyledTrigger size={size}>
-          <span>{title}</span>
-          {arrow && <StyledChevron data-accordion-chevron aria-hidden />}
-        </StyledTrigger>
-      </StyledHeader>
+      <StyledHeaderRow>
+        <StyledHeader>
+          <StyledTrigger size={size}>
+            <span>{title}</span>
+            {arrow && <StyledChevron data-accordion-chevron aria-hidden />}
+          </StyledTrigger>
+        </StyledHeader>
+        {actions && <StyledActions>{actions}</StyledActions>}
+      </StyledHeaderRow>
       <StyledContent>
         <StyledContentInner size={size}>{children}</StyledContentInner>
       </StyledContent>

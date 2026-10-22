@@ -1,9 +1,9 @@
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { IconCheck, IconChevronDown, IconSearch } from '@tabler/icons-react'
-import React, { createContext, forwardRef, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Tag } from '@pivot-ui/react'
 
-import { Badge } from '../Badge'
 import { Checkbox } from '../Checkbox'
 import { styled } from '../../styled-system/jsx'
 import { Flex } from '../Flex'
@@ -12,7 +12,7 @@ import { Text } from '../Typography'
 
 const SELECT_ALL_VALUE = '$$SELECT_ALL$$'
 
-const StyledComboboxTrigger = styled('button', {
+const StyledComboboxControl = styled('div', {
   base: {
     all: 'unset',
     position: 'relative',
@@ -26,10 +26,7 @@ const StyledComboboxTrigger = styled('button', {
     border: '1px solid transparent',
     transition: 'border-color .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease',
     cursor: 'pointer',
-    '&:focus-visible': {
-      outline: '2px solid var(--colors-focusRing)',
-      outlineOffset: '1px',
-    },
+    '&[data-disabled]': { opacity: 0.5, cursor: 'not-allowed' },
   },
   variants: {
     size: {
@@ -79,6 +76,21 @@ const StyledComboboxTrigger = styled('button', {
   defaultVariants: {
     size: 'sm',
     variant: 'soft',
+  },
+})
+
+const StyledComboboxTrigger = styled('button', {
+  base: {
+    all: 'unset',
+    position: 'absolute',
+    inset: 0,
+    width: '100%',
+    height: '100%',
+    boxSizing: 'border-box',
+    borderRadius: 'inherit',
+    cursor: 'pointer',
+    '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '1px' },
+    '&:disabled': { cursor: 'not-allowed' },
   },
 })
 
@@ -341,6 +353,8 @@ const StyledComboboxSlot = styled('div', {
 
 const StyledComboboxTriggerContent = styled('div', {
   base: {
+    position: 'relative',
+    pointerEvents: 'none',
     display: 'flex',
     alignItems: 'center',
     flex: 1,
@@ -356,15 +370,21 @@ const StyledComboboxValueNode = styled(Flex, {
     minWidth: 0,
     height: '100%',
     alignItems: 'center',
-    overflow: 'hidden',
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': { display: 'none' },
+    '& button': { pointerEvents: 'auto' },
     '& > *': {
       minWidth: 0,
+      flexShrink: 0,
     },
   },
 })
 
 interface ComboboxContextProps {
   autoClose: boolean
+  disabled: boolean
   placeholder?: string
   valueRenderer?: (value: string, location?: 'item' | 'trigger') => React.ReactNode
 
@@ -378,6 +398,7 @@ interface ComboboxContextProps {
   setFocusedIndex?: (val: number) => void
 
   close?: () => void
+  focusTrigger: () => void
 
   searchValue?: string
   setSearchValue?: (val: string) => void
@@ -392,6 +413,8 @@ interface ComboboxContextProps {
 
 const ComboboxContext = createContext<ComboboxContextProps>({
   autoClose: true,
+  disabled: false,
+  focusTrigger: () => {},
   value: [],
   open: false,
   setOpen: () => {},
@@ -417,7 +440,8 @@ export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProp
   function ComboboxTrigger(props, forwardedRef) {
     const { value, onValueNodeChange, placeholder, maxDisplayCount, maxDisplayText, noneText } =
       useContext(ComboboxContext)
-    const { valueRenderer, startSlot, size, variant, ...rest } = props
+    const { valueRenderer, startSlot, size, variant, disabled, ...rest } = props
+    const valueDescriptionId = React.useId()
 
     const valueArray = Array.isArray(value) ? value : value ? [value] : []
 
@@ -427,10 +451,19 @@ export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProp
     const summaryText = maxDisplayText.replace('{count}', valueArray.length.toString())
 
     return (
-      <StyledComboboxTrigger type="button" {...rest} ref={forwardedRef} size={size} variant={variant}>
+      <StyledComboboxControl size={size} variant={variant} data-disabled={disabled ? '' : undefined}>
+        <StyledComboboxTrigger
+          type="button"
+          aria-label={placeholder || 'Select options'}
+          {...rest}
+          aria-describedby={[rest['aria-describedby'], valueDescriptionId].filter(Boolean).join(' ')}
+          disabled={disabled}
+          ref={forwardedRef}>
+          <StyledChevronDown aria-hidden="true" size={size} />
+        </StyledComboboxTrigger>
         <StyledComboboxTriggerContent>
           {startSlot && <StyledComboboxSlot size={size}>{startSlot}</StyledComboboxSlot>}
-          <StyledComboboxValueNode spacing="xxs" wrap={false} ref={onValueNodeChange}>
+          <StyledComboboxValueNode id={valueDescriptionId} spacing="xxs" wrap={false} ref={onValueNodeChange}>
             {shouldShowSummary && (
               <Text size="sm" css={{ padding: '0 6px' }}>
                 {summaryText}
@@ -444,8 +477,7 @@ export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProp
             {valueArray.length === 0 && !noneText && <StyledPlaceholder>{placeholder}</StyledPlaceholder>}
           </StyledComboboxValueNode>
         </StyledComboboxTriggerContent>
-        <StyledChevronDown size={size} />
-      </StyledComboboxTrigger>
+      </StyledComboboxControl>
     )
   }
 )
@@ -506,7 +538,10 @@ export function ComboboxItem(props: ComboboxItemProps) {
     searchValue,
     autoClose,
     options,
+    disabled: controlDisabled,
+    focusTrigger,
   } = useContext(ComboboxContext)
+  const isDisabled = disabled || controlDisabled
   const selectedValueArray = Array.isArray(selectedValue) ? selectedValue : selectedValue ? [selectedValue] : []
   const isSelected = selectedValue.indexOf(value) !== -1
   const searchableText = textValue ?? label ?? (typeof children === 'string' ? children : value)
@@ -517,27 +552,22 @@ export function ComboboxItem(props: ComboboxItemProps) {
   const hasPrevSelected = !!prevValue && selectedValueArray.includes(prevValue)
   const hasNextSelected = !!nextValue && selectedValueArray.includes(nextValue)
 
-  const preventDefault = useCallback((e) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }, [])
-
   const handleRemove = () => {
-    if (selectValue) {
-      selectValue(value)
-    }
+    if (isDisabled) return
+    selectValue?.(value)
+    focusTrigger()
   }
 
   function handleSelect(e) {
     onClick?.(e)
-    if (disabled || e.defaultPrevented) return
+    if (isDisabled || e.defaultPrevented) return
     e.preventDefault()
     e.stopPropagation()
     selectValue && selectValue(value)
     autoClose && close && close()
   }
 
-  const shouldCreateBadge =
+  const shouldCreateTag =
     isSelected && valueNode && (maxDisplayCount === 0 || selectedValueArray.length <= maxDisplayCount)
 
   return (
@@ -547,13 +577,13 @@ export function ComboboxItem(props: ComboboxItemProps) {
           type="button"
           role="option"
           {...rest}
-          disabled={disabled}
-          data-disabled={disabled ? '' : undefined}
+          disabled={isDisabled}
+          data-disabled={isDisabled ? '' : undefined}
           data-option-index={optionIndex}
           data-text-value={searchableText}
           aria-selected={isSelected}
-          aria-disabled={disabled || undefined}
-          tabIndex={!disabled && focusedIndex === optionIndex ? 0 : -1}
+          aria-disabled={isDisabled || undefined}
+          tabIndex={!isDisabled && focusedIndex === optionIndex ? 0 : -1}
           selected={isSelected}
           selectedStart={isSelected && !hasPrevSelected}
           selectedEnd={isSelected && !hasNextSelected}
@@ -567,11 +597,11 @@ export function ComboboxItem(props: ComboboxItemProps) {
           {isSelected && <IconCheck size="12px" />}
         </StyledComboBoxItem>
       )}
-      {shouldCreateBadge
+      {shouldCreateTag
         ? createPortal(
-            <Badge onClick={preventDefault} closable onClose={handleRemove}>
+            <Tag disabled={isDisabled} onRemove={handleRemove} removeLabel={`Remove ${searchableText}`}>
               {valueRenderer ? valueRenderer(value, 'trigger') : children}
-            </Badge>,
+            </Tag>,
             valueNode
           )
         : null}
@@ -580,6 +610,7 @@ export function ComboboxItem(props: ComboboxItemProps) {
 }
 
 export interface ComboboxProps {
+  disabled?: boolean
   /**
    * indicates if the select is multiple
    */
@@ -671,8 +702,10 @@ export function Combobox(props: ComboboxProps) {
     variant = 'soft',
     showSelectAll = false,
     selectAllText = 'Select All',
+    disabled = false,
   } = props
   const [open, setOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   const openingFocusRef = useRef<'first' | 'last' | undefined>(undefined)
@@ -710,7 +743,7 @@ export function Combobox(props: ComboboxProps) {
   const allSelected = enabledOptions.length > 0 && enabledOptions.every((option) => value.includes(option))
 
   const selectValue = (val) => {
-    if (!value) return
+    if (!value || disabled) return
     if (val === SELECT_ALL_VALUE) {
       // If all options are selected, unselect all
       if (allSelected) {
@@ -730,6 +763,10 @@ export function Combobox(props: ComboboxProps) {
   function close() {
     setOpen(false)
   }
+
+  useEffect(() => {
+    if (disabled) setOpen(false)
+  }, [disabled])
 
   function getEnabledItems() {
     return Array.from(contentRef.current?.querySelectorAll<HTMLButtonElement>('[role="option"]:not(:disabled)') ?? [])
@@ -824,6 +861,8 @@ export function Combobox(props: ComboboxProps) {
         valueNode,
         onValueNodeChange: setValueNode,
         autoClose,
+        disabled,
+        focusTrigger: () => triggerRef.current?.focus(),
         placeholder,
         maxDisplayCount,
         maxDisplayText,
@@ -831,7 +870,8 @@ export function Combobox(props: ComboboxProps) {
         options,
       }}>
       <Popover
-        open={open}
+        open={open && !disabled}
+        disabled={disabled}
         compact
         sideOffset={4}
         forceRender
@@ -843,12 +883,15 @@ export function Combobox(props: ComboboxProps) {
         }}
         trigger={
           <ComboboxTrigger
+            ref={triggerRef}
+            disabled={disabled}
             placeholder={placeholder}
             startSlot={props.startSlot}
             size={size}
             variant={variant}
             aria-haspopup="listbox"
             onKeyDown={(event) => {
+              if (disabled) return
               if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
                 event.preventDefault()
                 openingFocusRef.current = event.key === 'ArrowUp' ? 'last' : 'first'
@@ -876,7 +919,7 @@ export function Combobox(props: ComboboxProps) {
                     <Checkbox
                       id={selectAllId}
                       checked={allSelected}
-                      disabled={enabledOptions.length === 0}
+                      disabled={disabled || enabledOptions.length === 0}
                       onCheckedChange={() => {
                         selectValue(SELECT_ALL_VALUE)
                       }}

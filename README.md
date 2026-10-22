@@ -13,12 +13,12 @@ Pivot UI is a React component library for building 3D editor interfaces, inspect
 
 ## Packages
 
-| Package                                             | Role                                                                  |
-| --------------------------------------------------- | --------------------------------------------------------------------- |
-| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views          |
-| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                      |
-| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package under refactor; B01 property contracts and playground |
-| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                 |
+| Package                                             | Role                                                                       |
+| --------------------------------------------------- | -------------------------------------------------------------------------- |
+| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views               |
+| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                           |
+| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package: property contracts, theme, buttons and visual foundations |
+| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                      |
 
 ## Getting started
 
@@ -40,7 +40,7 @@ pnpm dev
 # GUI component explorer
 pnpm dev:gui
 
-# Unified package contract playground
+# Unified package foundations and contract playground
 pnpm dev:interface
 
 # Demo application

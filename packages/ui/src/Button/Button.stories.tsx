@@ -1,5 +1,5 @@
 import { fn } from 'storybook/test'
-import { Button } from '.'
+import { Button, type ButtonProps } from '.'
 import { Meta, StoryFn, StoryObj } from '@storybook/react'
 import { Flex } from '../Flex'
 import { IconCircleCheckFilled, IconComponents, IconTrash } from '@tabler/icons-react'
@@ -117,7 +117,7 @@ export const WithSlot: StoryFn = (args) => {
 /**
  * Use the `async: () => Promise<unknown>` prop when the button triggers asynchronous work. The component then manages the pending and loading states.
  */
-export const WithAsyncFunction: StoryFn = (args) => {
+function AsyncButtonExample(args: ButtonProps) {
   const [done, setDone] = useState(false)
   async function upload() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
@@ -129,3 +129,5 @@ export const WithAsyncFunction: StoryFn = (args) => {
     </Button>
   )
 }
+
+export const WithAsyncFunction: StoryFn<typeof Button> = (args) => <AsyncButtonExample {...args} />

@@ -1,25 +1,17 @@
-import { useLayoutEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { Decorator, Preview } from '@storybook/react'
+import {
+  createBrowserThemeAppearance,
+  createThemeStore,
+  ThemeProvider,
+} from '../packages/interface/src/foundation/theme'
 
 function ThemePreview({ mode, children }: { mode: 'dark' | 'light'; children: ReactNode }) {
-  useLayoutEffect(() => {
-    const html = document.documentElement
-    const wasLight = html.classList.contains('light-theme')
-    const wasDark = html.classList.contains('dark-theme')
-    const previousColorScheme = html.style.colorScheme
-
-    html.classList.toggle('light-theme', mode === 'light')
-    html.classList.toggle('dark-theme', mode === 'dark')
-    html.style.colorScheme = mode
-
-    return () => {
-      html.classList.toggle('light-theme', wasLight)
-      html.classList.toggle('dark-theme', wasDark)
-      html.style.colorScheme = previousColorScheme
-    }
-  }, [mode])
-
-  return children
+  const [store] = useState(() =>
+    createThemeStore({ initialPreference: mode, appearance: createBrowserThemeAppearance() })
+  )
+  useEffect(() => store.setPreference(mode), [mode, store])
+  return <ThemeProvider store={store}>{children}</ThemeProvider>
 }
 
 const withTheme: Decorator = (Story, context) => (

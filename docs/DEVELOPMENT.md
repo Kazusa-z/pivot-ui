@@ -23,7 +23,7 @@ panda/               shared Panda configuration, tokens and reset
 docs/                integration, development and archive documentation
 ```
 
-Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. The new `@pivot-ui/react` package starts with contracts and a mock playground; existing components remain in `ui` and `gui` until their migration batch.
+Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts and, from B02, theme, buttons, feedback, typography and icons. Migrated `ui` entries forward to the unified implementation; other components remain in `ui` and `gui` until their migration batch.
 
 ## Commands
 
@@ -31,7 +31,7 @@ Library packages are source packages. They are consumed through `workspace:*` or
 | ---------------------- | ---------------------------------------------------------------- |
 | `pnpm dev`             | Editor Storybook                                                 |
 | `pnpm dev:gui`         | GUI Storybook                                                    |
-| `pnpm dev:interface`   | Unified package contract Storybook                               |
+| `pnpm dev:interface`   | Unified package foundations and contract Storybook               |
 | `pnpm dev:demo`        | Demo application                                                 |
 | `pnpm typecheck`       | Type-check all packages and the app                              |
 | `pnpm build:demo`      | Build the demo application                                       |
@@ -43,6 +43,8 @@ Library packages are source packages. They are consumed through `workspace:*` or
 The Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package Storybook runs on `6009`.
 
 All explorers share the **Theme** toolbar in `storybook/theme.tsx`. It switches the actual document theme, including portaled menus and dialogs. The editor's **Foundations / Design System / Overview** story compares light and dark surfaces and documents colors, sizes, spacing, typography, radii and shadows using the current Panda tokens.
+
+The toolbar uses the unified theme store and Provider. It supplies its own appearance adapter without browser persistence, so changing a story does not overwrite the application's theme preference. Theme examples use scoped appearance adapters to demonstrate system changes and shared consumers without competing for the document theme.
 
 All explorers share `storybook/vite.ts`. Their prebundled preview and docs runtimes use a 1200 kB chunk warning budget; the demo keeps Vite's default budget. Only the irrelevant `use client` module-directive warnings are filtered in these browser-only explorers. Other build warnings remain enabled.
 
@@ -79,6 +81,8 @@ The generator uses `esbuild`, declared as a workspace dev dependency.
 ## Styling conventions
 
 - Import runtime styling directly from `styled-system/jsx` and `styled-system/css` inside package source. A local `styled` re-export breaks Panda's static extraction.
+- Consumers use `@pivot-ui/react/styling/css`, `/styling/jsx`, `/styling/tokens` and the type-only `/styling/types`. These resolve directly to generated modules; `pandaBase.importMap` registers both the public subpaths and local generated paths.
+- Scan the unified package's `src` directory in all consumer configs. The demo and transitional packages generate the required styled-system modules in their pre-scripts, including when started individually after a clean checkout.
 - Do not use CSS property names as variant names. Use `orientation`, `spacing` and `justify` on styled layout wrappers instead of `direction`, `gap` and `justifyContent`.
 - Do not pass SVG `d` through a Panda `styled` wrapper; `d` is consumed as the CSS `display` shorthand. Use a `css()` class on a plain `<path>`.
 - Empty pseudo-element content must be written as `content: '""'`.
@@ -98,6 +102,8 @@ pnpm dedupe --check
 `pnpm verify` runs Prettier, TypeScript, the demo build and all three Storybook builds. The unified package checks production sources, stories/support, tooling and a pure ES2022 project for contracts/values without React, DOM or Node ambient types.
 
 Git and Prettier use LF line endings on every platform. Refactor verification scripts and outputs belong in the operating system's temporary directory and are not committed as standalone tests.
+
+Each refactor batch finishes with its own verified Git commit and a push to the remote branch. Update the batch ledger and clean temporary project files before committing; confirm the remote commit before starting the next batch.
 
 ## Documentation conventions
 

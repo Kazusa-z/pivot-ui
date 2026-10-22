@@ -4,7 +4,7 @@
 
 架构依据：[已采纳方案](D:/QtProject/editor-ui-custom/docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md)。批次范围和退出条件：[批次计划](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/BATCHES.md)。
 
-**B01 契约与统一包骨架已验收**。下一批为 B02 主题与视觉基础，B02–B11 尚未开始实施。实现进度、验证结果、旧入口退出和 Git 提交分别记录。
+**B02 主题与视觉基础已验收**。继承基线、B00、B01 已提交并推送至 origin/feat-blender-5-2-refactor；B03–B11 尚未开始。本批 Git 交付见第 9 节。实现进度、验证结果、旧入口退出和 Git 状态分别记录。
 
 ## 1 分支与继承基线
 
@@ -35,128 +35,135 @@
 
 ## 2 批次进度
 
-| 批次 | 名称             | 状态   | 前置          | 验证/交付记录            | 提交              |
-| ---- | ---------------- | ------ | ------------- | ------------------------ | ----------------- |
-| B00  | 启动与基线       | 已验收 | 无            | V00-01–V00-04 通过       | f2f2c98           |
-| B01  | 契约与统一包骨架 | 已验收 | B00           | V01-01–V01-08；见第 8 节 | 本提交；见第 9 节 |
-| B02  | 主题与视觉基础   | 待开始 | B01           | —                        | —                 |
-| B03  | 布局与字段结构   | 待开始 | B02           | —                        | —                 |
-| B04  | 浮层与菜单       | 待开始 | B02、B03      | —                        | —                 |
-| B05  | 文本与选择       | 待开始 | B03、B04      | —                        | —                 |
-| B06  | 数值与几何模板   | 待开始 | B05           | —                        | —                 |
-| B07  | 集合与拖放       | 待开始 | B03、B04、B05 | —                        | —                 |
-| B08  | 颜色与渐变模板   | 待开始 | B04、B06      | —                        | —                 |
-| B09  | 曲线与数值分布   | 待开始 | B04、B06      | —                        | —                 |
-| B10  | 资源引用与选择   | 待开始 | B04、B05、B07 | —                        | —                 |
-| B11  | 属性联调与收口   | 待开始 | B03–B10       | —                        | —                 |
+| 批次 | 名称             | 状态   | 前置          | 验证/交付记录             | 提交              |
+| ---- | ---------------- | ------ | ------------- | ------------------------- | ----------------- |
+| B00  | 启动与基线       | 已验收 | 无            | V00-01–V00-04 通过        | f2f2c98           |
+| B01  | 契约与统一包骨架 | 已验收 | B00           | V01-01–V01-08；见第 8 节  | bb3847e           |
+| B02  | 主题与视觉基础   | 已验收 | B01           | V02-01–V02-07；见第 10 节 | 本提交；见第 9 节 |
+| B03  | 布局与字段结构   | 待开始 | B02           | —                         | —                 |
+| B04  | 浮层与菜单       | 待开始 | B02、B03      | —                         | —                 |
+| B05  | 文本与选择       | 待开始 | B03、B04      | —                         | —                 |
+| B06  | 数值与几何模板   | 待开始 | B05           | —                         | —                 |
+| B07  | 集合与拖放       | 待开始 | B03、B04、B05 | —                         | —                 |
+| B08  | 颜色与渐变模板   | 待开始 | B04、B06      | —                         | —                 |
+| B09  | 曲线与数值分布   | 待开始 | B04、B06      | —                         | —                 |
+| B10  | 资源引用与选择   | 待开始 | B04、B05、B07 | —                         | —                 |
+| B11  | 属性联调与收口   | 待开始 | B03–B10       | —                         | —                 |
 
 ## 3 组件迁移台账
 
 每一行与方案保持同一编号、名称和动作。详细目标入口与理由以方案对应行为准；实现批次结束时补充实际新入口和验证记录。只创建了新文件不能标为已验证；仍有旧消费者时单独登记退出情况。
 
-| 编号 | 当前公共模块/名称                                                                                                                                            | 计划动作                   | 主批次 | 实现进度 | 旧入口退出       | 证据/实际新入口 |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- | ------ | -------- | ---------------- | --------------- |
-| U01  | Button：`Button`                                                                                                                                             | 保留                       | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U02  | ActionButton：`ActionButton`、`ActionButtonGroup`                                                                                                            | 合并内部实现，保留入口     | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U03  | Input：`Input`                                                                                                                                               | 保留                       | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| U04  | Textarea：`Textarea`                                                                                                                                         | 保留                       | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| U05  | InputNumber：`InputNumber`                                                                                                                                   | 拆分内部行为，保留完整控件 | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| U06  | EditableText：`EditableText`                                                                                                                                 | 重写                       | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| U07  | Checkbox：`Checkbox`                                                                                                                                         | 保留并修订状态类型         | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| U08  | Select：`Select`、`SelectItem`                                                                                                                               | 拆分                       | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| U09  | ToggleGroup：`ToggleGroup`、`ToggleGroupItem`                                                                                                                | 保留                       | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| U10  | SegmentControl：`SegmentControl`、`SegmentControlItem`                                                                                                       | 保留                       | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| U11  | Slider：`Slider`                                                                                                                                             | 局部重写                   | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| U12  | CascadeSlider：`CascadeSlider`                                                                                                                               | 保留能力，改名并拆模型     | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| U13  | Badge：`Badge`                                                                                                                                               | 拆分                       | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U14  | Callout：`Callout`                                                                                                                                           | 保留                       | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U15  | Progress：`Progress`                                                                                                                                         | 局部重写                   | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U16  | Spin：`Spin`                                                                                                                                                 | 保留                       | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U17  | Typography：`Text`、`Bold`、`Link`、`Title`                                                                                                                  | 保留，收敛 API             | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U18  | Kbd：`Kbd`、`KbdGroup`                                                                                                                                       | 保留，拆解析与展示         | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U19  | Icons：19 个公开图标，见 5.8                                                                                                                                 | 合并去重并保留             | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U20  | Triangle：`Triangle`                                                                                                                                         | 合并                       | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| U21  | Flex：`Flex`                                                                                                                                                 | 保留，收敛 API             | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| U22  | Separator：`Separator`                                                                                                                                       | 拆分组合                   | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| U23  | ScrollArea：`ScrollArea`                                                                                                                                     | 拆分属性入口               | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| U24  | Menu：`Menubar`、`MenubarItem`、`DropdownMenu`、`ContextMenu`、`MenuItem`、`SubMenuItem`、`MenuSeparator`、`MenuCheckboxItem`、`MenuRadioGroup`、`MenuGroup` | 拆分                       | B04    | 未迁移   | 未退出；最迟 B11 | —               |
-| U25  | Popover：`Popover`、`PopoverCloseTrigger`                                                                                                                    | 拆分 API，重整生命周期     | B04    | 未迁移   | 未退出；最迟 B11 | —               |
-| U26  | Tooltip：`Tooltip`                                                                                                                                           | 局部重写                   | B04    | 未迁移   | 未退出；最迟 B11 | —               |
-| U27  | HoverCard：`HoverCard`                                                                                                                                       | 保留并拆属性层级           | B04    | 未迁移   | 未退出；最迟 B11 | —               |
-| U28  | Dialog：`Dialog`、`DialogTrigger`、`DialogCloseTrigger`                                                                                                      | 拆分                       | B04    | 未迁移   | 未退出；最迟 B11 | —               |
-| U29  | AlertDialog：`AlertDialog`、`showAlert`                                                                                                                      | 保留确认语义，重写服务入口 | B04    | 未迁移   | 未退出；最迟 B11 | —               |
-| U30  | Toast：`Toaster`、`toast`                                                                                                                                    | 保留并隔离适配             | B04    | 未迁移   | 未退出；最迟 B11 | —               |
-| U31  | Accordion：`Accordion`、`AccordionItem`                                                                                                                      | 保留，合并视觉实现         | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| U32  | Collapsible：`Collapsible`                                                                                                                                   | 保留并整理组合             | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| U33  | Breadcrumbs：`Breadcrumbs`、`BreadcrumbItem`                                                                                                                 | 重写语义结构               | B07    | 未迁移   | 未退出；最迟 B11 | —               |
-| U34  | Pagination：`Pagination`                                                                                                                                     | 保留，拆纯算法             | B07    | 未迁移   | 未退出；最迟 B11 | —               |
-| U35  | Table：`Table`                                                                                                                                               | 拆分并重写数据适配         | B07    | 未迁移   | 未退出；最迟 B11 | —               |
-| U36  | Tree：`TreeItemRoot`、`TreeItemContent`、`TreeItemIcon`、`TreeItemPreview`、`TreeGroup`、`DragPreview`、`InsertionIndicator`                                 | 重写组件族                 | B07    | 未迁移   | 未退出；最迟 B11 | —               |
-| U37  | ResizablePanel：`ResizablePanel`                                                                                                                             | 重写并改名                 | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| U38  | ColorPicker：`ColorPicker`                                                                                                                                   | 拆分                       | B08    | 未迁移   | 未退出；最迟 B11 | —               |
-| U39  | ColorSlider：`GradientSlider`、`ParticleSlider`、`HDRSlider`                                                                                                 | 合并颜色模型，拆清职责     | B08    | 未迁移   | 未退出；最迟 B11 | —               |
-| U40  | BezierCurveEditor：`BezierCurveEditor`                                                                                                                       | 拆分并改名                 | B09    | 未迁移   | 未退出；最迟 B11 | —               |
-| U41  | AssetItem：`AssetItem`                                                                                                                                       | 保留，合并内部改名行为     | B10    | 未迁移   | 未退出；最迟 B11 | —               |
-| U42  | ThemeProvider：`ThemeProvider`、`ThemeContext`、`useTheme`、`defaultThemes`、`addThemeChangeListener`、`removeThemeChangeListener`                           | 重写状态层                 | B02    | 未迁移   | 未退出；最迟 B11 | —               |
-| G01  | `FormItem`                                                                                                                                                   | 拆分并重写                 | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| G02  | `FormItemInput`                                                                                                                                              | 删除包装并合并能力         | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| G03  | `FormItemTextarea`                                                                                                                                           | 删除包装                   | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| G04  | `FormItemInputNumber`                                                                                                                                        | 合并，删除旧入口           | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| G05  | `FormItemSlider`                                                                                                                                             | 重写为复合模板             | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| G06  | `FormItemCascadeSlider`                                                                                                                                      | 删除包装                   | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| G07  | `FormItemVector2`                                                                                                                                            | 合并实现，删除旧入口       | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| G08  | `FormItemVector3`                                                                                                                                            | 合并并拆比例策略           | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| G09  | `FormItemVector4`                                                                                                                                            | 合并实现，删除旧入口       | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| G10  | `FormItemRect`                                                                                                                                               | 合并底层实现，保留矩形语义 | B06    | 未迁移   | 未退出；最迟 B11 | —               |
-| G11  | `FormItemToggle`                                                                                                                                             | 删除包装                   | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| G12  | `FormItemToggleGroup`                                                                                                                                        | 删除包装并重整类型         | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| G13  | `FormItemSegmentControl`                                                                                                                                     | 删除包装，重写值映射       | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| G14  | `FormItemSelect`                                                                                                                                             | 删除包装，合并选择适配     | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| G15  | `FormItemColor`                                                                                                                                              | 拆分并合并到颜色模板       | B08    | 未迁移   | 未退出；最迟 B11 | —               |
-| G16  | `FormItemGradient`                                                                                                                                           | 拆分并重写模式模型         | B08    | 未迁移   | 未退出；最迟 B11 | —               |
-| G17  | `FormItemParticleCurve`、别名 `FormItemParticle`                                                                                                             | 重写组合，删除别名和旧入口 | B09    | 未迁移   | 未退出；最迟 B11 | —               |
-| G18  | `FormItemAssetPicker`                                                                                                                                        | 拆分并重写                 | B10    | 未迁移   | 未退出；最迟 B11 | —               |
-| G19  | `FormItemDisplay`                                                                                                                                            | 拆分，删除旧包装           | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| G20  | `FormItemButton`                                                                                                                                             | 删除包装                   | B05    | 未迁移   | 未退出；最迟 B11 | —               |
-| G21  | `FormItemGroup`                                                                                                                                              | 合并到布局                 | B03    | 未迁移   | 未退出；最迟 B11 | —               |
-| G22  | `FormItemArray`                                                                                                                                              | 重写                       | B07    | 未迁移   | 未退出；最迟 B11 | —               |
-| G23  | `PickableAssetItem`                                                                                                                                          | 合并并删除旧入口           | B10    | 未迁移   | 未退出；最迟 B11 | —               |
+| 编号 | 当前公共模块/名称                                                                                                                                            | 计划动作                   | 主批次 | 实现进度 | 旧入口退出           | 证据/实际新入口                                                        |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- | ------ | -------- | -------------------- | ---------------------------------------------------------------------- |
+| U01  | Button：`Button`                                                                                                                                             | 保留                       | B02    | 已验证   | 薄适配保留；B11 删除 | widgets/buttons/Button；V02-03/04/05                                   |
+| U02  | ActionButton：`ActionButton`、`ActionButtonGroup`                                                                                                            | 合并内部实现，保留入口     | B02    | 已验证   | 薄适配保留；B11 删除 | widgets/buttons/ActionButton、ButtonBase、useButtonState；V02-03/04/05 |
+| U03  | Input：`Input`                                                                                                                                               | 保留                       | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U04  | Textarea：`Textarea`                                                                                                                                         | 保留                       | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U05  | InputNumber：`InputNumber`                                                                                                                                   | 拆分内部行为，保留完整控件 | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U06  | EditableText：`EditableText`                                                                                                                                 | 重写                       | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U07  | Checkbox：`Checkbox`                                                                                                                                         | 保留并修订状态类型         | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U08  | Select：`Select`、`SelectItem`                                                                                                                               | 拆分                       | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U09  | ToggleGroup：`ToggleGroup`、`ToggleGroupItem`                                                                                                                | 保留                       | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U10  | SegmentControl：`SegmentControl`、`SegmentControlItem`                                                                                                       | 保留                       | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U11  | Slider：`Slider`                                                                                                                                             | 局部重写                   | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U12  | CascadeSlider：`CascadeSlider`                                                                                                                               | 保留能力，改名并拆模型     | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U13  | Badge：`Badge`                                                                                                                                               | 拆分                       | B02    | 已验证   | 薄适配保留；B11 删除 | widgets/display/Badge、Tag；V02-03/04/05/06                            |
+| U14  | Callout：`Callout`                                                                                                                                           | 保留                       | B02    | 已验证   | 薄适配保留；B11 删除 | widgets/feedback/Callout；V02-03/04                                    |
+| U15  | Progress：`Progress`                                                                                                                                         | 局部重写                   | B02    | 已验证   | 薄适配保留；B11 删除 | widgets/feedback/Progress；V02-03/04                                   |
+| U16  | Spin：`Spin`                                                                                                                                                 | 保留                       | B02    | 已验证   | 薄适配保留；B11 删除 | widgets/feedback/Spin；V02-03/04                                       |
+| U17  | Typography：`Text`、`Bold`、`Link`、`Title`                                                                                                                  | 保留，收敛 API             | B02    | 已验证   | 薄适配保留；B11 删除 | foundation/typography；V02-03/04                                       |
+| U18  | Kbd：`Kbd`、`KbdGroup`                                                                                                                                       | 保留，拆解析与展示         | B02    | 已验证   | 薄适配保留；B11 删除 | values/shortcut + widgets/display/Kbd；V02-03/04                       |
+| U19  | Icons：19 个公开图标，见 5.8                                                                                                                                 | 合并去重并保留             | B02    | 已验证   | 薄适配保留；B11 删除 | foundation/icons；V02-03/04                                            |
+| U20  | Triangle：`Triangle`                                                                                                                                         | 合并                       | B02    | 已验证   | 薄适配保留；B11 删除 | foundation/icons/common/Arrow；V02-03/04                               |
+| U21  | Flex：`Flex`                                                                                                                                                 | 保留，收敛 API             | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U22  | Separator：`Separator`                                                                                                                                       | 拆分组合                   | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U23  | ScrollArea：`ScrollArea`                                                                                                                                     | 拆分属性入口               | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U24  | Menu：`Menubar`、`MenubarItem`、`DropdownMenu`、`ContextMenu`、`MenuItem`、`SubMenuItem`、`MenuSeparator`、`MenuCheckboxItem`、`MenuRadioGroup`、`MenuGroup` | 拆分                       | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U25  | Popover：`Popover`、`PopoverCloseTrigger`                                                                                                                    | 拆分 API，重整生命周期     | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U26  | Tooltip：`Tooltip`                                                                                                                                           | 局部重写                   | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U27  | HoverCard：`HoverCard`                                                                                                                                       | 保留并拆属性层级           | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U28  | Dialog：`Dialog`、`DialogTrigger`、`DialogCloseTrigger`                                                                                                      | 拆分                       | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U29  | AlertDialog：`AlertDialog`、`showAlert`                                                                                                                      | 保留确认语义，重写服务入口 | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U30  | Toast：`Toaster`、`toast`                                                                                                                                    | 保留并隔离适配             | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U31  | Accordion：`Accordion`、`AccordionItem`                                                                                                                      | 保留，合并视觉实现         | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U32  | Collapsible：`Collapsible`                                                                                                                                   | 保留并整理组合             | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U33  | Breadcrumbs：`Breadcrumbs`、`BreadcrumbItem`                                                                                                                 | 重写语义结构               | B07    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U34  | Pagination：`Pagination`                                                                                                                                     | 保留，拆纯算法             | B07    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U35  | Table：`Table`                                                                                                                                               | 拆分并重写数据适配         | B07    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U36  | Tree：`TreeItemRoot`、`TreeItemContent`、`TreeItemIcon`、`TreeItemPreview`、`TreeGroup`、`DragPreview`、`InsertionIndicator`                                 | 重写组件族                 | B07    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U37  | ResizablePanel：`ResizablePanel`                                                                                                                             | 重写并改名                 | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U38  | ColorPicker：`ColorPicker`                                                                                                                                   | 拆分                       | B08    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U39  | ColorSlider：`GradientSlider`、`ParticleSlider`、`HDRSlider`                                                                                                 | 合并颜色模型，拆清职责     | B08    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U40  | BezierCurveEditor：`BezierCurveEditor`                                                                                                                       | 拆分并改名                 | B09    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U41  | AssetItem：`AssetItem`                                                                                                                                       | 保留，合并内部改名行为     | B10    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| U42  | ThemeProvider：`ThemeProvider`、`ThemeContext`、`useTheme`、`defaultThemes`、`addThemeChangeListener`、`removeThemeChangeListener`                           | 重写状态层                 | B02    | 已验证   | 薄适配保留；B11 删除 | foundation/theme；V02-03/04/05                                         |
+| G01  | `FormItem`                                                                                                                                                   | 拆分并重写                 | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G02  | `FormItemInput`                                                                                                                                              | 删除包装并合并能力         | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G03  | `FormItemTextarea`                                                                                                                                           | 删除包装                   | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G04  | `FormItemInputNumber`                                                                                                                                        | 合并，删除旧入口           | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G05  | `FormItemSlider`                                                                                                                                             | 重写为复合模板             | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G06  | `FormItemCascadeSlider`                                                                                                                                      | 删除包装                   | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G07  | `FormItemVector2`                                                                                                                                            | 合并实现，删除旧入口       | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G08  | `FormItemVector3`                                                                                                                                            | 合并并拆比例策略           | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G09  | `FormItemVector4`                                                                                                                                            | 合并实现，删除旧入口       | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G10  | `FormItemRect`                                                                                                                                               | 合并底层实现，保留矩形语义 | B06    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G11  | `FormItemToggle`                                                                                                                                             | 删除包装                   | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G12  | `FormItemToggleGroup`                                                                                                                                        | 删除包装并重整类型         | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G13  | `FormItemSegmentControl`                                                                                                                                     | 删除包装，重写值映射       | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G14  | `FormItemSelect`                                                                                                                                             | 删除包装，合并选择适配     | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G15  | `FormItemColor`                                                                                                                                              | 拆分并合并到颜色模板       | B08    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G16  | `FormItemGradient`                                                                                                                                           | 拆分并重写模式模型         | B08    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G17  | `FormItemParticleCurve`、别名 `FormItemParticle`                                                                                                             | 重写组合，删除别名和旧入口 | B09    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G18  | `FormItemAssetPicker`                                                                                                                                        | 拆分并重写                 | B10    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G19  | `FormItemDisplay`                                                                                                                                            | 拆分，删除旧包装           | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G20  | `FormItemButton`                                                                                                                                             | 删除包装                   | B05    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G21  | `FormItemGroup`                                                                                                                                              | 合并到布局                 | B03    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G22  | `FormItemArray`                                                                                                                                              | 重写                       | B07    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
+| G23  | `PickableAssetItem`                                                                                                                                          | 合并并删除旧入口           | B10    | 未迁移   | 未退出；最迟 B11     | —                                                                      |
 
 ## 4 共享事项台账
 
-| 编号 | 工作项                                                                    | 主批次                 | 状态   | 退出条件                                                 |
-| ---- | ------------------------------------------------------------------------- | ---------------------- | ------ | -------------------------------------------------------- |
-| S01  | PropertyDescriptor/Access、EditSession、ChoiceOption、能力接口与最小 Mock | B01                    | 已验收 | 基础模型、会话、可选能力和 Mock 通过；专用模型留对应批次 |
-| S02  | Panda token、styling 子入口、主题与生成配置                               | B02；B11 收口          | 待开始 | 单一源配置，开发/静态预览和消费者均能提取样式            |
-| S03  | 数值纯函数、拖动/草稿、round 与共享编辑行为                               | B05/B06                | 待开始 | 消费者共享一个内核，字段不重复计算                       |
-| S04  | 颜色值类型、公开 helpers/hooks 和转换                                     | B08                    | 待开始 | 纯模型独立；颜色/渐变/宿主转换边界明确                   |
-| S05  | 曲线类型、插值/坐标/刻度工具与预设能力                                    | B09                    | 待开始 | 值与选中/视图状态分开；存储不在控件内                    |
-| S06  | DragContext、Provider、useDrag/useDrop 与模型                             | B07                    | 待开始 | 稳定类型和受控 API；Tree/Asset 适配不泄漏可变上下文      |
-| S07  | PropertyField 的逐步联调                                                  | B05/B06 启动；B11 收口 | 待开始 | 文本/数值先贯通 Mock；最终覆盖复杂模板和异步情况         |
-| S08  | 公共 Props、值类型、严格检查与旧 StitchesComponent 名称                   | 各主批次；B11 收口     | 待开始 | 完整可导入类型，无旧内部深层引用，类型检查范围完整       |
-| S09  | 空文件、重复图标/Picker/helper、旧包装/HOC/别名                           | 各主批次；B11 收口     | 待开始 | 消费者切换后删除；GUI/GUIRoot/旧 Panel 保持已删除        |
-| S10  | 全部 stories、StoryFrame、demo、文档、脚本、旧包与锁文件                  | 各主批次；B11 收口     | 待开始 | 只有统一入口，现有能力有故事对应，旧包引用清零           |
+| 编号 | 工作项                                                                    | 主批次                 | 状态       | 退出条件                                                 |
+| ---- | ------------------------------------------------------------------------- | ---------------------- | ---------- | -------------------------------------------------------- |
+| S01  | PropertyDescriptor/Access、EditSession、ChoiceOption、能力接口与最小 Mock | B01                    | 已验收     | 基础模型、会话、可选能力和 Mock 通过；专用模型留对应批次 |
+| S02  | Panda token、styling 子入口、主题与生成配置                               | B02；B11 收口          | B02 已验收 | 单一源配置及消费者样式已验证；B11 删除旧包后收口         |
+| S03  | 数值纯函数、拖动/草稿、round 与共享编辑行为                               | B05/B06                | 待开始     | 消费者共享一个内核，字段不重复计算                       |
+| S04  | 颜色值类型、公开 helpers/hooks 和转换                                     | B08                    | 待开始     | 纯模型独立；颜色/渐变/宿主转换边界明确                   |
+| S05  | 曲线类型、插值/坐标/刻度工具与预设能力                                    | B09                    | 待开始     | 值与选中/视图状态分开；存储不在控件内                    |
+| S06  | DragContext、Provider、useDrag/useDrop 与模型                             | B07                    | 待开始     | 稳定类型和受控 API；Tree/Asset 适配不泄漏可变上下文      |
+| S07  | PropertyField 的逐步联调                                                  | B05/B06 启动；B11 收口 | 待开始     | 文本/数值先贯通 Mock；最终覆盖复杂模板和异步情况         |
+| S08  | 公共 Props、值类型、严格检查与旧 StitchesComponent 名称                   | 各主批次；B11 收口     | 部分迁移   | 完整可导入类型，无旧内部深层引用，类型检查范围完整       |
+| S09  | 空文件、重复图标/Picker/helper、旧包装/HOC/别名                           | 各主批次；B11 收口     | 部分迁移   | 消费者切换后删除；GUI/GUIRoot/旧 Panel 保持已删除        |
+| S10  | 全部 stories、StoryFrame、demo、文档、脚本、旧包与锁文件                  | 各主批次；B11 收口     | 部分迁移   | 只有统一入口，现有能力有故事对应，旧包引用清零           |
 
 内部零件、全部公共类型和非组件导出的逐项去向见方案 5.8、5.9 和第 6 节，不以主表只列组件为由遗漏它们。
 
-B01 为 S02 建立 Panda 生成/扫描骨架，为 S08 补齐检查范围并启用新包 strict，为 S10 接入第三个 Storybook、命令和锁文件；这些准备工作不表示主题、旧类型或旧包迁移已经完成，主批次状态保持待开始。
+B01 为 S02 建立 Panda 生成/扫描骨架，为 S08 补齐检查范围并启用新包 strict，为 S10 接入第三个 Storybook、命令和锁文件；这些准备工作不表示主题、旧类型或旧包迁移已经完成，上述为 B01 当时状态。B02 已验收 S02 的本批范围，并部分推进 S08/S09/S10；旧包、其余组件和兼容类型仍留对应主批次及 B11 收口。
 
 ## 5 验证记录
 
-| 记录   | 批次/日期        | 验证内容                                | 结果           | 证据或范围                                                                                                           |
-| ------ | ---------------- | --------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------- |
-| V00-01 | B00 / 2026-10-22 | 启动时运行 pnpm verify                  | 通过，退出码 0 | Prettier、当前类型检查、demo、UI 与 GUI Storybook 构建；见下方日志                                                   |
-| V00-02 | B00 / 2026-10-22 | 读取两个静态 Storybook 索引             | 通过           | UI：107 stories / 40 组 / 28 docs；GUI：88 stories / 22 组 / 1 docs                                                  |
-| V00-03 | B00 / 2026-10-22 | 文档格式、链接、65 项唯一归属、批次依赖 | 通过           | 65/65 项无遗漏/重复；12 批依赖无环；本地链接有效；Prettier 通过                                                      |
-| V00-04 | B00 / 2026-10-22 | 本轮文件范围与生产代码不变              | 通过           | 第 1 节指纹一致，仅新增/更新约定的 4 份文档                                                                          |
-| V01-01 | B01 / 2026-10-22 | 补齐旧 UI stories 类型检查的首次结果    | 失败后修复     | 5 文件共 19 条诊断：Accordion 7、CascadeSlider 2、ColorSlider 2、Select 7、Slider 1；V01-03 复验通过                 |
-| V01-02 | B01 / 2026-10-22 | Mock 边界与纯类型临时验证               | 通过           | 29 组运行时验证、非法类型断言检查；含重入错误返回修复、会话幂等、过期确认、Reset、revision 上限                      |
-| V01-03 | B01 / 2026-10-22 | pnpm verify                             | 通过，退出码 0 | 全仓格式/类型、demo、UI/GUI/interface Storybook 构建；日志无警告或错误                                               |
-| V01-04 | B01 / 2026-10-22 | 冻结锁文件安装、pnpm dedupe --check     | 通过，退出码 0 | 安装使用 --frozen-lockfile --ignore-scripts；无新增依赖版本；生成命令由 verify 实际执行                              |
-| V01-05 | B01 / 2026-10-22 | tsc 文件覆盖、显式出口与依赖审计        | 通过           | 预期 TS/TSX/CJS 源/示例/support/config 零遗漏；4 个出口有效；纯模块无 React/DOM/Node/Qt/旧包导入，无环               |
-| V01-06 | B01 / 2026-10-22 | 开发预览 6009 浏览器实测                | 通过           | 7 个契约场景，preview/authority 分离、取消/拒绝/旧响应、对象切换、能力缺失、选项类型身份；明暗主题、控制台正常       |
-| V01-07 | B01 / 2026-10-22 | 静态预览 6010 浏览器实测与索引          | 通过           | 7/7 场景加载无警告/错误；数值提交和选项 0 提交通过，明暗主题有样式；旧 UI 107、GUI 88 stories 数量不变               |
-| V01-08 | B01 / 2026-10-22 | 5 组旧 UI 示例浏览器回归                | 通过           | Accordion 单/多开、Cascade 51/49/100 与 Reset、Select 多选与受控更新、颜色三组/HDR 同步、Slider 20/24px 与键盘 50→51 |
+| 记录   | 批次/日期        | 验证内容                                | 结果           | 证据或范围                                                                                                                                                                           |
+| ------ | ---------------- | --------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| V00-01 | B00 / 2026-10-22 | 启动时运行 pnpm verify                  | 通过，退出码 0 | Prettier、当前类型检查、demo、UI 与 GUI Storybook 构建；见下方日志                                                                                                                   |
+| V00-02 | B00 / 2026-10-22 | 读取两个静态 Storybook 索引             | 通过           | UI：107 stories / 40 组 / 28 docs；GUI：88 stories / 22 组 / 1 docs                                                                                                                  |
+| V00-03 | B00 / 2026-10-22 | 文档格式、链接、65 项唯一归属、批次依赖 | 通过           | 65/65 项无遗漏/重复；12 批依赖无环；本地链接有效；Prettier 通过                                                                                                                      |
+| V00-04 | B00 / 2026-10-22 | 本轮文件范围与生产代码不变              | 通过           | 第 1 节指纹一致，仅新增/更新约定的 4 份文档                                                                                                                                          |
+| V01-01 | B01 / 2026-10-22 | 补齐旧 UI stories 类型检查的首次结果    | 失败后修复     | 5 文件共 19 条诊断：Accordion 7、CascadeSlider 2、ColorSlider 2、Select 7、Slider 1；V01-03 复验通过                                                                                 |
+| V01-02 | B01 / 2026-10-22 | Mock 边界与纯类型临时验证               | 通过           | 29 组运行时验证、非法类型断言检查；含重入错误返回修复、会话幂等、过期确认、Reset、revision 上限                                                                                      |
+| V01-03 | B01 / 2026-10-22 | pnpm verify                             | 通过，退出码 0 | 全仓格式/类型、demo、UI/GUI/interface Storybook 构建；日志无警告或错误                                                                                                               |
+| V01-04 | B01 / 2026-10-22 | 冻结锁文件安装、pnpm dedupe --check     | 通过，退出码 0 | 安装使用 --frozen-lockfile --ignore-scripts；无新增依赖版本；生成命令由 verify 实际执行                                                                                              |
+| V01-05 | B01 / 2026-10-22 | tsc 文件覆盖、显式出口与依赖审计        | 通过           | 预期 TS/TSX/CJS 源/示例/support/config 零遗漏；4 个出口有效；纯模块无 React/DOM/Node/Qt/旧包导入，无环                                                                               |
+| V01-06 | B01 / 2026-10-22 | 开发预览 6009 浏览器实测                | 通过           | 7 个契约场景，preview/authority 分离、取消/拒绝/旧响应、对象切换、能力缺失、选项类型身份；明暗主题、控制台正常                                                                       |
+| V01-07 | B01 / 2026-10-22 | 静态预览 6010 浏览器实测与索引          | 通过           | 7/7 场景加载无警告/错误；数值提交和选项 0 提交通过，明暗主题有样式；旧 UI 107、GUI 88 stories 数量不变                                                                               |
+| V01-08 | B01 / 2026-10-22 | 5 组旧 UI 示例浏览器回归                | 通过           | Accordion 单/多开、Cascade 51/49/100 与 Reset、Select 多选与受控更新、颜色三组/HDR 同步、Slider 20/24px 与键盘 50→51                                                                 |
+| V02-01 | B02 / 2026-10-22 | 中途失败与构建警告                      | 修复后复验通过 | 详见第 10 节：Panda 类型/跨文件 raw 抽取、旧 as=div、Slot Fragment、样式覆盖、原型键、嵌套按钮、ES2020 API 兼容；保留各次日志                                                        |
+| V02-02 | B02 / 2026-10-22 | pnpm verify；冻结安装及去重             | 通过，退出码 0 | 最终 verify-accepted.log：全仓格式/类型、demo、三套 Storybook，无构建警告/错误；--frozen-lockfile --ignore-scripts 与 dedupe --check 通过，未新增依赖版本                            |
+| V02-03 | B02 / 2026-10-22 | TEMP 单元级/SSR 探针及架构审计          | 通过           | 主题 14 项、按钮/反馈 23 项、排版/图标/快捷键 23 项及 3 个特殊键名；50 源文件/104 依赖边、6 个纯层文件、9 个出口、零循环和旧包反向导入                                               |
+| V02-04 | B02 / 2026-10-22 | 开发浏览器与主题生命周期                | 通过           | 24 个新故事：主题同步/系统/存储/多 Provider/StrictMode 清理，按钮异步/键盘/ref/asChild，受控 Tag，Progress 范围，图标命名、排版语义、快捷键、8 方向 Arrow；组件控制台无新增告警/错误 |
+| V02-05 | B02 / 2026-10-22 | 静态预览与 demo 浏览器                  | 通过           | 31/31 故事交替明暗加载，组件控制台无告警/错误；实测主题同步、按钮尺寸与 18px 覆盖、Tag 接受/拒绝删除、公共 styling 提取、demo 计数和主题切换                                         |
+| V02-06 | B02 / 2026-10-22 | 旧消费者浏览器回归                      | 通过           | FormItemArray 重命名/删除/新增及焦点恢复；Combobox 无嵌套 button、受控拒绝、禁用、Enter/Space 删除、ArrowDown/Enter 选择、Escape 恢复与浮层定位                                      |
+| V02-07 | B02 / 2026-10-22 | 静态索引与交付范围                      | 通过           | UI 108 stories / 40 组 / 28 docs；GUI 88 / 22 / 1；interface 31 / 10 / 1（本批新增 24）；无独立测试、日志、截图或临时脚本进入项目                                                    |
 
 构建日志：[baseline-verify.log](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b00-20261022/baseline-verify.log)。
 
@@ -170,15 +177,15 @@ B01 日志：[完整 verify](C:/Users/74053/AppData/Local/Temp/pivot-blender-ref
 
 ## 6 风险与迁移债务
 
-| 编号 | 事项                                                          | 处理规则                                                                                                                  | 负责批次           | 当前状态                 |
-| ---- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------ |
-| R01  | 启动时继承修复未提交，原 HEAD 不包含完整工作树                | 继承修复已单独归档到 2c4638f，保留启动记录                                                                                | B00 记录，持续关注 | 已归档                   |
-| R02  | 过渡期新旧入口造成双实现或反向依赖                            | 旧入口只做薄适配，新模块不导入旧包；每批记录剩余消费者                                                                    | 全部；B11 清零     | 待跟踪                   |
-| R03  | Panda 路径/导出变化导致生产样式遗漏                           | 更新扫描；验证 consumer、开发预览与无缓存静态构建                                                                         | B01/B02/B11        | 待跟踪                   |
-| R04  | 当前 stories 检查范围和严格类型不足                           | B01 已补齐 stories/support/config；新包 strict，旧包随迁移收紧；MDX 由构建覆盖                                            | B01–B11            | 范围已补齐；旧类型待迁移 |
-| R05  | 数值、颜色、曲线或资源的值语义在迁移中改变                    | 迁移前定义类型与转换，临时适配集中；不随目录移动隐式改变单位/范围/标识                                                    | B06/B08/B09/B10    | 待跟踪                   |
-| R06  | Qt 后端与原生视口尚不存在                                     | 用 Mock 验证语义；真实平台行为在后续 Qt 集成阶段验收，不用网页占位冒充原生接入                                            | B01/B11 及后续集成 | 已记录                   |
-| R07  | Storybook 管理界面提示 PopoverProvider 在 11 将强制 ariaLabel | 提示来自 storybook 10.6.3 的 sb-manager/globals-runtime.js，组件预览无此提示；不屏蔽、不修改 node_modules，依赖更新时复核 | B11/依赖维护       | 已记录，非组件告警       |
+| 编号 | 事项                                                          | 处理规则                                                                                                                  | 负责批次           | 当前状态                     |
+| ---- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------- |
+| R01  | 启动时继承修复未提交，原 HEAD 不包含完整工作树                | 继承修复已单独归档到 2c4638f，保留启动记录                                                                                | B00 记录，持续关注 | 已归档                       |
+| R02  | 过渡期新旧入口造成双实现或反向依赖                            | 旧入口只做薄适配，新模块不导入旧包；每批记录剩余消费者                                                                    | 全部；B11 清零     | B02 无反向依赖；旧适配待退出 |
+| R03  | Panda 路径/导出变化导致生产样式遗漏                           | 更新扫描；验证 consumer、开发预览与无缓存静态构建                                                                         | B01/B02/B11        | B02 开发/静态/消费者通过     |
+| R04  | 当前 stories 检查范围和严格类型不足                           | B01 已补齐 stories/support/config；新包 strict，旧包随迁移收紧；MDX 由构建覆盖                                            | B01–B11            | 范围已补齐；旧类型待迁移     |
+| R05  | 数值、颜色、曲线或资源的值语义在迁移中改变                    | 迁移前定义类型与转换，临时适配集中；不随目录移动隐式改变单位/范围/标识                                                    | B06/B08/B09/B10    | 待跟踪                       |
+| R06  | Qt 后端与原生视口尚不存在                                     | 用 Mock 验证语义；真实平台行为在后续 Qt 集成阶段验收，不用网页占位冒充原生接入                                            | B01/B11 及后续集成 | 已记录                       |
+| R07  | Storybook 管理界面提示 PopoverProvider 在 11 将强制 ariaLabel | 提示来自 storybook 10.6.3 的 sb-manager/globals-runtime.js，组件预览无此提示；不屏蔽、不修改 node_modules，依赖更新时复核 | B11/依赖维护       | 已记录，非组件告警           |
 
 ## 7 B00 执行记录
 
@@ -191,7 +198,7 @@ B00 已完成文档格式、链接、清单覆盖、依赖和文件范围验收�
 
 ## 8 B01 执行记录
 
-开始及完成日期：2026-10-22。验收完成，本记录随 B01 实现一并提交；分支为 `feat-blender-5-2-refactor`。继承修复与 B00 已分别提交，65 个 U/G 项仍为未迁移。提交引用见第 9 节，未推送远程。
+开始及完成日期：2026-10-22。验收完成，本记录随 B01 实现一并提交；分支为 `feat-blender-5-2-refactor`。继承修复与 B00 已分别提交，65 个 U/G 项仍为未迁移。提交引用见第 9 节；已于 B02 开始前补推远程。
 
 ### 实际交付
 
@@ -222,12 +229,50 @@ B02 从主题状态、token、按钮、图标和展示反馈开始。旧包、�
 
 ## 9 Git 提交记录
 
-用户要求每批结束后提交 Git，已写入批次执行规则。补交时按继承基线、B00、B01 分开；后续批次必须在验收与台账更新后完成独立提交，再结束该批或推进下一批。
+用户要求每批结束后提交 Git 并推送远程，已写入批次执行规则。补交时按继承基线、B00、B01 分开；后续批次必须在验收与台账更新后完成独立提交和远程推送，再结束该批或推进下一批。
 
-| 范围                     | 提交引用                                                               | 主要内容                                                   |
-| ------------------------ | ---------------------------------------------------------------------- | ---------------------------------------------------------- |
-| 继承修复 BASE-01–BASE-04 | 2c4638f49b481aa87e88fc7e5e0339288b90ce84                               | 删除旧 GUI 容器、修复数值及表单交互、补齐 FormItem stories |
-| B00                      | f2f2c98321cdcfe54d32b5f32dce6a453e352777                               | Blender 术语/架构、批次、组件台账和必须提交的执行规则      |
-| B01                      | 本提交：feat(B01): add unified interface contracts and mock playground | 新统一包、契约和 Mock、7 个故事、完整类型检查及旧示例修正  |
+| 范围                     | 提交引用                                 | 主要内容                                                   |
+| ------------------------ | ---------------------------------------- | ---------------------------------------------------------- |
+| 继承修复 BASE-01–BASE-04 | 2c4638f49b481aa87e88fc7e5e0339288b90ce84 | 删除旧 GUI 容器、修复数值及表单交互、补齐 FormItem stories |
+| B00                      | f2f2c98321cdcfe54d32b5f32dce6a453e352777 | Blender 术语/架构、批次、组件台账和必须提交的执行规则      |
+| B01                      | bb3847eb604e14e837514537556f12ad83a05340 | 新统一包、契约和 Mock、7 个故事、完整类型检查及旧示例修正  |
 
-当前批次用唯一提交标题指向包含本记录的提交，避免预测或自引用自身 SHA。可用 git log 按上表标题查找；下一批回填已存在的 SHA。提交钩子执行暂存文件格式检查；项目中不加入临时脚本、日志、截图、生成目录或测试文件。未推送远程。
+当前批次用唯一提交标题指向包含本记录的提交，避免预测或自引用自身 SHA。可用 git log 按上表标题查找；下一批回填已存在的 SHA。提交钩子执行暂存文件格式检查；项目中不加入临时脚本、日志、截图、生成目录或测试文件。以上三次提交已于 B02 开始前推送，远程分支 origin/feat-blender-5-2-refactor 的 SHA 已核对为 bb3847eb604e14e837514537556f12ad83a05340。
+
+B02 验收：已通过。提交引用：包含本记录的唯一标题 `feat(B02): unify theme and visual foundations`。推送目标：`origin/feat-blender-5-2-refactor`，随本提交交付；收尾以 `git ls-remote origin refs/heads/feat-blender-5-2-refactor` 与本地 HEAD 一致为完成条件。下一批回填已存在的 SHA 与推送回执。
+
+## 10 B02 执行记录
+
+开始日期：2026-10-22，前置 B01 已验收、提交并推送。范围为 U01、U02、U13–U20、U42 及 S02 样式基础，不展开后续布局或业务页面。
+
+新实现位于 `packages/interface/src/foundation` 与 `widgets`；旧 UI 入口改为薄适配，旧包的删除归 B11。共享 Panda 配置与 token 保持单一来源，消费端扫描新增统一包源码；styling 子入口直接指向生成模块。验收包含主题偏好/系统变化/多消费者、按钮加载与焦点、Tag 移除、Progress 范围及不定进度、图标排版、开发/静态与旧消费者样式提取。
+
+### B02 实际交付与旧入口
+
+- 主题位于 `foundation/theme`：纯 store 区分 preference 与 resolvedTheme，React Provider/hooks 共享快照；storage、system、appearance 三个适配接口可独立替换。创建/读快照无浏览器副作用，connect 引用计数，最后断开清理监听并恢复原 DOM。拒绝持久化时保留会话内存偏好。旧 hook/context/listener 均转向新核心；旧全局 listener 只监听默认 store 的偏好变化，局部 store 直接 subscribe。
+- 按钮位于 `widgets/buttons`：Button 与 ActionButton 共用 ButtonBase/useButtonState；外部 loading 与异步 pending 合并，激活锁防止重复请求。asChild 保留真实子元素的 class/ref/事件，禁用时阻断激活但允许 Tab 移出；透明包装必须转发 props/ref，默认不提交表单。ActionButtonGroup 仅视觉分组。删除已无引用的旧 useAsyncStatus。
+- 展示与反馈：Badge 纯展示、Tag 由父级决定移除；Callout severity 与 note/status/alert 分离；Progress 统一 value/max 与 ARIA，支持未知进度及非法范围回退；Spin 与 Pending 图标适配减少动态效果。旧 Badge 的自隐藏仅留兼容入口，B11 删除；生产多选消费者已直接使用受控 Tag。
+- 排版与图标：Text/Title 的 HTML 语义和视觉字号分开；19 个原公开图标统一 SVG props/ref/名称，新增正确 Atlas 拼写并保留旧别名；ConstrainIcon 两份实现合并。Triangle 由新 Arrow 装饰实现，旧入口仅方向/占位适配。Kbd 解析进入纯 values/shortcut，统一字符串/数组、别名、空白、大小写和手势，未知键名安全退回文本。
+- 样式以 `panda/` 为唯一 token/预设来源，未复制第二套主题数据。公开 styling/css、styling/jsx、styling/tokens 直接指向生成模块，styling/types 仅类型；importMap 同时识别公共入口和包内直接生成路径。css 覆盖先合并样式对象，避免同属性原子类排序改变优先级。UI/GUI 扫描新源码；demo 已只依赖新包。各消费者启动/检查/构建的前置脚本负责所需 codegen，根类型检查串行，避免并发覆盖相同生成目录。
+- 必要消费者修正：旧 AccordionItem 提供与折叠按钮同级的 actions 槽，FormItemArray 的重命名/删除恢复原生按钮和可访问名称，提交/取消后焦点回到重命名动作。旧 Combobox 的 Tag 移到原生触发按钮旁边，保留 Popover 的 ref/定位，受控拒绝不隐藏，禁用不移除。这些是 B02 接入闭包，U08/U31/G22 的主重构仍归 B05/B03/B07。
+- 新包增加 24 个故事（主题 3、Tokens 1、Typography 3、Kbd 4、Icons 3、Arrow 2、Buttons 4、Badge/Tag 1、Feedback 3）；新包总计 31。旧 Select 增加受控标签移除故事，原示例均保留。
+
+### B02 中途发现与修复
+
+1. 初始定向类型检查发现 `_hover` 与当前 Panda 条件不匹配、importMap readonly 数组不匹配；改为显式选择器及满足 Config 的配置。首次全仓 typecheck 发现 FormItemArray 两个旧 as="div" 入口，与上述 actions 消费者修正一并解决。
+2. 浏览器发现 asChild 的 Slot 将 className 传入 Fragment；改为直接组合真实子元素，并重新验证样式、父/子回调、ref、disabled/loading 和 Tab。追加包装 button/link 的表单案例，避免自定义组件被误判后恢复原生 submit 默认行为。
+3. 交叉审查发现原子 CSS 覆盖顺序不保证、快捷键表读取原型键，以及 Combobox 的原生移除按钮嵌套在触发按钮内；均补充临时探针或现有 story 并修复。`constructor`、`__proto__`、`toString` 的 SSR 与浏览器输入已通过。
+4. 手动运行旧 GUI tsc 时，其 noEmit=false 产生 47 个未跟踪 JS 文件；已按 Git 未跟踪清单和同名 TS 源核对后精准清除，并统一 noEmit=true。项目不保留这些产物，也不新增独立测试文件。
+
+5. 最终消费者检查发现 Object.hasOwn 超出 app 的 ES2020 lib；改为 Object.prototype.hasOwnProperty.call，保留原型键保护且不提高消费者运行基线。修复后特殊键名探针与全仓检查通过。
+6. CSS 覆盖修正引出 5 处 Panda imported_recipe_raw_dynamic 构建警告；将 raw 与 css 的组合函数移到各 recipe 定义文件，保留强类型和覆盖优先级。定向构建与最后完整 verify 均无此警告，静态按钮尺寸及覆盖实测通过。
+
+### B02 验证记录
+
+验收完成日期：2026-10-22。验证脚本、日志和截图全部位于系统 TEMP 的 `pivot-blender-refactor-b02-20261022`，项目没有新增独立测试文件。命令、浏览器、索引和架构结果见 V02-01–V02-07。
+
+最终日志：[全量 verify](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b02-20261022/verify-accepted.log)、[架构与静态索引](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b02-20261022/architecture-audit-final.log)、[31 个静态故事](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b02-20261022/static-all-stories.json)、[静态按钮截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b02-20261022/static-buttons-final.png)。中途 ES2020 失败留在 verify-final.log，跨文件 recipe 告警留在 verify-complete.log。
+
+主题测试中的系统与存储事件使用注入适配器；浏览器监听、拒绝存储和 StrictMode 另有临时应用验证。减少动态效果规则已核对构建 CSS，本轮未切换操作系统的减少动画设置。浏览器控制台结论针对组件预览；Storybook 管理端上游提示仍按 R07 记录。
+
+旧 UI/GUI 开发入口保留，B02 的 11 项旧入口均为薄适配，尚未删除旧包。U08/U31/G22 只做本批接入所需的消费者修正，不计入其主迁移完成。B03 是下一批。

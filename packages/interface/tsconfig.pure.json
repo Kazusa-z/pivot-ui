@@ -5,6 +5,6 @@
     "types": [],
     "skipLibCheck": false
   },
-  "include": ["src/contracts/**/*.ts", "src/values/**/*.ts"],
+  "include": ["src/contracts/**/*.ts", "src/values/**/*.ts", "src/foundation/theme/store.ts"],
   "exclude": ["node_modules", "src/**/*.stories.ts"]
 }

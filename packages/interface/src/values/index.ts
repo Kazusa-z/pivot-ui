@@ -19,3 +19,5 @@ export interface NumericConstraints {
   readonly dragStep?: number
   readonly precision?: number
 }
+export { formatShortcut } from './shortcut'
+export type { ShortcutInput, ShortcutLetterCase, ShortcutGesture, ShortcutToken } from './shortcut'

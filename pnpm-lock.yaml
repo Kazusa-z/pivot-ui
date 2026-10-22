@@ -199,9 +199,9 @@ importers:
 
   app:
     dependencies:
-      '@pivot-ui/editor':
+      '@pivot-ui/react':
         specifier: workspace:*
-        version: link:../packages/ui
+        version: link:../packages/interface
       react:
         specifier: ^19.3.1
         version: 19.3.1
@@ -230,6 +230,9 @@ importers:
       '@pivot-ui/editor':
         specifier: workspace:*
         version: link:../ui
+      '@pivot-ui/react':
+        specifier: workspace:*
+        version: link:../interface
       '@radix-ui/react-use-controllable-state':
         specifier: ^1.3.0
         version: 1.3.0(@types/react@19.3.0)(react@19.3.1)
@@ -269,6 +272,13 @@ importers:
         version: 10.6.3(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.1)
 
   packages/interface:
+    dependencies:
+      '@radix-ui/react-slot':
+        specifier: ^1.5.0
+        version: 1.5.0(@types/react@19.3.0)(react@19.3.1)
+      '@tabler/icons-react':
+        specifier: ^3.49.0
+        version: 3.49.0(react@19.3.1)
     devDependencies:
       '@pandacss/dev':
         specifier: 2.2.0
@@ -315,6 +325,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@pivot-ui/react':
+        specifier: workspace:*
+        version: link:../interface
       '@radix-ui/react-accordion':
         specifier: ^1.3.1
         version: 1.3.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)

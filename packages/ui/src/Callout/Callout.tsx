@@ -1,22 +1,11 @@
-import { styled } from '../../styled-system/jsx'
-import { Flex } from '../Flex'
+import { forwardRef } from 'react'
+import { Callout as BaseCallout, type CalloutProps as BaseCalloutProps } from '@pivot-ui/react'
 
-const StyledCallout = styled(Flex, {
-  base: {
-    borderRadius: '4px',
-    fontSize: '12px',
-    padding: '4px 8px',
-    userSelect: 'none',
-    fontWeight: 500,
-  },
-  variants: {
-    type: {
-      info: { backgroundColor: 'var(--colors-blue3)', color: 'var(--colors-blueA11)' },
-      warning: { backgroundColor: 'var(--colors-amber3)', color: 'var(--colors-amber11)' },
-      error: { backgroundColor: 'var(--colors-red3)', color: 'var(--colors-red11)' },
-      success: { backgroundColor: 'var(--colors-green3)', color: 'var(--colors-green11)' },
-    },
-  },
+/** Legacy type alias, removed with the old package in B11. */
+export interface CalloutProps extends BaseCalloutProps {
+  type?: BaseCalloutProps['severity']
+}
+
+export const Callout = forwardRef<HTMLDivElement, CalloutProps>(function Callout({ type, severity, ...props }, ref) {
+  return <BaseCallout {...props} ref={ref} severity={severity ?? type} />
 })
-
-export { StyledCallout as Callout }
