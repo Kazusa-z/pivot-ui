@@ -2,11 +2,9 @@ import React from 'react'
 import type { IPoint, IBezierPoint } from './types'
 import { Point } from './Point'
 
-import { styled } from '../../styled-system/jsx'
+import { css } from '../../styled-system/css'
 
-const StyledControlLine = styled('line', {
-  base: { stroke: 'var(--colors-gray5)' },
-})
+const controlLineClass = css({ stroke: 'var(--colors-gray5)' })
 
 export interface BezierPointProps {
   pointId: string
@@ -68,7 +66,8 @@ export function BezierPoint(props: BezierPointProps) {
     <>
       {algo === 'bezier' && (
         <>
-          <StyledControlLine
+          <line
+            className={controlLineClass}
             strokeWidth={1}
             x1={point.x}
             y1={point.y}
@@ -77,7 +76,8 @@ export function BezierPoint(props: BezierPointProps) {
             style={pointClipStyle}
           />
           {doublePoint && (
-            <StyledControlLine
+            <line
+              className={controlLineClass}
               strokeWidth={1}
               x1={point.x}
               y1={point.y}

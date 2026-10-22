@@ -4,37 +4,45 @@ import * as PopoverPrimitive from '@radix-ui/react-popover'
 import type { PopoverContentProps as PrimitiveContentProps } from '@radix-ui/react-popover'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 
-import { css, cx } from '../../styled-system/css'
+import { css } from '../../styled-system/css'
+import { styled } from '../../styled-system/jsx'
 import type { SystemStyleObject } from '../../styled-system/types'
 import { composeEventHandlers } from '../utils/composeEventHandler'
 
-const contentClass = css({
-  backgroundColor: 'var(--colors-overlayBg)',
-  borderRadius: '6px',
-  boxShadow: 'var(--shadows-popContainer)',
-  border: '1px solid var(--colors-border)',
-  transformOrigin: 'var(--radix-popover-content-transform-origin)',
-  animationName: 'scaleIn',
-  animationDuration: '300ms',
-  animationTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
-  willChange: 'transform, opacity',
-  padding: '8px',
-  fontSize: '12px',
-  color: 'var(--colors-text)',
-  minWidth: '160px',
-  outline: 'none',
-  '&[data-state="open"]': {
-    '&[data-side="top"]': { animationName: 'slideDownAndFade' },
-    '&[data-side="right"]': { animationName: 'slideLeftAndFade' },
-    '&[data-side="bottom"]': { animationName: 'slideUpAndFade' },
-    '&[data-side="left"]': { animationName: 'slideRightAndFade' },
+const StyledContent = styled(PopoverPrimitive.Content, {
+  base: {
+    backgroundColor: 'var(--colors-overlayBg)',
+    borderRadius: '6px',
+    boxShadow: 'var(--shadows-popContainer)',
+    border: '1px solid var(--colors-border)',
+    transformOrigin: 'var(--radix-popover-content-transform-origin)',
+    animationName: 'scaleIn',
+    animationDuration: '300ms',
+    animationTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
+    willChange: 'transform, opacity',
+    padding: '8px',
+    fontSize: '12px',
+    color: 'var(--colors-text)',
+    minWidth: '160px',
+    outline: 'none',
+    '&[data-state="open"]': {
+      '&[data-side="top"]': { animationName: 'slideDownAndFade' },
+      '&[data-side="right"]': { animationName: 'slideLeftAndFade' },
+      '&[data-side="bottom"]': { animationName: 'slideUpAndFade' },
+      '&[data-side="left"]': { animationName: 'slideRightAndFade' },
+    },
   },
-})
-
-const compactClass = css({ padding: 0 })
-const constrainClass = css({
-  width: 'var(--radix-popover-trigger-width)',
-  maxHeight: 'var(--radix-popover-content-available-height)',
+  variants: {
+    compact: {
+      true: { padding: 0 },
+    },
+    constrainSize: {
+      true: {
+        width: 'var(--radix-popover-trigger-width)',
+        maxHeight: 'var(--radix-popover-content-available-height)',
+      },
+    },
+  },
 })
 const disabledTriggerClass = css({ pointerEvents: 'none', userSelect: 'none' })
 
@@ -88,18 +96,15 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function 
 
   return (
     <PopoverPrimitive.Portal container={container}>
-      <PopoverPrimitive.Content
+      <StyledContent
         {...rest}
         ref={forwardedRef}
-        className={cx(
-          contentClass,
-          compact && compactClass,
-          constrainSize && constrainClass,
-          cssProp && css(cssProp),
-          className
-        )}>
+        compact={compact}
+        constrainSize={constrainSize}
+        css={cssProp}
+        className={className}>
         {children}
-      </PopoverPrimitive.Content>
+      </StyledContent>
     </PopoverPrimitive.Portal>
   )
 })

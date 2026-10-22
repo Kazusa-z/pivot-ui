@@ -1,40 +1,56 @@
 import { Toaster as HotToast, type ToasterProps } from 'react-hot-toast'
-import { css } from '../../styled-system/css'
+import { css, cx } from '../../styled-system/css'
 
 const toastClassName = 'pivot-toaster-toast'
 
 const containerClassName = css({
   '& .pivot-toaster-toast': {
-    minHeight: '28px',
-    padding: '6px 8px',
-    borderRadius: '6px',
-    border: '1px solid var(--colors-gray6)',
-    backgroundColor: 'var(--colors-toasterBg)',
-    color: 'var(--colors-grayA11)',
-    fontSize: '12px',
-    boxShadow: '0 5px 10px rgba(0,0,0,0.08)',
-    '& > div:first-child': { marginRight: '8px' },
-    '& div[role=status]': { margin: 0 },
+    // Hot Toast's child spacing is unlayered, so these layered overrides need priority.
+    '& > div:first-child:not([role=status])': { marginRight: '8px !important' },
+    '& div[role=status]': { margin: '0 !important' },
   },
 })
 
 export function Toaster(props: ToasterProps) {
-  const { toastOptions, containerStyle, ...rest } = props
+  const { toastOptions, containerStyle, containerClassName: customContainerClassName, ...rest } = props
 
   return (
     <HotToast
       containerStyle={{ inset: 38, ...containerStyle }}
       toastOptions={{
         ...toastOptions,
-        className: toastClassName,
+        className: cx(toastClassName, toastOptions?.className),
+        style: {
+          minHeight: '28px',
+          padding: '6px 8px',
+          borderRadius: '6px',
+          border: '1px solid var(--colors-gray6)',
+          backgroundColor: 'var(--colors-toasterBg)',
+          color: 'var(--colors-grayA11)',
+          fontSize: '12px',
+          boxShadow: '0 5px 10px rgba(0,0,0,0.08)',
+          ...toastOptions?.style,
+        },
         success: {
-          iconTheme: { primary: 'var(--colors-green10)', secondary: 'var(--colors-white)' },
+          ...toastOptions?.success,
+          iconTheme: {
+            primary: 'var(--colors-green10)',
+            secondary: 'var(--colors-white)',
+            ...toastOptions?.iconTheme,
+            ...toastOptions?.success?.iconTheme,
+          },
         },
         error: {
-          iconTheme: { primary: 'var(--colors-red9)', secondary: 'var(--colors-white)' },
+          ...toastOptions?.error,
+          iconTheme: {
+            primary: 'var(--colors-red9)',
+            secondary: 'var(--colors-white)',
+            ...toastOptions?.iconTheme,
+            ...toastOptions?.error?.iconTheme,
+          },
         },
       }}
-      containerClassName={containerClassName}
+      containerClassName={cx(containerClassName, customContainerClassName)}
       {...rest}
     />
   )

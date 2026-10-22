@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react'
 import type { IBezierPoint, IPoint } from './types'
 import { generateCurve, generateLineByPoints } from './helper'
 
-import { styled } from '../../styled-system/jsx'
+import { css, cva } from '../../styled-system/css'
 
-const StyledPath = styled('path', {
+// Keep runtime SVG geometry as attributes instead of Panda style props.
+const pathStyles = cva({
   base: {
     strokeWidth: 1,
     stroke: 'var(--colors-orange10)',
@@ -18,18 +19,14 @@ const StyledPath = styled('path', {
   },
 })
 
-const StyledExtensionPath = styled('path', {
-  base: { strokeWidth: 1, stroke: 'var(--colors-orange6)', fill: 'none' },
-})
+const extensionPathClass = css({ strokeWidth: 1, stroke: 'var(--colors-orange6)', fill: 'none' })
 
-const StyledTempPoint = styled('circle', {
-  base: {
-    fill: 'var(--colors-orange11)',
-    r: 3,
-    transition: 'transform .1s ease',
-    strokeWidth: 1,
-    stroke: 'var(--colors-orange12)',
-  },
+const tempPointClass = css({
+  fill: 'var(--colors-orange11)',
+  r: 3,
+  transition: 'transform .1s ease',
+  strokeWidth: 1,
+  stroke: 'var(--colors-orange12)',
 })
 
 interface BezierCurveProps {
@@ -129,11 +126,16 @@ export function BezierCurve(props: BezierCurveProps) {
 
   return (
     <g className="bezier-path" onMouseLeave={handleMouseLeave}>
-      {extensionD && <StyledExtensionPath d={extensionD} />}
-      <StyledPath d={mainD} />
-      <StyledPath hitline d={hitD} onMouseEnter={handleMouseEnter} onMouseMove={handleMouseMove} />
+      {extensionD && <path className={extensionPathClass} d={extensionD} />}
+      <path className={pathStyles()} d={mainD} />
+      <path
+        className={pathStyles({ hitline: true })}
+        d={hitD}
+        onMouseEnter={handleMouseEnter}
+        onMouseMove={handleMouseMove}
+      />
       {actualAlgorithm === 'linear' && hovered && matrixedPoint && (
-        <StyledTempPoint cx={matrixedPoint.x} cy={matrixedPoint.y} onClick={handleAddPoint} />
+        <circle className={tempPointClass} cx={matrixedPoint.x} cy={matrixedPoint.y} onClick={handleAddPoint} />
       )}
     </g>
   )

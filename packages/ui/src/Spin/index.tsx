@@ -14,7 +14,7 @@ const Spin = styled('div', {
     transformOrigin: 'center',
     boxSizing: 'border-box',
     '&::after': {
-      content: ' ',
+      content: '""',
       display: 'block',
       position: 'absolute',
       inset: '-2px',

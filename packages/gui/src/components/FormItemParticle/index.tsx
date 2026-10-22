@@ -10,10 +10,10 @@ import { FormItemProps } from '../FormItem/FormItem'
 export type ParticlePropertyType = 'constant' | 'curve' | 'two-constant' | 'two-curve'
 
 const particlePropertyTypeOptions = [
-  { type: 'constant', icon: <IconEqual size="14px" />, columns: 'minmax(0, 12fr) 32px' },
-  { type: 'curve', icon: <IconEaseIn size="14px" />, columns: 'minmax(0, 12fr) 32px' },
-  { type: 'two-constant', icon: <IconPlusMinus size="14px" />, columns: 'repeat(2, minmax(0, 12fr)) 32px' },
-  { type: 'two-curve', icon: <IconVectorBezier2 size="14px" />, columns: 'repeat(2, minmax(0, 12fr)) 32px' },
+  { type: 'constant', icon: <IconEqual size="14px" /> },
+  { type: 'curve', icon: <IconEaseIn size="14px" /> },
+  { type: 'two-constant', icon: <IconPlusMinus size="14px" /> },
+  { type: 'two-curve', icon: <IconVectorBezier2 size="14px" /> },
 ] as const
 
 function renderTypeIcon(value, location) {
@@ -168,10 +168,7 @@ export function FormItemParticleCurve(props: FormItemParticleCurveProps) {
     <FormItem
       label={label}
       info={info}
-      fieldCss={{
-        gridTemplateColumns: particlePropertyTypeOptions.find((option) => option.type === propType)?.columns,
-        columnGap: '$1',
-      }}
+      fieldColumn={propType === 'two-constant' || propType === 'two-curve' ? 'particlePair' : 'particle'}
       {...rest}>
       {valueMap.map((item) => {
         const { type, value, min, max, step } = item

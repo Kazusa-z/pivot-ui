@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import type { IPoint } from './types'
 
 import { styled } from '../../styled-system/jsx'
+import { css, cva } from '../../styled-system/css'
 
 export const POINT_HIT_RADIUS = 10
 const POINT_RING_RADIUS = 5
@@ -10,7 +11,7 @@ const POINT_CENTER_RADIUS = 2
 const POINT_HOVER_RING_RADIUS = 10
 const POINT_HOVER_CENTER_RADIUS = 6
 
-const StyledPoint = styled('circle', {
+const pointStyles = cva({
   base: {
     fill: 'var(--colors-green9)',
     cursor: 'pointer',
@@ -45,19 +46,20 @@ const StyledPointRoot = styled('g', {
   },
 })
 
-const StyledPointLabel = styled('text', {
-  base: { fill: 'var(--colors-gray12)', fontSize: '10px', pointerEvents: 'none', userSelect: 'none' },
+const pointLabelClass = css({
+  fill: 'var(--colors-gray12)',
+  fontSize: '10px',
+  pointerEvents: 'none',
+  userSelect: 'none',
 })
 
-const StyledPointLabelBg = styled('rect', {
-  base: {
-    fill: 'var(--colors-gray2)',
-    stroke: 'var(--colors-gray7)',
-    strokeWidth: 1,
-    rx: 3,
-    ry: 3,
-    pointerEvents: 'none',
-  },
+const pointLabelBgClass = css({
+  fill: 'var(--colors-gray2)',
+  stroke: 'var(--colors-gray7)',
+  strokeWidth: 1,
+  rx: 3,
+  ry: 3,
+  pointerEvents: 'none',
 })
 
 interface PointProps {
@@ -134,30 +136,31 @@ export function Point(props: PointProps) {
       }}>
       {hoverLabel && (hovered || moving) && (
         <>
-          <StyledPointLabelBg
+          <rect
+            className={pointLabelBgClass}
             x={point.x - (hoverLabel.length * 6 + 8) / 2}
             y={point.y - 24}
             width={hoverLabel.length * 6 + 8}
             height={14}
           />
-          <StyledPointLabel x={point.x} y={point.y - 14} textAnchor="middle">
+          <text className={pointLabelClass} x={point.x} y={point.y - 14} textAnchor="middle">
             {hoverLabel}
-          </StyledPointLabel>
+          </text>
         </>
       )}
       <g style={pointClipPath ? { clipPath: pointClipPath } : undefined}>
-        <StyledPoint data-point-type="hitpoint" cx={point.x} cy={point.y} r={POINT_HIT_RADIUS} />
-        <StyledPoint
+        <circle className={pointStyles()} data-point-type="hitpoint" cx={point.x} cy={point.y} r={POINT_HIT_RADIUS} />
+        <circle
+          className={pointStyles({ pointType: main ? 'main' : 'control' })}
           data-point-type="ring"
-          pointType={main ? 'main' : 'control'}
           cx={point.x}
           cy={point.y}
           r={POINT_RING_RADIUS}
         />
-        <StyledPoint
+        <circle
+          className={pointStyles({ pointType: main ? 'main' : 'control' })}
           data-point-type="point"
-          pointType={main ? 'main' : 'control'}
-          type={type}
+          data-type={type}
           cx={point.x}
           cy={point.y}
           r={POINT_CENTER_RADIUS}

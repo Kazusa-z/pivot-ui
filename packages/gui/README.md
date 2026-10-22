@@ -688,6 +688,11 @@ For React applications, you can use individual form components for more control:
 - `FormItemButton` - Action button
 - `FormItemArray` - Array input
 
+`FormItemArray` supports inline renaming for items with `renameable: true` when an `onRename` handler is provided.
+The pencil opens a text field; Enter or blur commits the new name, and Escape cancels. Handle
+`onRename(item, name)` by updating that item's `name` in the controlled `items` array. Deleting an item remains a
+separate `onDelete(item)` action.
+
 ### Component Props
 
 All form components share common props:

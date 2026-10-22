@@ -16,6 +16,7 @@ import { POINT_HIT_RADIUS } from './Point'
 import { TICK_EPSILON, formatTick, getTickPrecision } from './tick'
 
 import { styled } from '../../styled-system/jsx'
+import { css } from '../../styled-system/css'
 import { clamp, mergeRefs } from '../utils'
 import { ActionButton, ActionButtonGroup } from '../ActionButton'
 import { IconPlayerPlayFilled, IconZoomInFilled, IconZoomOutFilled, IconZoomReset } from '@tabler/icons-react'
@@ -41,23 +42,19 @@ function normalizeInputPoints(inputPoints: IPoint[], minY: number, maxY: number)
   }))
 }
 
-const StyledSvgRoot = styled('svg', {
-  base: {
-    overflow: 'unset',
-    fontSize: 0,
-    userSelect: 'none',
-    backgroundImage: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--colors-orangeA2) 100%)',
-  },
+const svgRootClass = css({
+  overflow: 'unset',
+  fontSize: 0,
+  userSelect: 'none',
+  backgroundImage: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--colors-orangeA2) 100%)',
 })
 
-const StyledPanelBorder = styled('rect', {
-  base: {
-    fill: 'none',
-    stroke: 'var(--colors-orange7)',
-    strokeWidth: 1,
-    shapeRendering: 'crispEdges',
-    pointerEvents: 'none',
-  },
+const panelBorderClass = css({
+  fill: 'none',
+  stroke: 'var(--colors-orange7)',
+  strokeWidth: 1,
+  shapeRendering: 'crispEdges',
+  pointerEvents: 'none',
 })
 
 const BezierCurveContainer = styled('div', {
@@ -386,7 +383,8 @@ function _BezierCurveEditor(props: BezierCurveEditorProps, forwardedRef: React.R
       }}
       trigger={
         <BezierCurveContainer ref={containerRef} tabIndex={0} onKeyDown={handleKeyDown}>
-          <StyledSvgRoot
+          <svg
+            className={svgRootClass}
             xmlns="http://www.w3.org/2000/svg"
             viewBox={`${offset.x} ${offset.y} ${width} ${height}`}
             width={width}
@@ -413,7 +411,7 @@ function _BezierCurveEditor(props: BezierCurveEditorProps, forwardedRef: React.R
               axisYScale={axisYScale}
               overlay={
                 <>
-                  <StyledPanelBorder x={offset.x} y={offset.y} width={width} height={height} />
+                  <rect className={panelBorderClass} x={offset.x} y={offset.y} width={width} height={height} />
                   <g className="bezier-curve-points">
                     {points.map((bezierPoint, index) => (
                       <BezierPoint
@@ -443,7 +441,7 @@ function _BezierCurveEditor(props: BezierCurveEditorProps, forwardedRef: React.R
               />
               <CurveAnimation points={points} algo={algo} ref={player} />
             </Grid>
-          </StyledSvgRoot>
+          </svg>
           {props.onYTickScaleChange && (
             <StyledYScaleInputWrap
               style={{

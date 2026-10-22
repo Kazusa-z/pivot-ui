@@ -40,6 +40,8 @@ Both component packages are source packages. They are consumed through `workspac
 
 The Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`.
 
+Both explorers share `storybook/vite.ts`. Their prebundled preview and docs runtimes use a 1200 kB chunk warning budget; the demo keeps Vite's default budget. Only the irrelevant `use client` module-directive warnings are filtered in these browser-only explorers. Other build warnings remain enabled.
+
 ## Panda CSS pipeline
 
 Panda configuration is shared from `panda/base.ts`:
@@ -89,6 +91,8 @@ pnpm dedupe --check
 ```
 
 `pnpm verify` runs Prettier, TypeScript, the demo build and both Storybook builds.
+
+Git and Prettier use LF line endings on every platform. Temporary verification scripts and outputs belong in the ignored `temp/` directory and are excluded from formatting checks.
 
 ## Documentation conventions
 

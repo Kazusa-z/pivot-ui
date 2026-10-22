@@ -1,3 +1,4 @@
+import { forwardRef, type ComponentProps } from 'react'
 import { styled } from '../../styled-system/jsx'
 
 const StyledTextarea = styled('textarea', {
@@ -53,7 +54,7 @@ const StyledTextarea = styled('textarea', {
         '&::placeholder': { color: 'var(--colors-dangerText)', opacity: 0.8 },
       },
     },
-    disabled: {
+    disabledState: {
       true: {
         backgroundColor: 'var(--colors-surfaceSubtle)',
         color: 'var(--colors-textMuted)',
@@ -100,22 +101,22 @@ const StyledTextarea = styled('textarea', {
     },
     {
       variant: 'outline',
-      disabled: true,
+      disabledState: true,
       css: { backgroundColor: 'var(--colors-surfaceSubtle)', borderColor: 'var(--colors-border)' },
     },
     {
       variant: 'soft',
-      disabled: true,
+      disabledState: true,
       css: { backgroundColor: 'var(--colors-surfaceSubtle)', borderColor: 'transparent' },
     },
     {
       variant: 'subtle',
-      disabled: true,
+      disabledState: true,
       css: { backgroundColor: 'transparent', borderColor: 'transparent' },
     },
     {
       state: 'valid',
-      disabled: true,
+      disabledState: true,
       css: {
         backgroundColor: 'var(--colors-successBg)',
         borderColor: 'var(--colors-successBorder)',
@@ -125,7 +126,7 @@ const StyledTextarea = styled('textarea', {
     },
     {
       state: 'invalid',
-      disabled: true,
+      disabledState: true,
       css: {
         backgroundColor: 'var(--colors-dangerBg)',
         borderColor: 'var(--colors-dangerBorder)',
@@ -137,4 +138,10 @@ const StyledTextarea = styled('textarea', {
   defaultVariants: { variant: 'soft', size: 'sm' },
 })
 
-export { StyledTextarea as Textarea }
+type TextareaProps = Omit<ComponentProps<typeof StyledTextarea>, 'disabledState'>
+
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea({ disabled, ...props }, ref) {
+  return <StyledTextarea {...props} ref={ref} disabled={disabled} disabledState={disabled} />
+})
+
+export { Textarea }

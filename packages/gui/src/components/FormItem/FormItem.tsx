@@ -22,6 +22,8 @@ const StyledField = styled('div', {
       number: { gridTemplateColumns: 'minmax(0, 8fr) repeat(2, 1fr)' },
       asset: { gridTemplateColumns: 'minmax(0, 8fr) 24px 24px', alignItems: 'center' },
       assetPreview: { gridTemplateColumns: 'minmax(0, 1fr)', alignItems: 'center' },
+      particle: { gridTemplateColumns: 'minmax(0, 1fr) 32px' },
+      particlePair: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr)) 32px' },
     },
   },
 })
@@ -74,7 +76,7 @@ export interface FormItemProps<T = any> extends BaseFormItemProps<T> {
   labelCss?: SystemStyleObject
   fieldCss?: SystemStyleObject
   size?: 'sm' | 'md'
-  fieldColumn?: 1 | 2 | 3 | 4 | 'color' | 'number' | 'asset' | 'assetPreview'
+  fieldColumn?: 1 | 2 | 3 | 4 | 'color' | 'number' | 'asset' | 'assetPreview' | 'particle' | 'particlePair'
 }
 
 export function extractFormItemProps<T>(props: Record<any, any>): FormItemProps<T> {

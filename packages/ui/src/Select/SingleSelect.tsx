@@ -177,16 +177,14 @@ const cornerIconClass = css({
   right: 1,
 })
 
-const SelectContent = styled(SelectPrimitive.Content, {
-  base: {
-    overflow: 'auto',
-    maxHeight: 'min(300px, var(--radix-select-content-available-height))',
-    backgroundColor: 'var(--colors-surfaceOverlay)',
-    minWidth: 'var(--radix-select-trigger-width)',
-    borderRadius: '6px',
-    boxShadow: 'var(--shadows-popContainer)',
-    border: '1px solid var(--colors-border)',
-  },
+const selectContentClass = css({
+  overflow: 'auto',
+  maxHeight: 'min(300px, var(--radix-select-content-available-height))',
+  backgroundColor: 'var(--colors-surfaceOverlay)',
+  minWidth: 'var(--radix-select-trigger-width)',
+  borderRadius: '6px',
+  boxShadow: 'var(--shadows-popContainer)',
+  border: '1px solid var(--colors-border)',
 })
 
 const SelectViewport = styled(SelectPrimitive.Viewport, {
@@ -565,7 +563,11 @@ function Select(props: SelectProps) {
           )}
         </SelectTrigger>
         <SelectPrimitive.Portal>
-          <SelectContent position={position} sideOffset={sideOffset} collisionPadding={4}>
+          <SelectPrimitive.Content
+            className={selectContentClass}
+            position={position}
+            sideOffset={sideOffset}
+            collisionPadding={4}>
             <SelectScrollUpButton>
               <IconChevronUp size="14px" />
             </SelectScrollUpButton>
@@ -573,7 +575,7 @@ function Select(props: SelectProps) {
             <SelectScrollDownButton>
               <IconChevronDown size="14px" />
             </SelectScrollDownButton>
-          </SelectContent>
+          </SelectPrimitive.Content>
         </SelectPrimitive.Portal>
       </SelectPrimitive.Root>
     </SelectContext.Provider>

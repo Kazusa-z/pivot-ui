@@ -6,8 +6,6 @@ import { Button } from '../Button'
 
 import { Table } from './'
 
-type Props = any
-
 const dataSource = [
   {
     key: '1',
@@ -62,7 +60,9 @@ export default {
 export const Overview: StoryFn<typeof Table> = (args) => {
   return (
     <Flex gap="md">
-      <Table columns={columns} dataSource={dataSource} rowKey="key" />
+      <Table {...args} />
     </Flex>
   )
 }
+
+Overview.args = { columns, dataSource, rowKey: 'key' }

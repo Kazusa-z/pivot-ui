@@ -63,10 +63,10 @@ export interface FormItemGradientProps {
 }
 
 const particlePropertyTypeOptions = [
-  { type: 'constant', icon: <IconEqual size="14px" />, columns: '1fr 32px' },
-  { type: 'gradient', icon: <IconEaseIn size="14px" />, columns: '1fr 32px' },
-  { type: 'two-constant', icon: <IconPlusMinus size="14px" />, columns: 'repeat(2, minmax(0, 12fr)) 32px' },
-  { type: 'two-gradient', icon: <IconVectorBezier2 size="14px" />, columns: 'repeat(2, minmax(0, 12fr)) 32px' },
+  { type: 'constant', icon: <IconEqual size="14px" /> },
+  { type: 'gradient', icon: <IconEaseIn size="14px" /> },
+  { type: 'two-constant', icon: <IconPlusMinus size="14px" /> },
+  { type: 'two-gradient', icon: <IconVectorBezier2 size="14px" /> },
 ] as const
 
 // IParticleColor -> IEngineParticleColor
@@ -319,9 +319,7 @@ export function FormItemGradient(props: FormItemGradientProps) {
     <FormItem
       label={label}
       info={info}
-      fieldCss={{
-        gridTemplateColumns: particlePropertyTypeOptions.find((option) => option.type === propType)?.columns,
-      }}>
+      fieldColumn={propType === 'two-constant' || propType === 'two-gradient' ? 'particlePair' : 'particle'}>
       {valueMap.map((item) => {
         const { type, value } = item
         if (!type || propType !== type) return null

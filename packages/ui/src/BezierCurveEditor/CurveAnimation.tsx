@@ -1,9 +1,9 @@
 import React, { useMemo, useImperativeHandle, forwardRef } from 'react'
 import { IBezierPoint } from './types'
 import { convertBezierPointToPoint, getPointOnCurve, getPointOnLinear } from './helper'
-import { styled } from '../../styled-system/jsx'
+import { cva } from '../../styled-system/css'
 
-const AnimatedCircle = styled('circle', {
+const animatedCircleStyles = cva({
   base: { fill: 'transparent', transition: 'fill 0.3s ease', pointerEvents: 'none' },
   variants: {
     display: {
@@ -73,6 +73,14 @@ export const CurveAnimation = forwardRef<CurveAnimationRef, CurveAnimationProps>
       cancelAnimationFrame(rafRef.current)
     }
 
-    return <AnimatedCircle ref={circleRef} r="6" cx={points[0].x} cy={points[0].y} display={playing} />
+    return (
+      <circle
+        className={animatedCircleStyles({ display: playing })}
+        ref={circleRef}
+        r="6"
+        cx={points[0].x}
+        cy={points[0].y}
+      />
+    )
   }
 )

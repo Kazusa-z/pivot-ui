@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { IconTrash, IconPlus, IconEdit } from '@tabler/icons-react'
-import { Flex, ActionButton, Accordion, AccordionItem, Button } from '@pivot-ui/editor'
+import { Flex, ActionButton, Accordion, AccordionItem, Button, Input } from '@pivot-ui/editor'
 import { styled } from '../../../styled-system/jsx'
 
 import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormItem'
@@ -8,6 +8,7 @@ import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormI
 interface AccordionTitleProps {
   title: string
   onDelete?: () => void
+  onRename?: (name: string) => void
   removable?: boolean
   renameable?: boolean
   hasChild?: boolean
@@ -32,12 +33,52 @@ const AddItemButton = styled(Button, {
 })
 
 function AccordionTitle(props: AccordionTitleProps) {
-  const { renameable, onDelete, removable } = props
+  const { title, renameable, onDelete, onRename, removable } = props
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(title)
+  const editingRef = useRef(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    }
+  }, [editing])
+
+  const finishRename = (commit: boolean) => {
+    if (!editingRef.current) return
+    editingRef.current = false
+    setEditing(false)
+    if (commit && draft !== title) {
+      onRename?.(draft)
+    }
+  }
+
   return (
     <Flex align="v" css={{ flex: 1, justifyContent: 'space-between' }}>
-      <span>{props.title}</span>
+      {editing ? (
+        <Input
+          ref={inputRef}
+          aria-label="Item name"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => {
+            e.stopPropagation()
+            if (e.key === 'Enter' || e.key === 'Escape') {
+              e.preventDefault()
+              finishRename(e.key === 'Enter')
+            }
+          }}
+          onKeyUp={(e) => e.stopPropagation()}
+          onBlur={() => finishRename(true)}
+        />
+      ) : (
+        <span>{title}</span>
+      )}
       <Flex gap="xxs">
-        {renameable && (
+        {renameable && onRename && !editing && (
           <ActionButton
             as="div"
             variant="subtle"
@@ -47,9 +88,9 @@ function AccordionTitle(props: AccordionTitleProps) {
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              if (onDelete) {
-                onDelete()
-              }
+              setDraft(title)
+              editingRef.current = true
+              setEditing(true)
             }}>
             <IconEdit size="14px" />
           </ActionButton>
@@ -91,6 +132,8 @@ export interface FormItemArrayProps extends Omit<BaseFormItemProps<any>, 'value'
   defaultValue?: string[]
   onAdd?: () => void
   onDelete?: (item: GroupItem) => void
+  /** Called after an inline rename is committed. Update the item's name in `items` to apply it. */
+  onRename?: (item: GroupItem, name: string) => void
 }
 
 export function FormItemArray(props: FormItemArrayProps) {
@@ -98,6 +141,7 @@ export function FormItemArray(props: FormItemArrayProps) {
     items = [],
     onAdd,
     onDelete,
+    onRename,
     addItemText = 'Add Item',
     defaultValue: propDefaultValue,
     addable = false,
@@ -125,6 +169,7 @@ export function FormItemArray(props: FormItemArrayProps) {
               <AccordionTitle
                 title={item.name}
                 onDelete={handleItemDelete(item)}
+                onRename={onRename ? (name) => onRename(item, name) : undefined}
                 removable={item.removable}
                 renameable={item.renameable}
               />

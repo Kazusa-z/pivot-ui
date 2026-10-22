@@ -65,7 +65,7 @@ const StyledInput = styled('input', {
     '&[readonly]': {
       cursor: 'default',
     },
-    '&::read-only::placeholder': {
+    '&:read-only::placeholder': {
       color: 'var(--colors-textMuted)',
     },
   },

@@ -1,5 +1,5 @@
 import React from 'react'
-import { styled } from '../../styled-system/jsx'
+import { css, cva, cx } from '../../styled-system/css'
 import { TICK_EPSILON, formatTick, getAlignedTickPrecision, getTickPrecision } from './tick'
 
 const TICK_EDGE_CAPTURE = 8
@@ -12,7 +12,7 @@ const Y_TICK_CLIP_PADDING_BOTTOM = TICK_EDGE_CAPTURE
 const X_TICK_Y_OFFSET = 16
 const Y_TICK_X_OFFSET = 12
 
-const StyledTicks = styled('text', {
+const tickStyles = cva({
   base: { fontSize: '10px', fill: 'var(--colors-gray10)', userSelect: 'none', pointerEvents: 'none' },
   variants: {
     direction: {
@@ -23,18 +23,16 @@ const StyledTicks = styled('text', {
   defaultVariants: { direction: 'horizontal' },
 })
 
-const StyledLabel = styled('text', {
-  base: {
-    fontSize: '11px',
-    textAnchor: 'middle',
-    fill: 'var(--colors-grayA11)',
-    userSelect: 'none',
-    pointerEvents: 'none',
-  },
+const labelClass = css({
+  fontSize: '11px',
+  textAnchor: 'middle',
+  fill: 'var(--colors-grayA11)',
+  userSelect: 'none',
+  pointerEvents: 'none',
 })
 
-const StyledGridLine = styled('rect', { base: { fill: 'var(--colors-grayA3)' } })
-const StyledAxis = styled('line', { base: { stroke: 'var(--colors-grayA6)' } })
+const gridLineClass = css({ fill: 'var(--colors-grayA3)' })
+const axisClass = css({ stroke: 'var(--colors-grayA6)' })
 
 interface GridProps {
   children?: React.ReactNode
@@ -86,7 +84,9 @@ export function Grid(props: GridProps) {
   function renderYAxis() {
     // When origin is exactly on left border, keep only the orange border to avoid double-line mismatch.
     if (Math.abs(offset.x) < TICK_EPSILON) return null
-    return <StyledAxis className="y-axis" x1={0} y1={offset.y} x2={0} y2={offset.y + height} strokeWidth="1" />
+    return (
+      <line className={cx(axisClass, 'y-axis')} x1={0} y1={offset.y} x2={0} y2={offset.y + height} strokeWidth="1" />
+    )
   }
 
   function renderHorizontalGridLines() {
@@ -94,7 +94,8 @@ export function Grid(props: GridProps) {
       <g className="grid-x-lines">
         {[...Array(yAxisLength).keys()].map((index) => {
           return (
-            <StyledGridLine
+            <rect
+              className={gridLineClass}
               key={index}
               x={offset.x}
               y={index * yAxisGap + offset.y - (offset.y % yAxisGap)}
@@ -125,14 +126,13 @@ export function Grid(props: GridProps) {
       <g className="grid-y-ticks" style={{ clipPath: `url(#${clipYTicksId})` }}>
         {ticks.map((tickItem) => {
           return (
-            <StyledTicks
-              className="y-axis-tick"
+            <text
+              className={cx(tickStyles({ direction: 'vertical' }), 'y-axis-tick')}
               key={`y-${tickItem.index}`}
               x={tickXOffset}
-              direction="vertical"
               y={tickItem.worldY + tickYOffset}>
               {formatTick(tickItem.value, alignedPrecision)}
-            </StyledTicks>
+            </text>
           )
         })}
       </g>
@@ -141,9 +141,9 @@ export function Grid(props: GridProps) {
 
   function renderXAxisLabel() {
     return (
-      <StyledLabel className="x-axis-label" x={offset.x + width / 2} y={offset.y + height - labelGap}>
+      <text className={cx(labelClass, 'x-axis-label')} x={offset.x + width / 2} y={offset.y + height - labelGap}>
         {axisLabel ?? 'x'}
-      </StyledLabel>
+      </text>
     )
   }
 
@@ -158,7 +158,7 @@ export function Grid(props: GridProps) {
             return null
           }
 
-          return <StyledGridLine key={index} x={x} y={offset.y} width={1} height={height} />
+          return <rect className={gridLineClass} key={index} x={x} y={offset.y} width={1} height={height} />
         })}
       </g>
     )
@@ -180,9 +180,13 @@ export function Grid(props: GridProps) {
       <g className="grid-x-ticks" style={{ clipPath: `url(#${clipXTicksId})` }}>
         {ticks.map((tickItem) => {
           return (
-            <StyledTicks className="x-axis-tick" key={`x-${tickItem.index}`} y={tickYOffset} x={tickItem.x}>
+            <text
+              className={cx(tickStyles(), 'x-axis-tick')}
+              key={`x-${tickItem.index}`}
+              y={tickYOffset}
+              x={tickItem.x}>
               {formatTick(tickItem.value, alignedPrecision)}
-            </StyledTicks>
+            </text>
           )
         })}
       </g>
@@ -190,7 +194,9 @@ export function Grid(props: GridProps) {
   }
 
   function renderXAxis() {
-    return <StyledAxis className="x-axis" x1={offset.x} y1={0} x2={offset.x + width} y2={0} strokeWidth="1" />
+    return (
+      <line className={cx(axisClass, 'x-axis')} x1={offset.x} y1={0} x2={offset.x + width} y2={0} strokeWidth="1" />
+    )
   }
 
   return (

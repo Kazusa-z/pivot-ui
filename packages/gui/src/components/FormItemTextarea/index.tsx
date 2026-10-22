@@ -6,7 +6,7 @@ import { BaseFormItemProps } from '../FormItem/FormItem'
 export interface FormItemTextareaProps extends BaseFormItemProps<string> {}
 
 export function FormItemTextarea(props: FormItemTextareaProps) {
-  const { value, defaultValue, onChange } = props
+  const { value, defaultValue, onChange, disabled } = props
 
   const handleOnChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -17,7 +17,13 @@ export function FormItemTextarea(props: FormItemTextareaProps) {
 
   return (
     <FormItem {...extractFormItemProps(props)}>
-      <Textarea value={value} onChange={handleOnChange} defaultValue={defaultValue} variant="soft" />
+      <Textarea
+        value={value}
+        onChange={handleOnChange}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        variant="soft"
+      />
     </FormItem>
   )
 }

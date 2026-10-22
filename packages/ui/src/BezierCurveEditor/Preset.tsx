@@ -1,26 +1,23 @@
 import { useState } from 'react'
 import { styled } from '../../styled-system/jsx'
+import { css } from '../../styled-system/css'
 import { IPoint } from './types'
 import { IconCirclePlusFilled, IconCircleXFilled } from '@tabler/icons-react'
 import { Flex } from '../Flex'
 import { Button } from '../Button'
 
-const PresetPath = styled('path', {
-  base: {
-    fill: 'none',
-    stroke: 'var(--colors-grayA8)',
-    strokeWidth: '1.5px',
-    transition: 'stroke .2s ease-in-out, stroke-width .2s ease-in-out',
-  },
+const presetPathClass = css({
+  fill: 'none',
+  stroke: 'var(--colors-grayA8)',
+  strokeWidth: '1.5px',
+  transition: 'stroke .2s ease-in-out, stroke-width .2s ease-in-out',
 })
 
-const PresetSvg = styled('svg', {
-  base: {
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    '&:hover path': { stroke: 'var(--colors-orange10)', strokeWidth: '2px' },
-  },
+const presetSvgClass = css({
+  width: '100%',
+  height: '100%',
+  overflow: 'hidden',
+  '&:hover path': { stroke: 'var(--colors-orange10)', strokeWidth: '2px' },
 })
 
 const defaultPresets = [
@@ -116,9 +113,9 @@ function PresetItem(props: PresetItemProps) {
   }
   return (
     <CurvePresetItem {...rest}>
-      <PresetSvg width={width} height={height} viewBox={`0 -${height} ${width} ${height}`}>
-        <PresetPath d={genPath(points)} />
-      </PresetSvg>
+      <svg className={presetSvgClass} width={width} height={height} viewBox={`0 -${height} ${width} ${height}`}>
+        <path className={presetPathClass} d={genPath(points)} />
+      </svg>
       {deletable && (
         <DeleteButton>
           <IconCircleXFilled size="14px" onClick={onDelete} />
