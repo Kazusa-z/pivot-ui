@@ -23,7 +23,7 @@ panda/               shared Panda configuration, tokens and reset
 docs/                integration, development and archive documentation
 ```
 
-Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts, B02 visual foundations and B03 layouts, property-row parts, display, disclosure, scrolling and resizable panes. B04 currently adds overlays, menus, dialogs and scoped confirmation/notification services. Migrated `ui` and `gui` entries forward to the unified implementation; other components remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
+Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts, B02 visual foundations and B03 layouts, property-row parts, display, disclosure, scrolling and resizable panes. B04 adds overlays, menus, dialogs and scoped confirmation/notification services. B05 adds text and choice widgets, shared text-edit sessions and text/boolean/enum `PropertyField` bindings. Migrated `ui` entries forward to the unified implementation; the seven basic GUI FormItem wrappers are removed in favor of explicit composition. Other controls remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
 
 ## Commands
 
@@ -70,6 +70,8 @@ pnpm --filter @pivot-ui/gui panda
 pnpm --filter @pivot-ui/react panda
 ```
 
+Source-link consumers must also generate `@pivot-ui/react` styling modules before importing migrated components, including through old UI/GUI adapters. Their Panda configs scan `packages/interface/src/**/*.{ts,tsx}` as well as application source and any transitional package sources they use; generating modules does not replace the consumer's own CSS extraction and PostCSS build.
+
 ### Token snapshot
 
 `panda/generate-tokens.mjs` reads the data-only token sources in `panda/token-source/` and writes `panda/designTokens.ts`:
@@ -111,6 +113,8 @@ For B03, inspect both the unified stories and legacy consumers. Required checks 
 Property-row implementations must not scan the DOM or infer child control types. Legacy FormItem adapters use explicit control render props or named groups; business-specific column rules remain in consumers. Keep root layout refs separate from input/scroll viewport refs, and put disclosure actions beside, not inside, the trigger button.
 
 For B04, exercise the new Menus, Overlays, Dialogs and Notifications stories plus legacy consumers. Check controlled rejection, repeated open/close, nested Escape order, focus restoration, real unmount, StrictMode, custom portal containers and local light/dark themes. Retained Popovers must preserve state/DOM while closed content effects/refs, focus layers and scroll locks are suspended. Confirm service results settle once, reject duplicate confirmation hosts, and isolate notification IDs/cleanup across services; clear/dismiss/unmount must prevent stale promise completions from recreating notices. Check console diagnostics and Panda extraction as well as screenshots. API and migration details are in the [B04 guide](./refactor/blender-5.2/B04_OVERLAYS.md); record actual evidence in the ledger.
+
+For B05, exercise the unified text/choice stories, PropertyField and remaining rename consumers. Check IME drafts, one submission for Enter plus blur, Escape cancellation, invalid drafts and rejected commits, pending updates, equal-valued revision changes, target replacement and unmount. Check original string/number option identity, empty and mixed values, readonly versus disabled behavior, keyboard/search boundaries and controlled rejection. Verify the removed GUI wrappers have no remaining consumers and keep Mock adapters in stories/support. Details are in the [B05 guide](./refactor/blender-5.2/B05_TEXT_CHOICES.md); numeric binding remains B06.
 
 Each refactor batch finishes with its own verified Git commit and a push to the remote branch. Update the batch ledger and clean temporary project files before committing; confirm the remote commit before starting the next batch.
 

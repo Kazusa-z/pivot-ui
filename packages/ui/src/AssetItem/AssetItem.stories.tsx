@@ -22,8 +22,9 @@ function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export const Overview: StoryFn<typeof AssetItem> = (args) => {
+function AssetItemExample() {
   const [selectedMap, setSelectedMap] = useState<{ [key: string]: boolean }>({})
+  const [name, setName] = useState('spine_person')
 
   useEffect(() => {
     function clearSelect() {
@@ -49,10 +50,10 @@ export const Overview: StoryFn<typeof AssetItem> = (args) => {
     <Grid>
       <AssetItem
         id="1"
-        name="spine_person"
+        name={name}
         onRename={async (name) => {
           await wait(1000)
-          console.log('rename', name)
+          setName(name)
         }}
         loadingStatus="loading"
         thumbnail="https://mdn.alipayobjects.com/huamei_dc3kgb/afts/img/A*q7BUSabi8scAAAAAAAAAAAAADuiaAQ/original"
@@ -86,3 +87,5 @@ export const Overview: StoryFn<typeof AssetItem> = (args) => {
     </Grid>
   )
 }
+
+export const Overview: StoryFn<typeof AssetItem> = () => <AssetItemExample />

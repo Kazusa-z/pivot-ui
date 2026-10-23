@@ -1,6 +1,6 @@
-import { createElement, PropsWithChildren } from 'react'
+import { createElement } from 'react'
 import { FormItem } from './FormItem'
-import { Button, CascadeSlider } from '@pivot-ui/editor'
+import { CascadeSlider } from '@pivot-ui/editor'
 import { mergeFormItemDescriptionIds, type BaseFormItemProps } from './FormItem/FormItem'
 
 function wrapFormItem<T>(association: 'control' | 'group') {
@@ -38,32 +38,19 @@ function wrapFormItem<T>(association: 'control' | 'group') {
   }
 }
 
-export type FormItemButtonProps = PropsWithChildren<Omit<BaseFormItemProps<string>, 'value' | 'onChange'>>
-export const FormItemButton = wrapFormItem<string>('control')(Button, {
-  variant: 'soft',
-})
-
 export type FormItemCascadeSliderProps = BaseFormItemProps<number[]>
 export const FormItemCascadeSlider = wrapFormItem<number[]>('group')(CascadeSlider)
-
-export { FormItemInput, type FormItemInputProps } from './FormItemInput'
-export { FormItemSelect, type FormItemSelectProps } from './FormItemSelect'
 
 export { FormItemColor, type FormItemColorProps } from './FormItemColor'
 export { type Color } from '@pivot-ui/editor'
 export { FormItemGroup, type FormItemGroupProps } from './FormItemGroup'
 export { FormItemInputNumber, type FormItemInputNumberProps } from './FormItemInputNumber'
-export { FormItemTextarea, type FormItemTextareaProps } from './FormItemTextarea'
-
-export { FormItemToggle, type FormItemToggleProps } from './FormItemToggle'
-export { FormItemToggleGroup, type FormItemToggleGroupProps } from './FormItemToggleGroup'
 
 export * from './FormItemVector2'
 export * from './FormItemVector3'
 export * from './FormItemVector4'
 export * from './FormItemRect'
 export { FormItemSlider, type FormItemSliderProps } from './FormItemSlider'
-export { FormItemSegmentControl, type FormItemSegmentControlProps } from './FormItemSegmentControl'
 export { FormItemArray, type FormItemArrayProps } from './FormItemArray'
 export { FormItemDisplay, type FormItemDisplayProps } from './FormItemDisplay'
 export * from './FormItemAssetPicker'

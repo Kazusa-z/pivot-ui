@@ -2,6 +2,8 @@
 
 Composable React form items for scene inspectors, material editors and other property editors. Built on [@pivot-ui/editor](../ui/README.md), this package supplies fields and field groups. The application owns layout, state and backend integration.
 
+B05 removes the basic text, boolean, choice and action FormItem wrappers. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, boolean or enum property through `PropertyAccess`. The numeric, color, curve and resource form items below remain available for later migration batches. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md).
+
 ## Setup
 
 This is a TypeScript source package in the Pivot UI workspace. React and React DOM 19 are peer dependencies. Add it through `workspace:*` or link the directory:
@@ -10,7 +12,15 @@ This is a TypeScript source package in the Pivot UI workspace. React and React D
 pnpm link ../pivot-ui/packages/gui
 ```
 
-Configure Panda's PostCSS plugin and include both `packages/gui/src` and `packages/ui/src` in the application's Panda configuration. Import the layer entry once:
+Configure Panda's PostCSS plugin and scan `packages/gui/src/**/*.{ts,tsx}`, `packages/ui/src/**/*.{ts,tsx}` and `packages/interface/src/**/*.{ts,tsx}` alongside the application's source. The unified source is required for migrated controls and layouts, even when importing a legacy FormItem.
+
+Before consuming a source link, generate the unified package's styling modules from the Pivot UI workspace:
+
+```bash
+pnpm --filter @pivot-ui/react panda
+```
+
+Workspace app and Storybook pre-scripts already generate these modules, including after cleaning generated files. Consumers still run their own Panda extraction and PostCSS build. Import the layer entry once:
 
 ```ts
 import '@pivot-ui/gui/panda.css'
@@ -21,10 +31,13 @@ The CSS entry declares layer order; Panda generates the styles during the applic
 ## Controlled form items
 
 ```tsx
-import { useState } from 'react'
-import { FormItemGroup, FormItemInput, FormItemSlider, FormItemVector3 } from '@pivot-ui/gui'
+import { useId, useState } from 'react'
+import { FormItemGroup, FormItemSlider, FormItemVector3 } from '@pivot-ui/gui'
+
+import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 
 export function Inspector() {
+  const nameId = useId()
   const [name, setName] = useState('Object')
   const [position, setPosition] = useState({ x: 0, y: 0, z: 0 })
   const [opacity, setOpacity] = useState(1)
@@ -32,7 +45,12 @@ export function Inspector() {
   return (
     <div style={{ width: 360 }}>
       <FormItemGroup label="Object">
-        <FormItemInput label="Name" value={name} onChange={setName} />
+        <PropertyRow>
+          <PropertyLabel htmlFor={nameId}>Name</PropertyLabel>
+          <PropertyControl association="control">
+            <Input id={nameId} value={name} onValueChange={setName} />
+          </PropertyControl>
+        </PropertyRow>
         <FormItemVector3 label="Position" value={position} onChange={setPosition} />
         <FormItemSlider label="Opacity" value={opacity} onChange={setOpacity} min={0} max={1} step={0.01} />
       </FormItemGroup>
@@ -52,24 +70,17 @@ Every form item has a dedicated Storybook entry under `FormItem`.
 | Component                                               | Purpose                                                      |
 | ------------------------------------------------------- | ------------------------------------------------------------ |
 | `FormItem`                                              | Label, help text and field layout for custom controls        |
-| `FormItemInput`                                         | Text input                                                   |
-| `FormItemTextarea`                                      | Multiline input                                              |
 | `FormItemInputNumber`                                   | Numeric input with dragging and increment/decrement controls |
 | `FormItemSlider`                                        | Numeric slider and input                                     |
 | `FormItemCascadeSlider`                                 | Editable distribution across segments                        |
 | `FormItemVector2`, `FormItemVector3`, `FormItemVector4` | Vector fields; Vector3 supports proportional edits           |
 | `FormItemRect`                                          | Rectangle coordinates and dimensions                         |
-| `FormItemToggle`                                        | Boolean field                                                |
-| `FormItemToggleGroup`                                   | Single or multiple selections                                |
-| `FormItemSegmentControl`                                | Segmented selection                                          |
-| `FormItemSelect`                                        | Dropdown selection                                           |
 | `FormItemColor`                                         | Color and alpha input                                        |
 | `FormItemGradient`                                      | Constant colors and gradient modes                           |
 | `FormItemParticleCurve`                                 | Constant values and curve modes                              |
 | `FormItemParticle`                                      | Alias of `FormItemParticleCurve`                             |
 | `FormItemAssetPicker`                                   | Asset selection, location and clearing                       |
 | `FormItemDisplay`                                       | Read-only text or image                                      |
-| `FormItemButton`                                        | Action with a form label                                     |
 | `FormItemGroup`                                         | Collapsible field group                                      |
 | `FormItemArray`                                         | Collection with add, delete and rename callbacks             |
 

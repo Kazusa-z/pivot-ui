@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { useTextEdit } from '@pivot-ui/react'
 import { IconChevronRight, IconChevronDown } from '@tabler/icons-react'
 
 import { styled } from '../../styled-system/jsx'
@@ -136,13 +137,13 @@ interface TreeItemContentProps {
   onExpand: (id: string) => void
   startSlot?: React.ReactNode
   endSlot?: React.ReactNode
-  onRename?: (id: string, name: string) => void
+  onRename?: (id: string, name: string) => void | Promise<void>
   handleMouseEnter?: () => void
   handleMouseLeave?: () => void
 }
 
 export function TreeItemContent(props: TreeItemContentProps) {
-  const input = useRef<HTMLInputElement>(undefined)
+  const input = useRef<HTMLInputElement>(null)
   const content = useRef<HTMLDivElement>(null)
   const restoreFocus = useRef(false)
   const {
@@ -162,8 +163,15 @@ export function TreeItemContent(props: TreeItemContentProps) {
     onRename,
     renamable = true,
   } = props
-  const [editing, setEditing] = useState(false)
-  const [name, setName] = useState(propName)
+  const editor = useTextEdit({
+    value: propName,
+    resetKey: id,
+    readOnly: !renamable || !onRename,
+    onCommit: (name) => {
+      if (name !== propName) return onRename?.(id, name)
+    },
+  })
+  const editing = editor.phase !== 'idle'
 
   const toggleExpandEntity = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -184,7 +192,7 @@ export function TreeItemContent(props: TreeItemContentProps) {
     }
     if (e.key === 'F2' && renamable) {
       e.preventDefault()
-      setEditing(true)
+      editor.begin()
       return
     }
     if (isExpandable && ((e.key === 'ArrowRight' && !isExpanded) || (e.key === 'ArrowLeft' && isExpanded))) {
@@ -214,40 +222,16 @@ export function TreeItemContent(props: TreeItemContentProps) {
     }
   }
 
-  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation()
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      restoreFocus.current = true
-      setEditing(false)
-      if (onRename) {
-        onRename(id, name)
-      }
-    }
-    if (e.key === 'Escape') {
-      restoreFocus.current = true
-      setEditing(false)
-      setName(propName)
-    }
-  }
-
-  const handleInputChange = (e) => {
-    setName(e.target.value)
-  }
-
-  const handleInputBlur = (e) => {
-    e.stopPropagation()
-    if (restoreFocus.current) return
-    setEditing(false)
-    if (onRename) {
-      onRename(id, name)
-    }
+    editor.inputProps.onKeyDown(e)
+    if (e.defaultPrevented && (e.key === 'Enter' || e.key === 'Escape')) restoreFocus.current = true
   }
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (renamable) {
-      setEditing(true)
+      editor.begin()
     }
   }
 
@@ -261,17 +245,13 @@ export function TreeItemContent(props: TreeItemContentProps) {
     }
   }, [editing])
 
-  useEffect(() => {
-    setName(propName)
-  }, [propName])
-
   return (
     <TreeItemContentRoot
       ref={content}
       data-part="content"
       role="treeitem"
       tabIndex={0}
-      aria-label={name}
+      aria-label={propName}
       aria-level={level + 1}
       aria-selected={isSelected}
       aria-expanded={isExpandable ? isExpanded : undefined}
@@ -297,19 +277,25 @@ export function TreeItemContent(props: TreeItemContentProps) {
       <TreeItemName align="v" onDoubleClick={handleDoubleClick}>
         {renamable && editing ? (
           <TreeItemRenameInput
+            {...editor.inputProps}
             type="text"
             ref={input}
-            value={name}
-            onBlur={handleInputBlur}
+            aria-label={`Rename ${propName}`}
+            readOnly={editor.phase === 'pending'}
+            value={editor.draft}
             onKeyDown={handleInputKeyDown}
-            onChange={handleInputChange}
+            onBlur={(event) => {
+              restoreFocus.current = false
+              editor.inputProps.onBlur(event)
+            }}
           />
         ) : (
           <Text size="sm" ellipsis deleted={prefabRemoved}>
-            {name}
+            {propName}
           </Text>
         )}
       </TreeItemName>
+      {editor.error && <span role="alert">{editor.error}</span>}
       {endSlot}
     </TreeItemContentRoot>
   )

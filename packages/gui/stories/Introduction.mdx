@@ -9,10 +9,13 @@ import { Meta } from '@storybook/addon-docs/blocks'
 ## Start with local state
 
 ```tsx
-import { useState } from 'react'
-import { FormItemGroup, FormItemInput, FormItemSlider, FormItemVector3 } from '@pivot-ui/gui'
+import { useId, useState } from 'react'
+import { FormItemGroup, FormItemSlider, FormItemVector3 } from '@pivot-ui/gui'
+
+import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 
 export function Inspector() {
+  const nameId = useId()
   const [name, setName] = useState('Object')
   const [position, setPosition] = useState({ x: 0, y: 0, z: 0 })
   const [opacity, setOpacity] = useState(1)
@@ -20,7 +23,12 @@ export function Inspector() {
   return (
     <div style={{ width: 360 }}>
       <FormItemGroup label="Object">
-        <FormItemInput label="Name" value={name} onChange={setName} />
+        <PropertyRow>
+          <PropertyLabel htmlFor={nameId}>Name</PropertyLabel>
+          <PropertyControl association="control">
+            <Input id={nameId} value={name} onValueChange={setName} />
+          </PropertyControl>
+        </PropertyRow>
         <FormItemVector3 label="Position" value={position} onChange={setPosition} />
         <FormItemSlider label="Opacity" value={opacity} min={0} max={1} step={0.01} onChange={setOpacity} />
       </FormItemGroup>
@@ -35,9 +43,9 @@ Later, the application can route edits through a C++/Qt adapter and pass the res
 
 ## Explore the fields
 
-- Text and actions: Input, Textarea, Button and Display.
+- Text, choices and actions moved to the unified explorer on port 6009; the seven corresponding FormItem wrappers have been removed.
 - Numbers and geometry: InputNumber, Slider, CascadeSlider, Vector2/3/4 and Rect.
-- Selection: Toggle, ToggleGroup, SegmentControl and Select.
+- Display: read-only values and images.
 - Specialized values: Color, Gradient, ParticleCurve and AssetPicker.
 - Composition: FormItem, Group and Array.
 

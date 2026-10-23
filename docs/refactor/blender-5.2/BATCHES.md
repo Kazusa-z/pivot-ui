@@ -88,9 +88,13 @@ TooltipProvider 由应用或组合边界共享提供。Popover 的 `keepMounted`
 
 从本批开始实现 PropertyField 的文本/布尔/选项适配，用真实控件连接 B01 Mock；属性绑定不拖到最后才验证。
 
+本批接口与迁移约定见 [B05 文本、选择与属性绑定](./B05_TEXT_CHOICES.md)。文本控件和 useTextEdit 位于 widgets/inputs；Checkbox、Select、Combobox、SegmentControl、ToggleGroup 位于 widgets/choices；稳定选项映射位于 values/choice-options；PropertyField 位于 property。七个对应 FormItem 包装删除，旧 UI 入口只保留转发/形状转换，B11 清理。
+
+文本提交遵循一个会话只终结一次：pending 后的外部更新、切换目标和卸载只能使本地结果失效，不能再通知取消已发出的提交。PropertyField 本批只绑定 string/boolean/enum；number 留 B06，多选数组不提前扩入 B01 标量模型。原始选项类型在 JS 回调中保留，name/form 仅在 HTML 序列化边界转为字符串。
+
 必验：中间草稿、Enter/blur 只提交一次、Escape 取消、外部值更新、单/多选键盘与搜索、字符串 `001` 与数字值身份、空值、混合状态、disabled/readOnly。资源和集合中的旧改名消费者同时接入唯一编辑内核。
 
-退出条件：选项 key 到值只映射一次；没有两套编辑状态；G02、G03、G11–G14、G20 的消费者已迁移。
+退出条件：选项 key 到值只映射一次；没有两套编辑状态；G02、G03、G11–G14、G20 的实现、出口和专属故事退出，活跃消费者已迁移。类型、完整构建、临时事件探针与开发/静态浏览器交互通过；异步接受后不得再发取消，拒绝与 change invalid 保留草稿并可重试。
 
 ### B06 数值与几何模板
 

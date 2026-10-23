@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import { FormItemArray, type FormItemArrayProps } from './'
 import { FormItemInputNumber } from '../FormItemInputNumber'
-import { FormItemToggle } from '../FormItemToggle'
+import { Checkbox, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 import { StoryFrame } from '../../../stories/StoryFrame'
 
 export default {
@@ -18,6 +18,7 @@ const initialLayers = [
 ]
 
 function ArrayExample({ initialEmpty = false, ...args }: FormItemArrayProps & { initialEmpty?: boolean }) {
+  const idPrefix = useId()
   const [layers, setLayers] = useState(() => structuredClone(initialEmpty ? [] : initialLayers))
   const [resetKey, setResetKey] = useState(0)
   const nextId = useRef(3)
@@ -51,13 +52,20 @@ function ArrayExample({ initialEmpty = false, ...args }: FormItemArrayProps & { 
                   setLayers((current) => current.map((item) => (item.id === layer.id ? { ...item, weight } : item)))
                 }
               />
-              <FormItemToggle
-                label="Enabled"
-                value={layer.enabled}
-                onChange={(enabled) =>
-                  setLayers((current) => current.map((item) => (item.id === layer.id ? { ...item, enabled } : item)))
-                }
-              />
+              <PropertyRow>
+                <PropertyLabel htmlFor={`${idPrefix}-${layer.id}`}>Enabled</PropertyLabel>
+                <PropertyControl association="control">
+                  <Checkbox
+                    id={`${idPrefix}-${layer.id}`}
+                    checked={layer.enabled}
+                    onCheckedChange={(enabled) =>
+                      setLayers((current) =>
+                        current.map((item) => (item.id === layer.id ? { ...item, enabled } : item))
+                      )
+                    }
+                  />
+                </PropertyControl>
+              </PropertyRow>
             </>
           ),
         }))}

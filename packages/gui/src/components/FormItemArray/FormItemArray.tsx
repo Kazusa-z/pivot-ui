@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
+import { useTextEdit } from '@pivot-ui/react'
 import { IconTrash, IconPlus, IconEdit } from '@tabler/icons-react'
 import { Flex, ActionButton, Accordion, AccordionItem, Button, Input } from '@pivot-ui/editor'
 import { styled } from '../../../styled-system/jsx'
@@ -8,7 +9,7 @@ import { FormItem, extractFormItemProps, type BaseFormItemProps } from '../FormI
 interface AccordionActionsProps {
   title: string
   onDelete?: () => void
-  onRename?: (name: string) => void
+  onRename?: (name: string) => void | Promise<void>
   removable?: boolean
   renameable?: boolean
   hasChild?: boolean
@@ -34,9 +35,14 @@ const AddItemButton = styled(Button, {
 
 function AccordionActions(props: AccordionActionsProps) {
   const { title, renameable, onDelete, onRename, removable } = props
-  const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(title)
-  const editingRef = useRef(false)
+  const editor = useTextEdit({
+    value: title,
+    readOnly: !renameable || !onRename,
+    onCommit: (draft) => {
+      if (draft !== title) return onRename?.(draft)
+    },
+  })
+  const editing = editor.phase !== 'idle'
   const inputRef = useRef<HTMLInputElement>(null)
   const renameButtonRef = useRef<HTMLButtonElement>(null)
   const restoreRenameFocus = useRef(false)
@@ -51,35 +57,27 @@ function AccordionActions(props: AccordionActionsProps) {
     }
   }, [editing])
 
-  const finishRename = (commit: boolean) => {
-    if (!editingRef.current) return
-    editingRef.current = false
-    restoreRenameFocus.current = true
-    setEditing(false)
-    if (commit && draft !== title) {
-      onRename?.(draft)
-    }
-  }
-
   return (
     <Flex align="v" gap="xxs" css={{ minWidth: 0 }}>
       {editing && (
         <Input
+          {...editor.inputProps}
           ref={inputRef}
           aria-label={`Rename ${title}`}
           css={{ width: '140px', minWidth: 0, maxWidth: '100%' }}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          value={editor.draft}
+          readOnly={editor.phase === 'pending'}
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => {
             e.stopPropagation()
-            if (e.key === 'Enter' || e.key === 'Escape') {
-              e.preventDefault()
-              finishRename(e.key === 'Enter')
-            }
+            editor.inputProps.onKeyDown(e)
+            if (e.defaultPrevented && (e.key === 'Enter' || e.key === 'Escape')) restoreRenameFocus.current = true
           }}
           onKeyUp={(e) => e.stopPropagation()}
-          onBlur={() => finishRename(true)}
+          onBlur={(event) => {
+            restoreRenameFocus.current = false
+            editor.inputProps.onBlur(event)
+          }}
         />
       )}
       <Flex gap="xxs">
@@ -92,9 +90,7 @@ function AccordionActions(props: AccordionActionsProps) {
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              setDraft(title)
-              editingRef.current = true
-              setEditing(true)
+              editor.begin()
             }}>
             <IconEdit size="14px" />
           </ActionButton>
@@ -115,6 +111,7 @@ function AccordionActions(props: AccordionActionsProps) {
           </ActionButton>
         )}
       </Flex>
+      {editor.error && <span role="alert">{editor.error}</span>}
     </Flex>
   )
 }
@@ -135,7 +132,7 @@ export interface FormItemArrayProps extends Omit<BaseFormItemProps<any>, 'value'
   onAdd?: () => void
   onDelete?: (item: GroupItem) => void
   /** Called after an inline rename is committed. Update the item's name in `items` to apply it. */
-  onRename?: (item: GroupItem, name: string) => void
+  onRename?: (item: GroupItem, name: string) => void | Promise<void>
 }
 
 export function FormItemArray(props: FormItemArrayProps) {

@@ -47,7 +47,7 @@ pnpm dev:interface
 pnpm dev:demo
 ```
 
-Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. B04 currently adds overlays, menus, dialogs and scoped confirmation/notification services to the foundations and layouts introduced in B01–B03. Migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
+Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. B05 adds text and choice controls plus PropertyField bindings, alongside the existing foundations, layouts, overlays and services. Migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
 
 ### Build and verify
 
@@ -82,16 +82,24 @@ export function Toolbar() {
 ### Form items
 
 ```tsx
-import { useState } from 'react'
-import { FormItemGroup, FormItemInput, FormItemVector3 } from '@pivot-ui/gui'
+import { useId, useState } from 'react'
+import { FormItemGroup, FormItemVector3 } from '@pivot-ui/gui'
+
+import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 
 export function Inspector() {
+  const nameId = useId()
   const [name, setName] = useState('Camera')
   const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
 
   return (
     <FormItemGroup label="Camera">
-      <FormItemInput label="Name" value={name} onChange={setName} />
+      <PropertyRow>
+        <PropertyLabel htmlFor={nameId}>Name</PropertyLabel>
+        <PropertyControl association="control">
+          <Input id={nameId} value={name} onValueChange={setName} />
+        </PropertyControl>
+      </PropertyRow>
       <FormItemVector3 label="Position" value={position} onChange={setPosition} />
     </FormItemGroup>
   )

@@ -341,3 +341,46 @@ export type {
   MenubarPortalProps,
   MenuSize,
 } from './widgets/menus'
+
+export { Input } from './widgets/inputs/Input'
+export type { InputProps } from './widgets/inputs/Input'
+export { Textarea } from './widgets/inputs/Textarea'
+export type { TextareaProps } from './widgets/inputs/Textarea'
+export { EditableText } from './widgets/inputs/EditableText'
+export type { EditableTextProps } from './widgets/inputs/EditableText'
+export { useTextEdit } from './widgets/inputs/useTextEdit'
+export type {
+  UseTextEditOptions,
+  TextEditPhase,
+  TextEditCommitReason,
+  TextEditCancelReason,
+} from './widgets/inputs/useTextEdit'
+export { Select } from './widgets/choices/Select'
+export type { SelectProps } from './widgets/choices/Select'
+export { Combobox } from './widgets/choices/Combobox'
+export type { ComboboxProps, SingleComboboxProps, MultipleComboboxProps } from './widgets/choices/Combobox'
+export { Checkbox } from './widgets/choices/Checkbox'
+export type { CheckboxProps, CheckboxState } from './widgets/choices/Checkbox'
+export { SegmentControl, SegmentControlRoot, SegmentControlItem } from './widgets/choices/SegmentControl'
+export type {
+  SegmentControlProps,
+  SegmentControlRootProps,
+  SegmentControlItemProps,
+} from './widgets/choices/SegmentControl'
+export { ToggleGroup, ToggleGroupRoot, ToggleGroupItem } from './widgets/choices/ToggleGroup'
+export type {
+  ToggleGroupProps,
+  ToggleGroupSingleProps,
+  ToggleGroupMultipleProps,
+  ToggleGroupRootProps,
+  ToggleGroupRootSingleProps,
+  ToggleGroupRootMultipleProps,
+  ToggleGroupItemProps,
+} from './widgets/choices/ToggleGroup'
+export { createChoiceCollection } from './values/choice-options'
+export type { ChoiceCollection } from './values/choice-options'
+export { PropertyField } from './property/PropertyField'
+export type { PropertyFieldProps, PropertyFieldWidget } from './property/PropertyField'
+
+export type { TextInputSize, TextInputState, TextInputVariant } from './widgets/inputs/text.styles'
+export type { ChoiceSize, ChoiceVariant } from './widgets/choices/choice.styles'

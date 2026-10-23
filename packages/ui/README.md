@@ -4,6 +4,8 @@
 
 The package is part of the Pivot UI workspace and can be integrated through the workspace or a package link.
 
+Migrated components forward to `@pivot-ui/react`. B05 moves text and choice controls to the unified package, including their shared text-edit lifecycle and the first `PropertyField` bindings. Use the unified entry for new code; numeric, color, curve and resource controls remain here until their assigned batches. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md).
+
 ## Installation
 
 ```bash
@@ -14,7 +16,15 @@ React and React DOM 19 are peer dependencies.
 
 ## Styling prerequisite
 
-Components use Panda CSS. The consuming application must run Panda's PostCSS plugin and include this package's source in its Panda config. The `panda.css` file declares layer order only; it is not a prebuilt stylesheet.
+Components use Panda CSS. The consuming application must run Panda's PostCSS plugin and scan both `packages/ui/src/**/*.{ts,tsx}` and `packages/interface/src/**/*.{ts,tsx}` alongside its own source. The unified source is required because migrated legacy entries forward to it. The `panda.css` file declares layer order only; it is not a prebuilt stylesheet.
+
+Before consuming a source link, generate the unified package's styling modules from the Pivot UI workspace:
+
+```bash
+pnpm --filter @pivot-ui/react panda
+```
+
+Workspace app and Storybook pre-scripts already generate these modules, including after cleaning generated files. Consumers still run their own Panda extraction and PostCSS build.
 
 See [Integrating Pivot UI](../../docs/CONSUMING.md) for the full configuration. The demo app in `app/` is the reference integration.
 

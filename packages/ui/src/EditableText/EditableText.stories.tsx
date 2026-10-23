@@ -10,14 +10,18 @@ export default {
   component: EditableText,
 } as Meta<typeof EditableText>
 
-export const Overview: StoryFn<typeof EditableText> = (args) => {
+function EditableTextExample() {
+  const [first, setFirst] = useState('Pam Beesly')
+  const [second, setSecond] = useState('Jim Halpert')
   return (
     <Flex gap="md" direction="column">
-      <EditableText value="Pam Beesly" {...args} />
-      <EditableText value="Jim Halpert" {...args} showIcon />
+      <EditableText value={first} onBlur={setFirst} />
+      <EditableText value={second} onBlur={setSecond} showIcon />
     </Flex>
   )
 }
+
+export const Overview: StoryFn<typeof EditableText> = () => <EditableTextExample />
 
 Overview.argTypes = {
   value: {

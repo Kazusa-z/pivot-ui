@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 当前新增浮层、菜单、对话框和应用拥有的确认/通知服务。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
+Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
 
 ## 入口与依赖
 
@@ -61,7 +61,9 @@ Button 的 `async` 只是 Promise 便利回调；`onAsyncError` 接收失败，�
 
 Callout 的 `severity` 选择视觉等级，`role` 决定普通说明、`status` 或 `alert`，不会把所有静态说明都设为实时告警。Progress 的 `max` 必须为正有限数，非法范围退回 100；空值表示不定进度，确定进度按 `value / max` 显示。Spin 支持名称或装饰用途，并尊重减少动态效果偏好。
 
-全局 token 与预设继续以仓库 `panda/` 为唯一来源。包内直接导入生成的 `styled-system`；消费端使用 styling 子入口，并将统一包 `src` 加入 Panda 扫描。demo 和三个 Storybook 都使用相同预设，只加载一个 layer 入口，详见[接入说明](../../docs/CONSUMING.md)。
+全局 token 与预设继续以仓库 `panda/` 为唯一来源。包内直接导入生成的 `styled-system`；消费端使用 styling 子入口，并将 `packages/interface/src/**/*.{ts,tsx}` 与应用源码加入 Panda 扫描。通过旧 ui/gui 入口消费已迁移组件时也必须扫描统一包，不能只扫描适配器。
+
+首次使用源码链接或清理生成文件后，在本仓库运行 `pnpm --filter @pivot-ui/react panda` 生成样式模块；消费应用仍需执行自己的 Panda 提取和 PostCSS 构建。workspace app 与 Storybook 的前置脚本已处理生成步骤。demo 和三个 Storybook 都使用相同预设，只加载一个 layer 入口，详见[接入说明](../../docs/CONSUMING.md)。
 
 ## 布局与字段结构
 
@@ -125,7 +127,7 @@ export function LegacyNameRow() {
 }
 ```
 
-已有 `FormItemInput` 等适配器会完成单控件关联；组合字段负责各子控件名称。旧 `fieldColumn="color|number|asset|assetPreview|particle|particlePair"` 已移出通用行布局，专用网格在相应消费者中定义。
+B05 已删除文本、布尔、选项及按钮的七个 FormItem 包装；使用 PropertyRow 组合或 PropertyField 绑定，显式传递控件 id；组合字段负责各子控件名称。旧 `fieldColumn="color|number|asset|assetPreview|particle|particlePair"` 已移出通用行布局，专用网格在相应消费者中定义。
 
 ## ScrollArea：布局与滚动视口
 
@@ -294,10 +296,18 @@ pnpm --filter @pivot-ui/react build-storybook
 pnpm verify                          # 完整仓库检查与三个 Storybook 构建
 ```
 
-`Contracts / Property editing` 提供生命周期、延迟/拒绝、编辑中外部更新、过期确认、对象切换、可编辑状态/宿主能力、选择身份等场景。每个场景可 Reset，并展示快照与结果。使用原生 HTML 控件作为契约演示，不提前实现 B05/B06 的 PropertyField。
+`Contracts / Property editing` 提供生命周期、延迟/拒绝、编辑中外部更新、过期确认、对象切换、可编辑状态/宿主能力、选择身份等场景。每个场景可 Reset，并展示快照与结果。这组契约演示继续使用原生 HTML 控件；B05 的真实控件绑定另在 `Property / PropertyField` 展示，数值绑定留待 B06。
 
 Mock 位于 `stories/support/mock-property-access.ts`，只服务示例与临时验证；包出口不包含它。它模拟订阅、会话、延迟、拒绝、外部更新及事务计数，不代表真实后端。
 
 类型检查包含生产源码、全部 stories/support、Panda/PostCSS/Storybook 配置，以及仅 ES2022、无 React/DOM/Node 环境类型的 contracts/values 检查。Panda 在 dev、typecheck、build 前生成 `styled-system`；该目录与构建输出不提交。
 
 进度与验证证据见 [实施台账](../../docs/refactor/blender-5.2/LEDGER.md)，架构边界见 [重构方案](../../docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md)。
+
+## B05 文本、选项和 PropertyField
+
+`Input` / `Textarea` 保留原生事件和 ref，另提供 `onValueChange(string)`。需要延迟提交时用 `useTextEdit` 或 `EditableText`；Enter/blur 共用一次提交，Escape 取消，外部 revision 用 resetKey 使旧草稿失效。只读使用 readOnly，禁用使用 disabled。
+
+`Select` 是单选下拉；`Combobox` 负责搜索及明确的 single/multiple 值类型。`SegmentControl` 是不可取消的 radio；`ToggleGroup` 单选可取消，多选为数组。选项直接传 `ChoiceOption<T>[]`，稳定 key 与原始 value 分开，null 表示未选，空字符串仍是合法值。Checkbox 的 indeterminate 表示混合状态。
+
+`PropertyField access={access}` 为一个文本、布尔或枚举属性提供标签/控件/说明和 B01 编辑会话连接；可选 widget="textarea" / "combobox"。宿主权威值与历史仍由 access 管理。数字及复杂值将在后续批次接入。七个基础 FormItem 包装已删除，改用 PropertyRow 组合或 PropertyField。详情见 [B05 接入说明](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md)。

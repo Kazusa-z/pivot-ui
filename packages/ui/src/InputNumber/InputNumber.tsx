@@ -53,7 +53,7 @@ const StyledInputNumberRoot = styled('div', {
 
 export interface InputNumberProps extends Omit<
   React.ComponentProps<typeof Input>,
-  'onChange' | 'value' | 'defaultValue' | 'type'
+  'onChange' | 'onValueChange' | 'value' | 'defaultValue' | 'type'
 > {
   min?: number
   max?: number

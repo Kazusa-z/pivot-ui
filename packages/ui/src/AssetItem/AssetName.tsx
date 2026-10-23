@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { useTextEdit } from '@pivot-ui/react'
 import { styled } from '../../styled-system/jsx'
 
 export const StyledAssetNameRoot = styled('div', {
@@ -88,74 +89,41 @@ export interface AssetNameProps {
 export const AssetName = function AssetName(props: AssetNameProps) {
   const { selected, readOnly, onRename } = props
   const inputRef = useRef<HTMLInputElement>(null)
-  const [editing, setEditing] = useState(false)
-  const [renaming, setRenaming] = useState(false)
-  const [name, setName] = useState(props.name)
+  const editor = useTextEdit({
+    value: props.name,
+    readOnly: readOnly || !selected || !onRename,
+    onCommit: async (name) => {
+      if (!name) throw new Error('Name cannot be empty')
+      if (name !== props.name) await onRename?.(name)
+    },
+  })
+  const editing = editor.phase !== 'idle'
 
   useEffect(() => {
-    setName(props.name)
-  }, [props.name])
+    if (editing) inputRef.current?.focus()
+  }, [editing])
 
   function handleDoubleClick(e: React.MouseEvent) {
     e.stopPropagation()
     e.preventDefault()
     if (readOnly || !selected) return
-    setEditing(true)
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 0)
-  }
-
-  function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setName(e.target.value)
-  }
-
-  function handleOnKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
-      inputRef.current?.blur()
-    }
-  }
-
-  async function handleOnBlur() {
-    if (!name) {
-      setName(props.name)
-      setEditing(false)
-      return
-    }
-    if (!onRename) {
-      setEditing(false)
-      setName(props.name)
-      return
-    }
-    if (name !== props.name) {
-      setRenaming(true)
-      try {
-        await onRename?.(name)
-        setName(name)
-      } catch (error) {
-        console.warn(error)
-      }
-      setRenaming(false)
-      setEditing(false)
-      return
-    }
-    setEditing(false)
-    setName(props.name)
+    editor.begin()
   }
 
   return (
     <StyledAssetNameRoot onDoubleClickCapture={handleDoubleClick}>
-      {!editing && <AssetNameDisplay selected={selected}>{name}</AssetNameDisplay>}
+      {!editing && <AssetNameDisplay selected={selected}>{props.name}</AssetNameDisplay>}
       <AssetNameInput
-        readOnly={readOnly}
-        value={name}
+        {...editor.inputProps}
+        aria-label={`Rename ${props.name}`}
+        aria-invalid={editor.error ? true : undefined}
+        readOnly={readOnly || editor.phase === 'pending'}
+        value={editor.draft}
         editing={editing}
-        renaming={renaming}
+        renaming={editor.phase === 'pending'}
         ref={inputRef}
-        onChange={handleOnChange}
-        onBlur={handleOnBlur}
-        onKeyDown={handleOnKeyDown}
       />
+      {editor.error && <span role="alert">{editor.error}</span>}
     </StyledAssetNameRoot>
   )
 }

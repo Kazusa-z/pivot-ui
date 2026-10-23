@@ -1,17 +1,23 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button } from '@pivot-ui/editor'
 import { FormItemDisplay, type FormItemDisplayProps } from './'
-import { FormItemInput } from '../FormItemInput'
+import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 import { StoryFrame } from '../../../stories/StoryFrame'
 
 function TextDisplayExample(args: FormItemDisplayProps) {
   const initialValue = args.value ?? 'Main camera'
   const [value, setValue] = useState(initialValue)
+  const id = useId()
 
   return (
     <StoryFrame value={value} onReset={() => setValue(initialValue)}>
-      <FormItemInput label="Source" value={value} onChange={setValue} placeholder="Edit the displayed value" />
+      <PropertyRow>
+        <PropertyLabel htmlFor={id}>Source</PropertyLabel>
+        <PropertyControl association="control">
+          <Input id={id} value={value} onValueChange={setValue} placeholder="Edit the displayed value" />
+        </PropertyControl>
+      </PropertyRow>
       <FormItemDisplay {...args} value={value} />
     </StoryFrame>
   )

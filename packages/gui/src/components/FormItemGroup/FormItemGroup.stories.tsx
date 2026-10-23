@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import { FormItemGroup, type FormItemGroupProps } from './'
 import { FormItemVector2 } from '../FormItemVector2'
 import { FormItemRect } from '../FormItemRect'
 import { FormItemInputNumber } from '../FormItemInputNumber'
-import { FormItemToggle } from '../FormItemToggle'
+import { Checkbox, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 import { StoryFrame } from '../../../stories/StoryFrame'
 
 export default {
@@ -22,6 +22,7 @@ const initialValues = {
 }
 
 function GroupExample({ nested = false, ...args }: FormItemGroupProps & { nested?: boolean }) {
+  const visibleId = useId()
   const initialOpen = args.open ?? args.defaultOpen ?? true
   const [values, setValues] = useState(() => structuredClone(initialValues))
   const [open, setOpen] = useState(initialOpen)
@@ -68,11 +69,17 @@ function GroupExample({ nested = false, ...args }: FormItemGroupProps & { nested
         />
         {nested && (
           <FormItemGroup label="Visibility" nesting open={nestedOpen} onOpenChange={setNestedOpen}>
-            <FormItemToggle
-              label="Visible"
-              value={values.visible}
-              onChange={(visible) => setValues((current) => ({ ...current, visible }))}
-            />
+            <PropertyRow>
+              <PropertyLabel htmlFor={visibleId}>Visible</PropertyLabel>
+              <PropertyControl association="control">
+                <Checkbox
+                  id={visibleId}
+                  disabled={args.disabled}
+                  checked={values.visible}
+                  onCheckedChange={(visible) => setValues((current) => ({ ...current, visible }))}
+                />
+              </PropertyControl>
+            </PropertyRow>
           </FormItemGroup>
         )}
       </FormItemGroup>
