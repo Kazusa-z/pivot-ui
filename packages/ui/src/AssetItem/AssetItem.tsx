@@ -1,86 +1,94 @@
-import { forwardRef } from 'react'
-import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { styled } from '../../styled-system/jsx'
-import { AssetThumbnail, AssetThumbnailProps } from './AssetThumbnail'
-import AssetName, { AssetNameProps } from './AssetName'
+import { forwardRef, useId, useState, type HTMLAttributes, type MouseEvent, type ReactNode } from 'react'
+import { AssetItem as NewAssetItem, ActionButton } from '@pivot-ui/react'
+import { IconChevronDown, IconChevronRight } from '@tabler/icons-react'
+import type { SystemStyleObject } from '../../styled-system/types'
+import { legacyAssetDescriptor } from './legacyAssetDescriptor'
 
-const StyledAssetItem = styled('div', {
-  base: {
-    display: 'flex',
-    flexWrap: 'nowrap',
-    gap: '4px',
-    alignItems: 'center',
-    '&[data-sub]': { backgroundColor: 'var(--colors-grayA2)' },
-    '&[data-sub]:nth-child(1 of &[data-sub])': { borderRadius: '6px' },
-    '&[data-sub]:nth-last-child(1 of &[data-sub])': { borderRadius: '6px' },
-  },
-  variants: {
-    displayMode: {
-      grid: { flexDirection: 'column' },
-      list: { flexDirection: 'row', marginLeft: '4px' },
-    },
-  },
-  defaultVariants: { displayMode: 'grid' },
-})
-
-export interface AssetItemProps extends AssetThumbnailProps, AssetNameProps, React.HTMLAttributes<HTMLDivElement> {
-  id?: string
-  onSelectedChange?: (e: React.MouseEvent) => void
+export interface AssetItemProps extends HTMLAttributes<HTMLDivElement> {
+  name: string
+  thumbnail?: string
+  loadingStatus?: 'loading' | 'error' | 'success'
+  selected?: boolean
+  onSelectedChange?: (event: MouseEvent) => void
+  onRename?: (name: string) => void | Promise<void>
   readOnly?: boolean
+  disabled?: boolean
   expandable?: boolean
   expanded?: boolean
   defaultExpanded?: boolean
-  children?: React.ReactNode
+  onToggleExpanded?: () => void
+  dropping?: boolean
+  mini?: boolean
+  children?: ReactNode
   displayMode?: 'grid' | 'list'
+  css?: SystemStyleObject
 }
 
+/** B11 removes this prop-shape adapter. Expansion is an explicit sibling action, outside the selection button. */
 export const AssetItem = forwardRef<HTMLDivElement, AssetItemProps>(function AssetItem(
-  props: AssetItemProps,
-  forwardedRef
-) {
-  const {
+  {
+    id,
     name,
+    thumbnail,
+    loadingStatus,
     selected,
     onSelectedChange,
-    readOnly,
-    thumbnail,
+    onSelect: nativeOnSelect,
     onRename,
+    readOnly,
+    disabled,
     expandable,
-    loadingStatus,
-    children,
-    expanded: propExpanded,
-    dropping,
-    defaultExpanded,
+    expanded: controlledExpanded,
+    defaultExpanded = false,
     onToggleExpanded,
-    ...rest
-  } = props
-
-  const [expanded, setExpanded] = useControllableState({
-    prop: propExpanded,
-    defaultProp: defaultExpanded ?? false,
-    onChange: onToggleExpanded,
-  })
-
+    dropping,
+    mini,
+    children,
+    displayMode = 'grid',
+    css,
+    ...props
+  },
+  ref
+) {
+  const localId = useId()
+  const [localExpanded, setLocalExpanded] = useState(defaultExpanded)
+  const expanded = controlledExpanded ?? localExpanded
   return (
-    <StyledAssetItem
-      aria-label={name}
-      aria-expanded={expanded}
-      aria-selected={selected}
-      onClick={onSelectedChange}
-      {...rest}
-      ref={forwardedRef}>
-      <AssetThumbnail
-        thumbnail={thumbnail}
-        mini={rest.displayMode === 'list'}
-        loadingStatus={loadingStatus}
+    <div
+      data-legacy-asset=""
+      data-dropping={dropping || undefined}
+      onSelect={nativeOnSelect}
+      style={dropping ? { outline: '2px solid var(--colors-focusRing)', borderRadius: '6px' } : undefined}>
+      <NewAssetItem
+        {...props}
+        id={id}
+        ref={ref}
+        asset={legacyAssetDescriptor(id ?? localId, name, thumbnail, loadingStatus)}
         selected={selected}
-        expandable={expandable}
-        expanded={expanded}
-        dropping={dropping}
-        onToggleExpanded={() => setExpanded(!expanded)}
+        selectionButtonProps={onSelectedChange ? { onClick: onSelectedChange } : undefined}
+        onRename={onRename}
+        readOnly={readOnly || !selected}
+        disabled={disabled}
+        viewMode={mini ? 'list' : displayMode}
+        css={css}
+        actions={
+          expandable ? (
+            <ActionButton
+              aria-label={expanded ? `Collapse ${name}` : `Expand ${name}`}
+              aria-expanded={expanded}
+              disabled={disabled}
+              size="xs"
+              variant="subtle"
+              onClick={() => {
+                if (controlledExpanded === undefined) setLocalExpanded(!expanded)
+                onToggleExpanded?.()
+              }}>
+              {expanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
+            </ActionButton>
+          ) : undefined
+        }
       />
-      <AssetName name={name} selected={selected} readOnly={readOnly} onRename={onRename} />
-      {children}
-    </StyledAssetItem>
+      {(!expandable || expanded) && children}
+    </div>
   )
 })

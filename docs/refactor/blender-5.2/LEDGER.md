@@ -4,7 +4,7 @@
 
 架构依据：[已采纳方案](D:/QtProject/editor-ui-custom/docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md)。批次范围和退出条件：[批次计划](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/BATCHES.md)。
 
-**B09 曲线与数值分布已验收**，累计 62/65。B00–B08 已提交并推送；B09 以第 9 节唯一提交标题定位本批 Git 交付，范围与验证记录见第 17 节。B10–B11 尚未开始。
+**B10 资源引用与选择已验收**，累计 65/65。B00–B09 已提交并推送；B10 以第 9 节唯一标题定位本批 Git 交付，范围与验证见第 18 节。B11 属性联调、旧包删除与最终收口尚未开始，65/65 表示组件主迁移完成，不代表整个重构完成。
 
 ## 1 分支与继承基线
 
@@ -46,8 +46,8 @@
 | B06  | 数值与几何模板   | 已验收 | B05           | V06-01–V06-07；见第 14 节 | 0bab111         |
 | B07  | 集合与拖放       | 已验收 | B03、B04、B05 | V07-01–V07-07；见第 15 节 | 3ec1d1d         |
 | B08  | 颜色与渐变模板   | 已验收 | B04、B06      | V08-01–V08-07；见第 16 节 | 4886282         |
-| B09  | 曲线与数值分布   | 已验收 | B04、B06      | V09-01–V09-07；见第 17 节 | 第 9 节唯一标题 |
-| B10  | 资源引用与选择   | 待开始 | B04、B05、B07 | —                         | —               |
+| B09  | 曲线与数值分布   | 已验收 | B04、B06      | V09-01–V09-07；见第 17 节 | 73d7364         |
+| B10  | 资源引用与选择   | 已验收 | B04、B05、B07 | V10-01–V10-07；见第 18 节 | 第 9 节唯一标题 |
 | B11  | 属性联调与收口   | 待开始 | B03–B10       | —                         | —               |
 
 ## 3 组件迁移台账
@@ -96,7 +96,7 @@
 | U38  | ColorPicker：`ColorPicker`                                                                                                                                   | 拆分                       | B08    | 已验证   | 薄适配保留；B11 删除          | widgets/color/ColorWidget + templates/color/ColorPicker、ColorInput、HDRColorInput；V08-03–V08-07   |
 | U39  | ColorSlider：`GradientSlider`、`ParticleSlider`、`HDRSlider`                                                                                                 | 合并颜色模型，拆清职责     | B08    | 已验证   | 薄适配保留；B11 删除          | templates/color/ColorRamp、ColorRampChannels、HDRColorInput + values/color-ramp；V08-03–V08-07      |
 | U40  | BezierCurveEditor：`BezierCurveEditor`                                                                                                                       | 拆分并改名                 | B09    | 已验证   | 薄适配保留；B11 删除          | values/curve + widgets/curve/CurveWidget + templates/curve/CurvePicker、CurvePresets；V09-03–V09-06 |
-| U41  | AssetItem：`AssetItem`                                                                                                                                       | 保留，合并内部改名行为     | B10    | 未迁移   | 未退出；最迟 B11              | —                                                                                                   |
+| U41  | AssetItem：`AssetItem`                                                                                                                                       | 保留，合并内部改名行为     | B10    | 已验证   | 薄适配保留；B11 删除          | widgets/collections/asset：AssetItem、AssetThumbnail、AssetName；V10-03–V10-06                      |
 | U42  | ThemeProvider：`ThemeProvider`、`ThemeContext`、`useTheme`、`defaultThemes`、`addThemeChangeListener`、`removeThemeChangeListener`                           | 重写状态层                 | B02    | 已验证   | 薄适配保留；B11 删除          | foundation/theme；V02-03/04/05                                                                      |
 | G01  | `FormItem`                                                                                                                                                   | 拆分并重写                 | B03    | 已验证   | 薄适配保留；B11 删除          | layout/PropertyRow、PropertyLabel、PropertyControl、PropertyDescription；V03-03–V03-06              |
 | G02  | `FormItemInput`                                                                                                                                              | 删除包装并合并能力         | B05    | 已验证   | 实现/出口/专属故事已删除      | PropertyRow + Input；PropertyField string 绑定；V05-03–V05-07                                       |
@@ -115,12 +115,12 @@
 | G15  | `FormItemColor`                                                                                                                                              | 拆分并合并到颜色模板       | B08    | 已验证   | 实现/出口/专属故事已删除      | PropertyRow + ColorInput/ColorPicker/HDRColorInput；V08-03–V08-07                                   |
 | G16  | `FormItemGradient`                                                                                                                                           | 拆分并重写模式模型         | B08    | 已验证   | 实现/出口/专属故事已删除      | templates/color/ColorDistributionTemplate + values/color-distribution；V08-03–V08-07                |
 | G17  | `FormItemParticleCurve`、别名 `FormItemParticle`                                                                                                             | 重写组合，删除别名和旧入口 | B09    | 已验证   | 实现/别名/出口/专属故事已删除 | templates/curve/NumericDistributionTemplate + values/numeric-distribution；V09-03–V09-06            |
-| G18  | `FormItemAssetPicker`                                                                                                                                        | 拆分并重写                 | B10    | 未迁移   | 未退出；最迟 B11              | —                                                                                                   |
+| G18  | `FormItemAssetPicker`                                                                                                                                        | 拆分并重写                 | B10    | 已验证   | 实现/出口/专属故事已删除      | templates/resources：AssetReferenceInput + ResourcePicker + ResourceProvider；V10-03–V10-06         |
 | G19  | `FormItemDisplay`                                                                                                                                            | 拆分，删除旧包装           | B03    | 已验证   | 薄适配保留；B11 删除          | widgets/display/ReadonlyValue、ImagePreview；V03-03–V03-06                                          |
 | G20  | `FormItemButton`                                                                                                                                             | 删除包装                   | B05    | 已验证   | 实现/出口/专属故事已删除      | PropertyRow + Button；Layout/Action row；V05-04/07                                                  |
 | G21  | `FormItemGroup`                                                                                                                                              | 合并到布局                 | B03    | 已验证   | 薄适配保留；B11 删除          | layout/Section；V03-03–V03-06                                                                       |
 | G22  | `FormItemArray`                                                                                                                                              | 重写                       | B07    | 已验证   | 实现/出口/专属故事已删除      | templates/collections/CollectionTemplate；V07-03–V07-07                                             |
-| G23  | `PickableAssetItem`                                                                                                                                          | 合并并删除旧入口           | B10    | 未迁移   | 未退出；最迟 B11              | —                                                                                                   |
+| G23  | `PickableAssetItem`                                                                                                                                          | 合并并删除旧入口           | B10    | 已验证   | 重复实现及类型已删除          | 合并为 widgets/collections/asset/AssetItem 选择组合；V10-03–V10-06                                  |
 
 ## 4 共享事项台账
 
@@ -219,6 +219,13 @@ B06 推进 S03 的纯数值规则、文本/拖动与滑块编辑内核，以及 
 | V09-05 | B09 / 2026-10-23 | 生产故事与实际浏览器交互 | 通过 | 26/26故事交替明暗加载；锚点/独立handle拖动、键盘、取消、异步拒绝重试、预设保存/加载/删除、模式缓存/Reset、host倍率与坐标边界通过；组件console0。 |
 | V09-06 | B09 / 2026-10-23 | 窄屏与旧入口浏览器 | 通过 | 320px下三组clientWidth=scrollWidth=317；嵌套弹层左右12/305.33、顶部12，滚动编辑/取消/逐层焦点恢复通过；旧入口坐标提交/回滚/Y显示倍率不写points。 |
 | V09-07 | B09 / 2026-10-23 | 依赖、静态索引与清理 | 通过 | frozen-lockfile安装、dedupe --check通过，无依赖/锁变更；interface238/52/6、UI109/40/26、GUI17/4/1；无独立测试或临时产物入库。 |
+| V10-01 | B10 / 2026-10-23 | 基线、范围与问题修复 | 通过 | 起点73d7364本地/远程一致且干净；U41/G18/G23；浏览器焦点、当前引用改名刷新及窄屏边界修复见第18节。 |
+| V10-02 | B10 / 2026-10-23 | 格式、全仓类型、Demo/三套Storybook | 通过，退出码0 | verify-first.log通过；浏览器收尾修复后verify-final.log全流程再次通过，warning/error/deprecated匹配0。 |
+| V10-03 | B10 / 2026-10-23 | 架构、出口和旧入口退出 | 通过 | 172生产文件/474依赖边/24纯层，无环、新→旧导入、纯层污染或资源组件直接存储/engine方法；5组件及完整类型显式导出。 |
+| V10-04 | B10 / 2026-10-23 | TEMP模型、宿主和真实ReactDOM | 通过 | Asset31、Picker41、Reference26、模型/Mock/宿主24共122项，组件console0；异步拒绝、过期请求、稳定ID、分页及焦点均覆盖。 |
+| V10-05 | B10 / 2026-10-23 | 生产故事及实际交互 | 通过 | 28/28新故事交替light/dark加载；搜索/类型/分组/分页、改名失败重试、引用选择/清空/定位、模拟文件能力与真实内部拖放通过。 |
+| V10-06 | B10 / 2026-10-23 | 窄屏、焦点与旧入口 | 通过 | 320px三组无横向溢出；弹层默认12px安全边距可滚动；选择失败恢复焦点、分页保留焦点；旧AssetItem选择/改名/展开与列表复验。 |
+| V10-07 | B10 / 2026-10-23 | 依赖、索引与清理 | 通过 | offline frozen-lockfile与dedupe --check通过，无manifest/lock变更；interface266/56/6、UI110/40/26、GUI10/3/1；无独立测试和临时产物入库。 |
 
 构建日志：[baseline-verify.log](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b00-20261022/baseline-verify.log)。
 
@@ -308,7 +315,9 @@ B07 验收：已通过。提交 `3ec1d1d442fd600bc67c544cb3815905e371369f`（`fe
 
 B08 验收：已通过。提交 `4886282b283b73694d322cbb178384d17f155aae`（`feat(B08): unify color editing, ramps and color distributions`）已推送；B09 启动时核对本地与远程一致，工作树干净。
 
-B09 验收：已通过。本批唯一提交标题为 `feat(B09): split curve editing, presets and numeric distributions`；通过正常提交/推送钩子交付。实际 SHA、远程一致性与工作树状态记录在系统 TEMP 的 B09 `git-delivery.json`，下一批启动时回填 SHA。
+B09 验收：已通过。提交 `73d73648173bbfa02a09ca713702de0035194e67`（`feat(B09): split curve editing, presets and numeric distributions`）通过正常 hooks 并推送；B10 启动时再次核对本地/远程一致，工作树干净。
+
+B10 验收：已通过。当前提交用唯一标题 `feat(B10): separate resource browsing, references and host capabilities` 定位；提交和推送遵循正常 hooks。实际 SHA、远程核对和工作树状态另存系统 TEMP B10 的 git-delivery.json；下一批回填 SHA。
 
 ## 10 B02 执行记录
 
@@ -625,3 +634,39 @@ TEMP探针含曲线纯模型/真实DOM41项、Picker/预设28项、数值分布D
 临时6010验收服务收尾停止，6007/6008/6009开发服务保留；项目无临时脚本/日志/截图入库。U40/G17/S05完成，累计62/65，下一批B10资源引用与选择尚未启动。Git依正常hooks独立提交并推送，实际回执另存TEMP。
 
 证据：[完整verify](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/verify-first.log)、[架构与索引](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/architecture-audit.json)、[曲线41项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/curve-probe.log)、[预设28项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/curve-picker-final.log)、[分布24项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/numeric-distribution-component-escape-after.log)、[旧适配10项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/legacy-curve-cross-empty.log)、[26故事](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/static-all-stories.json)、[浏览器日志](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/browser-final-logs.json)、[窄屏截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/static-nested-narrow-dark.png)。首次失败保留：[嵌套Escape](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/numeric-distribution-component-escape-before.log)、[旧卸载回写](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/legacy-curve-cross-first.log)、[浮点探针](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b09-20261023/curve-first.log)。
+
+B10 继续 S08/S09/S10：公开纯资源与服务类型、移除 BasicAssetType/重复 Picker 与资源 FormItem、新增28故事/4组。共享事项仍为部分迁移，B11 负责复杂属性联调、旧 UI/GUI 包及最终文档收口。
+
+## 18 B10 执行记录
+
+启动日期：2026-10-23。前置 B04/B05/B07 已验收并推送；起点 B09 的 73d73648173bbfa02a09ca713702de0035194e67，本地/远程一致，开始时工作树干净。本批认领 U41/G18/G23 共3项，继续 S08/S09/S10。
+
+范围：纯资源描述符与 ID、独立 AssetItem、ResourcePicker、AssetReferenceInput 和可注入 ResourceProvider/Mock；宿主负责缩略图、文件选择、定位、改名与显示偏好。旧 GUI 资源选择包装与重复类型删除；旧 UI 只留展示适配。接口与迁移见 [B10 资源指南](./B10_RESOURCES.md)。
+
+必验：搜索/类型/分组/分页、网格列表、选择/清空/定位、只读禁用、未就绪、内部拖放、改名失败与重试、过期请求与目标切换、当前值不在结果中、能力缺失、明暗/320px。格式、全仓类型、Demo/三套Storybook和架构/依赖检查均须通过。临时脚本/日志/截图放系统TEMP pivot-blender-refactor-b10-20261023，不加入独立测试文件。
+
+### B10 实际交付
+
+新增纯 AssetDescriptor/AssetId/AssetStatus 与过滤/分组规则、ResourceProvider 查询与可选能力契约，5个公共组件 AssetItem/AssetThumbnail/AssetName/ResourcePicker/AssetReferenceInput。引用值为 ID 或 null，当前展示独立 get，不因搜索/分页/空列表丢失；资源赋值是原子命令，false/reject 保留引用并允许重试，不创建连续数值编辑会话。查询、provider、resetKey、可用性或目标变化使迟到结果失效。
+
+AssetItem 选择、改名与动作是并列控件；改名复用 B05。ResourcePicker 支持宿主定义的类型/分组、搜索、1基分页与网格/列表，受控与默认 UI 状态分开。AssetReferenceInput 提供当前引用、清空、定位、宿主文件选择与显式启用的 B07 内部拖放。file/drop 重新 get 校验 ID、ready/selectable、kind/group；搜索文字只影响浏览。缺少能力时禁用对应动作，不选择默认存储。Mock 模拟延迟、失败、查询和原子能力，示例引擎转换只在 host adapter。应用 Storage 偏好适配显式接收存储，旧键不自动迁移。
+
+旧 GUI FormItemAssetPicker/Content/Popover/PickableAssetItem/SearchBarBorder、BasicAssetType、重复Props、出口及7故事删除；旧 UI AssetItem 三部分只做展示 props 薄适配，expand 为外层组合。新增28故事/4组，UI旧入口新增List，GUI剩3个结构适配。复杂PropertyField/真实C++Qt/业务页面未扩展，留B11及应用集成阶段。
+
+### B10 发现与修复
+
+1. 选择按钮在pending期间disabled，浏览器将焦点移到document，拒绝后无法直接键盘重试。有效命令结束时恢复到原ID按钮；用户主动点选其它控件、Tab、窗口失焦、对象切换或卸载后不抢焦点。生产拒绝后Enter重试成功，焦点返回引用触发器。
+2. 翻页时整个结果子树卸载导致分页按钮也失去焦点。分页导航改用同provider/reset最近成功的总量保持挂载；旧资源项仍清空，迟到旧页不能覆盖新页，provider/reset更换清除旧分页元数据。生产Page3及快速3→2、键盘翻页复验。
+3. Picker里改名当前资源后，引用ID不变，独立metadata缓存曾显示旧名字。关闭弹层后重取get；显式selectedAsset快照仍由owner负责，不多发值写入。首次真实失败留asset-reference-rename-first.log，最终26项通过。
+4. 320×640生产弹层曾贴住x0与底边640.49，默认补12px collisionPadding，允许contentProps覆盖，保留宽高限制和内部滚动。最终边界与明暗截图留TEMP。
+5. 旧适配原生onSelect与新onSelect(id)类型冲突，旧DOM事件留外层wrapper；AssetThumbnail用span避免button嵌套非法结构。早期TEMP选择器/焦点模拟错误只修探针，不改正确生产语义；首次日志保留。
+
+### B10 验证与交接
+
+最终完整verify通过：全仓格式、production/stories/support/tooling/pure类型、Demo和UI/GUI/interface三套Storybook。冻结安装与dedupe通过；AST无依赖环、新→旧导入、未声明依赖或纯层污染。生产索引interface266 stories/56组/6docs，UI110/40/26，GUI10/3/1。122组临时模型/DOM/宿主探针全部通过，重跑不重复计数；实际浏览器覆盖所有28故事、常用流程与边界。
+
+浏览器已实测复合筛选不改当前引用、资源选择失败/键盘重试、改名保稿/重试/当前名字刷新、missing/current-outside-query、模拟file类型校验、locate失败重试、clear单次写入，以及真实拖入ready接受、material/加载中拒绝。明暗与320px滚动/弹层、旧AssetItem入口同步复验。系统文件对话框和Qt宿主未真实接入，Mock验证不能替代这些平台验收。组件warning/error另存browser-final-logs.json，管理端已有提示仍按R07区分。
+
+U41/G18/G23完成，累计65/65主组件；B11尚未开始。临时脚本/日志/截图全部位于系统TEMP pivot-blender-refactor-b10-20261023，不新增独立测试文件。停止6010临时验收服务，保留6007/6008/6009开发服务；正常提交/推送hooks与远程核对后交付。
+
+证据：[完整verify](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/verify-final.log)、[架构审计](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/architecture-audit.json)、[Asset31项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/asset-item-probe-final.log)、[Picker41项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/resource-picker-pagination-final.log)、[Reference26项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/asset-reference-final.log)、[模型宿主24项](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/model-host-probe.log)、[28故事](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/static-all-stories-final.json)、[生产选择焦点](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/static-selection-reject-focus.txt)、[改名回显](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/static-current-rename.txt)、[内部拖放](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/static-drag-validation.txt)、[窄屏截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b10-20261023/static-reference-narrow-dark.png)。

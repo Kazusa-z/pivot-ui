@@ -1,91 +1,93 @@
-import { useEffect, useState } from 'react'
-import { Meta, StoryFn } from '@storybook/react'
+import { useState } from 'react'
+import type { Meta, StoryObj } from '@storybook/react'
 import { AssetItem } from './'
-import { styled } from '../../styled-system/jsx'
+import { css } from '../../styled-system/css'
 
-export default {
-  title: 'Display/AssetItem',
-  component: AssetItem,
-} as Meta<typeof AssetItem>
-
-const Grid = styled('div', {
-  base: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
-    gap: '12px',
-    alignItems: 'self-start',
-    width: '600px',
-  },
-})
-
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-function AssetItemExample() {
-  const [selectedMap, setSelectedMap] = useState<{ [key: string]: boolean }>({})
-  const [name, setName] = useState('spine_person')
-
-  useEffect(() => {
-    function clearSelect() {
-      setSelectedMap({})
-    }
-
-    document.addEventListener('click', clearSelect)
-
-    return () => {
-      document.removeEventListener('click', clearSelect)
-    }
-  })
-
-  function selectFile(id: string) {
-    return (e) => {
-      e.stopPropagation()
-      e.preventDefault()
-      setSelectedMap({ ...selectedMap, [id]: true })
-    }
-  }
-
+function AssetItemExample({ list = false }: { list?: boolean }) {
+  const [selected, setSelected] = useState<string | null>(null)
+  const [name, setName] = useState('Landscape texture')
+  const [events, setEvents] = useState<string[]>([])
   return (
-    <Grid>
-      <AssetItem
-        id="1"
-        name={name}
-        onRename={async (name) => {
-          await wait(1000)
-          setName(name)
-        }}
-        loadingStatus="loading"
-        thumbnail="https://mdn.alipayobjects.com/huamei_dc3kgb/afts/img/A*q7BUSabi8scAAAAAAAAAAAAADuiaAQ/original"
-        selected={selectedMap['1']}
-        onSelectedChange={selectFile('1')}
-        onDoubleClick={() => {
-          console.log('double click')
-        }}
-      />
-      <AssetItem
-        id="2"
-        name="helper.ts"
-        loadingStatus="success"
-        thumbnail="https://mdn.alipayobjects.com/huamei_dc3kgb/afts/img/A*rMekSIWSS4oAAAAAAAAAAAAADuiaAQ/original"
-        selected={selectedMap['2']}
-        onSelectedChange={selectFile('2')}
-      />
-      <AssetItem
-        id="3"
-        name="spine_skeleton"
-        readOnly
-        selected={selectedMap['3']}
-        onSelectedChange={selectFile('3')}
-        thumbnail="https://mdn.alipayobjects.com/huamei_dc3kgb/afts/img/A*UnoLR4LjgcEAAAAAAAAAAAAADuiaAQ/original"
-      />
-      <AssetItem
-        name="car_prefab"
-        readOnly
-        thumbnail="https://mdn.alipayobjects.com/huamei_dc3kgb/afts/img/A*HQs2QrqBTawAAAAAAAAAAAAADuiaAQ/original"
-      />
-    </Grid>
+    <div
+      className={css({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        minWidth: 0,
+        width: '100%',
+        maxWidth: '620px',
+        padding: '16px',
+      })}>
+      <p>
+        Legacy props adapt to the new AssetItem. Select the preview, then edit the name. Expansion is a separate button.
+      </p>
+      <button
+        type="button"
+        onClick={() => {
+          setSelected(null)
+          setName('Landscape texture')
+          setEvents([])
+        }}>
+        Reset
+      </button>
+      <div
+        className={css({ display: 'grid', gap: '12px', minWidth: 0 })}
+        style={{ gridTemplateColumns: list ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))' }}>
+        <AssetItem
+          id="legacy-texture"
+          name={name}
+          loadingStatus="success"
+          selected={selected === 'legacy-texture'}
+          displayMode={list ? 'list' : 'grid'}
+          onSelectedChange={(event) => {
+            event.stopPropagation()
+            setSelected('legacy-texture')
+            setEvents((old) => [...old, 'select:texture'])
+          }}
+          onRename={(next) => {
+            setName(next)
+            setEvents((old) => [...old, 'rename:' + next])
+          }}
+          expandable
+          onToggleExpanded={() => setEvents((old) => [...old, 'toggle expansion'])}>
+          <p>Host supplied expanded details.</p>
+        </AssetItem>
+        <AssetItem
+          id="legacy-loading"
+          name="Loading mesh"
+          loadingStatus="loading"
+          displayMode={list ? 'list' : 'grid'}
+          onSelectedChange={() => setEvents((old) => [...old, 'unexpected loading select'])}
+        />
+        <AssetItem
+          id="legacy-error"
+          name="Unavailable asset"
+          loadingStatus="error"
+          displayMode={list ? 'list' : 'grid'}
+          onSelectedChange={() => setEvents((old) => [...old, 'unexpected error select'])}
+        />
+        <AssetItem
+          id="legacy-readonly"
+          name="Read-only material"
+          readOnly
+          selected={selected === 'legacy-readonly'}
+          displayMode={list ? 'list' : 'grid'}
+          onSelectedChange={() => setSelected('legacy-readonly')}
+        />
+      </div>
+      <pre className={css({ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' })}>
+        {JSON.stringify({ selected, name, events }, null, 2)}
+      </pre>
+    </div>
   )
 }
-
-export const Overview: StoryFn<typeof AssetItem> = () => <AssetItemExample />
+const meta = {
+  title: 'Display/AssetItem',
+  component: AssetItem,
+  args: { name: 'Asset' },
+  parameters: { layout: 'fullscreen' },
+} satisfies Meta<typeof AssetItem>
+export default meta
+type Story = StoryObj<typeof meta>
+export const Overview: Story = { render: () => <AssetItemExample /> }
+export const List: Story = { render: () => <AssetItemExample list /> }

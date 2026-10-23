@@ -1,4 +1,5 @@
 export { getEditEndAction } from './property'
+export type { ResourceQuery, ResourcePage, ResourceProvider, ResourceViewPreferences } from './resources'
 export type {
   PropertyTarget,
   PropertyDescriptor,

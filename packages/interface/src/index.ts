@@ -1,4 +1,30 @@
 export type { PropertyValue, ChoiceValue, ChoiceOption, NumericConstraints } from './values'
+export type {
+  AssetId,
+  AssetStatus,
+  AssetDescriptor,
+  AssetFilter,
+  AssetGroup,
+  AssetDragData,
+  ResourceViewMode,
+} from './values/assets'
+export {
+  assertAssetDescriptor,
+  copyAssetDescriptor,
+  assertAssetCollection,
+  isAssetSelectable,
+  matchesAssetFilter,
+  filterAssets,
+  groupAssets,
+  ASSET_REFERENCE_DRAG_TYPE,
+} from './values/assets'
+export type { ResourceQuery, ResourcePage, ResourceProvider, ResourceViewPreferences } from './contracts/resources'
+export { AssetItem, AssetName, AssetThumbnail } from './widgets/collections/asset'
+export type { AssetItemProps, AssetNameProps, AssetThumbnailProps } from './widgets/collections/asset'
+export { ResourcePicker } from './templates/resources/ResourcePicker'
+export type { ResourcePickerProps, ResourceFilterOption } from './templates/resources/ResourcePicker'
+export { AssetReferenceInput } from './templates/resources/AssetReferenceInput'
+export type { AssetReferenceInputProps } from './templates/resources/AssetReferenceInput'
 export { getEditEndAction } from './contracts'
 export type {
   PropertyTarget,

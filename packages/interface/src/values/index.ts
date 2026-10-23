@@ -1,5 +1,24 @@
 export type PropertyValue = string | number | boolean
 export type ChoiceValue = string | number
+export type {
+  AssetId,
+  AssetStatus,
+  AssetDescriptor,
+  AssetFilter,
+  AssetGroup,
+  AssetDragData,
+  ResourceViewMode,
+} from './assets'
+export {
+  assertAssetDescriptor,
+  copyAssetDescriptor,
+  assertAssetCollection,
+  isAssetSelectable,
+  matchesAssetFilter,
+  filterAssets,
+  groupAssets,
+  ASSET_REFERENCE_DRAG_TYPE,
+} from './assets'
 
 export interface ChoiceOption<T extends ChoiceValue = ChoiceValue> {
   readonly key: string

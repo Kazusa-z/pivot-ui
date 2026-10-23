@@ -37,7 +37,6 @@ export * from './AlertDialog'
 export * from './AssetItem'
 export * from './Dialog'
 export * from './BezierCurveEditor'
-// export * from './AssetPicker'
 export * from './ResizablePanel'
 export * from './HoverCard'
 

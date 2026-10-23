@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定；B07 提供集合模型、Tree、Table/DataTable、导航、CollectionTemplate 与类型化拖放；B08 提供明确编码的颜色模型、ColorWidget/Picker/Input、HDR、单/双轨渐变和颜色分布模板；B09 提供曲线模型、CurveWidget/Picker、外部预设能力和数值分布模板。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
+Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定；B07 提供集合模型、Tree、Table/DataTable、导航、CollectionTemplate 与类型化拖放；B08 提供明确编码的颜色模型、ColorWidget/Picker/Input、HDR、单/双轨渐变和颜色分布模板；B09 提供曲线模型、CurveWidget/Picker、外部预设能力和数值分布模板；B10 提供纯资源描述符、AssetItem、ResourcePicker、AssetReferenceInput 与资源服务契约。旧入口仅作兼容适配，B11 收口时删除旧包。各批验收状态以实施台账为准。
 
 ## 入口与依赖
 
@@ -14,7 +14,7 @@ Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、
 | `@pivot-ui/react/styling/css`、`/styling/jsx`、`/styling/tokens` | 直接指向生成的 Panda 运行模块                                        | 不经二次 re-export；需先生成 styled-system |
 | `@pivot-ui/react/styling/types`                                  | Panda 的 SystemStyleObject、RecipeVariantProps 等类型                | 仅类型，不作为运行时模块导入               |
 
-PropertyValue 当前只定义 string、number、boolean 和 string/number enum。B08/B09 已提供独立颜色、渐变、曲线和分布值模型；复杂属性绑定留 B11，资源引用留 B10。数值硬范围与软范围分开；step、dragStep、precision 是描述元数据，B06 的纯数值规则与编辑行为负责解释它们。
+PropertyValue 当前只定义 string、number、boolean 和 string/number enum。B08/B09 已提供独立颜色、渐变、曲线和分布值模型；B10 的资源引用为 AssetId | null，资源展示与查询通过 ResourceProvider 提供；复杂属性绑定留 B11。数值硬范围与软范围分开；step、dragStep、precision 是描述元数据，B06 的纯数值规则与编辑行为负责解释它们。
 
 `ChoiceOption.key` 是 UI 选择身份，`value` 是属性值。从 key 查找对应 option 后取原始 value，不通过字符串猜测数字；`'001'`、`'1'`、`1` 因而可以保持不同身份。
 
@@ -331,3 +331,7 @@ Breadcrumbs、Pagination、TreeRoot/TreeItem/TreeItemContent/TreeGroup、Table �
 ## 曲线与数值分布
 
 CurveWidget 提供独立内联编辑；CurvePicker 组合浮层与 CurvePresets。CurveValue 使用严格递增的 x、稳定点 ID 和绝对控制柄坐标；选择、缩放和平移不写属性。CurvePresetService 由应用注入，控件不读取 localStorage。NumericDistributionTemplate 使用明确的当前模式联合与独立缓存；引擎倍率保留在宿主边界。详见 [B09 曲线指南](../../docs/refactor/blender-5.2/B09_CURVES.md)。
+
+## 资源引用与选择
+
+AssetItem 仅展示 AssetDescriptor 并提供独立选择与改名。ResourcePicker 负责查询、筛选、分页及列表/网格；AssetReferenceInput 负责独立解析当前 ID、清空、定位、文件选择与可选内部拖放。ResourceProvider 由应用提供，控件不读取引擎对象或 localStorage；Mock 只在 stories/support。详见 [B10 资源指南](../../docs/refactor/blender-5.2/B10_RESOURCES.md)。

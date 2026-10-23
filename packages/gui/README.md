@@ -2,7 +2,7 @@
 
 Composable React form items for scene inspectors, material editors and other property editors. Built on [@pivot-ui/editor](../ui/README.md), this package supplies fields and field groups. The application owns layout, state and backend integration.
 
-B05 removes the basic text, boolean, choice and action FormItem wrappers; B06 removes the numeric, slider, vector and rectangle wrappers; B07 replaces FormItemArray with CollectionTemplate; B08 replaces FormItemColor/FormItemGradient with ColorInput and ColorDistributionTemplate; B09 replaces FormItemParticleCurve and its Particle alias with NumericDistributionTemplate. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, number, boolean or enum property through `PropertyAccess`. Resource form items remain for B10; color and curve templates now come from the unified package. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md) and [B06 numeric guide](../../docs/refactor/blender-5.2/B06_NUMERIC.md).
+B05 removes the basic text, boolean, choice and action FormItem wrappers; B06 removes the numeric, slider, vector and rectangle wrappers; B07 replaces FormItemArray with CollectionTemplate; B08 replaces FormItemColor/FormItemGradient with ColorInput and ColorDistributionTemplate; B09 replaces FormItemParticleCurve and its Particle alias with NumericDistributionTemplate. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, number, boolean or enum property through `PropertyAccess`. B10 replaces FormItemAssetPicker with AssetReferenceInput and ResourcePicker. Only the legacy structural FormItem, FormItemDisplay and FormItemGroup remain until B11. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md) and [B06 numeric guide](../../docs/refactor/blender-5.2/B06_NUMERIC.md).
 
 ## Setup
 
@@ -87,14 +87,13 @@ The component library does not own data fetching, object binding, command dispat
 
 Every form item has a dedicated Storybook entry under `FormItem`.
 
-| Component             | Purpose                                               |
-| --------------------- | ----------------------------------------------------- |
-| `FormItem`            | Label, help text and field layout for custom controls |
-| `FormItemAssetPicker` | Asset selection, location and clearing                |
-| `FormItemDisplay`     | Read-only text or image                               |
-| `FormItemGroup`       | Collapsible field group                               |
+| Component         | Purpose                                               |
+| ----------------- | ----------------------------------------------------- |
+| `FormItem`        | Label, help text and field layout for custom controls |
+| `FormItemDisplay` | Read-only text or image                               |
+| `FormItemGroup`   | Collapsible field group                               |
 
-Numeric and color distributions now use a discriminated current value and a separate cache in the unified package. Asset selection uses `onSelect(asset)` and `onDelete()`. Collections now use CollectionTemplate from `@pivot-ui/react`; see the [B07 collection guide](../../docs/refactor/blender-5.2/B07_COLLECTIONS.md).
+Numeric and color distributions now use a discriminated current value and a separate cache in the unified package. Resource references now use `AssetId | null` and `onValueChange(id, asset)` from the unified package; see the [B10 resource guide](../../docs/refactor/blender-5.2/B10_RESOURCES.md). Collections now use CollectionTemplate from `@pivot-ui/react`; see the [B07 collection guide](../../docs/refactor/blender-5.2/B07_COLLECTIONS.md).
 
 ## Storybook
 
@@ -102,7 +101,7 @@ Numeric and color distributions now use a discriminated current value and a sepa
 pnpm dev:gui
 ```
 
-Open the component explorer on port `6008`. Editable stories maintain local React state, show the current value and provide Reset. Additional stories demonstrate supported ranges, disabled states, selection modes. Color, ramp and curve stories now live in the unified package on port `6009`.
+Open the component explorer on port `6008`. Editable stories maintain local React state, show the current value and provide Reset. Additional stories demonstrate supported ranges, disabled states, selection modes. Color, ramp, curve and resource stories now live in the unified package on port `6009`.
 
 The toolbar switches between light and dark themes. In an application, use `ThemeProvider` from `@pivot-ui/editor`.
 

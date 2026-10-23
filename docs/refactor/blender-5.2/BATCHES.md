@@ -132,6 +132,8 @@ TooltipProvider 由应用或组合边界共享提供。Popover 的 `keepMounted`
 
 ### B10 资源引用与选择
 
+本批接口、职责、宿主边界与旧入口迁移见 [B10 资源指南](./B10_RESOURCES.md)。
+
 先实现 AssetDescriptor 与旧引擎对象的单一转换，再迁移 AssetItem、ResourcePicker、AssetReferenceInput 和 MockResourceProvider。定位、选择文件、缩略图解析与显示偏好由宿主提供。
 
 必验：搜索、过滤、列表/网格、选择/清空/定位、disabled、未就绪、拖放、改名失败、过期查询、当前引用不在结果列表中、宿主能力缺失。
