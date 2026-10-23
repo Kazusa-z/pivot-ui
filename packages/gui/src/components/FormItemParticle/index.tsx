@@ -168,8 +168,14 @@ export function FormItemParticleCurve(props: FormItemParticleCurveProps) {
     <FormItem
       label={label}
       info={info}
-      fieldColumn={propType === 'two-constant' || propType === 'two-curve' ? 'particlePair' : 'particle'}
-      {...rest}>
+      {...rest}
+      association="group"
+      fieldCss={{
+        gridTemplateColumns:
+          propType === 'two-constant' || propType === 'two-curve'
+            ? 'repeat(2, minmax(0, 1fr)) 32px'
+            : 'minmax(0, 1fr) 32px',
+      }}>
       {valueMap.map((item) => {
         const { type, value, min, max, step } = item
         if (!type || propType !== type) return null
@@ -178,6 +184,8 @@ export function FormItemParticleCurve(props: FormItemParticleCurveProps) {
           case 'constant':
             return (
               <InputNumber
+                aria-label="Constant value"
+                size="sm"
                 key="constant"
                 min={min}
                 max={max}
@@ -193,6 +201,7 @@ export function FormItemParticleCurve(props: FormItemParticleCurveProps) {
             return (
               <React.Fragment key="two-constant">
                 <InputNumber
+                  aria-label="Minimum"
                   size="sm"
                   startSlot="min"
                   value={value[0]}
@@ -203,6 +212,7 @@ export function FormItemParticleCurve(props: FormItemParticleCurveProps) {
                   onValueChange={handleRdConstantValueChange(0)}
                 />
                 <InputNumber
+                  aria-label="Maximum"
                   size="sm"
                   startSlot="max"
                   value={value[1]}
@@ -227,6 +237,8 @@ export function FormItemParticleCurve(props: FormItemParticleCurveProps) {
       })}
       {!hideTypeSelector && (
         <Select
+          aria-label="Distribution mode"
+          size="sm"
           value={propType}
           position="item-aligned"
           cornerArrow

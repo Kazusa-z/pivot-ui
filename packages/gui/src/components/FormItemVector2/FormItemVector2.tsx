@@ -27,8 +27,10 @@ export function FormItemVector2(props: FormItemVector2Props) {
   }
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={2}>
+    <FormItem {...extractFormItemProps(props)} association="group" fieldColumn={2}>
       <InputNumber
+        size="sm"
+        aria-label="X"
         min={min}
         max={max}
         startSlot={slotMapping?.x}
@@ -37,6 +39,8 @@ export function FormItemVector2(props: FormItemVector2Props) {
         onValueChange={handleOnChange('x')}
       />
       <InputNumber
+        size="sm"
+        aria-label="Y"
         min={min}
         max={max}
         startSlot={slotMapping?.y}

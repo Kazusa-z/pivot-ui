@@ -88,7 +88,10 @@ export function FormItemColor(props: FormItemColorProps) {
   const isHdrMode = mode === 'hdr'
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={isHdrMode ? 1 : 'color'}>
+    <FormItem
+      {...extractFormItemProps(props)}
+      association="group"
+      fieldCss={{ gridTemplateColumns: isHdrMode ? 'minmax(0, 1fr)' : '24px minmax(0, 1fr) 56px' }}>
       <ColorPicker
         mode={mode as 'constant'}
         fullsize={isHdrMode}
@@ -102,6 +105,7 @@ export function FormItemColor(props: FormItemColorProps) {
       {!isHdrMode && (
         <>
           <Input
+            aria-label="Hex color"
             disabled={disabled}
             startSlot="#"
             size="sm"
@@ -123,6 +127,7 @@ export function FormItemColor(props: FormItemColorProps) {
             }
           />
           <InputNumber
+            aria-label="Alpha"
             name="color alpha"
             disabled={disabled}
             size="sm"

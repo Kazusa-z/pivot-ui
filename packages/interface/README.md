@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。
+Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 当前新增布局、字段结构、折叠组合、滚动和可调整分隔布局。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
 
 ## 入口与依赖
 
@@ -62,6 +62,176 @@ Button 的 `async` 只是 Promise 便利回调；`onAsyncError` 接收失败，�
 Callout 的 `severity` 选择视觉等级，`role` 决定普通说明、`status` 或 `alert`，不会把所有静态说明都设为实时告警。Progress 的 `max` 必须为正有限数，非法范围退回 100；空值表示不定进度，确定进度按 `value / max` 显示。Spin 支持名称或装饰用途，并尊重减少动态效果偏好。
 
 全局 token 与预设继续以仓库 `panda/` 为唯一来源。包内直接导入生成的 `styled-system`；消费端使用 styling 子入口，并将统一包 `src` 加入 Panda 扫描。demo 和三个 Storybook 都使用相同预设，只加载一个 layer 入口，详见[接入说明](../../docs/CONSUMING.md)。
+
+## 布局与字段结构
+
+`Flex` 的五个布局属性各有唯一含义，不读取业务值：
+
+| 属性        | 值与默认值                                                      | 含义                            |
+| ----------- | --------------------------------------------------------------- | ------------------------------- |
+| `direction` | `row`（默认）、`column`、`row-reverse`、`column-reverse`        | 主轴方向                        |
+| `gap`       | `none`（默认）、`xxs`、`xs`、`sm`、`md`、`lg`                   | 间距分别为 0、2、4、8、12、16px |
+| `align`     | `stretch`（默认）、`start`、`center`、`end`、`baseline`         | 交叉轴对齐                      |
+| `justify`   | `start`（默认）、`center`、`end`、`between`、`around`、`evenly` | 主轴分布                        |
+| `wrap`      | `nowrap`（默认）、`wrap`、`wrap-reverse`                        | 换行方式                        |
+
+`orientation`、`flexDirection`、`spacing`、`justifyContent`、布尔 `wrap` 和 `align="v|h|both"` 只留在旧包适配器。新代码使用上述 API；宽高、边距等交给 `css` 或原生 `style`。旧适配器保持原来的默认换行行为。
+
+`Separator` 是基础分隔线，支持 `orientation="horizontal|vertical"`，默认横向且具有 `separator` 语义；`decorative` 隐藏其辅助技术语义。竖线需要父容器提供高度。`SectionDivider` 是水平线与文字的组合，其 `children` 保持原有语义；需要章节标题时显式传入 `Title` 或原生 heading，不把文本塞进 `Separator`。
+
+`PropertyRow` 只管理两列或纵向布局。`PropertyLabel`、`PropertyControl`、`PropertyDescription` 显式组合，不遍历子元素、不查找 DOM，也不推断哪个控件应获得标签。单控件的 `id` 和帮助文本 ID 放在真实控件上：
+
+```tsx
+import { useId, useState } from 'react'
+import { PropertyRow, PropertyLabel, PropertyControl, PropertyDescription } from '@pivot-ui/react'
+
+export function NameRow() {
+  const id = useId()
+  const [name, setName] = useState('Camera')
+  return (
+    <PropertyRow labelWidth="100px">
+      <PropertyLabel htmlFor={id}>Name</PropertyLabel>
+      <PropertyControl association="control">
+        <input
+          id={id}
+          aria-describedby={`${id}-help`}
+          value={name}
+          onChange={(event) => setName(event.currentTarget.value)}
+        />
+      </PropertyControl>
+      <PropertyDescription id={`${id}-help`}>Shown in the scene hierarchy.</PropertyDescription>
+    </PropertyRow>
+  )
+}
+```
+
+多控件组使用 `<PropertyLabel id={labelId}>` 与 `<PropertyControl association="group" labelledBy={labelId}>`，并为每个输入提供自身名称，例如 X、Y、Z。组说明通过 `aria-describedby` 放在 `PropertyControl` 上；单控件说明放在输入本身。`association="none"` 仅布局，不生成 group 语义。`columns` 仅接受 1–4；颜色、资源、粒子等专用列定义由消费组件通过 `css` 显式配置。无标签时设置 `PropertyRow withoutLabel`；`direction="column"` 适合窄侧栏。行的 ref 指向外层 div，不会代替控件 ref。
+
+`PropertyLabel` 的 `startSlot` / `endSlot` 可放独立动作，标签 ID 只命名文字，不把动作名称拼入字段名称。`ReadonlyValue` 展示已格式化的 children，支持 `code` 和 `emptyText`；null、undefined、空字符串使用占位，数值 0 保留。`ImagePreview` 保留原生 img 属性与 ref，要求显式 `alt`，默认 `objectFit="contain"`、最大宽度 100%；资源解析、加载与失败策略由消费端负责。
+
+旧 `FormItem` 目前默认形成命名组。直接组合单控件并需要点击标签聚焦时，显式选择 `association="control"`，通过 render prop 把生成的 `id` 和 `aria-describedby` 传给真实控件；不再依赖自动 clone 或 DOM 扫描：
+
+```tsx
+import { FormItem } from '@pivot-ui/gui'
+
+export function LegacyNameRow() {
+  return (
+    <FormItem label="Name" info="Shown in the scene hierarchy." association="control">
+      {({ id, 'aria-describedby': describedBy }) => (
+        <input id={id} aria-describedby={describedBy} defaultValue="Camera" />
+      )}
+    </FormItem>
+  )
+}
+```
+
+已有 `FormItemInput` 等适配器会完成单控件关联；组合字段负责各子控件名称。旧 `fieldColumn="color|number|asset|assetPreview|particle|particlePair"` 已移出通用行布局，专用网格在相应消费者中定义。
+
+## ScrollArea：布局与滚动视口
+
+`ScrollAreaRoot` 的 ref 指向外层布局 div，`ScrollAreaViewport` 的 ref 指向可执行 `scrollTo()` 的滚动元素。`onScroll` / `onScrollCapture` 属于 Viewport；Root 的类型不接受这两个事件。
+
+| 入口     | 属性                             | 行为                                        |
+| -------- | -------------------------------- | ------------------------------------------- |
+| Root     | `sizing="fill                    | content"`                                   | 默认 `fill` 填满有明确高度的父容器；`content` 随内容增长，并受 `maxHeight` 约束 |
+| Root     | `scrollbars="vertical            | horizontal                                  | both"`                                                                          | 启用原生滚动轴，默认 `both` |
+| Root     | `type="hover                     | always                                      | scroll                                                                          | auto"`、`scrollHideDelay`   | 滚动条可见策略，默认 `hover` |
+| Root     | `scrollbarVariant="subtle        | track"`、`shadows`                          | 默认轻量滚动条、无边缘阴影；阴影按实际剩余内容更新                              |
+| Viewport | `contentLayout="block            | intrinsic"`                                 | 默认 `block` 适合视口内换行；`intrinsic` 用于横向内容的固有尺寸                 |
+| Viewport | 原生事件、`tabIndex`、`css`、ref | 默认 `tabIndex=0`，保留浏览器键盘和滚动行为 |
+
+```tsx
+import { useRef, useState } from 'react'
+import { ScrollAreaRoot, ScrollAreaViewport } from '@pivot-ui/react'
+
+export function ScrollExample() {
+  const viewport = useRef<HTMLDivElement>(null)
+  const [scrollTop, setScrollTop] = useState(0)
+  return (
+    <>
+      <button type="button" onClick={() => viewport.current?.scrollTo({ top: 0 })}>
+        Back to top
+      </button>
+      <div style={{ height: 220 }}>
+        <ScrollAreaRoot scrollbars="vertical" type="always" shadows>
+          <ScrollAreaViewport
+            ref={viewport}
+            aria-label="Properties"
+            onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}>
+            {Array.from({ length: 30 }, (_, index) => (
+              <p key={index}>Property {index + 1}</p>
+            ))}
+          </ScrollAreaViewport>
+        </ScrollAreaRoot>
+      </div>
+      <output>{scrollTop}</output>
+    </>
+  )
+}
+```
+
+便利组件 `ScrollArea` 使用同一实现：外层属性直接传入，滚动属性放入 `viewportProps`，滚动 ref 放入 `viewportRef`。例如 `<ScrollArea sizing="content" css={{ maxHeight: '180px' }} viewportProps={{ 'aria-label': 'Details' }}>…</ScrollArea>`。横向或双向内容可设 `viewportProps={{ contentLayout: 'intrinsic' }}` 并给内容明确宽度。旧 `ScrollArea` 适配器把 `type/dir/scrollHideDelay` 送到 Root，其余旧事件与样式仍送到 Viewport，旧 ref 也指向 Viewport。
+
+## 折叠与标题动作
+
+`Accordion` 保留 Radix 的 `type="single|multiple"`、`value/defaultValue` 和 `onValueChange` 契约。每个 `AccordionItem` 需要稳定的 `value` 与非交互 `title`；按钮、复选框等标题动作放入 `actions`，与折叠 trigger 并列，点击动作不会隐式折叠。`headingLevel` 支持 2–6，默认 3；`triggerProps` 和 `contentProps` 分别承接对应部件的原生属性与 ref。
+
+`Collapsible` 使用 `open/defaultOpen/onOpenChange`，默认收起。`Section` 是同一实现的布局入口，默认展开。两者支持 `triggerMode="title|icon"`、`triggerLabel`、`actions`、`size="sm|md"` 和 `variant="surface|subtle|transparent"`；`collapsible={false}` 固定展开并移除折叠按钮。`disabled` 禁用折叠 trigger，独立 actions 是否可用由调用方决定。标题只放静态内容，动作不嵌入按钮内部。
+
+```tsx
+import { Button, Section } from '@pivot-ui/react'
+
+export function TransformSection() {
+  return (
+    <Section
+      title="Transform"
+      actions={
+        <Button size="sm" onClick={() => console.log('Reset requested')}>
+          Reset
+        </Button>
+      }>
+      <p>Property rows belong here.</p>
+    </Section>
+  )
+}
+```
+
+## ResizableSplit：像素尺寸与请求
+
+`ResizableSplit` 的 `primary` 是可调整尺寸的主面板，`children` 是可选的剩余面板。`orientation="horizontal"` 调整主面板宽度，`vertical` 调整高度；`primarySide="start|end"` 决定主面板位置，横向遵循 RTL。外层 ref 指向布局根节点；`primaryRef` 指向主面板。
+
+所有尺寸都是 CSS 像素：默认 `defaultSize=240`、`minSize=80`、`maxSize=960`、`minSecondarySize=80`，分隔条占 6px。有剩余面板时，上限同时受容器可用空间约束；空间不足以满足最小值时，有效最小值会降低到有效上限，避免把另一面板挤出容器。非有限数回退到内部或默认值，最小尺寸不低于 0，声明的上限不低于声明的下限。父容器应提供明确宽高。
+
+```tsx
+import { useState } from 'react'
+import { ResizableSplit } from '@pivot-ui/react'
+
+export function InspectorSplit() {
+  const [width, setWidth] = useState(240)
+  return (
+    <div style={{ width: 720, height: 300 }}>
+      <ResizableSplit
+        primary={<aside>Inspector</aside>}
+        size={width}
+        minSize={160}
+        maxSize={400}
+        minSecondarySize={200}
+        onSizeChange={setWidth}
+        separatorLabel="Resize inspector">
+        <main>Editor</main>
+      </ResizableSplit>
+    </div>
+  )
+}
+```
+
+受控 `size` 是显示值，`onSizeChange(next)` 只是尺寸请求，父组件需要回写才会改变显示。`onSizeCommit(next)` 在指针释放或一次键盘调整后报告最终请求值，即使父组件拒绝回写也不把它伪装为已接受的尺寸。非受控使用 `defaultSize` 并在内部保存请求值。
+
+分隔条可聚焦：方向键按 `keyboardStep`（默认 10px）调整，Shift 放大 10 倍，Home/End 到有效边界。Escape、pointer-cancel、失去指针捕获、窗口失焦、拖动期间方向/范围/禁用等配置变化会取消操作，请求恢复拖动起点并调用 `onResizeCancel(reason)`；取消不调用 `onSizeCommit`。卸载清理指针捕获与监听，不调用业务回调。范围变化后的显示始终按最新有效边界裁剪。
+
+省略 `children` 即独立区域模式，根节点沿调整轴占主面板尺寸加 6px，不使用剩余面板约束。`primaryAsChild` 省略额外主面板包装，但仍保留外层布局与分隔条；`primary` 必须是一个非 Fragment 元素，并转发原生 props/ref。尺寸由布局控制，子元素自己的 width/height 不覆盖调整结果。
+
+旧 `ResizablePanel` 仅作适配，`range.min/max` 是明确像素边界，默认尺寸现在为 240px、范围为 80–960px，不再按首次测量值生成 ±50px 范围。旧 `asChild` 映射到 `primaryAsChild`，对应 ref 指向实际主面板元素。
 
 ## 编辑会话
 

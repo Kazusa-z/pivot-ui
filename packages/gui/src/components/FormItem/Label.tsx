@@ -1,29 +1,6 @@
-import { ReactNode } from 'react'
-import * as LabelPrimitive from '@radix-ui/react-label'
-
-import { HoverCard } from '@pivot-ui/editor'
-import { styled } from '../../../styled-system/jsx'
+import { type ReactNode } from 'react'
+import { PropertyDescription, PropertyLabel } from '@pivot-ui/react'
 import type { SystemStyleObject } from '../../../styled-system/types'
-
-const StyledLabelRoot = styled('div', {
-  base: {
-    all: 'unset',
-    display: 'flex',
-    minHeight: '24px',
-    alignItems: 'center',
-    fontSize: '12px',
-    fontWeight: 500,
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    color: 'var(--colors-gray10)',
-    textOverflow: 'ellipsis',
-    userSelect: 'none',
-  },
-})
-
-const StyledLabel = styled(LabelPrimitive.Root, {
-  base: { display: 'block', width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' },
-})
 
 export interface LabelProps {
   id?: string
@@ -35,25 +12,12 @@ export interface LabelProps {
   css?: SystemStyleObject
 }
 
-export function Label(props: LabelProps) {
-  const { id, info, startSlot, endSlot, label, htmlFor, css } = props
-
-  const LabelRoot = (
-    <StyledLabelRoot css={css}>
-      {startSlot}
-      <StyledLabel id={id} htmlFor={htmlFor}>
-        {label}
-      </StyledLabel>
-      {endSlot}
-    </StyledLabelRoot>
+/** Compatibility adapter; descriptions are visible instead of requiring a hover interaction. */
+export function Label({ info, label, ...props }: LabelProps) {
+  return (
+    <>
+      <PropertyLabel {...props}>{label}</PropertyLabel>
+      {info != null && <PropertyDescription>{info}</PropertyDescription>}
+    </>
   )
-
-  if (info) {
-    return (
-      <HoverCard trigger={LabelRoot} side="left">
-        {info}
-      </HoverCard>
-    )
-  }
-  return LabelRoot
 }

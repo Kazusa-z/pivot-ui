@@ -1,5 +1,5 @@
+import { ImagePreview, ReadonlyValue } from '@pivot-ui/react'
 import { FormItem, extractFormItemProps } from '../FormItem'
-import { Text } from '@pivot-ui/editor'
 import { BaseFormItemProps } from '../FormItem/FormItem'
 
 export interface FormItemDisplayProps extends Omit<BaseFormItemProps<string>, 'onChange'> {
@@ -7,15 +7,14 @@ export interface FormItemDisplayProps extends Omit<BaseFormItemProps<string>, 'o
 }
 
 export function FormItemDisplay(props: FormItemDisplayProps) {
-  const { label, info, value, displayType = 'text' } = props
+  const { label, value, displayType = 'text' } = props
   return (
     <FormItem {...extractFormItemProps(props)}>
-      {displayType === 'text' && (
-        <Text size="sm" selectable code>
-          {value}
-        </Text>
+      {displayType === 'text' ? (
+        <ReadonlyValue code>{value}</ReadonlyValue>
+      ) : (
+        <ImagePreview src={value} alt={label ?? ''} css={{ height: 'auto' }} />
       )}
-      {displayType === 'image' && <img src={value as string} alt={label} />}
     </FormItem>
   )
 }

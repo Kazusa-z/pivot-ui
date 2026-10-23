@@ -31,7 +31,7 @@ export default {
     align: {
       type: {
         name: 'enum',
-        value: ['both', 'vertical', 'horizontal'],
+        value: ['both', 'v', 'h', 'start', 'center', 'end', 'stretch', 'baseline'],
       },
     },
     justifyContent: {
@@ -45,7 +45,7 @@ export default {
         name: 'enum',
         value: ['column', 'row', 'row-reverse', 'column-reverse'],
       },
-      defaultValue: 'both',
+      defaultValue: 'row',
     },
   },
   args: {

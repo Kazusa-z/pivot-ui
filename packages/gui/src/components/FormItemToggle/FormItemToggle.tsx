@@ -12,8 +12,17 @@ export function FormItemToggle(props: FormItemToggleProps) {
   const { value, disabled, onChange, withLabel = false } = props
 
   return (
-    <FormItem {...extractFormItemProps(props)}>
-      <Checkbox withLabel={withLabel} checked={!!value} disabled={disabled} onCheckedChange={onChange} />
+    <FormItem {...extractFormItemProps(props)} association="control">
+      {({ size, ...controlProps }) => (
+        <Checkbox
+          {...controlProps}
+          withLabel={withLabel}
+          label={props.checkboxLabel}
+          checked={!!value}
+          disabled={disabled}
+          onCheckedChange={onChange}
+        />
+      )}
     </FormItem>
   )
 }

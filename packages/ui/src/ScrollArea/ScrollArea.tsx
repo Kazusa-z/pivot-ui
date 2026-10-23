@@ -1,105 +1,37 @@
-import React from 'react'
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
-import type { ScrollAreaViewportProps, ScrollAreaProps as PrimitiveScrollAreaProps } from '@radix-ui/react-scroll-area'
+import { forwardRef, type ReactNode } from 'react'
+import { ScrollArea as BaseScrollArea, type ScrollAreaRootProps, type ScrollAreaViewportProps } from '@pivot-ui/react'
 
-import { styled } from '../../styled-system/jsx'
-import type { SystemStyleObject } from '../../styled-system/types'
-
-const ScrollAreaRoot = styled(ScrollAreaPrimitive.Root, {
-  base: {
-    position: 'relative',
-    width: '100%',
-    overflow: 'hidden',
-    maxHeight: 'inherit',
-  },
-  variants: {
-    fullHeight: { true: { height: '100%' } },
-  },
-  defaultVariants: { fullHeight: true },
-})
-
-const ScrollAreaViewport = styled(ScrollAreaPrimitive.Viewport, {
-  base: {
-    width: '100%',
-    height: '100%',
-    maxHeight: 'inherit',
-    borderRadius: 'inherit',
-    '& > div[style]': { display: 'block !important' },
-  },
-  variants: {
-    asContainer: { true: { padding: '4px' } },
-  },
-})
-
-const SCROLLBAR_SIZE = 4
-
-const ScrollAreaScrollbar = styled(ScrollAreaPrimitive.Scrollbar, {
-  base: {
-    display: 'flex',
-    userSelect: 'none',
-    touchAction: 'none',
-    margin: '2px',
-    background: 'var(--colors-scrollbarTrack)',
-    '&[data-orientation="vertical"]': { width: SCROLLBAR_SIZE },
-    '&[data-orientation="horizontal"]': { flexDirection: 'column', height: SCROLLBAR_SIZE },
-  },
-  variants: {
-    subtle: {
-      true: {
-        padding: '2px 0 2px 2px',
-        margin: 0,
-        background: 'transparent',
-        '&:hover': { background: 'var(--colors-scrollbarTrackHover)' },
-      },
-    },
-  },
-  defaultVariants: { subtle: true },
-})
-
-const ScrollAreaThumb = styled(ScrollAreaPrimitive.Thumb, {
-  base: {
-    flex: 1,
-    background: 'var(--colors-scrollbarThumb)',
-    borderRadius: SCROLLBAR_SIZE,
-    position: 'relative',
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '100%',
-      height: '100%',
-      minWidth: 8,
-      minHeight: 8,
-    },
-  },
-})
-
-const StyledCorner = styled(ScrollAreaPrimitive.Corner, {
-  base: { backgroundColor: 'var(--colors-scrollbarTrackHover)' },
-})
-
-interface ScrollAreaProps extends PrimitiveScrollAreaProps {
-  children: React.ReactNode
-  css?: SystemStyleObject
+/** @deprecated Use explicit root props and viewportProps on @pivot-ui/react ScrollArea. */
+export interface ScrollAreaProps extends ScrollAreaViewportProps {
+  children: ReactNode
+  type?: ScrollAreaRootProps['type']
+  dir?: ScrollAreaRootProps['dir']
+  scrollHideDelay?: number
   fullHeight?: boolean
   asContainer?: boolean
   subtle?: boolean
 }
 
-export function ScrollArea(props: ScrollAreaProps) {
-  const { fullHeight, subtle, css, asContainer, ...rest } = props
+/** The legacy ref follows its event/style props and points to the scrolling viewport. */
+export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea(
+  { fullHeight = true, subtle = true, asContainer, type, dir, scrollHideDelay, children, style, ...viewportProps },
+  ref
+) {
   return (
-    <ScrollAreaRoot fullHeight={fullHeight}>
-      <ScrollAreaViewport css={css} asContainer={asContainer} {...rest} />
-      <ScrollAreaScrollbar orientation="horizontal" subtle={subtle}>
-        <ScrollAreaThumb />
-      </ScrollAreaScrollbar>
-      <ScrollAreaScrollbar orientation="vertical" subtle={subtle}>
-        <ScrollAreaThumb />
-      </ScrollAreaScrollbar>
-      <StyledCorner />
-    </ScrollAreaRoot>
+    <BaseScrollArea
+      sizing={fullHeight ? 'fill' : 'content'}
+      type={type}
+      dir={dir}
+      scrollHideDelay={scrollHideDelay}
+      scrollbarVariant={subtle ? 'subtle' : 'track'}
+      viewportRef={ref}
+      viewportProps={{
+        tabIndex: -1,
+        ...viewportProps,
+        contentLayout: 'block',
+        style: { ...(asContainer ? { padding: '4px' } : {}), ...style },
+      }}>
+      {children}
+    </BaseScrollArea>
   )
-}
+})

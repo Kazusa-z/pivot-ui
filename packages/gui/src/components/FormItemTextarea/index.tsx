@@ -16,14 +16,17 @@ export function FormItemTextarea(props: FormItemTextareaProps) {
   )
 
   return (
-    <FormItem {...extractFormItemProps(props)}>
-      <Textarea
-        value={value}
-        onChange={handleOnChange}
-        defaultValue={defaultValue}
-        disabled={disabled}
-        variant="soft"
-      />
+    <FormItem {...extractFormItemProps(props)} association="control">
+      {(controlProps) => (
+        <Textarea
+          {...controlProps}
+          value={value}
+          onChange={handleOnChange}
+          defaultValue={defaultValue}
+          disabled={disabled}
+          variant="soft"
+        />
+      )}
     </FormItem>
   )
 }

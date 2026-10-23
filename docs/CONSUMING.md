@@ -2,7 +2,7 @@
 
 Pivot UI is distributed from this repository as source packages. An application can consume it through the pnpm workspace or by linking a package directory.
 
-Use [`@pivot-ui/react`](../packages/interface/README.md) for migrated foundations: theme, buttons, feedback, typography, icons and shortcut presentation. Pure property contracts and value types are available through `/contracts` and `/values`. The transitional `@pivot-ui/editor` and `@pivot-ui/gui` packages still provide unmigrated controls and form items. The unified package has no Qt bridge; its Mock is Storybook-only support.
+Use [`@pivot-ui/react`](../packages/interface/README.md) for migrated foundations and the current B03 layout APIs: Flex, Separator/SectionDivider, PropertyRow parts, ScrollArea, Accordion/Collapsible/Section, ReadonlyValue/ImagePreview and ResizableSplit. Pure property contracts and value types are available through `/contracts` and `/values`. The transitional `@pivot-ui/editor` and `@pivot-ui/gui` packages still provide unmigrated controls and form items. The unified package has no Qt bridge; its Mock is Storybook-only support. See the refactor ledger for batch acceptance status.
 
 ## Requirements
 
@@ -34,6 +34,7 @@ Use the integrations in this repository as references:
 - Demo application: `app/postcss.config.cjs`, `app/panda.config.ts`, `app/src/main.tsx`
 - Editor Storybook: `packages/ui/postcss.config.cjs`, `packages/ui/panda.config.ts`
 - GUI Storybook: `packages/gui/panda.config.ts`
+- Unified Storybook: `packages/interface/panda.config.ts`
 
 A consuming application needs a Panda config that includes its own source and the Pivot UI package source:
 
@@ -107,14 +108,14 @@ export function App() {
 
 ```tsx
 import { useState } from 'react'
-import { Button, Text } from '@pivot-ui/react'
-import { ColorPicker, Flex } from '@pivot-ui/editor'
+import { Button, Flex, Text } from '@pivot-ui/react'
+import { ColorPicker } from '@pivot-ui/editor'
 
 export function Toolbar() {
   const [color, setColor] = useState({ r: 30, g: 99, b: 238, a: 1 })
 
   return (
-    <Flex gap="sm" align="v">
+    <Flex gap="sm" align="center">
       <Button>Save</Button>
       <Text tone="muted">Scene settings</Text>
       <ColorPicker mode="constant" value={color} onValueChange={setColor} />
@@ -123,7 +124,45 @@ export function Toolbar() {
 }
 ```
 
-## Controlled form items
+## Explicit property layouts
+
+The layout owns structure, while the caller owns control identity, value and help associations:
+
+```tsx
+import { useId, useState } from 'react'
+import { PropertyRow, PropertyLabel, PropertyControl, PropertyDescription } from '@pivot-ui/react'
+
+export function NameRow() {
+  const id = useId()
+  const [name, setName] = useState('Camera')
+  return (
+    <PropertyRow>
+      <PropertyLabel htmlFor={id}>Name</PropertyLabel>
+      <PropertyControl association="control">
+        <input
+          id={id}
+          aria-describedby={`${id}-help`}
+          value={name}
+          onChange={(event) => setName(event.currentTarget.value)}
+        />
+      </PropertyControl>
+      <PropertyDescription id={`${id}-help`}>Shown in the scene hierarchy.</PropertyDescription>
+    </PropertyRow>
+  )
+}
+```
+
+For several inputs, use `PropertyLabel id={labelId}` and `PropertyControl association="group" labelledBy={labelId}`. Give each input its own name and put group help on the group's `aria-describedby`. Use `direction="column"` for stacked rows and `withoutLabel` when there is no label column. The layout does not scan the DOM or infer a control type. Color, asset and other specialized grids belong to their consuming components.
+
+`Flex` uses `direction`, `gap`, cross-axis `align`, main-axis `justify`, and string-valued `wrap`; it defaults to `row` and `nowrap`. Old aliases such as `spacing`, `align="v"` or boolean `wrap` exist only in the legacy adapter. Use `Separator` for an oriented line, `decorative` for a purely visual line, and `SectionDivider` for a text-and-line composition.
+
+`ScrollAreaRoot` receives dimensions, `sizing`, scrolling axes and scrollbar policy. Its ref points to the outer container. `ScrollAreaViewport` receives scroll events and the imperative scrolling ref; give a fill-sized area a definite parent height. The `ScrollArea` convenience component preserves the split through `viewportProps` and `viewportRef`. `sizing="content"` with `css={{ maxHeight: '180px' }}` grows up to a limit; viewport `contentLayout="intrinsic"` supports wide horizontal content.
+
+`AccordionItem`, `Collapsible` and `Section` put interactive header controls in `actions`, beside the disclosure trigger. Titles are non-interactive content. `Section` defaults open; `Collapsible` defaults closed. `collapsible={false}` creates a fixed expanded section. `ReadonlyValue` displays formatted content without parsing or binding; `ImagePreview` requires `alt` and keeps native image attributes/ref.
+
+`ResizableSplit` uses CSS pixel sizes. Supply `primary`, optional remaining `children`, and either `defaultSize` or controlled `size` / `onSizeChange`. A controlled parent must accept size requests to update the display; `onSizeCommit` reports the final request. The pane is bounded by explicit min/max and, with a secondary pane, available container space. Escape and pointer cancellation restore the starting size through a new request. See the [full layout API](../packages/interface/README.md) for cancellation reasons, keyboard behavior, standalone sizing and `primaryAsChild` requirements.
+
+## Transitional controlled form items
 
 ```tsx
 import { useState } from 'react'
@@ -143,6 +182,10 @@ export function Inspector() {
 ```
 
 The application owns layout and state. Update each control's `value` in its change callback; passing a fixed value makes the control read-only. Use local state while developing the UI, then connect the same callbacks to application commands and supply backend snapshots through props.
+
+The old `FormItem` entry is a thin composition over the property-row parts. When directly wrapping a single control, use `association="control"` and its render function to forward the supplied `id` and `aria-describedby` to the actual input. This is required for label-click focus and help association; the adapter no longer searches or clones child controls. Existing single-control `FormItemInput` and similar wrappers perform that mapping. Business-specific `fieldColumn` names have moved to the corresponding consumers; the generic column count is 1–4.
+
+Legacy `ResizablePanel` now delegates to `ResizableSplit`: its default size is 240px and default bounds are 80–960px. `range.min/max` are explicit pixel bounds, replacing the former measured-size ±50 behavior. Its `asChild` requires a single non-Fragment child that forwards DOM props/ref.
 
 ## Custom styling
 

@@ -18,8 +18,9 @@ export function FormItemSlider(props: FormItemSliderProps) {
   const arrValue = Array.isArray(value) ? value : [value]
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={3}>
+    <FormItem {...extractFormItemProps(props)} association="group" fieldColumn={3}>
       <InputNumber
+        aria-label={`${props.label ?? 'Slider'} value`}
         min={min}
         max={max}
         step={step}

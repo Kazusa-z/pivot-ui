@@ -319,7 +319,13 @@ export function FormItemGradient(props: FormItemGradientProps) {
     <FormItem
       label={label}
       info={info}
-      fieldColumn={propType === 'two-constant' || propType === 'two-gradient' ? 'particlePair' : 'particle'}>
+      association="group"
+      fieldCss={{
+        gridTemplateColumns:
+          propType === 'two-constant' || propType === 'two-gradient'
+            ? 'repeat(2, minmax(0, 1fr)) 32px'
+            : 'minmax(0, 1fr) 32px',
+      }}>
       {valueMap.map((item) => {
         const { type, value } = item
         if (!type || propType !== type) return null
@@ -374,6 +380,8 @@ export function FormItemGradient(props: FormItemGradientProps) {
         }
       })}
       <Select
+        aria-label="Gradient mode"
+        size="sm"
         defaultValue="constant"
         position="item-aligned"
         cornerArrow

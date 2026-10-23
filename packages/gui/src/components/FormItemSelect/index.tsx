@@ -37,25 +37,29 @@ export function FormItemSelect<T extends number | string>(props: FormItemSelectP
   } = props
 
   return (
-    <FormItem {...extractFormItemProps(props)}>
-      <Select
-        placeholder={placeholder}
-        value={value as string}
-        disabled={disabled}
-        onValueChange={onChange}
-        multiple={multiple}
-        selectAllText={selectAllText}
-        maxDisplayCount={maxDisplayCount}
-        maxDisplayText={maxDisplayText}
-        noneText={noneText}
-        showSelectAll={showSelectAll}
-        startSlot={startSlot}>
-        {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))}
-      </Select>
+    <FormItem {...extractFormItemProps(props)} association="control">
+      {(controlProps) => (
+        <Select
+          {...controlProps}
+          size={size ?? controlProps.size}
+          placeholder={placeholder}
+          value={value as string}
+          disabled={disabled}
+          onValueChange={onChange}
+          multiple={multiple}
+          selectAllText={selectAllText}
+          maxDisplayCount={maxDisplayCount}
+          maxDisplayText={maxDisplayText}
+          noneText={noneText}
+          showSelectAll={showSelectAll}
+          startSlot={startSlot}>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </Select>
+      )}
     </FormItem>
   )
 }

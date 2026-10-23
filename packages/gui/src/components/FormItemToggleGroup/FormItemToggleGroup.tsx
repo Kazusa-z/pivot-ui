@@ -22,8 +22,8 @@ export function FormItemToggleGroup(props: FormItemToggleGroupProps) {
   const groupProps: any = { type, value, onValueChange, defaultValue }
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={1}>
-      <ToggleGroup {...groupProps} variant="subtle">
+    <FormItem {...extractFormItemProps(props)} association="group" fieldColumn={1}>
+      <ToggleGroup {...groupProps} size="sm" variant="subtle">
         {options.map((option) => (
           <ToggleGroupItem key={option.value} value={option.value} disabled={disabled}>
             {option.label}

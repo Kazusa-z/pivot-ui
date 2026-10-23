@@ -5,7 +5,7 @@ Pivot UI is a React component library for building 3D editor interfaces, inspect
 ## Highlights
 
 - **Editor-focused components** — color pickers, gradient and HDR sliders, bezier curve editing, asset views, trees, tables and inspector panels.
-- **Composable forms** — combine individual `FormItem` components with application state and layout.
+- **Composable property layouts** — explicitly associate labels, controls and descriptions; combine sections, scrolling and resizable panes with application state.
 - **Consistent theming** — light and dark themes are driven by a shared design-token system.
 - **Accessible foundations** — interactive primitives are built on Radix UI and support keyboard navigation.
 - **Engine agnostic** — connect controlled inputs to local state or an application adapter for an engine backend.
@@ -13,12 +13,12 @@ Pivot UI is a React component library for building 3D editor interfaces, inspect
 
 ## Packages
 
-| Package                                             | Role                                                                       |
-| --------------------------------------------------- | -------------------------------------------------------------------------- |
-| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views               |
-| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                           |
-| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package: property contracts, theme, buttons and visual foundations |
-| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                      |
+| Package                                             | Role                                                                                                        |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views                                                |
+| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                                                            |
+| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package: contracts, visual foundations, property layouts, disclosure, scrolling and resizable panes |
+| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                                                       |
 
 ## Getting started
 
@@ -40,14 +40,14 @@ pnpm dev
 # GUI component explorer
 pnpm dev:gui
 
-# Unified package foundations and contract playground
+# Unified package components and contract playground
 pnpm dev:interface
 
 # Demo application
 pnpm dev:demo
 ```
 
-Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the new unified package runs on `6009`. Components remain in the existing packages until their migration batch is complete. See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
+Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. B03 currently adds layout and field structure to the unified package; migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
 
 ### Build and verify
 
@@ -63,15 +63,16 @@ pnpm verify             # Formatting, types, demo build and Storybook builds
 
 ```tsx
 import { useState } from 'react'
-import { Button, ColorPicker, Flex, Text } from '@pivot-ui/editor'
+import { Button, Flex, Text } from '@pivot-ui/react'
+import { ColorPicker } from '@pivot-ui/editor'
 
 export function Toolbar() {
   const [color, setColor] = useState({ r: 30, g: 99, b: 238, a: 1 })
 
   return (
-    <Flex gap="sm" align="v">
+    <Flex gap="sm" align="center">
       <Button>Save</Button>
-      <Text muted>Scene settings</Text>
+      <Text tone="muted">Scene settings</Text>
       <ColorPicker mode="constant" value={color} onValueChange={setColor} />
     </Flex>
   )
@@ -99,6 +100,8 @@ export function Inspector() {
 
 Form items work with local state before a backend exists. The application owns data loading, commands and synchronization with a future engine or C++/Qt adapter.
 
+For new layouts, use `PropertyRow`, `PropertyLabel`, `PropertyControl` and `PropertyDescription` from `@pivot-ui/react`. Control IDs and help relationships are explicit; the layout does not inspect or clone controls. `Section` separates its disclosure trigger from header actions, and `ScrollAreaRoot` / `ScrollAreaViewport` separate layout from scroll events and refs. See the [unified package API guide](./packages/interface/README.md) for these compositions and the pixel-based `ResizableSplit` contract.
+
 ## Documentation
 
 - [Documentation index](./docs/README.md)
@@ -106,6 +109,7 @@ Form items work with local state before a backend exists. The application owns d
 - [Development guide](./docs/DEVELOPMENT.md)
 - [Editor package](./packages/ui/README.md)
 - [GUI package](./packages/gui/README.md)
+- [Unified package](./packages/interface/README.md)
 
 ## Technology
 

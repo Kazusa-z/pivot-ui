@@ -183,7 +183,10 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
 
   if (useLargePreview) {
     return (
-      <FormItem {...extractFormItemProps(props)} fieldColumn="assetPreview">
+      <FormItem
+        {...extractFormItemProps(props)}
+        association="group"
+        fieldCss={{ gridTemplateColumns: 'minmax(0, 1fr)', alignItems: 'center' }}>
         <TextureAssetControl ref={dropRef as any} isDraggingOver={isDraggingOver}>
           <SelectedAssetPreview>
             {selectedThumbnail ? <img src={selectedThumbnail} alt="" /> : <PreviewFallbackIcon size="24px" />}
@@ -195,7 +198,7 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
                 disabled={disabled}
                 sideOffset={6}
                 trigger={
-                  <TextureAssetName id={label} disabled={disabled}>
+                  <TextureAssetName type="button" disabled={disabled}>
                     <TextureAssetNameText>{textureDisplayName}</TextureAssetNameText>
                     <IconChevronDown size="14px" />
                   </TextureAssetName>
@@ -238,7 +241,6 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
     <StyledTriggerButton
       ref={dropRef as any}
       size="sm"
-      id={label}
       disabled={disabled}
       variant="soft"
       isDraggingOver={isDraggingOver}
@@ -251,7 +253,10 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
   )
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn="asset">
+    <FormItem
+      {...extractFormItemProps(props)}
+      association="group"
+      fieldCss={{ gridTemplateColumns: 'minmax(0, 8fr) 24px 24px', alignItems: 'center' }}>
       <Popover compact disabled={disabled} sideOffset={6} trigger={trigger} onOpenChange={onOpenChange}>
         <AssetPickerContent
           assets={assets}

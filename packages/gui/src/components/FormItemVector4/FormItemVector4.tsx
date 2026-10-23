@@ -39,8 +39,10 @@ export function FormItemVector4(props: FormItemVector4Props) {
   }
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={4}>
+    <FormItem {...extractFormItemProps(props)} association="group" fieldColumn={4}>
       <InputNumber
+        size="sm"
+        aria-label="X"
         disabled={disabled}
         startSlot={slotMapping?.x}
         min={min}
@@ -51,6 +53,8 @@ export function FormItemVector4(props: FormItemVector4Props) {
         onValueChange={handleOnChange('x')}
       />
       <InputNumber
+        size="sm"
+        aria-label="Y"
         disabled={disabled}
         min={min}
         max={max}
@@ -61,6 +65,8 @@ export function FormItemVector4(props: FormItemVector4Props) {
         onValueChange={handleOnChange('y')}
       />
       <InputNumber
+        size="sm"
+        aria-label="Z"
         disabled={disabled}
         min={min}
         max={max}
@@ -71,6 +77,8 @@ export function FormItemVector4(props: FormItemVector4Props) {
         onValueChange={handleOnChange('z')}
       />
       <InputNumber
+        size="sm"
+        aria-label="W"
         disabled={disabled}
         min={min}
         max={max}

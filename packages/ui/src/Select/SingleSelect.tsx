@@ -481,6 +481,9 @@ export interface SelectProps extends Omit<PrimitiveSelectProps, 'value' | 'defau
   defaultValue?: string | number
   onValueChange?: (value: any) => void
   id?: string
+  'aria-label'?: string
+  'aria-labelledby'?: string
+  'aria-describedby'?: string
   sideOffset?: number
   children?: React.ReactNode
   arrow?: boolean
@@ -503,6 +506,9 @@ function Select(props: SelectProps) {
     cornerArrow = false,
     width,
     id,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-describedby': ariaDescribedBy,
     sideOffset = 4,
     triggerCss,
     startSlot,
@@ -547,7 +553,14 @@ function Select(props: SelectProps) {
   return (
     <SelectContext.Provider value={{ size, valueType: valueType as unknown as 'string' | 'number', valueRenderer }}>
       <SelectPrimitive.Root {...rest} value={value} onValueChange={setValue}>
-        <SelectTrigger size={size} variant={variant} id={id} css={triggerCss}>
+        <SelectTrigger
+          size={size}
+          variant={variant}
+          id={id}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+          css={triggerCss}>
           <StyledTriggerContent>
             {!!startSlot && (
               <StyledSelectSlot align="both" size={size}>

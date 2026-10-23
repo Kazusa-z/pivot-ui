@@ -11,7 +11,7 @@ export interface FormItemSegmentControlProps extends BaseFormItemProps<any> {
 export function FormItemSegmentControl(props: FormItemSegmentControlProps) {
   const { value, onChange, defaultValue, disabled, options = [], variant = 'subtle' } = props
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={1}>
+    <FormItem {...extractFormItemProps(props)} association="group" fieldColumn={1}>
       <SegmentControl
         size="sm"
         variant={variant}

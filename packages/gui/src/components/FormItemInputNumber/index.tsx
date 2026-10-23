@@ -56,28 +56,46 @@ export function FormItemInputNumber(props: FormItemInputNumberProps) {
   }
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={additionalControl ? 'number' : 2}>
-      <InputNumber
-        startSlot={startSlot}
-        endSlot={endSlot}
-        disabled={disabled}
-        min={props.min}
-        max={props.max}
-        step={props.step}
-        dragStep={props.dragStep}
-        value={props.value}
-        onBlur={handleOnBlur}
-        onValueChange={onChange}
-      />
-      {additionalControl && (
-        <Fragment>
-          <Button size="sm" variant="soft" onClick={handleDecrease} disabled={disabled}>
-            <IconMinus size="14px" />
-          </Button>
-          <Button size="sm" variant="soft" onClick={handleIncrease} disabled={disabled}>
-            <IconPlus size="14px" />
-          </Button>
-        </Fragment>
+    <FormItem
+      {...extractFormItemProps(props)}
+      association="control"
+      fieldCss={additionalControl ? { gridTemplateColumns: 'minmax(0, 8fr) repeat(2, 1fr)' } : undefined}>
+      {(controlProps) => (
+        <>
+          <InputNumber
+            {...controlProps}
+            startSlot={startSlot}
+            endSlot={endSlot}
+            disabled={disabled}
+            min={props.min}
+            max={props.max}
+            step={props.step}
+            dragStep={props.dragStep}
+            value={props.value}
+            onBlur={handleOnBlur}
+            onValueChange={onChange}
+          />
+          {additionalControl && (
+            <Fragment>
+              <Button
+                aria-label={`Decrease ${label ?? 'value'}`}
+                size="sm"
+                variant="soft"
+                onClick={handleDecrease}
+                disabled={disabled}>
+                <IconMinus size="14px" />
+              </Button>
+              <Button
+                aria-label={`Increase ${label ?? 'value'}`}
+                size="sm"
+                variant="soft"
+                onClick={handleIncrease}
+                disabled={disabled}>
+                <IconPlus size="14px" />
+              </Button>
+            </Fragment>
+          )}
+        </>
       )}
     </FormItem>
   )

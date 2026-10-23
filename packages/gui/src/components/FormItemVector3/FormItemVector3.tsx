@@ -7,7 +7,12 @@ export type Vector3 = { x: number; y: number; z: number }
 
 const ConstrainButton = function ConstrainButton(props: { active: boolean; onClick: (e) => void }) {
   return (
-    <ActionButton onClick={props.onClick} variant="subtle" fancy>
+    <ActionButton
+      aria-label="Toggle proportional scaling"
+      aria-pressed={props.active}
+      onClick={props.onClick}
+      variant="subtle"
+      fancy>
       <ConstrainIcon active={props.active} />
     </ActionButton>
   )
@@ -74,9 +79,11 @@ export function FormItemVector3(props: FormItemVector3Props) {
   }
 
   return (
-    <FormItem {...extractFormItemProps(props)} formEndSlot={endSlot} fieldColumn={3}>
+    <FormItem {...extractFormItemProps(props)} association="group" formEndSlot={endSlot} fieldColumn={3}>
       {(['x', 'y', 'z'] as const).map((axis) => (
         <InputNumber
+          size="sm"
+          aria-label={axis.toUpperCase()}
           disabled={disabled}
           min={min}
           max={max}

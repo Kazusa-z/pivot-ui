@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 
 import { styled } from '../../styled-system/jsx'
 import { Flex } from '../Flex'
 
-import { Collapsible } from './'
+import { Collapsible, type CollapsibleProps } from './'
 import { Button } from '..'
 
 export default {
@@ -20,14 +20,14 @@ const StyledContent = styled('div', {
 export const Overview: StoryFn<typeof Collapsible> = (args) => {
   return (
     <Flex gap="md" style={{ width: '300px' }}>
-      <Collapsible title="Section 1">
+      <Collapsible title="Section 1" {...args}>
         <StyledContent>Collapsible Content</StyledContent>
       </Collapsible>
     </Flex>
   )
 }
 
-export const Controlled: StoryFn<typeof Collapsible> = (args) => {
+function ControlledExample(args: CollapsibleProps) {
   const [open, setOpen] = useState(false)
   return (
     <Flex gap="md" style={{ width: '300px' }}>
@@ -37,17 +37,27 @@ export const Controlled: StoryFn<typeof Collapsible> = (args) => {
         }}>
         toggle
       </Button>
-      <Collapsible title="Section 1" open={open} onOpenChange={setOpen}>
+      <Collapsible
+        title="Section 1"
+        {...args}
+        open={open}
+        onOpenChange={(value) => {
+          setOpen(value)
+          args.onOpenChange?.(value)
+        }}>
         <StyledContent>Collapsible Content</StyledContent>
       </Collapsible>
+      <output>Open: {String(open)}</output>
     </Flex>
   )
 }
 
+export const Controlled: StoryFn<typeof Collapsible> = (args) => <ControlledExample {...args} />
+
 export const Uncontrolled: StoryFn<typeof Collapsible> = (args) => {
   return (
     <Flex gap="md" style={{ width: '300px' }}>
-      <Collapsible title="Section 1">
+      <Collapsible title="Section 1" {...args}>
         <StyledContent>Collapsible Content</StyledContent>
       </Collapsible>
     </Flex>

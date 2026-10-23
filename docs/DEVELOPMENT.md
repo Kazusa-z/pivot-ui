@@ -23,7 +23,7 @@ panda/               shared Panda configuration, tokens and reset
 docs/                integration, development and archive documentation
 ```
 
-Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts and, from B02, theme, buttons, feedback, typography and icons. Migrated `ui` entries forward to the unified implementation; other components remain in `ui` and `gui` until their migration batch.
+Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts and B02 visual foundations. B03 currently adds layout, explicit property-row parts, read-only/image presentation, disclosure, scroll areas and resizable panes. Migrated `ui` and `gui` entries forward to the unified implementation; other components remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
 
 ## Commands
 
@@ -31,7 +31,7 @@ Library packages are source packages. They are consumed through `workspace:*` or
 | ---------------------- | ---------------------------------------------------------------- |
 | `pnpm dev`             | Editor Storybook                                                 |
 | `pnpm dev:gui`         | GUI Storybook                                                    |
-| `pnpm dev:interface`   | Unified package foundations and contract Storybook               |
+| `pnpm dev:interface`   | Unified components, layouts and contract Storybook               |
 | `pnpm dev:demo`        | Demo application                                                 |
 | `pnpm typecheck`       | Type-check all packages and the app                              |
 | `pnpm build:demo`      | Build the demo application                                       |
@@ -83,10 +83,11 @@ The generator uses `esbuild`, declared as a workspace dev dependency.
 - Import runtime styling directly from `styled-system/jsx` and `styled-system/css` inside package source. A local `styled` re-export breaks Panda's static extraction.
 - Consumers use `@pivot-ui/react/styling/css`, `/styling/jsx`, `/styling/tokens` and the type-only `/styling/types`. These resolve directly to generated modules; `pandaBase.importMap` registers both the public subpaths and local generated paths.
 - Scan the unified package's `src` directory in all consumer configs. The demo and transitional packages generate the required styled-system modules in their pre-scripts, including when started individually after a clean checkout.
-- Do not use CSS property names as variant names. Use `orientation`, `spacing` and `justify` on styled layout wrappers instead of `direction`, `gap` and `justifyContent`.
+- Panda `styled` can consume CSS-like props before forwarding them. Keep semantic props explicit on plain React components, as in the new Flex, and consume them before spreading native props. For remaining styled wrappers, use non-colliding internal variant names. Old Flex aliases are compatibility-only; do not add them to the new API.
 - Do not pass SVG `d` through a Panda `styled` wrapper; `d` is consumed as the CSS `display` shorthand. Use a `css()` class on a plain `<path>`.
 - Empty pseudo-element content must be written as `content: '""'`.
 - Prefer inline style configs for custom and Radix components; config objects held in variables can require type casts and weaken static extraction.
+- Keep recipe creation and `recipe.raw()` composition in the same source module. Cross-file consumers can call a helper that returns the final class name; do not spread imported dynamic raw recipes into another recipe and hide extraction diagnostics.
 - Use CSS variables (`var(--colors-...)`) or `token(...)` calls in `css` values.
 
 ## Verification
@@ -102,6 +103,10 @@ pnpm dedupe --check
 `pnpm verify` runs Prettier, TypeScript, the demo build and all three Storybook builds. The unified package checks production sources, stories/support, tooling and a pure ES2022 project for contracts/values without React, DOM or Node ambient types.
 
 Git and Prettier use LF line endings on every platform. Refactor verification scripts and outputs belong in the operating system's temporary directory and are not committed as standalone tests.
+
+For B03, inspect both the unified stories and legacy consumers. Required checks include label-click focus and description IDs, group and per-control names, long labels and narrow widths, disclosure keyboard/action focus, native scroll events matching the viewport ref, horizontal/vertical scrolling and height limits, and resizable separator keyboard/pointer cancellation. A controlled split must not move unless the parent accepts `onSizeChange`; its commit callback still reports the requested size. Exercise standalone and `primaryAsChild` sizing, both primary sides and RTL, disabled/boundary cases, and light/dark styles. Record actual results in the batch ledger instead of treating the presence of a story as verification.
+
+Property-row implementations must not scan the DOM or infer child control types. Legacy FormItem adapters use explicit control render props or named groups; business-specific column rules remain in consumers. Keep root layout refs separate from input/scroll viewport refs, and put disclosure actions beside, not inside, the trigger button.
 
 Each refactor batch finishes with its own verified Git commit and a push to the remote branch. Update the batch ledger and clean temporary project files before committing; confirm the remote commit before starting the next batch.
 

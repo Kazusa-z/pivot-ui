@@ -161,7 +161,7 @@ export function FormItemArray(props: FormItemArrayProps) {
   }, [items])
 
   return (
-    <FormItem {...extractFormItemProps(props)} direction="column">
+    <FormItem {...extractFormItemProps(props)} association="group" direction="column">
       <Accordion type="multiple" defaultValue={propDefaultValue ?? defaultValue}>
         {items.map((item) => (
           <AccordionItem

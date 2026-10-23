@@ -20,8 +20,10 @@ export function FormItemRect(props: FormItemRectProps) {
   }
 
   return (
-    <FormItem {...extractFormItemProps(props)} fieldColumn={4}>
+    <FormItem {...extractFormItemProps(props)} association="group" fieldColumn={4}>
       <InputNumber
+        size="sm"
+        aria-label="X"
         disabled={disabled}
         startSlot="X"
         min={min}
@@ -30,6 +32,8 @@ export function FormItemRect(props: FormItemRectProps) {
         onValueChange={handleOnChange('x')}
       />
       <InputNumber
+        size="sm"
+        aria-label="Y"
         disabled={disabled}
         min={min}
         max={max}
@@ -38,6 +42,8 @@ export function FormItemRect(props: FormItemRectProps) {
         onValueChange={handleOnChange('y')}
       />
       <InputNumber
+        size="sm"
+        aria-label="Width"
         disabled={disabled}
         min={min}
         max={max}
@@ -46,6 +52,8 @@ export function FormItemRect(props: FormItemRectProps) {
         onValueChange={handleOnChange('width')}
       />
       <InputNumber
+        size="sm"
+        aria-label="Height"
         disabled={disabled}
         min={min}
         max={max}

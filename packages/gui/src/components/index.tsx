@@ -1,20 +1,37 @@
-import { PropsWithChildren } from 'react'
+import { createElement, PropsWithChildren } from 'react'
 import { FormItem } from './FormItem'
 import { Button, CascadeSlider } from '@pivot-ui/editor'
-import { BaseFormItemProps } from './FormItem/FormItem'
+import { mergeFormItemDescriptionIds, type BaseFormItemProps } from './FormItem/FormItem'
 
-function wrapFormItem<T>() {
+function wrapFormItem<T>(association: 'control' | 'group') {
   return <C extends React.JSXElementConstructor<any>>(Component: C, defaultProps?: React.ComponentProps<C>) => {
     return function FormItemComponent(props: React.ComponentProps<C> & BaseFormItemProps<T>) {
       const { label, info, formStartSlot, formEndSlot, direction, ...rest } = props
       return (
         <FormItem
+          association={association}
+          controlId={props.id}
           label={label}
           info={info}
           formStartSlot={formStartSlot}
           formEndSlot={formEndSlot}
           direction={direction}>
-          <Component {...defaultProps} {...(rest as typeof defaultProps)} />
+          {(controlProps) =>
+            createElement(Component, {
+              ...(association === 'control' ? controlProps : {}),
+              ...defaultProps,
+              ...rest,
+              ...(association === 'control'
+                ? {
+                    id: props.id ?? controlProps.id,
+                    'aria-describedby': mergeFormItemDescriptionIds(
+                      controlProps['aria-describedby'],
+                      props['aria-describedby']
+                    ),
+                  }
+                : {}),
+            })
+          }
         </FormItem>
       )
     }
@@ -22,12 +39,12 @@ function wrapFormItem<T>() {
 }
 
 export type FormItemButtonProps = PropsWithChildren<Omit<BaseFormItemProps<string>, 'value' | 'onChange'>>
-export const FormItemButton = wrapFormItem<string>()(Button, {
+export const FormItemButton = wrapFormItem<string>('control')(Button, {
   variant: 'soft',
 })
 
 export type FormItemCascadeSliderProps = BaseFormItemProps<number[]>
-export const FormItemCascadeSlider = wrapFormItem<number[]>()(CascadeSlider)
+export const FormItemCascadeSlider = wrapFormItem<number[]>('group')(CascadeSlider)
 
 export { FormItemInput, type FormItemInputProps } from './FormItemInput'
 export { FormItemSelect, type FormItemSelectProps } from './FormItemSelect'
