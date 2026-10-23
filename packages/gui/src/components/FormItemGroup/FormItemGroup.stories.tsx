@@ -1,10 +1,15 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import { FormItemGroup, type FormItemGroupProps } from './'
-import { FormItemVector2 } from '../FormItemVector2'
-import { FormItemRect } from '../FormItemRect'
-import { FormItemInputNumber } from '../FormItemInputNumber'
-import { Checkbox, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
+import {
+  Checkbox,
+  InputNumber,
+  Vector2Input,
+  RectInput,
+  PropertyRow,
+  PropertyLabel,
+  PropertyControl,
+} from '@pivot-ui/react'
 import { StoryFrame } from '../../../stories/StoryFrame'
 
 export default {
@@ -25,6 +30,8 @@ function GroupExample({ nested = false, ...args }: FormItemGroupProps & { nested
   const visibleId = useId()
   const initialOpen = args.open ?? args.defaultOpen ?? true
   const [values, setValues] = useState(() => structuredClone(initialValues))
+  const editStart = useRef(values)
+  const [resetKey, setResetKey] = useState(0)
   const [open, setOpen] = useState(initialOpen)
   const [nestedOpen, setNestedOpen] = useState(true)
   useEffect(() => {
@@ -38,6 +45,7 @@ function GroupExample({ nested = false, ...args }: FormItemGroupProps & { nested
         setValues(structuredClone(initialValues))
         setOpen(initialOpen)
         setNestedOpen(true)
+        setResetKey((key) => key + 1)
       }}>
       <FormItemGroup
         {...args}
@@ -46,27 +54,64 @@ function GroupExample({ nested = false, ...args }: FormItemGroupProps & { nested
           setOpen(nextOpen)
           args.onOpenChange?.(nextOpen)
         }}>
-        <FormItemVector2
-          label="Position"
-          disabled={args.disabled}
-          value={values.position}
-          onChange={(position) => setValues((current) => ({ ...current, position }))}
-        />
-        <FormItemRect
-          label="Bounds"
-          disabled={args.disabled}
-          value={values.bounds}
-          onChange={(bounds) => setValues((current) => ({ ...current, bounds }))}
-        />
-        <FormItemInputNumber
-          label="Scale"
-          disabled={args.disabled}
-          value={values.scale}
-          min={0}
-          step={0.1}
-          dragStep={0.1}
-          onChange={(scale) => setValues((current) => ({ ...current, scale }))}
-        />
+        <PropertyRow>
+          <PropertyLabel id={`${visibleId}-position-label`}>Position</PropertyLabel>
+          <PropertyControl association="group" labelledBy={`${visibleId}-position-label`}>
+            <Vector2Input
+              disabled={args.disabled}
+              value={values.position}
+              resetKey={resetKey}
+              onEditStart={() => {
+                editStart.current = values
+              }}
+              onEditCancel={(reason) => {
+                if (['escape', 'pointer-cancel', 'window-blur', 'read-only', 'disabled'].includes(reason))
+                  setValues((current) => ({ ...current, position: editStart.current.position }))
+              }}
+              onValueChange={(position) => setValues((current) => ({ ...current, position }))}
+            />
+          </PropertyControl>
+        </PropertyRow>
+        <PropertyRow>
+          <PropertyLabel id={`${visibleId}-bounds-label`}>Bounds</PropertyLabel>
+          <PropertyControl association="group" labelledBy={`${visibleId}-bounds-label`}>
+            <RectInput
+              disabled={args.disabled}
+              value={values.bounds}
+              resetKey={resetKey}
+              onEditStart={() => {
+                editStart.current = values
+              }}
+              onEditCancel={(reason) => {
+                if (['escape', 'pointer-cancel', 'window-blur', 'read-only', 'disabled'].includes(reason))
+                  setValues((current) => ({ ...current, bounds: editStart.current.bounds }))
+              }}
+              onValueChange={(bounds) => setValues((current) => ({ ...current, bounds }))}
+            />
+          </PropertyControl>
+        </PropertyRow>
+        <PropertyRow>
+          <PropertyLabel htmlFor={`${visibleId}-scale`}>Scale</PropertyLabel>
+          <PropertyControl association="control">
+            <InputNumber
+              id={`${visibleId}-scale`}
+              disabled={args.disabled}
+              value={values.scale}
+              min={0}
+              step={0.1}
+              dragStep={0.1}
+              resetKey={resetKey}
+              onEditStart={() => {
+                editStart.current = values
+              }}
+              onEditCancel={(reason) => {
+                if (['escape', 'pointer-cancel', 'window-blur', 'read-only', 'disabled'].includes(reason))
+                  setValues((current) => ({ ...current, scale: editStart.current.scale }))
+              }}
+              onValueChange={(scale) => setValues((current) => ({ ...current, scale }))}
+            />
+          </PropertyControl>
+        </PropertyRow>
         {nested && (
           <FormItemGroup label="Visibility" nesting open={nestedOpen} onOpenChange={setNestedOpen}>
             <PropertyRow>

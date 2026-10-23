@@ -47,7 +47,7 @@ pnpm dev:interface
 pnpm dev:demo
 ```
 
-Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. B05 adds text and choice controls plus PropertyField bindings, alongside the existing foundations, layouts, overlays and services. Migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
+Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. The unified package includes foundations, layouts, overlays, services, text and choice controls, plus B06 numeric editing, sliders, geometry templates and PropertyField bindings. Migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
 
 ### Build and verify
 
@@ -83,12 +83,13 @@ export function Toolbar() {
 
 ```tsx
 import { useId, useState } from 'react'
-import { FormItemGroup, FormItemVector3 } from '@pivot-ui/gui'
+import { FormItemGroup } from '@pivot-ui/gui'
 
-import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
+import { Input, Vector3Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 
 export function Inspector() {
   const nameId = useId()
+  const positionId = useId()
   const [name, setName] = useState('Camera')
   const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
 
@@ -100,7 +101,12 @@ export function Inspector() {
           <Input id={nameId} value={name} onValueChange={setName} />
         </PropertyControl>
       </PropertyRow>
-      <FormItemVector3 label="Position" value={position} onChange={setPosition} />
+      <PropertyRow>
+        <PropertyLabel id={positionId}>Position</PropertyLabel>
+        <PropertyControl association="group" labelledBy={positionId}>
+          <Vector3Input value={position} onValueChange={setPosition} />
+        </PropertyControl>
+      </PropertyRow>
     </FormItemGroup>
   )
 }

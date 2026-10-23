@@ -222,3 +222,127 @@ function ValidationExample() {
 }
 
 export const ChangeValidation: Story = { render: () => <ValidationExample /> }
+
+function NumericFieldExample({
+  slider = false,
+  delay = 0,
+  initialMixed = false,
+  validateChange = false,
+}: {
+  slider?: boolean
+  delay?: number
+  initialMixed?: boolean
+  validateChange?: boolean
+}) {
+  const [hosts] = useState(() => {
+    const make = (objectId: string, value: number) =>
+      createMockPropertyAccess<number>({
+        target: { objectId, propertyId: 'distance' },
+        descriptor: {
+          id: 'distance',
+          label: 'Distance',
+          kind: 'number',
+          unit: 'm',
+          description: '硬范围 -100…100；软范围 -10…10；步进 1，拖动 0.1，精度 3。',
+          constraints: { min: -100, max: 100, softMin: -10, softMax: 10, step: 1, dragStep: 0.1, precision: 3 },
+        },
+        value,
+        delayMs: delay,
+      })
+    const a = make('cube', 2)
+    const b = make('sphere', 8)
+    const withValidation = (base: typeof a): PropertyAccess<number> => ({
+      subscribe: base.subscribe,
+      getSnapshot: base.getSnapshot,
+      begin() {
+        const started = base.begin()
+        if (started.status !== 'started') return started
+        return {
+          ...started,
+          session: {
+            ...started.session,
+            change(value) {
+              return value === 13
+                ? { status: 'invalid', error: { code: 'invalid-value', message: '13 is unavailable in this example.' } }
+                : started.session.change(value)
+            },
+          },
+        }
+      },
+    })
+    return { a, b, accessA: validateChange ? withValidation(a) : a, accessB: validateChange ? withValidation(b) : b }
+  })
+  const [target, setTarget] = useState<'a' | 'b'>('a')
+  const [mixed, setMixed] = useState(initialMixed)
+  const [mounted, setMounted] = useState(true)
+  const [results, setResults] = useState<EditResult<number>[]>([])
+  const a = useSyncExternalStore(hosts.a.subscribe, hosts.a.getSnapshot, hosts.a.getSnapshot)
+  const b = useSyncExternalStore(hosts.b.subscribe, hosts.b.getSnapshot, hosts.b.getSnapshot)
+  const current = hosts[target]
+  const snapshot = target === 'a' ? a : b
+  return (
+    <ContractFrame
+      title="Numeric PropertyField / One gesture, one transaction"
+      description="拖动实时更新 preview，松开后才接受为权威值并增加一条历史；Escape 回滚。可观察延迟、拒绝、外部版本、同值更新与目标切换。"
+      onReset={() => {
+        hosts.a.reset()
+        hosts.b.reset()
+        setTarget('a')
+        setMixed(initialMixed)
+        setMounted(true)
+        setResults([])
+      }}>
+      <Flex gap="sm" wrap="wrap">
+        <Button onClick={() => current.rejectNext('The numeric host rejected this edit.')}>Reject next</Button>
+        <Button onClick={() => current.externalUpdate(7)}>External value</Button>
+        <Button onClick={() => current.externalUpdate(snapshot.value)}>Same value revision</Button>
+        <Button onClick={() => setTarget((value) => (value === 'a' ? 'b' : 'a'))}>Switch target</Button>
+        <Button onClick={() => current.setAvailability({ readOnly: !snapshot.readOnly })}>Toggle read only</Button>
+        <Button onClick={() => current.setAvailability({ disabled: !snapshot.disabled })}>Toggle disabled</Button>
+        <Button onClick={() => setMixed((value) => !value)}>Toggle mixed</Button>
+        <Button onClick={() => setMounted((value) => !value)}>Toggle field</Button>
+      </Flex>
+      <Section title={`Object: ${snapshot.target.objectId}`}>
+        {mounted && (
+          <PropertyField
+            access={target === 'a' ? hosts.accessA : hosts.accessB}
+            widget={slider ? 'numeric-slider' : 'input-number'}
+            mixed={mixed}
+            onEditResult={(result) => {
+              setResults((currentResults) => [...currentResults, result])
+              if (result.status === 'committed' || result.status === 'unchanged') setMixed(false)
+            }}
+          />
+        )}
+      </Section>
+      <StatePanel
+        label="Numeric authority and preview"
+        value={{
+          activeTarget: snapshot.target.objectId,
+          a: {
+            value: a.value,
+            preview: a.edit?.previewValue,
+            phase: a.edit?.phase,
+            history: a.historyCount,
+            revision: a.revision,
+          },
+          b: {
+            value: b.value,
+            preview: b.edit?.previewValue,
+            phase: b.edit?.phase,
+            history: b.historyCount,
+            revision: b.revision,
+          },
+          results: results.map((result) => ({ status: result.status, target: result.target.objectId })),
+        }}
+      />
+    </ContractFrame>
+  )
+}
+
+export const NumericLifecycle: Story = { render: () => <NumericFieldExample /> }
+export const NumericSliderLifecycle: Story = { render: () => <NumericFieldExample slider /> }
+export const NumericDelayedAndRejected: Story = { render: () => <NumericFieldExample delay={1200} /> }
+export const NumericTargetsAndVersions: Story = { render: () => <NumericFieldExample slider delay={1600} /> }
+export const NumericMixedAndAvailability: Story = { render: () => <NumericFieldExample initialMixed /> }
+export const NumericChangeValidation: Story = { render: () => <NumericFieldExample validateChange /> }

@@ -10,12 +10,14 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 ```tsx
 import { useId, useState } from 'react'
-import { FormItemGroup, FormItemSlider, FormItemVector3 } from '@pivot-ui/gui'
+import { FormItemGroup } from '@pivot-ui/gui'
 
-import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
+import { Input, Vector3Input, NumericSlider, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 
 export function Inspector() {
   const nameId = useId()
+  const positionId = useId()
+  const opacityId = useId()
   const [name, setName] = useState('Object')
   const [position, setPosition] = useState({ x: 0, y: 0, z: 0 })
   const [opacity, setOpacity] = useState(1)
@@ -29,8 +31,26 @@ export function Inspector() {
             <Input id={nameId} value={name} onValueChange={setName} />
           </PropertyControl>
         </PropertyRow>
-        <FormItemVector3 label="Position" value={position} onChange={setPosition} />
-        <FormItemSlider label="Opacity" value={opacity} min={0} max={1} step={0.01} onChange={setOpacity} />
+        <PropertyRow>
+          <PropertyLabel id={positionId}>Position</PropertyLabel>
+          <PropertyControl association="group" labelledBy={positionId}>
+            <Vector3Input value={position} onValueChange={setPosition} />
+          </PropertyControl>
+        </PropertyRow>
+        <PropertyRow>
+          <PropertyLabel htmlFor={opacityId}>Opacity</PropertyLabel>
+          <PropertyControl association="control">
+            <NumericSlider
+              id={opacityId}
+              label="Opacity"
+              value={opacity}
+              onValueChange={setOpacity}
+              min={0}
+              max={1}
+              step={0.01}
+            />
+          </PropertyControl>
+        </PropertyRow>
       </FormItemGroup>
     </div>
   )
@@ -44,7 +64,7 @@ Later, the application can route edits through a C++/Qt adapter and pass the res
 ## Explore the fields
 
 - Text, choices and actions moved to the unified explorer on port 6009; the seven corresponding FormItem wrappers have been removed.
-- Numbers and geometry: InputNumber, Slider, CascadeSlider, Vector2/3/4 and Rect.
+- Numbers and geometry moved to port 6009: InputNumber, Slider, DistributionSlider, NumericSlider, Vector2/3/4Input and RectInput.
 - Display: read-only values and images.
 - Specialized values: Color, Gradient, ParticleCurve and AssetPicker.
 - Composition: FormItem, Group and Array.
@@ -53,6 +73,6 @@ Gradient and particle fields use `onValueChange(value, type)`. Asset selection u
 
 ## Styling and themes
 
-Configure Panda CSS to scan the form and editor source, then import `@pivot-ui/gui/panda.css` in your application. The CSS entry declares layer order; Panda generates the styles during the build.
+Configure Panda CSS to scan the form, editor and unified interface source, then import `@pivot-ui/gui/panda.css` in your application. The CSS entry declares layer order; Panda generates the styles during the build.
 
 Use `ThemeProvider` from `@pivot-ui/editor` in your application. This Storybook's toolbar applies the same light and dark themes to every example.

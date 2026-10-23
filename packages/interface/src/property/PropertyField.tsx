@@ -14,15 +14,18 @@ import { useTextEdit } from '../widgets/inputs/useTextEdit'
 import { Checkbox } from '../widgets/choices/Checkbox'
 import { Select } from '../widgets/choices/Select'
 import { Combobox } from '../widgets/choices/Combobox'
+import { InputNumber } from '../widgets/inputs/InputNumber'
+import { NumericSlider } from '../templates/numeric/NumericSlider'
 
-export type PropertyFieldWidget = 'input' | 'textarea' | 'checkbox' | 'select' | 'combobox'
+export type PropertyFieldWidget =
+  'input' | 'textarea' | 'checkbox' | 'select' | 'combobox' | 'input-number' | 'numeric-slider'
 
 export interface PropertyFieldProps<T extends PropertyValue = PropertyValue> extends Omit<
   PropertyRowProps,
   'children'
 > {
   access: PropertyAccess<T>
-  /** Defaults to input / checkbox / select according to the descriptor. Numeric fields arrive in B06. */
+  /** Defaults to input / input-number / checkbox / select according to the descriptor. */
   widget?: PropertyFieldWidget
   controlId?: string
   label?: ReactNode
@@ -50,18 +53,28 @@ export function PropertyField<T extends PropertyValue>({
   const id = controlId ?? generatedId
   const session = useRef<{ access: PropertyAccess<T>; edit: EditSession<T>; submitted: boolean } | null>(null)
   const textChanged = useRef(false)
+  const numericChanged = useRef(false)
   const resultCallback = useRef(onEditResult)
   resultCallback.current = onEditResult
   const resetKey = useMemo(() => ({}), [access, snapshot.revision, mixed])
   const descriptor = snapshot.descriptor as PropertyDescriptor
   const selectedWidget =
-    widget ?? (descriptor.kind === 'boolean' ? 'checkbox' : descriptor.kind === 'enum' ? 'select' : 'input')
+    widget ??
+    (descriptor.kind === 'number'
+      ? 'input-number'
+      : descriptor.kind === 'boolean'
+        ? 'checkbox'
+        : descriptor.kind === 'enum'
+          ? 'select'
+          : 'input')
   const validWidget =
     descriptor.kind === 'string'
       ? selectedWidget === 'input' || selectedWidget === 'textarea'
-      : descriptor.kind === 'boolean'
-        ? selectedWidget === 'checkbox'
-        : descriptor.kind === 'enum' && (selectedWidget === 'select' || selectedWidget === 'combobox')
+      : descriptor.kind === 'number'
+        ? selectedWidget === 'input-number' || selectedWidget === 'numeric-slider'
+        : descriptor.kind === 'boolean'
+          ? selectedWidget === 'checkbox'
+          : descriptor.kind === 'enum' && (selectedWidget === 'select' || selectedWidget === 'combobox')
 
   const cancel = (reason: EditCancelReason) => {
     const current = session.current
@@ -151,6 +164,7 @@ export function PropertyField<T extends PropertyValue>({
     id,
     'aria-labelledby': `${id}-label`,
     'aria-describedby': describedBy,
+    'aria-errormessage': error ? `${id}-error` : undefined,
     'aria-invalid': !!error,
     'aria-busy': pending,
     disabled: snapshot.disabled,
@@ -162,16 +176,49 @@ export function PropertyField<T extends PropertyValue>({
         /* The access snapshot owns the displayed host rejection. */
       })
   }
+  const numberProps = {
+    ...common,
+    ...(descriptor.kind === 'number' ? descriptor.constraints : {}),
+    // The widget owns its pending state. A submitted request must not invalidate
+    // itself merely because its host publishes a pending snapshot.
+    readOnly: snapshot.readOnly || (pending && !session.current?.submitted),
+    value: (snapshot.edit?.previewValue ?? snapshot.value) as number,
+    resetKey,
+    mixed,
+    placeholder: mixed ? 'Multiple values' : placeholder,
+    onEditStart: () => {
+      numericChanged.current = false
+      return begin()
+    },
+    onValueChange: (value: number) => {
+      numericChanged.current = true
+      change(value as T)
+    },
+    onValueCommit: (value: number) => {
+      if (mixed && !numericChanged.current) {
+        cancel('reset')
+        return
+      }
+      return commit(value as T)
+    },
+    onEditCancel: cancel,
+  }
 
   return (
     <PropertyRow
       {...rowProps}
       data-property-kind={descriptor.kind}
-      data-edit-phase={pending ? 'pending' : editor.phase}>
+      data-edit-phase={pending ? 'pending' : (snapshot.edit?.phase ?? editor.phase)}>
       <PropertyLabel id={`${id}-label`} htmlFor={id}>
         {label ?? descriptor.label}
       </PropertyLabel>
       <PropertyControl association="control">
+        {descriptor.kind === 'number' &&
+          (selectedWidget === 'numeric-slider' ? (
+            <NumericSlider {...numberProps} label={descriptor.label} unit={descriptor.unit} />
+          ) : (
+            <InputNumber {...numberProps} endSlot={descriptor.unit} />
+          ))}
         {descriptor.kind === 'string' &&
           (selectedWidget === 'textarea' ? (
             <Textarea

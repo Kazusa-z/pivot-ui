@@ -1,8 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import { FormItemArray, type FormItemArrayProps } from './'
-import { FormItemInputNumber } from '../FormItemInputNumber'
-import { Checkbox, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
+import { Checkbox, InputNumber, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 import { StoryFrame } from '../../../stories/StoryFrame'
 
 export default {
@@ -22,11 +21,13 @@ function ArrayExample({ initialEmpty = false, ...args }: FormItemArrayProps & { 
   const [layers, setLayers] = useState(() => structuredClone(initialEmpty ? [] : initialLayers))
   const [resetKey, setResetKey] = useState(0)
   const nextId = useRef(3)
+  const weightStarts = useRef(new Map<string, number>())
   useEffect(() => setLayers(structuredClone(initialEmpty ? [] : initialLayers)), [initialEmpty])
 
   const reset = () => {
     setLayers(structuredClone(initialEmpty ? [] : initialLayers))
     nextId.current = 3
+    weightStarts.current.clear()
     setResetKey((key) => key + 1)
   }
 
@@ -42,16 +43,32 @@ function ArrayExample({ initialEmpty = false, ...args }: FormItemArrayProps & { 
           removable: true,
           children: (
             <>
-              <FormItemInputNumber
-                label="Weight"
-                value={layer.weight}
-                min={0}
-                max={1}
-                step={0.1}
-                onChange={(weight) =>
-                  setLayers((current) => current.map((item) => (item.id === layer.id ? { ...item, weight } : item)))
-                }
-              />
+              <PropertyRow>
+                <PropertyLabel htmlFor={`${idPrefix}-${layer.id}-weight`}>Weight</PropertyLabel>
+                <PropertyControl association="control">
+                  <InputNumber
+                    id={`${idPrefix}-${layer.id}-weight`}
+                    value={layer.weight}
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    onEditStart={() => {
+                      weightStarts.current.set(layer.id, layer.weight)
+                    }}
+                    onEditCancel={(reason) => {
+                      if (!['escape', 'pointer-cancel', 'window-blur', 'read-only', 'disabled'].includes(reason)) return
+                      const weight = weightStarts.current.get(layer.id)
+                      if (weight !== undefined)
+                        setLayers((current) =>
+                          current.map((item) => (item.id === layer.id ? { ...item, weight } : item))
+                        )
+                    }}
+                    onValueChange={(weight) =>
+                      setLayers((current) => current.map((item) => (item.id === layer.id ? { ...item, weight } : item)))
+                    }
+                  />
+                </PropertyControl>
+              </PropertyRow>
               <PropertyRow>
                 <PropertyLabel htmlFor={`${idPrefix}-${layer.id}`}>Enabled</PropertyLabel>
                 <PropertyControl association="control">

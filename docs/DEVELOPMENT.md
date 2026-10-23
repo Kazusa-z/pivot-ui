@@ -23,7 +23,7 @@ panda/               shared Panda configuration, tokens and reset
 docs/                integration, development and archive documentation
 ```
 
-Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts, B02 visual foundations and B03 layouts, property-row parts, display, disclosure, scrolling and resizable panes. B04 adds overlays, menus, dialogs and scoped confirmation/notification services. B05 adds text and choice widgets, shared text-edit sessions and text/boolean/enum `PropertyField` bindings. Migrated `ui` entries forward to the unified implementation; the seven basic GUI FormItem wrappers are removed in favor of explicit composition. Other controls remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
+Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts, B02 visual foundations and B03 layouts, property-row parts, display, disclosure, scrolling and resizable panes. B04 adds overlays, menus, dialogs and scoped confirmation/notification services. B05 adds text and choice widgets, shared text-edit sessions and text/boolean/enum `PropertyField` bindings. B06 adds numeric rules, input and slider lifecycles, geometry templates and number property bindings. Migrated `ui` entries forward to the unified implementation; fourteen GUI FormItem wrappers from B05/B06 are removed in favor of explicit composition. Other controls remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
 
 ## Commands
 
@@ -124,3 +124,7 @@ Each refactor batch finishes with its own verified Git commit and a push to the 
 - Repository workflow belongs in this guide.
 - Historical project records are kept in the [project archive](./RELEASE_ARCHIVE.md). Archive documents are immutable records and are not a work plan.
 - When changing a public API, update the relevant package README and Storybook description in the same change.
+
+## B06 numeric regression scope
+
+Numeric fields use the shared rules in values/numeric and the editing callbacks in interaction/numeric. Test a full gesture with live preview and a single terminal result, plus cancellation, pending rejection and external target/revision changes. Composite inputs must preserve one value owner; test zero-axis proportional edits, fixed controlled values, multiple thumbs and fixed-total distributions. Keep probes in the system temporary directory and record actual browser checks in the batch ledger. Do not add independent test files or duplicate rounding logic in a field wrapper.

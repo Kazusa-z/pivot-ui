@@ -180,12 +180,12 @@ For several inputs, use `PropertyLabel id={labelId}` and `PropertyControl associ
 
 ```tsx
 import { useId, useState } from 'react'
-import { FormItemVector3 } from '@pivot-ui/gui'
 
-import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
+import { Input, Vector3Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 
 export function Inspector() {
   const nameId = useId()
+  const positionId = useId()
   const [name, setName] = useState('Camera')
   const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
 
@@ -197,15 +197,20 @@ export function Inspector() {
           <Input id={nameId} value={name} onValueChange={setName} />
         </PropertyControl>
       </PropertyRow>
-      <FormItemVector3 label="Position" value={position} onChange={setPosition} />
+      <PropertyRow>
+        <PropertyLabel id={positionId}>Position</PropertyLabel>
+        <PropertyControl association="group" labelledBy={positionId}>
+          <Vector3Input value={position} onValueChange={setPosition} />
+        </PropertyControl>
+      </PropertyRow>
     </div>
   )
 }
 ```
 
-The application owns layout and state. Update each control's `value` in its change callback; passing a fixed value makes the control read-only. Use local state while developing the UI, then connect the same callbacks to application commands and supply backend snapshots through props.
+The application owns layout and state. Update each control's `value` in its change callback; a fixed value rejects value changes; use readOnly to declare a readable, non-editable control explicitly. Use local state while developing the UI, then connect the same callbacks to application commands and supply backend snapshots through props.
 
-The old `FormItem` entry is a thin composition over the property-row parts. When directly wrapping a single control, use `association="control"` and its render function to forward the supplied `id` and `aria-describedby` to the actual input. This is required for label-click focus and help association; the adapter no longer searches or clones child controls. B05 removed the text, boolean, choice and action wrappers. Compose their controls with PropertyRow directly or use PropertyField with a PropertyAccess. Business-specific `fieldColumn` names have moved to the corresponding consumers; the generic column count is 1–4.
+The old `FormItem` entry is a thin composition over the property-row parts. When directly wrapping a single control, use `association="control"` and its render function to forward the supplied `id` and `aria-describedby` to the actual input. This is required for label-click focus and help association; the adapter no longer searches or clones child controls. B05 removed the text, boolean, choice and action wrappers; B06 also removed the numeric, slider, vector and rectangle wrappers. Compose their controls with PropertyRow directly or use PropertyField with a PropertyAccess. Business-specific `fieldColumn` names have moved to the corresponding consumers; the generic column count is 1–4.
 
 Legacy `ResizablePanel` now delegates to `ResizableSplit`: its default size is 240px and default bounds are 80–960px. `range.min/max` are explicit pixel bounds, replacing the former measured-size ±50 behavior. Its `asChild` requires a single non-Fragment child that forwards DOM props/ref.
 
@@ -227,3 +232,7 @@ For custom layouts, import `css`/`cva`/`cx` from `@pivot-ui/react/styling/css`, 
 - [Development](./DEVELOPMENT.md)
 - [Editor package](../packages/ui/README.md)
 - [GUI package](../packages/gui/README.md)
+
+## Numeric editing and cancellation
+
+Use InputNumber, Slider, DistributionSlider, NumericSlider and Vector2/3/4Input/RectInput from `@pivot-ui/react`. A controlled onValueChange accepts preview requests; onValueCommit marks one edit boundary. The application handles controlled rollback through onEditCancel, while external resetKey updates preserve the new authoritative value. PropertyField with a numeric PropertyAccess connects these callbacks to the host transaction automatically. See [B06 numeric integration](./refactor/blender-5.2/B06_NUMERIC.md) for constraints, mixed state, proportional edits and migration details.

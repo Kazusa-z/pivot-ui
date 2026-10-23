@@ -2,7 +2,7 @@
 
 Composable React form items for scene inspectors, material editors and other property editors. Built on [@pivot-ui/editor](../ui/README.md), this package supplies fields and field groups. The application owns layout, state and backend integration.
 
-B05 removes the basic text, boolean, choice and action FormItem wrappers. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, boolean or enum property through `PropertyAccess`. The numeric, color, curve and resource form items below remain available for later migration batches. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md).
+B05 removes the basic text, boolean, choice and action FormItem wrappers; B06 removes the numeric, slider, vector and rectangle wrappers. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, number, boolean or enum property through `PropertyAccess`. Color, curve, collection and resource form items remain for their migration batches. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md) and [B06 numeric guide](../../docs/refactor/blender-5.2/B06_NUMERIC.md).
 
 ## Setup
 
@@ -32,12 +32,14 @@ The CSS entry declares layer order; Panda generates the styles during the applic
 
 ```tsx
 import { useId, useState } from 'react'
-import { FormItemGroup, FormItemSlider, FormItemVector3 } from '@pivot-ui/gui'
+import { FormItemGroup } from '@pivot-ui/gui'
 
-import { Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
+import { Input, Vector3Input, NumericSlider, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
 
 export function Inspector() {
   const nameId = useId()
+  const positionId = useId()
+  const opacityId = useId()
   const [name, setName] = useState('Object')
   const [position, setPosition] = useState({ x: 0, y: 0, z: 0 })
   const [opacity, setOpacity] = useState(1)
@@ -51,8 +53,26 @@ export function Inspector() {
             <Input id={nameId} value={name} onValueChange={setName} />
           </PropertyControl>
         </PropertyRow>
-        <FormItemVector3 label="Position" value={position} onChange={setPosition} />
-        <FormItemSlider label="Opacity" value={opacity} onChange={setOpacity} min={0} max={1} step={0.01} />
+        <PropertyRow>
+          <PropertyLabel id={positionId}>Position</PropertyLabel>
+          <PropertyControl association="group" labelledBy={positionId}>
+            <Vector3Input value={position} onValueChange={setPosition} />
+          </PropertyControl>
+        </PropertyRow>
+        <PropertyRow>
+          <PropertyLabel htmlFor={opacityId}>Opacity</PropertyLabel>
+          <PropertyControl association="control">
+            <NumericSlider
+              id={opacityId}
+              label="Opacity"
+              value={opacity}
+              onValueChange={setOpacity}
+              min={0}
+              max={1}
+              step={0.01}
+            />
+          </PropertyControl>
+        </PropertyRow>
       </FormItemGroup>
     </div>
   )
@@ -67,22 +87,17 @@ The component library does not own data fetching, object binding, command dispat
 
 Every form item has a dedicated Storybook entry under `FormItem`.
 
-| Component                                               | Purpose                                                      |
-| ------------------------------------------------------- | ------------------------------------------------------------ |
-| `FormItem`                                              | Label, help text and field layout for custom controls        |
-| `FormItemInputNumber`                                   | Numeric input with dragging and increment/decrement controls |
-| `FormItemSlider`                                        | Numeric slider and input                                     |
-| `FormItemCascadeSlider`                                 | Editable distribution across segments                        |
-| `FormItemVector2`, `FormItemVector3`, `FormItemVector4` | Vector fields; Vector3 supports proportional edits           |
-| `FormItemRect`                                          | Rectangle coordinates and dimensions                         |
-| `FormItemColor`                                         | Color and alpha input                                        |
-| `FormItemGradient`                                      | Constant colors and gradient modes                           |
-| `FormItemParticleCurve`                                 | Constant values and curve modes                              |
-| `FormItemParticle`                                      | Alias of `FormItemParticleCurve`                             |
-| `FormItemAssetPicker`                                   | Asset selection, location and clearing                       |
-| `FormItemDisplay`                                       | Read-only text or image                                      |
-| `FormItemGroup`                                         | Collapsible field group                                      |
-| `FormItemArray`                                         | Collection with add, delete and rename callbacks             |
+| Component               | Purpose                                               |
+| ----------------------- | ----------------------------------------------------- |
+| `FormItem`              | Label, help text and field layout for custom controls |
+| `FormItemColor`         | Color and alpha input                                 |
+| `FormItemGradient`      | Constant colors and gradient modes                    |
+| `FormItemParticleCurve` | Constant values and curve modes                       |
+| `FormItemParticle`      | Alias of `FormItemParticleCurve`                      |
+| `FormItemAssetPicker`   | Asset selection, location and clearing                |
+| `FormItemDisplay`       | Read-only text or image                               |
+| `FormItemGroup`         | Collapsible field group                               |
+| `FormItemArray`         | Collection with add, delete and rename callbacks      |
 
 Most editable items use `value` and `onChange`. Gradient and particle fields use `onValueChange(value, type)`; keep the selected mode in state when supplying a controlled `type`. Asset selection uses `onSelect(asset)` and `onDelete()`. Arrays receive `items` plus `onAdd`, `onDelete` and `onRename`; update the item list in those callbacks.
 

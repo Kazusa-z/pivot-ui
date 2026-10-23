@@ -42,7 +42,7 @@ export const Overview: StoryFn<typeof InputNumber> = (args) => {
   return <InputNumber startSlot={<IconBorderRight size="16px" />} placeholder="Variable x..." size="sm" {...args} />
 }
 
-export const Controlled: StoryFn<typeof InputNumber> = () => {
+function ControlledExample() {
   const [val, setVal] = useState(0)
 
   return (
@@ -55,6 +55,8 @@ export const Controlled: StoryFn<typeof InputNumber> = () => {
     </Flex>
   )
 }
+
+export const Controlled: StoryFn<typeof InputNumber> = () => <ControlledExample />
 
 export const Uncontrolled: StoryFn<typeof InputNumber> = (args) => {
   return <InputNumber {...args} />

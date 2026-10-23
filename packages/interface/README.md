@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
+Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
 
 ## 入口与依赖
 
@@ -14,7 +14,7 @@ Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、
 | `@pivot-ui/react/styling/css`、`/styling/jsx`、`/styling/tokens` | 直接指向生成的 Panda 运行模块                                        | 不经二次 re-export；需先生成 styled-system |
 | `@pivot-ui/react/styling/types`                                  | Panda 的 SystemStyleObject、RecipeVariantProps 等类型                | 仅类型，不作为运行时模块导入               |
 
-当前只定义 string、number、boolean 和 string/number enum。颜色、曲线、资源引用的专用模型分别在 B08–B10 实现。数值硬范围与软范围分开；step、dragStep、precision 是描述元数据，数值交互算法属于 B06。
+当前只定义 string、number、boolean 和 string/number enum。颜色、曲线、资源引用的专用模型分别在 B08–B10 实现。数值硬范围与软范围分开；step、dragStep、precision 是描述元数据，B06 的纯数值规则与编辑行为负责解释它们。
 
 `ChoiceOption.key` 是 UI 选择身份，`value` 是属性值。从 key 查找对应 option 后取原始 value，不通过字符串猜测数字；`'001'`、`'1'`、`1` 因而可以保持不同身份。
 
@@ -296,7 +296,7 @@ pnpm --filter @pivot-ui/react build-storybook
 pnpm verify                          # 完整仓库检查与三个 Storybook 构建
 ```
 
-`Contracts / Property editing` 提供生命周期、延迟/拒绝、编辑中外部更新、过期确认、对象切换、可编辑状态/宿主能力、选择身份等场景。每个场景可 Reset，并展示快照与结果。这组契约演示继续使用原生 HTML 控件；B05 的真实控件绑定另在 `Property / PropertyField` 展示，数值绑定留待 B06。
+`Contracts / Property editing` 提供生命周期、延迟/拒绝、编辑中外部更新、过期确认、对象切换、可编辑状态/宿主能力、选择身份等场景。每个场景可 Reset，并展示快照与结果。这组契约演示继续使用原生 HTML 控件；B05 的真实控件绑定另在 `Property / PropertyField` 展示，B06 在同组新增数值连续事务、延迟/拒绝、目标/版本、mixed 与 change 校验场景。
 
 Mock 位于 `stories/support/mock-property-access.ts`，只服务示例与临时验证；包出口不包含它。它模拟订阅、会话、延迟、拒绝、外部更新及事务计数，不代表真实后端。
 
@@ -310,4 +310,10 @@ Mock 位于 `stories/support/mock-property-access.ts`，只服务示例与临时
 
 `Select` 是单选下拉；`Combobox` 负责搜索及明确的 single/multiple 值类型。`SegmentControl` 是不可取消的 radio；`ToggleGroup` 单选可取消，多选为数组。选项直接传 `ChoiceOption<T>[]`，稳定 key 与原始 value 分开，null 表示未选，空字符串仍是合法值。Checkbox 的 indeterminate 表示混合状态。
 
-`PropertyField access={access}` 为一个文本、布尔或枚举属性提供标签/控件/说明和 B01 编辑会话连接；可选 widget="textarea" / "combobox"。宿主权威值与历史仍由 access 管理。数字及复杂值将在后续批次接入。七个基础 FormItem 包装已删除，改用 PropertyRow 组合或 PropertyField。详情见 [B05 接入说明](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md)。
+`PropertyField access={access}` 为一个文本、布尔或枚举属性提供标签/控件/说明和 B01 编辑会话连接；可选 widget="textarea" / "combobox"。宿主权威值与历史仍由 access 管理。数值绑定已由 B06 接入，复杂值仍由后续批次完成。七个基础 FormItem 包装已删除，改用 PropertyRow 组合或 PropertyField。详情见 [B05 接入说明](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md)。
+
+## B06 数值与几何
+
+InputNumber 的文本草稿、指针拖动与纯数值规则分别位于 widgets、interaction、values；Slider 与 DistributionSlider 使用同一轨道内核。NumericSlider 组合数值输入和滑块，NumericTupleInput 统一轴编辑；Vector2/3/4Input 与 RectInput 保留对象形状和各自语义。
+
+所有数值组件采用 onEditStart/onValueChange/onValueCommit/onEditCancel。受控值和取消回滚由调用者拥有；PropertyField 的 number 分支连接 EditSession，连续预览只在一次终结后产生一次历史。软/硬范围、精度、单位、比例零轴与旧包装退出约定见 [B06 接入指南](../../docs/refactor/blender-5.2/B06_NUMERIC.md)。

@@ -384,3 +384,65 @@ export type { PropertyFieldProps, PropertyFieldWidget } from './property/Propert
 
 export type { TextInputSize, TextInputState, TextInputVariant } from './widgets/inputs/text.styles'
 export type { ChoiceSize, ChoiceVariant } from './widgets/choices/choice.styles'
+
+export { InputNumber } from './widgets/inputs/InputNumber'
+export type { InputNumberProps } from './widgets/inputs/InputNumber'
+export type {
+  NumericEditSource,
+  NumericCommitReason,
+  NumericCancelReason,
+  NumericEditCallbacks,
+} from './interaction/numeric/types'
+export { Slider } from './widgets/sliders/Slider'
+export type { SliderProps } from './widgets/sliders/Slider'
+export { DistributionSlider } from './widgets/sliders/DistributionSlider'
+export type { DistributionSliderProps } from './widgets/sliders/DistributionSlider'
+export {
+  normalizeNumericConstraints,
+  normalizeNumericValue,
+  parseNumericDraft,
+  roundNumeric,
+  stepNumericValue,
+  snapNumericValue,
+} from './values/numeric'
+export type { ResolvedNumericConstraints, NumericDraft } from './values/numeric'
+export {
+  getDistributionTotal,
+  validateDistribution,
+  distributionToBoundaries,
+  boundariesToDistribution,
+  moveDistributionBoundary,
+} from './values/distribution'
+export type { DistributionConstraints } from './values/distribution'
+export type { Vector2, Vector3, Vector4, Rect } from './values/geometry'
+export {
+  NumericSlider,
+  NumericTupleInput,
+  Vector2Input,
+  Vector3Input,
+  Vector4Input,
+  RectInput,
+} from './templates/numeric'
+export type {
+  NumericSliderProps,
+  NumericTupleInputProps,
+  NumericAxisConfig,
+  NumericObjectInputProps,
+  Vector2InputProps,
+  Vector3InputProps,
+  Vector4InputProps,
+  RectInputProps,
+} from './templates/numeric'
+export {
+  assertNumericTuple,
+  vector2ToTuple,
+  vector3ToTuple,
+  vector4ToTuple,
+  rectToTuple,
+  tupleToVector2,
+  tupleToVector3,
+  tupleToVector4,
+  tupleToRect,
+} from './values/geometry'
+export { getProportionalAxisRange, applyProportionalChange } from './values/proportion'
+export type { ProportionalRange, ProportionalChange } from './values/proportion'

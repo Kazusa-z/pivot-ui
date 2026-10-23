@@ -98,6 +98,8 @@ TooltipProvider 由应用或组合边界共享提供。Popover 的 `keepMounted`
 
 ### B06 数值与几何模板
 
+接口、状态归属与旧入口迁移约定见 [B06 数值与几何指南](./B06_NUMERIC.md)。
+
 拆 InputNumber 的文本草稿、拖动行为与纯数值规则；统一 Slider、DistributionSlider、NumericSlider 和 NumericTupleInput。Vector2/3/4 共用内核，Rect 保持位置/尺寸含义，比例锁定独立建模。
 
 数值 PropertyField 验证一次拖动一次事务、取消、版本冲突和对象切换。必验中间 `-`/小数、点击与拖动区分、实时显示、软/硬范围、step/dragStep、细调、零轴比例、受控冻结值、多 thumb、分段总量和 Reset。
