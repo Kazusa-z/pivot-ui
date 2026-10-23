@@ -4,7 +4,7 @@ import { type Color, type ColorSpace, srgbColorToLinear, linearColorToSRGB } fro
 /**
  * Hook for handling color space conversions between component color space and display color space
  *
- * @param value - The color value in component color space, which is always in sRGB format in 0-255 range
+ * @param value - The color value in component color space, represented in the legacy 0-255 range
  * @param componentColorSpace - The color space that the component expects for input/output
  * @param displayColorSpace - The color space that should be displayed to the user
  * @returns Object with display value and conversion function for user input

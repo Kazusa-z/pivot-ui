@@ -133,7 +133,7 @@ export const ColorSpaceMode = (args) => {
   return (
     <Flex gap="sm" style={{ width: '400px' }} align="v" justifyContent="center">
       <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
-        ColorSpace Demo - Click the badge to switch between sRGB and Linear
+        ColorSpace Demo - Use RGB encoding to switch between sRGB and Linear
       </div>
       <ColorPicker
         mode="constant"

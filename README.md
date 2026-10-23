@@ -47,7 +47,7 @@ pnpm dev:interface
 pnpm dev:demo
 ```
 
-Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. The unified package includes foundations, layouts, overlays, services, text and choice controls, numeric editing, sliders, geometry templates and PropertyField bindings, plus B07 navigation, trees, tables, collection templates and scoped drag/drop. Migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
+Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. The unified package includes foundations, layouts, overlays, services, text and choice controls, numeric editing, sliders, geometry templates and PropertyField bindings, plus B07 collections/drag-drop and B08 color, HDR, ramp and color-distribution templates. Migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
 
 ### Build and verify
 
@@ -64,16 +64,16 @@ pnpm verify             # Formatting, types, demo build and Storybook builds
 ```tsx
 import { useState } from 'react'
 import { Button, Flex, Text } from '@pivot-ui/react'
-import { ColorPicker } from '@pivot-ui/editor'
+import { ColorPicker, type ColorValue } from '@pivot-ui/react'
 
 export function Toolbar() {
-  const [color, setColor] = useState({ r: 30, g: 99, b: 238, a: 1 })
+  const [color, setColor] = useState<ColorValue>({ space: 'srgb', r: 30 / 255, g: 99 / 255, b: 238 / 255, a: 1 })
 
   return (
     <Flex gap="sm" align="center">
       <Button>Save</Button>
       <Text tone="muted">Scene settings</Text>
-      <ColorPicker mode="constant" value={color} onValueChange={setColor} />
+      <ColorPicker value={color} onValueChange={setColor} />
     </Flex>
   )
 }

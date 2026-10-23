@@ -14,3 +14,4 @@ export type {
   PropertyAccess,
 } from './property'
 export type { HostCapabilities, HostFileReference, HostFileRequest } from './capabilities'
+export type { ColorCapabilities } from './color'

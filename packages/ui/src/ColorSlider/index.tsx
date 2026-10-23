@@ -1,3 +1,6 @@
 export { GradientSlider } from './GradientSlider'
+export type { GradientSliderProps } from './GradientSlider'
 export { ParticleSlider } from './ParticleSlider'
+export type { ParticleSliderProps } from './ParticleSlider'
 export { HDRSlider } from './HDRSlider'
+export type { HDRSliderProps } from './HDRSlider'

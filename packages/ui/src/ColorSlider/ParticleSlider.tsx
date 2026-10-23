@@ -1,106 +1,74 @@
-import React, { useMemo } from 'react'
-import { useControllableState } from '@radix-ui/react-use-controllable-state'
+import { useRef } from 'react'
+import { ColorRampChannels } from '@pivot-ui/react'
+import { fromLegacyChannels, toLegacyChannels, type ParticleColor } from '../ColorPicker/helper'
 
-import type { GradientColor, ParticleColor } from '../ColorPicker/helper'
-import { blendParticleStops } from '../ColorPicker/helper'
-import { Range } from './Range'
-import { ThumbGroup } from './Thumb'
-
-import { styled } from '../../styled-system/jsx'
-
-const StyledParticleSliderRoot = styled('div', {
-  base: { width: '100%', position: 'relative', marginBottom: '8px' },
-})
-
-interface ParticleSliderProps {
+export interface ParticleSliderProps {
   selectedType?: 'color' | 'alpha'
   selectedIndex?: number
   colors?: ParticleColor
   onSelect?: (index: number, type: 'color' | 'alpha') => void
   onChange?: (colors: ParticleColor) => void
+  disabled?: boolean
+  readOnly?: boolean
 }
-
-function ParticleSlider(props: ParticleSliderProps) {
-  const ref = React.useRef<HTMLDivElement>(null)
-
-  const [selected, setSelected] = useControllableState<{
-    type: 'color' | 'alpha'
-    index: number
-  }>({
-    prop:
-      props.selectedType && props.selectedIndex !== undefined
-        ? { type: props.selectedType, index: props.selectedIndex }
-        : undefined,
-    defaultProp: { type: 'color', index: -1 },
-    onChange: (value) => {
-      if (props.onSelect) {
-        props.onSelect(value.index, value.type)
-      }
-    },
-  })
-
-  const [colors, setColors] = useControllableState<ParticleColor>({
-    prop: props.colors,
-    defaultProp: {
-      color: [
-        { value: { r: 255, g: 255, b: 255, a: 0.5 }, position: 0 },
-        { value: { r: 30, g: 99, b: 238, a: 1 }, position: 1 },
-      ],
-      alpha: [
-        { value: { r: 255, g: 255, b: 255, a: 0.5 }, position: 0 },
-        { value: { r: 255, g: 255, b: 255, a: 0.5 }, position: 1 },
-      ],
-    },
-    onChange: props.onChange,
-  })
-
-  const [width, setWidth] = React.useState(0)
-  const colorValues = useMemo(() => colors!.color.map((c) => c.value), [colors])
-  const colorPositionsValues = useMemo(() => colors!.color.map((c) => c.position), [colors])
-  const alphasValues = useMemo(() => colors!.alpha.map((c) => c.value), [colors])
-  const alphaPositionValues = useMemo(() => colors!.alpha.map((c) => c.position), [colors])
-  const blendedStops = useMemo(() => blendParticleStops(colors!.color, colors!.alpha), [colors])
-
-  React.useEffect(() => {
-    const { current } = ref
-    if (!current) return
-    const { right, left } = current.getBoundingClientRect()
-    setWidth(right - left)
-  }, [])
-
-  const handleThumbChange = (type: 'alpha' | 'color') => (value: GradientColor) => {
-    setColors({
-      ...colors!,
-      [type]: value,
-    })
-  }
-
-  const handleThumbSelect = (type: 'alpha' | 'color') => (index: number) => {
-    setSelected({ type, index })
-  }
-
+const defaultColors: ParticleColor = {
+  color: [
+    { id: 'start', value: { r: 255, g: 255, b: 255, a: 1 }, position: 0 },
+    { id: 'end', value: { r: 30, g: 99, b: 238, a: 1 }, position: 1 },
+  ],
+  alpha: [
+    { id: 'alpha-start', value: { r: 255, g: 255, b: 255, a: 0.5 }, position: 0 },
+    { id: 'alpha-end', value: { r: 255, g: 255, b: 255, a: 1 }, position: 1 },
+  ],
+}
+export function ParticleSlider({
+  colors,
+  selectedIndex,
+  selectedType,
+  onSelect,
+  onChange,
+  ...props
+}: ParticleSliderProps) {
+  const latest = useRef(fromLegacyChannels(colors ?? defaultColors))
+  if (colors !== undefined) latest.current = fromLegacyChannels(colors)
+  const controlledSelection = selectedIndex !== undefined && selectedType !== undefined
   return (
-    <StyledParticleSliderRoot>
-      <ThumbGroup
-        selectedIndex={selected?.type === 'color' ? selected.index : -1}
-        onSelect={handleThumbSelect('color')}
-        width={width}
-        onChange={handleThumbChange('color')}
-        colors={colorValues}
-        positions={colorPositionsValues}
-        flipY
-      />
-      <Range ref={ref} colors={blendedStops.colors} positions={blendedStops.positions} />
-      <ThumbGroup
-        selectedIndex={selected?.type === 'alpha' ? selected.index : -1}
-        onSelect={handleThumbSelect('alpha')}
-        width={width}
-        onChange={handleThumbChange('alpha')}
-        colors={alphasValues}
-        positions={alphaPositionValues}
-      />
-    </StyledParticleSliderRoot>
+    <ColorRampChannels
+      {...props}
+      value={colors === undefined ? undefined : latest.current}
+      defaultValue={fromLegacyChannels(defaultColors)}
+      activeStopId={
+        controlledSelection
+          ? selectedType === 'color'
+            ? (latest.current.color.stops[selectedIndex]?.id ?? null)
+            : null
+          : undefined
+      }
+      activeAlphaStopId={
+        controlledSelection
+          ? selectedType === 'alpha'
+            ? (latest.current.alpha[selectedIndex]?.id ?? null)
+            : null
+          : undefined
+      }
+      onActiveStopIdChange={(id) => {
+        if (id !== null)
+          onSelect?.(
+            latest.current.color.stops.findIndex((stop) => stop.id === id),
+            'color'
+          )
+      }}
+      onActiveAlphaStopIdChange={(id) => {
+        if (id !== null)
+          onSelect?.(
+            latest.current.alpha.findIndex((stop) => stop.id === id),
+            'alpha'
+          )
+      }}
+      onValueChange={(value) => {
+        if (colors === undefined) latest.current = value
+        onChange?.(toLegacyChannels(value))
+      }}
+    />
   )
 }
-
-export { ParticleSlider }

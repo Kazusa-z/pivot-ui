@@ -1,70 +1,33 @@
-import React, { useMemo } from 'react'
-import { useControllableState } from '@radix-ui/react-use-controllable-state'
+import { useRef } from 'react'
+import { ColorRamp } from '@pivot-ui/react'
+import { fromLegacyRamp, toLegacyRamp, type GradientColor } from '../ColorPicker/helper'
 
-import type { GradientColor } from '../ColorPicker/helper'
-import { Range } from './Range'
-import { ThumbGroup } from './Thumb'
-
-import { styled } from '../../styled-system/jsx'
-
-const StyledGradientSliderRoot = styled('div', {
-  base: { position: 'relative', marginBottom: '8px', width: '100%' },
-})
-
-interface GradientSliderProps {
+export interface GradientSliderProps {
   selectedIndex?: number
   onSelect?: (index: number) => void
-  // The `colors` property must contain at least two colors.
   colors?: GradientColor
   onChange?: (colors: GradientColor) => void
+  disabled?: boolean
+  readOnly?: boolean
 }
-
-function GradientSlider(props: GradientSliderProps) {
-  const [index, setIndex] = useControllableState<number>({
-    defaultProp: -1,
-    prop: props.selectedIndex,
-    onChange: (i) => {
-      if (props.onSelect) {
-        props.onSelect(i)
-      }
-    },
-  })
-  const [colors, setColors] = useControllableState({
-    defaultProp: [
-      { value: { r: 30, g: 99, b: 238, a: 0.5 }, position: 0 },
-      { value: { r: 30, g: 99, b: 238, a: 1 }, position: 1 },
-    ],
-    prop: props.colors,
-    onChange: props.onChange,
-  })
-  const ref = React.useRef<HTMLDivElement>(null)
-  const colorValues = useMemo(() => colors!.map((c) => c.value), [colors])
-  const positionValues = useMemo(() => colors!.map((c) => c.position), [colors])
-  const [width, setWidth] = React.useState(0)
-
-  React.useEffect(() => {
-    const { current } = ref
-    if (!current) return
-    const { right, left } = current.getBoundingClientRect()
-    setWidth(right - left)
-  }, [])
-
+const defaultColors: GradientColor = [
+  { id: 'start', value: { r: 30, g: 99, b: 238, a: 0.5 }, position: 0 },
+  { id: 'end', value: { r: 30, g: 99, b: 238, a: 1 }, position: 1 },
+]
+export function GradientSlider({ colors, selectedIndex, onSelect, onChange, ...props }: GradientSliderProps) {
+  const latest = useRef(fromLegacyRamp(colors ?? defaultColors))
+  if (colors !== undefined) latest.current = fromLegacyRamp(colors)
   return (
-    <StyledGradientSliderRoot>
-      {width !== 0 && (
-        <ThumbGroup
-          selectedIndex={index!}
-          onSelect={setIndex}
-          width={width}
-          onChange={setColors}
-          colors={colorValues}
-          positions={positionValues}
-          flipY
-        />
-      )}
-      <Range ref={ref} colors={colorValues} positions={positionValues} />
-    </StyledGradientSliderRoot>
+    <ColorRamp
+      {...props}
+      value={colors === undefined ? undefined : latest.current}
+      defaultValue={fromLegacyRamp(defaultColors)}
+      activeStopId={selectedIndex === undefined ? undefined : (latest.current.stops[selectedIndex]?.id ?? null)}
+      onActiveStopIdChange={(id) => onSelect?.(latest.current.stops.findIndex((stop) => stop.id === id))}
+      onValueChange={(value) => {
+        if (colors === undefined) latest.current = value
+        onChange?.(toLegacyRamp(value))
+      }}
+    />
   )
 }
-
-export { GradientSlider }

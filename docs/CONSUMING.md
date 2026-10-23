@@ -123,16 +123,16 @@ See [B04 overlay and service migration](./refactor/blender-5.2/B04_OVERLAYS.md) 
 ```tsx
 import { useId, useState } from 'react'
 import { Button, Flex, Text } from '@pivot-ui/react'
-import { ColorPicker } from '@pivot-ui/editor'
+import { ColorPicker, type ColorValue } from '@pivot-ui/react'
 
 export function Toolbar() {
-  const [color, setColor] = useState({ r: 30, g: 99, b: 238, a: 1 })
+  const [color, setColor] = useState<ColorValue>({ space: 'srgb', r: 30 / 255, g: 99 / 255, b: 238 / 255, a: 1 })
 
   return (
     <Flex gap="sm" align="center">
       <Button>Save</Button>
       <Text tone="muted">Scene settings</Text>
-      <ColorPicker mode="constant" value={color} onValueChange={setColor} />
+      <ColorPicker value={color} onValueChange={setColor} />
     </Flex>
   )
 }
@@ -210,7 +210,7 @@ export function Inspector() {
 
 The application owns layout and state. Update each control's `value` in its change callback; a fixed value rejects value changes; use readOnly to declare a readable, non-editable control explicitly. Use local state while developing the UI, then connect the same callbacks to application commands and supply backend snapshots through props.
 
-The old `FormItem` entry is a thin composition over the property-row parts. When directly wrapping a single control, use `association="control"` and its render function to forward the supplied `id` and `aria-describedby` to the actual input. This is required for label-click focus and help association; the adapter no longer searches or clones child controls. B05 removed the text, boolean, choice and action wrappers; B06 also removed the numeric, slider, vector and rectangle wrappers; B07 removes FormItemArray in favor of CollectionTemplate. Compose their controls with PropertyRow directly or use PropertyField with a PropertyAccess. Business-specific `fieldColumn` names have moved to the corresponding consumers; the generic column count is 1–4.
+The old `FormItem` entry is a thin composition over the property-row parts. When directly wrapping a single control, use `association="control"` and its render function to forward the supplied `id` and `aria-describedby` to the actual input. This is required for label-click focus and help association; the adapter no longer searches or clones child controls. B05 removed the text, boolean, choice and action wrappers; B06 also removed the numeric, slider, vector and rectangle wrappers; B07 removes FormItemArray in favor of CollectionTemplate; B08 removes FormItemColor/FormItemGradient in favor of color templates. Compose their controls with PropertyRow directly or use PropertyField with a PropertyAccess. Business-specific `fieldColumn` names have moved to the corresponding consumers; the generic column count is 1–4.
 
 Legacy `ResizablePanel` now delegates to `ResizableSplit`: its default size is 240px and default bounds are 80–960px. `range.min/max` are explicit pixel bounds, replacing the former measured-size ±50 behavior. Its `asChild` requires a single non-Fragment child that forwards DOM props/ref.
 
@@ -240,3 +240,7 @@ Use InputNumber, Slider, DistributionSlider, NumericSlider and Vector2/3/4Input/
 ## Collections and drag/drop
 
 Use TreeRoot, Table/DataTable, Breadcrumbs, Pagination and CollectionTemplate from `@pivot-ui/react`. Stable keys distinguish numeric and string identities; the host owns item mutations and accepts selection/expansion/reorder requests. Put drag-enabled components inside an explicit DragDropProvider; useDragDropState provides a readonly snapshot. The legacy DragContext mutable object is removed. See the [B07 collection guide](./refactor/blender-5.2/B07_COLLECTIONS.md) for composition and migration.
+
+## Color and ramp templates
+
+Use normalized ColorValue with an explicit srgb/linear space. ColorInput composes ColorPicker and ColorWidget; ColorRamp and ColorRampChannels own only editing UI. Inject optional ColorCapabilities from your application and keep engine DTO conversions at the host boundary. The distribution template takes one discriminated current value and a separate mode cache. See [B08 integration](./refactor/blender-5.2/B08_COLOR.md).

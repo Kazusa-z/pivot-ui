@@ -2,7 +2,7 @@
 
 Composable React form items for scene inspectors, material editors and other property editors. Built on [@pivot-ui/editor](../ui/README.md), this package supplies fields and field groups. The application owns layout, state and backend integration.
 
-B05 removes the basic text, boolean, choice and action FormItem wrappers; B06 removes the numeric, slider, vector and rectangle wrappers; B07 replaces FormItemArray with CollectionTemplate. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, number, boolean or enum property through `PropertyAccess`. Color, curve and resource form items remain for their migration batches. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md) and [B06 numeric guide](../../docs/refactor/blender-5.2/B06_NUMERIC.md).
+B05 removes the basic text, boolean, choice and action FormItem wrappers; B06 removes the numeric, slider, vector and rectangle wrappers; B07 replaces FormItemArray with CollectionTemplate; B08 replaces FormItemColor/FormItemGradient with ColorInput and ColorDistributionTemplate. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, number, boolean or enum property through `PropertyAccess`. Curve and resource form items remain for B09/B10; color templates now come from the unified package. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md) and [B06 numeric guide](../../docs/refactor/blender-5.2/B06_NUMERIC.md).
 
 ## Setup
 
@@ -90,8 +90,6 @@ Every form item has a dedicated Storybook entry under `FormItem`.
 | Component               | Purpose                                               |
 | ----------------------- | ----------------------------------------------------- |
 | `FormItem`              | Label, help text and field layout for custom controls |
-| `FormItemColor`         | Color and alpha input                                 |
-| `FormItemGradient`      | Constant colors and gradient modes                    |
 | `FormItemParticleCurve` | Constant values and curve modes                       |
 | `FormItemParticle`      | Alias of `FormItemParticleCurve`                      |
 | `FormItemAssetPicker`   | Asset selection, location and clearing                |
@@ -106,7 +104,7 @@ Most editable items use `value` and `onChange`. Gradient and particle fields use
 pnpm dev:gui
 ```
 
-Open the component explorer on port `6008`. Editable stories maintain local React state, show the current value and provide Reset. Additional stories demonstrate supported ranges, disabled states, selection modes and specialized color/curve modes.
+Open the component explorer on port `6008`. Editable stories maintain local React state, show the current value and provide Reset. Additional stories demonstrate supported ranges, disabled states, selection modes and specialized curve modes. Color and ramp stories now live in the unified package on port `6009`.
 
 The toolbar switches between light and dark themes. In an application, use `ThemeProvider` from `@pivot-ui/editor`.
 

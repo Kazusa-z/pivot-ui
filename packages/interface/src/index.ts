@@ -527,3 +527,78 @@ export type {
   TreeDropRequest,
   TreeDragDropOptions,
 } from './widgets/collections/tree'
+
+export type { ColorSpace, ColorValue, ColorOptions, HsvColor } from './values/color'
+export {
+  assertColorValue,
+  normalizeColor,
+  srgbChannelToLinear,
+  linearChannelToSrgb,
+  convertColorSpace,
+  getDisplayColor,
+  areColorsEqual,
+  parseHexColor,
+  formatColorHex,
+  rgbToHsv,
+  hsvToColor,
+  mixColors,
+} from './values/color'
+export type {
+  ColorRampStop,
+  AlphaStop,
+  ColorRampInterpolation,
+  ColorRampValue,
+  ColorRampChannelsValue,
+} from './values/color-ramp'
+export {
+  assertColorRampValue,
+  assertAlphaStops,
+  assertColorRampChannelsValue,
+  cloneColorRampValue,
+  cloneColorRampChannelsValue,
+  sortRampStops,
+  sampleColorRamp,
+  sampleAlphaStops,
+  sampleColorRampChannels,
+  areColorRampsEqual,
+  areColorRampChannelsEqual,
+} from './values/color-ramp'
+export type { ColorDistributionValue, ColorDistributionMode, ColorDistributionCache } from './values/color-distribution'
+export {
+  colorDistributionModes,
+  assertColorDistributionValue,
+  copyColorDistributionValue,
+  copyColorDistributionCache,
+  areColorDistributionsEqual,
+  rememberColorDistribution,
+  switchColorDistributionMode,
+} from './values/color-distribution'
+export type { ColorCapabilities } from './contracts/color'
+export type {
+  ColorEditSource,
+  ColorCommitReason,
+  ColorCancelReason,
+  ColorEditCallbacks,
+} from './interaction/color/types'
+export { getColorCss } from './widgets/color/color-preview'
+export { getColorRampCss, getColorRampChannelsCss } from './templates/color/color-ramp-preview'
+export { ColorWidget } from './widgets/color/ColorWidget'
+export type { ColorWidgetProps, ColorControlProps } from './widgets/color/ColorWidget'
+export { ColorPicker } from './templates/color/ColorPicker'
+export type { ColorPickerProps } from './templates/color/ColorPicker'
+export { ColorInput } from './templates/color/ColorInput'
+export type { ColorInputProps } from './templates/color/ColorInput'
+export { HDRColorInput } from './templates/color/HDRColorInput'
+export type { HDRColorInputProps } from './templates/color/HDRColorInput'
+export { ColorRamp } from './templates/color/ColorRamp'
+export type { ColorRampProps } from './templates/color/ColorRamp'
+export { ColorRampChannels } from './templates/color/ColorRampChannels'
+export type { ColorRampChannelsProps } from './templates/color/ColorRampChannels'
+export { ColorRampPicker } from './templates/color/ColorRampPicker'
+export type { ColorRampPickerProps } from './templates/color/ColorRampPicker'
+export { ColorDistributionTemplate } from './templates/color/ColorDistributionTemplate'
+export type {
+  ColorDistributionTemplateProps,
+  ColorDistributionEditSource,
+  ColorDistributionCommitReason,
+} from './templates/color/ColorDistributionTemplate'

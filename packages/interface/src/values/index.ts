@@ -51,3 +51,49 @@ export type { TreeCollection, TreeCollectionOptions, TreeNode, TreeDropPosition 
 export { getPaginationState, getPageCount, clampPage } from './pagination'
 export type { PaginationItem, PaginationOptions, PaginationState } from './pagination'
 export type { DragPayload, DragCancelReason, DragResult, DragDropSnapshot, DropPosition } from './drag-drop'
+
+export type { ColorSpace, ColorValue, ColorOptions, HsvColor } from './color'
+export {
+  assertColorValue,
+  normalizeColor,
+  srgbChannelToLinear,
+  linearChannelToSrgb,
+  convertColorSpace,
+  getDisplayColor,
+  areColorsEqual,
+  parseHexColor,
+  formatColorHex,
+  rgbToHsv,
+  hsvToColor,
+  mixColors,
+} from './color'
+export type {
+  ColorRampStop,
+  AlphaStop,
+  ColorRampInterpolation,
+  ColorRampValue,
+  ColorRampChannelsValue,
+} from './color-ramp'
+export {
+  assertColorRampValue,
+  assertAlphaStops,
+  assertColorRampChannelsValue,
+  cloneColorRampValue,
+  cloneColorRampChannelsValue,
+  sortRampStops,
+  sampleColorRamp,
+  sampleAlphaStops,
+  sampleColorRampChannels,
+  areColorRampsEqual,
+  areColorRampChannelsEqual,
+} from './color-ramp'
+export type { ColorDistributionValue, ColorDistributionMode, ColorDistributionCache } from './color-distribution'
+export {
+  colorDistributionModes,
+  assertColorDistributionValue,
+  copyColorDistributionValue,
+  copyColorDistributionCache,
+  areColorDistributionsEqual,
+  rememberColorDistribution,
+  switchColorDistributionMode,
+} from './color-distribution'

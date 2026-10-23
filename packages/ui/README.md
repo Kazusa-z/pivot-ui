@@ -114,6 +114,8 @@ Built with:
 
 - `@radix-ui` for accessible primitives
 - `@radix-ui/colors` for the color system
-- `react-colorful` for the color picker
-- `colord` for color manipulation
 - `@tabler/icons-react` for icons
+
+## B08 color migration
+
+Legacy ColorPicker/GradientSlider/ParticleSlider/HDRSlider delegate to the unified color templates. New code uses normalized ColorValue with an explicit encoding and stable stop IDs; legacy byte-range and intensity conversions stay in this compatibility package. Browser capabilities are application-owned. See the [B08 guide](../../docs/refactor/blender-5.2/B08_COLOR.md).

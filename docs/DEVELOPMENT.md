@@ -23,7 +23,7 @@ panda/               shared Panda configuration, tokens and reset
 docs/                integration, development and archive documentation
 ```
 
-Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts, B02 visual foundations and B03 layouts, property-row parts, display, disclosure, scrolling and resizable panes. B04 adds overlays, menus, dialogs and scoped confirmation/notification services. B05 adds text and choice widgets, shared text-edit sessions and text/boolean/enum `PropertyField` bindings. B06 adds numeric rules, input and slider lifecycles, geometry templates and number property bindings. B07 adds collection models, Tree, native Table/DataTable, Breadcrumbs/Pagination and scoped drag/drop. Migrated `ui` entries forward to the unified implementation; fifteen GUI FormItem wrappers from B05–B07 are removed in favor of explicit composition. Other controls remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
+Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts, B02 visual foundations and B03 layouts, property-row parts, display, disclosure, scrolling and resizable panes. B04 adds overlays, menus, dialogs and scoped confirmation/notification services. B05 adds text and choice widgets, shared text-edit sessions and text/boolean/enum `PropertyField` bindings. B06 adds numeric rules, input and slider lifecycles, geometry templates and number property bindings. B07 adds collection models, Tree, native Table/DataTable, Breadcrumbs/Pagination and scoped drag/drop. Migrated `ui` entries forward to the unified implementation; seventeen GUI FormItem wrappers from B05–B08 are removed in favor of explicit composition. Other controls remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
 
 ## Commands
 
@@ -132,3 +132,7 @@ Numeric fields use the shared rules in values/numeric and the editing callbacks 
 ## B07 collection regression scope
 
 Verify numeric/string key identity, empty and bounded pagination, semantic navigation/table structure, independent tree selection/expansion/focus, keyboard row actions, focus after deletion/reorder, async rename rejection and stale completion. Exercise native drag/drop, provider isolation and cancellation when source/target/reset changes; check both themes and narrow layouts. CollectionTemplate replaces FormItemArray; legacy UI hooks only map their options into the new drag implementation. See the [B07 guide](./refactor/blender-5.2/B07_COLLECTIONS.md).
+
+## B08 color regression scope
+
+Verify normalized RGB/alpha, sRGB/Linear round trips, HDR preview clipping without data loss, inline/popup parity, missing and stale host capabilities. Exercise coincident stop identity, independent color/alpha tracks, selection without writes, keyboard/pointer cancellation, mode cache acceptance, controlled refusal and Reset. See the [B08 guide](./refactor/blender-5.2/B08_COLOR.md).

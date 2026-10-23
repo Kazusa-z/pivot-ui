@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定；B07 提供集合模型、Tree、Table/DataTable、导航、CollectionTemplate 与类型化拖放。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
+Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定；B07 提供集合模型、Tree、Table/DataTable、导航、CollectionTemplate 与类型化拖放；B08 提供明确编码的颜色模型、ColorWidget/Picker/Input、HDR、单/双轨渐变和颜色分布模板。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
 
 ## 入口与依赖
 
@@ -14,7 +14,7 @@ Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、
 | `@pivot-ui/react/styling/css`、`/styling/jsx`、`/styling/tokens` | 直接指向生成的 Panda 运行模块                                        | 不经二次 re-export；需先生成 styled-system |
 | `@pivot-ui/react/styling/types`                                  | Panda 的 SystemStyleObject、RecipeVariantProps 等类型                | 仅类型，不作为运行时模块导入               |
 
-当前只定义 string、number、boolean 和 string/number enum。颜色、曲线、资源引用的专用模型分别在 B08–B10 实现。数值硬范围与软范围分开；step、dragStep、precision 是描述元数据，B06 的纯数值规则与编辑行为负责解释它们。
+PropertyValue 当前只定义 string、number、boolean 和 string/number enum。B08 已提供独立颜色/渐变/分布值模型；复杂属性绑定留 B11，曲线与资源引用分别留 B09/B10。数值硬范围与软范围分开；step、dragStep、precision 是描述元数据，B06 的纯数值规则与编辑行为负责解释它们。
 
 `ChoiceOption.key` 是 UI 选择身份，`value` 是属性值。从 key 查找对应 option 后取原始 value，不通过字符串猜测数字；`'001'`、`'1'`、`1` 因而可以保持不同身份。
 
@@ -323,3 +323,7 @@ InputNumber 的文本草稿、指针拖动与纯数值规则分别位于 widgets
 Breadcrumbs、Pagination、TreeRoot/TreeItem/TreeItemContent/TreeGroup、Table 结构组件与 DataTable 从统一包导入；CollectionTemplate 替代旧 FormItemArray。数据、展开、选择和焦点使用稳定 key，应用通过回调接受变更。启用拖放时显式包裹 DragDropProvider；只读会话由 useDragDropState 观察，useDragDropCancel 负责取消，不暴露可变上下文。
 
 纯 collection/tree/pagination 模型也从 /values 导入。详细接口、键盘与异步约定、旧入口退出见 [B07 集合指南](../../docs/refactor/blender-5.2/B07_COLLECTIONS.md)。
+
+## 颜色与渐变
+
+使用 ColorWidget、ColorPicker、ColorInput、HDRColorInput、ColorRamp、ColorRampChannels、ColorRampPicker 和 ColorDistributionTemplate。ColorValue 显式声明 srgb/linear，采用归一化通道；HDR 允许 RGB 超过 1。选中停靠点、显示编码与模式缓存不混入当前属性值。能力由宿主注入，旧 UI 只转换 DTO，GUI 颜色包装退出。详见 [B08 颜色指南](../../docs/refactor/blender-5.2/B08_COLOR.md)。
