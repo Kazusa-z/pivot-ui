@@ -2,7 +2,7 @@
 
 Composable React form items for scene inspectors, material editors and other property editors. Built on [@pivot-ui/editor](../ui/README.md), this package supplies fields and field groups. The application owns layout, state and backend integration.
 
-B05 removes the basic text, boolean, choice and action FormItem wrappers; B06 removes the numeric, slider, vector and rectangle wrappers. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, number, boolean or enum property through `PropertyAccess`. Color, curve, collection and resource form items remain for their migration batches. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md) and [B06 numeric guide](../../docs/refactor/blender-5.2/B06_NUMERIC.md).
+B05 removes the basic text, boolean, choice and action FormItem wrappers; B06 removes the numeric, slider, vector and rectangle wrappers; B07 replaces FormItemArray with CollectionTemplate. Compose controls from `@pivot-ui/react` with `PropertyRow`, or use `PropertyField` to bind a text, number, boolean or enum property through `PropertyAccess`. Color, curve and resource form items remain for their migration batches. See the [B05 migration guide](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md) and [B06 numeric guide](../../docs/refactor/blender-5.2/B06_NUMERIC.md).
 
 ## Setup
 
@@ -97,9 +97,8 @@ Every form item has a dedicated Storybook entry under `FormItem`.
 | `FormItemAssetPicker`   | Asset selection, location and clearing                |
 | `FormItemDisplay`       | Read-only text or image                               |
 | `FormItemGroup`         | Collapsible field group                               |
-| `FormItemArray`         | Collection with add, delete and rename callbacks      |
 
-Most editable items use `value` and `onChange`. Gradient and particle fields use `onValueChange(value, type)`; keep the selected mode in state when supplying a controlled `type`. Asset selection uses `onSelect(asset)` and `onDelete()`. Arrays receive `items` plus `onAdd`, `onDelete` and `onRename`; update the item list in those callbacks.
+Most editable items use `value` and `onChange`. Gradient and particle fields use `onValueChange(value, type)`; keep the selected mode in state when supplying a controlled `type`. Asset selection uses `onSelect(asset)` and `onDelete()`. Collections now use CollectionTemplate from `@pivot-ui/react`; see the [B07 collection guide](../../docs/refactor/blender-5.2/B07_COLLECTIONS.md).
 
 ## Storybook
 
@@ -107,7 +106,7 @@ Most editable items use `value` and `onChange`. Gradient and particle fields use
 pnpm dev:gui
 ```
 
-Open the component explorer on port `6008`. Editable stories maintain local React state, show the current value and provide Reset. Additional stories demonstrate supported ranges, disabled states, selection modes, collection editing and specialized color/curve modes.
+Open the component explorer on port `6008`. Editable stories maintain local React state, show the current value and provide Reset. Additional stories demonstrate supported ranges, disabled states, selection modes and specialized color/curve modes.
 
 The toolbar switches between light and dark themes. In an application, use `ThemeProvider` from `@pivot-ui/editor`.
 
@@ -126,3 +125,5 @@ The GUI typecheck includes all component stories and tooling. The workspace veri
 - [Integrating Pivot UI](../../docs/CONSUMING.md)
 - [Development](../../docs/DEVELOPMENT.md)
 - [Editor package](../ui/README.md)
+
+AssetPicker drag/drop uses the shared implementation through thin legacy hook adapters. Place it and its drag sources inside an explicit DragDropProvider (the old DragDropContextProvider name is an alias). Asset selection remains keyboard-accessible through its picker.

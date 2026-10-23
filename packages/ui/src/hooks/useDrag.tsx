@@ -1,126 +1,35 @@
-import { RefObject, useContext, useEffect, useRef } from 'react'
-import React, { createContext, createRef, PropsWithChildren } from 'react'
+import { useDragSource, DragDropProvider, type DragPayload } from '@pivot-ui/react'
 
-export enum DragState {
-  None = 'none',
-  Dragging = 'dragging',
-  Dropped = 'dropped',
+/** @deprecated Use DragDropProvider and string payload types from @pivot-ui/react. */
+export const DragDropContextProvider = DragDropProvider
+export const LEGACY_DRAG_TYPE = 'pivot-legacy-layer'
+export interface LegacyDragData<T> {
+  readonly layer: number
+  readonly item: T | undefined
 }
-
-interface IDndContextValue<T = any> {
-  type: number
-  item: T
-  state: DragState
-}
-
-export const DragContext = createContext({ item: null } as IDndContextValue)
-
-export function DragDropContextProvider(props: PropsWithChildren) {
-  const dragItemRef = useRef<IDndContextValue>({ item: null, type: -1, state: DragState.None })
-
-  return <DragContext.Provider value={dragItemRef.current!}>{props.children}</DragContext.Provider>
-}
+export type LegacyDragPayload<T> = DragPayload<LegacyDragData<T>>
 
 export interface IDragOptions<T> {
-  /**
-   * The type of the item that can be dropped.
-   */
   type: number
-  /**
-   * The data item that is being dragged.
-   */
   item?: T
-  /**
-   * The callback that is called when the item is end.
-   */
-  onEnd?: (e: DragEvent, item: T | undefined) => void
-  /**
-   * The callback that is called when the item is start.
-   */
-  onStart?: (e: DragEvent, item: T | undefined) => void
-  /**
-   * The callback that is called when the drag is canceled.
-   */
-  onCancel?: (e: DragEvent, item: T | undefined) => void
-  /**
-   * Disable the drop area.
-   */
+  onEnd?: (event: DragEvent | null, item: T | undefined) => void
+  onStart?: (event: DragEvent | null, item: T | undefined) => void
+  onCancel?: (event: DragEvent | null, item: T | undefined) => void
   disable?: boolean
 }
 
-type IDragElement = RefObject<any>
-
-type IDragReturnType = [IDragElement, IDragElement]
-
-export function useDrag<T>(options: IDragOptions<T>): IDragReturnType {
-  const dragRef = useRef<HTMLDivElement>(null)
-  const previewRef = useRef<HTMLDivElement>(null)
-  const { type, item, onEnd, onStart, onCancel, disable = false } = options
-
-  const dragItem = useContext(DragContext)
-
-  useEffect(() => {
-    const { current: dragElement } = dragRef
-    if (!dragElement) {
-      return
-    }
-
-    const handleDragStart = (e: DragEvent) => {
-      e.stopImmediatePropagation()
-
-      const dataTransfer = e.dataTransfer!
-      dataTransfer.effectAllowed = 'move'
-
-      dragItem.state = DragState.Dragging
-      dragItem.type = type
-      dragItem.item = item
-
-      if (previewRef.current) {
-        dataTransfer.setDragImage(previewRef.current, 0, 0)
-      }
-
-      if (onStart) {
-        onStart(e, item)
-      }
-    }
-
-    const handleDragEnd = (e: DragEvent) => {
-      e.preventDefault()
-      e.stopImmediatePropagation()
-      if (dragItem.state !== DragState.Dropped) {
-        if (onCancel) {
-          onCancel(e, item)
-        }
-      }
-      if (onEnd) {
-        onEnd(e, item)
-      }
-      dragItem.state = DragState.None
-      dragItem.item = null
-      dragItem.type = -1
-    }
-
-    if (!disable) {
-      dragElement.setAttribute('draggable', 'true')
-      dragElement.addEventListener('dragstart', handleDragStart)
-      dragElement.addEventListener('dragend', handleDragEnd)
-    } else {
-      dragElement.removeAttribute('draggable')
-    }
-
-    return () => {
-      dragElement.removeEventListener('dragstart', handleDragStart)
-      dragElement.removeEventListener('dragend', handleDragEnd)
-      dragElement.removeAttribute('draggable')
-      // 只有当前实例正在拖拽时才重置共享 dragItem
-      // 其他 useDrag 实例（如 AssetItem）重渲染触发 cleanup 时不应干扰进行中的拖拽
-      if (dragItem.item === item) {
-        dragItem.state = DragState.None
-        dragItem.item = null
-        dragItem.type = -1
-      }
-    }
-  }, [type, item, onEnd, onStart, onCancel, disable])
-
-  return [dragRef, previewRef]
+/** @deprecated Thin numeric-layer adapter; the scoped provider owns the only drag session. */
+export function useDrag<T>(options: IDragOptions<T>) {
+  const binding = useDragSource<LegacyDragData<T>>({
+    type: LEGACY_DRAG_TYPE,
+    data: { layer: options.type, item: options.item },
+    resetKey: options.type,
+    disabled: options.disable,
+    onStart: (payload, context) => options.onStart?.(context.event, payload.data.item),
+    onEnd: (result, context) => {
+      if (result.status === 'cancelled') options.onCancel?.(context.event, result.payload.data.item)
+      options.onEnd?.(context.event, result.payload.data.item)
+    },
+  })
+  return [binding.ref, binding.previewRef] as const
 }

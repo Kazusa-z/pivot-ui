@@ -1,3 +1,5 @@
 export { DragPreview } from './DragPreview'
+export type { DragPreviewProps } from './DragPreview'
 export { InsertionIndicator } from './InsertionIndicator'
-export { TreeItemRoot, TreeItemContent, TreeItemIcon, TreeItemPreview, TreeGroup } from './Tree'
+export type { InsertionIndicatorProps, TreeItemAcceptDropType } from './InsertionIndicator'
+export * from './Tree'

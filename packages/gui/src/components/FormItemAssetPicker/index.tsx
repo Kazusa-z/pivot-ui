@@ -156,12 +156,12 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
   const selectedThumbnail = useLargePreview ? asset?.thumbnailUrl : undefined
   const textureDisplayName = useLargePreview ? stripImageExtension(value) : value
 
-  const dropRef = useDrop({
+  const dropRef = useDrop<HTMLElement, T>({
     accept: dropLayer,
     disable: disabled || !onSelect,
-    onDrop(_, item: any, dropElement) {
+    onDrop(_, item, dropElement) {
       setIsDraggingOver(false)
-      onSelect?.(item)
+      if (item) onSelect?.(item)
       dropElement.blur()
     },
     onEnter(_, __, dropElement) {
@@ -187,7 +187,7 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
         {...extractFormItemProps(props)}
         association="group"
         fieldCss={{ gridTemplateColumns: 'minmax(0, 1fr)', alignItems: 'center' }}>
-        <TextureAssetControl ref={dropRef as any} isDraggingOver={isDraggingOver}>
+        <TextureAssetControl ref={dropRef} isDraggingOver={isDraggingOver}>
           <SelectedAssetPreview>
             {selectedThumbnail ? <img src={selectedThumbnail} alt="" /> : <PreviewFallbackIcon size="24px" />}
           </SelectedAssetPreview>
@@ -239,7 +239,7 @@ function _FormItemAssetPicker<T extends BasicAssetType>(props: FormItemAssetPick
 
   const trigger = (
     <StyledTriggerButton
-      ref={dropRef as any}
+      ref={dropRef}
       size="sm"
       disabled={disabled}
       variant="soft"

@@ -4,7 +4,7 @@
 
 架构依据：[已采纳方案](D:/QtProject/editor-ui-custom/docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md)。批次范围和退出条件：[批次计划](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/BATCHES.md)。
 
-**B06 数值与几何模板已验收**。B00–B05 已验收并推送；B06 的 10 个主迁移项已验证，累计 51/65。B05 提交 `ca7c7ee6d55aa445bf0c976aec85bb6e1d9a92fa` 已核对远程一致。撰写本记录时 B06 尚未提交、未推送，验收与证据见第 14 节；B07–B11 尚未开始。
+**B07 集合与拖放已验收**，累计 56/65。B00–B06 已提交并推送；B07 的提交标题及交付回执规则见第 9 节，B08–B11 尚未开始。
 
 ## 1 分支与继承基线
 
@@ -35,20 +35,20 @@
 
 ## 2 批次进度
 
-| 批次 | 名称             | 状态   | 前置          | 验证/交付记录             | 提交              |
-| ---- | ---------------- | ------ | ------------- | ------------------------- | ----------------- |
-| B00  | 启动与基线       | 已验收 | 无            | V00-01–V00-04 通过        | f2f2c98           |
-| B01  | 契约与统一包骨架 | 已验收 | B00           | V01-01–V01-08；见第 8 节  | bb3847e           |
-| B02  | 主题与视觉基础   | 已验收 | B01           | V02-01–V02-07；见第 10 节 | 60e12bb           |
-| B03  | 布局与字段结构   | 已验收 | B02           | V03-01–V03-07；见第 11 节 | 4b2264a           |
-| B04  | 浮层与菜单       | 已验收 | B02、B03      | V04-01–V04-07；见第 12 节 | 2da9813           |
-| B05  | 文本与选择       | 已验收 | B03、B04      | V05-01–V05-07；见第 13 节 | ca7c7ee           |
-| B06  | 数值与几何模板   | 已验收 | B05           | V06-01–V06-07；见第 14 节 | 本提交；见第 9 节 |
-| B07  | 集合与拖放       | 待开始 | B03、B04、B05 | —                         | —                 |
-| B08  | 颜色与渐变模板   | 待开始 | B04、B06      | —                         | —                 |
-| B09  | 曲线与数值分布   | 待开始 | B04、B06      | —                         | —                 |
-| B10  | 资源引用与选择   | 待开始 | B04、B05、B07 | —                         | —                 |
-| B11  | 属性联调与收口   | 待开始 | B03–B10       | —                         | —                 |
+| 批次 | 名称             | 状态   | 前置          | 验证/交付记录             | 提交         |
+| ---- | ---------------- | ------ | ------------- | ------------------------- | ------------ |
+| B00  | 启动与基线       | 已验收 | 无            | V00-01–V00-04 通过        | f2f2c98      |
+| B01  | 契约与统一包骨架 | 已验收 | B00           | V01-01–V01-08；见第 8 节  | bb3847e      |
+| B02  | 主题与视觉基础   | 已验收 | B01           | V02-01–V02-07；见第 10 节 | 60e12bb      |
+| B03  | 布局与字段结构   | 已验收 | B02           | V03-01–V03-07；见第 11 节 | 4b2264a      |
+| B04  | 浮层与菜单       | 已验收 | B02、B03      | V04-01–V04-07；见第 12 节 | 2da9813      |
+| B05  | 文本与选择       | 已验收 | B03、B04      | V05-01–V05-07；见第 13 节 | ca7c7ee      |
+| B06  | 数值与几何模板   | 已验收 | B05           | V06-01–V06-07；见第 14 节 | 0bab111      |
+| B07  | 集合与拖放       | 已验收 | B03、B04、B05 | V07-01–V07-07；见第 15 节 | 本节唯一标题 |
+| B08  | 颜色与渐变模板   | 待开始 | B04、B06      | —                         | —            |
+| B09  | 曲线与数值分布   | 待开始 | B04、B06      | —                         | —            |
+| B10  | 资源引用与选择   | 待开始 | B04、B05、B07 | —                         | —            |
+| B11  | 属性联调与收口   | 待开始 | B03–B10       | —                         | —            |
 
 ## 3 组件迁移台账
 
@@ -88,10 +88,10 @@
 | U30  | Toast：`Toaster`、`toast`                                                                                                                                    | 保留并隔离适配             | B04    | 已验证   | 薄适配保留；B11 删除     | widgets/notifications：ToastView、Toaster、NotificationProvider/service；V04-03–V04-07 |
 | U31  | Accordion：`Accordion`、`AccordionItem`                                                                                                                      | 保留，合并视觉实现         | B03    | 已验证   | 薄适配保留；B11 删除     | widgets/disclosure/Accordion、AccordionItem；V03-03–V03-06                             |
 | U32  | Collapsible：`Collapsible`                                                                                                                                   | 保留并整理组合             | B03    | 已验证   | 薄适配保留；B11 删除     | widgets/disclosure/Collapsible；V03-03–V03-06                                          |
-| U33  | Breadcrumbs：`Breadcrumbs`、`BreadcrumbItem`                                                                                                                 | 重写语义结构               | B07    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
-| U34  | Pagination：`Pagination`                                                                                                                                     | 保留，拆纯算法             | B07    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
-| U35  | Table：`Table`                                                                                                                                               | 拆分并重写数据适配         | B07    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
-| U36  | Tree：`TreeItemRoot`、`TreeItemContent`、`TreeItemIcon`、`TreeItemPreview`、`TreeGroup`、`DragPreview`、`InsertionIndicator`                                 | 重写组件族                 | B07    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
+| U33  | Breadcrumbs：`Breadcrumbs`、`BreadcrumbItem`                                                                                                                 | 重写语义结构               | B07    | 已验证   | 薄适配保留；B11 删除     | widgets/navigation/Breadcrumbs；V07-03/04/06                                           |
+| U34  | Pagination：`Pagination`                                                                                                                                     | 保留，拆纯算法             | B07    | 已验证   | 薄适配保留；B11 删除     | widgets/navigation/Pagination + values/pagination；V07-03/04/06                        |
+| U35  | Table：`Table`                                                                                                                                               | 拆分并重写数据适配         | B07    | 已验证   | 薄适配保留；B11 删除     | widgets/collections/Table、DataTable；V07-03/04/06                                     |
+| U36  | Tree：`TreeItemRoot`、`TreeItemContent`、`TreeItemIcon`、`TreeItemPreview`、`TreeGroup`、`DragPreview`、`InsertionIndicator`                                 | 重写组件族                 | B07    | 已验证   | 薄适配保留；B11 删除     | widgets/collections/tree + values/tree、collection；V07-03–V07-06                      |
 | U37  | ResizablePanel：`ResizablePanel`                                                                                                                             | 重写并改名                 | B03    | 已验证   | 薄适配保留；B11 删除     | layout/ResizableSplit；V03-03–V03-06                                                   |
 | U38  | ColorPicker：`ColorPicker`                                                                                                                                   | 拆分                       | B08    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
 | U39  | ColorSlider：`GradientSlider`、`ParticleSlider`、`HDRSlider`                                                                                                 | 合并颜色模型，拆清职责     | B08    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
@@ -119,7 +119,7 @@
 | G19  | `FormItemDisplay`                                                                                                                                            | 拆分，删除旧包装           | B03    | 已验证   | 薄适配保留；B11 删除     | widgets/display/ReadonlyValue、ImagePreview；V03-03–V03-06                             |
 | G20  | `FormItemButton`                                                                                                                                             | 删除包装                   | B05    | 已验证   | 实现/出口/专属故事已删除 | PropertyRow + Button；Layout/Action row；V05-04/07                                     |
 | G21  | `FormItemGroup`                                                                                                                                              | 合并到布局                 | B03    | 已验证   | 薄适配保留；B11 删除     | layout/Section；V03-03–V03-06                                                          |
-| G22  | `FormItemArray`                                                                                                                                              | 重写                       | B07    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
+| G22  | `FormItemArray`                                                                                                                                              | 重写                       | B07    | 已验证   | 实现/出口/专属故事已删除 | templates/collections/CollectionTemplate；V07-03–V07-07                                |
 | G23  | `PickableAssetItem`                                                                                                                                          | 合并并删除旧入口           | B10    | 未迁移   | 未退出；最迟 B11         | —                                                                                      |
 
 ## 4 共享事项台账
@@ -131,7 +131,7 @@
 | S03  | 数值纯函数、拖动/草稿、round 与共享编辑行为                               | B05/B06                | 文本及数值已验收   | useTextEdit、useNumericInput/useNumericDrag 与 values/numeric 单一实现；V06-03–V06-05                        |
 | S04  | 颜色值类型、公开 helpers/hooks 和转换                                     | B08                    | 待开始             | 纯模型独立；颜色/渐变/宿主转换边界明确                                                                       |
 | S05  | 曲线类型、插值/坐标/刻度工具与预设能力                                    | B09                    | 待开始             | 值与选中/视图状态分开；存储不在控件内                                                                        |
-| S06  | DragContext、Provider、useDrag/useDrop 与模型                             | B07                    | 待开始             | 稳定类型和受控 API；Tree/Asset 适配不泄漏可变上下文                                                          |
+| S06  | DragContext、Provider、useDrag/useDrop 与模型                             | B07                    | 已验证             | interaction/drag-drop + values/drag-drop；公开只读快照和取消API，旧hook仅映射numeric layer；V07-03–V07-06    |
 | S07  | PropertyField 的逐步联调                                                  | B05/B06 启动；B11 收口 | 基础标量绑定已验证 | string/boolean/enum/number 已接入 Mock；数值双通道、事务/拒绝/版本验证通过，复杂模板绑定与最终收口留后续批次 |
 | S08  | 公共 Props、值类型、严格检查与旧 StitchesComponent 名称                   | 各主批次；B11 收口     | 部分迁移           | 完整可导入类型，无旧内部深层引用，类型检查范围完整                                                           |
 | S09  | 空文件、重复图标/Picker/helper、旧包装/HOC/别名                           | 各主批次；B11 收口     | 部分迁移           | 消费者切换后删除；GUI/GUIRoot/旧 Panel 保持已删除                                                            |
@@ -143,7 +143,7 @@ B01 为 S02 建立 Panda 生成/扫描骨架，为 S08 补齐检查范围并启�
 
 B05 推进 S03 的文本草稿/终结行为及 S07 的 string/boolean/enum 属性绑定，复用 B01 会话契约；在 B05 当时，数值编辑、数组属性和复杂模板尚未实现。S08/S09/S10 同步补齐新 Props、唯一选项映射、七个旧 FormItem 包装退出与 34 个新故事（8 组）；UI 薄适配和旧包仍由 B11 清理。
 
-B06 推进 S03 的纯数值规则、文本/拖动与滑块编辑内核，以及 S07 的 number 属性绑定；数值模板保留独立受控值，未把几何对象提前扩入 B01 标量契约。S08/S09/S10 增加 9 个数值控件/模板及 Props、纯模型与 33 个故事（覆盖 6 组），删除七个数值 FormItem 包装和专属故事。最终静态浏览器验收见 V06-05；B07–B11 尚未开始。
+B06 推进 S03 的纯数值规则、文本/拖动与滑块编辑内核，以及 S07 的 number 属性绑定；数值模板保留独立受控值，未把几何对象提前扩入 B01 标量契约。S08/S09/S10 增加 9 个数值控件/模板及 Props、纯模型与 33 个故事（覆盖 6 组），删除七个数值 FormItem 包装和专属故事。最终静态浏览器验收见 V06-05；B07–B11 在当时未开始。B07 现已完成 S06，并继续 S08/S09/S10 的集合类型、旧包装退出和故事迁移。
 
 ## 5 验证记录
 
@@ -196,6 +196,13 @@ B06 推进 S03 的纯数值规则、文本/拖动与滑块编辑内核，以及 
 | V06-05 | B06 / 2026-10-23 | 最终生产 Storybook 浏览器               | 通过               | 本批 33/33 故事交替 light/dark 加载无 error，最终 console=[]；拒绝 draft=6/authority=2/history=0 且仅 1 alert、aria-errormessage 关联该节点；重试/目标切换通过；实际拖动 2→7/history=1；320px 窗口 clientWidth=scrollWidth=317                                                               |
 | V06-06 | B06 / 2026-10-23 | 旧消费者浏览器回归                      | 通过               | GUI Group scale=2.5、Array weight=0.6、旧 HDR 2→1.9、Color R=220；数值旧入口只做薄适配，未来颜色/曲线模型仍按原批次推进                                                                                                                                                                      |
 | V06-07 | B06 / 2026-10-23 | 架构、出口、索引与交付范围              | 通过               | 118 生产源文件/254 依赖边/11 pure 文件，无环、新→旧导入、未声明依赖、纯层污染或独立测试；新增 9 控件/模板及 Props；新增 33 stories 覆盖 6 组。interface 158/39/5、UI 109/40/28、GUI 37/8/1；七个旧数值 FormItem 无活跃出口/专属故事                                                          |
+| V07-01 | B07 / 2026-10-23 | 基线与批次范围                          | 通过               | B06 本地/远程 0bab111 完整 SHA 一致；启动工作树干净；本批 U33–U36/G22 与 S06。                                                                                                                                                                                                               |
+| V07-02 | B07 / 2026-10-23 | 格式、全仓类型、Demo/三套 Storybook     | 通过               | 最终 verify-final.log 退出 0；生产、stories/support、tooling、pure 与跨包消费端全通过；warning/error=0。                                                                                                                                                                                     |
+| V07-03 | B07 / 2026-10-23 | 架构/出口/退出审计                      | 通过               | 133 个生产文件、300 条依赖边、15 个纯层文件；无环、旧包反向导入、未声明依赖或纯层 DOM/React；FormItemArray 和可变 DragContext 退出。                                                                                                                                                         |
+| V07-04 | B07 / 2026-10-23 | 临时纯值与 ReactDOM 探针                | 通过               | Tree 28 组、CollectionTemplate 25 组、导航/表格 14 组（包含168组分页组合）、共享拖放 20 组、旧面包屑适配 3 组；console=0；无独立测试文件进项目。                                                                                                                                             |
+| V07-05 | B07 / 2026-10-23 | 拖放隔离与终结                          | 通过               | 原生 marker/typed payload、跨Provider与type拒绝、Escape/reset/disabled/unmount/blur、同步drop移除源、替换拖动重入；浏览器确认成功/拒绝/跨provider均一次终结。                                                                                                                                |
+| V07-06 | B07 / 2026-10-23 | 浏览器实际交互与样式                    | 通过               | 最终构建本批26故事交替明暗加载；键盘导航、Tree/Collection原生拖放、异步改名拒绝重试、增删焦点、DataTable草稿身份、分页越界/零结果、320px四组宽度及旧Asset/Table适配。                                                                                                                        |
+| V07-07 | B07 / 2026-10-23 | 交付清理与依赖                          | 通过               | frozen-lockfile offline安装、dedupe --check 通过且锁文件不变；最终构建索引与源码一致；临时探针/日志/截图在系统TEMP，Git依正常hooks提交与推送。                                                                                                                                               |
 
 构建日志：[baseline-verify.log](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b00-20261022/baseline-verify.log)。
 
@@ -212,7 +219,7 @@ B01 日志：[完整 verify](C:/Users/74053/AppData/Local/Temp/pivot-blender-ref
 | 编号 | 事项                                                          | 处理规则                                                                                                                  | 负责批次           | 当前状态                     |
 | ---- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------- |
 | R01  | 启动时继承修复未提交，原 HEAD 不包含完整工作树                | 继承修复已单独归档到 2c4638f，保留启动记录                                                                                | B00 记录，持续关注 | 已归档                       |
-| R02  | 过渡期新旧入口造成双实现或反向依赖                            | 旧入口只做薄适配，新模块不导入旧包；每批记录剩余消费者                                                                    | 全部；B11 清零     | B06 无反向依赖；旧适配待退出 |
+| R02  | 过渡期新旧入口造成双实现或反向依赖                            | 旧入口只做薄适配，新模块不导入旧包；每批记录剩余消费者                                                                    | 全部；B11 清零     | B07 无反向依赖；旧适配待退出 |
 | R03  | Panda 路径/导出变化导致生产样式遗漏                           | 更新扫描；验证 consumer、开发预览与无缓存静态构建                                                                         | B01/B02/B11        | B02 开发/静态/消费者通过     |
 | R04  | 当前 stories 检查范围和严格类型不足                           | B01 已补齐 stories/support/config；新包 strict，旧包随迁移收紧；MDX 由构建覆盖                                            | B01–B11            | 范围已补齐；旧类型待迁移     |
 | R05  | 数值、颜色、曲线或资源的值语义在迁移中改变                    | 迁移前定义类型与转换，临时适配集中；不随目录移动隐式改变单位/范围/标识                                                    | B06/B08/B09/B10    | 待跟踪                       |
@@ -279,7 +286,9 @@ B04 验收：已通过。提交 `2da9813e1a4c4eabc3a86e0b4226501add6a6869`（`fe
 
 B05 验收：已通过。提交 `ca7c7ee6d55aa445bf0c976aec85bb6e1d9a92fa`（feat(B05): unify text editing, typed choices and property bindings）已推送；B06 启动时再次核对远程完整 SHA 与本地一致，工作树干净。
 
-B06 验收：已通过。包含本记录的批次提交以唯一标题 `feat(B06): unify numeric editing, sliders and geometry templates` 定位，不预测自身 SHA。撰写本记录时尚未提交、尚未推送；正常提交钩子、暂存范围及远程状态由实际 Git 回执单独确认，回执放系统 TEMP；下一批回填已存在的提交 SHA。
+B06 验收：已通过。提交 `0bab111d28b39495f3f596cc35bd10dc509c63d8`（`feat(B06): unify numeric editing, sliders and geometry templates`）已推送；B07 启动时 git ls-remote 核对远程与本地 HEAD 一致，工作树干净。
+
+B07 验收：已通过。包含本记录的提交用唯一标题 `feat(B07): rebuild collections, navigation and scoped drag and drop` 定位，不预测自身 SHA。撰写此记录时尚未提交、推送；完成正常 hooks 后以系统 TEMP 的 git-delivery.json 核对实际本地/远程 SHA 和工作树状态，下一批回填已存在的 SHA。
 
 ## 10 B02 执行记录
 
@@ -462,7 +471,7 @@ DistributionSlider 的公开值是段长，内部一次转换到累计边界；�
 
 验收完成日期：2026-10-23。最终完整 verify-final.log 退出 0，覆盖格式、全仓生产/stories/support/tooling/pure 类型、Demo 与三套 Storybook，warning/error=0；此前 verify-first.log 的通过记录仍保留。冻结锁文件安装及 dedupe --check 退出 0，锁文件未变。架构审计覆盖 118 个生产源文件、254 条依赖边及 11 个纯层文件，没有依赖环、新包反向导入旧包、未声明依赖、纯层 React/DOM 污染或独立测试文件。
 
-新增 33 个故事分布于 6 组（含扩展既有 PropertyField 组）；统一包总计 158 stories / 39 组 / 5 docs，旧 UI 109 / 40 / 28，GUI 37 / 8 / 1。10 个主迁移项已实现并通过完整验收，累计 51/65；B06 已验收，B07–B11 未开始。
+新增 33 个故事分布于 6 组（含扩展既有 PropertyField 组）；统一包总计 158 stories / 39 组 / 5 docs，旧 UI 109 / 40 / 28，GUI 37 / 8 / 1。10 个主迁移项已实现并通过完整验收，当时累计 51/65；B06 已验收，B07–B11 在当时未开始。当前状态见第 2、9、15 节。
 
 临时验证分别为 InputNumber 25 项、InputNumber 原生 reset 15 项、数值错误归属 4 项、Slider/Distribution 28 项（原 26 项及错误归属 2 项）、模板 24 项、模板 reset/迟到结果 15 项、number PropertyField 24 项、B05 text PropertyField 回归 16 项；相同脚本的复跑不重复计作覆盖。模板 reset 15 项在 InputNumber 最后实现落盘后重新 bundle 运行通过；受控取消、拒绝、外部版本、零轴、联动范围和原生表单均有对应断言。
 
@@ -475,3 +484,45 @@ DistributionSlider 的公开值是段长，内部一次转换到累计边界；�
 项目扫描未发现临时脚本、日志、截图或独立测试文件。临时静态服务 6010 已停止，开发示例保留；暂存范围和 Git 提交/推送状态由收尾时的实际回执核对，不提前声明已经推送。
 
 证据位于系统 TEMP 的 pivot-blender-refactor-b06-20261023：[最终完整 verify](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/verify-final.log)、[冻结安装](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/frozen-install.log)、[依赖去重](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/dedupe.log)、[架构审计](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/architecture-audit.json)、[InputNumber 最终回归](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/number-events-after-reset.log)、[InputNumber reset](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/number-reset.log)、[Slider/Distribution](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/slider-probe.log)、[模板回归](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/numeric-template-probe.log)、[模板 reset 与迟到结果](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/numeric-slider-reset-probe.log)、[数值 PropertyField](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/property-number-final.log)、[文本绑定回归](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/property-text-regression.log)、[开发控制台](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/browser-dev-logs.json)、[Rect 窄窗口截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/dev-rect-narrow.png)。最终浏览器证据：[本批 33 个生产故事](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/static-all-stories-final.json)、[最终控制台](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/browser-final-logs.json)、[错误归属记录](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/static-error-owner.txt)、[错误归属截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/static-error-owner.png)、[组合滑块拒绝重试](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/static-slider-retry.txt)、[真实指针拖动](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/static-drag.txt)、[数值验收截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/B06-numeric-verified.png)、[窄窗口截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/static-numeric-narrow.png)。验证环境首次失败：[property-number-first.log](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/property-number-first.log)，补齐后：[property-number-after-setup.log](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b06-20261023/property-number-after-setup.log)。这些脚本、日志、截图不进入项目交付。
+
+## 15 B07 执行记录
+
+启动日期：2026-10-23。前置 B03/B04/B05 与 B06 均已验收并推送；本地/远程起点 0bab111d28b39495f3f596cc35bd10dc509c63d8，工作树干净。本批认领 U33–U36、G22 共 5 项及 S06 共享拖放。
+
+范围：稳定 collection key 与树集合/selection/expansion/focus；TreeRoot 组件族与拖放适配；Table 结构和 DataTable 泛型组合；Breadcrumbs、Pagination 纯算法与导航；CollectionTemplate 增删改名/重排；有类型、不可直接突变的拖放状态与显式 Provider。旧 UI 只留薄适配，GUI FormItemArray 实现/出口/故事退出，必要 Tree/Array/Asset 消费者迁移。领域资源模型仍留 B10。
+
+必验：稳定键（含数值/字符串身份）、增删重排后的焦点与选择、独立展开、空态、拒绝/异步改名、拖放取消/源卸载/目标禁用、可独立聚焦的行操作、页码越界/零结果、明暗主题及窄宽度。临时脚本和证据放系统 TEMP 的 pivot-blender-refactor-b07-20261023，不新增独立测试文件，不实现业务页面或真实 C++/Qt 接入。
+
+### B07 实际交付
+
+新纯模型为 values/collection、tree、pagination、drag-drop；TreeRoot 将 selection/expansion/focus 分开，TreeItemContent 复用 B05 改名行为。Table 拆原生结构部件和泛型 DataTable，Breadcrumbs 使用 nav/ol/li，Pagination 拆纯算法。CollectionTemplate 接收纯 items/getKey/getLabel/renderItem，增删改名与重排交给父级；取代旧 FormItemArray。
+
+DragDropProvider 仅拥有局部拖放会话；useDragSource/useDropTarget/useDragDropState/useDragDropCancel 不公开可变 context。原生 DataTransfer 只传不透明标记，外部文件另经 onFilesDrop；Tree 和 Collection 使用同一实现，AssetPicker 的旧 numeric layer hooks 仅做映射。旧 Tree 的领域状态不进入通用控件，低层消费者改为新 collection/itemKey 组合。资源领域模型仍由 B10 负责。公共接口、键盘约定与迁移说明见 [B07 集合指南](./B07_COLLECTIONS.md)。
+
+### B07 发现与修复
+
+1. drop 回调同步重排/卸载源会先触发源清理，导致成功误记取消；现先占有终结操作再调用宿主，成功只发一次 dropped。替换旧拖动的 onEnd 可 reset/禁用/卸载新源，begin 重新核对 epoch 和 source 身份，避免旧完成回调后复活新会话。首次失败与最终20组复验均在 TEMP 保留。
+2. 图标按钮拖动有两个边界：源按钮内 SVG 不应被当成子行操作；按钮 all:unset 还会覆盖浏览器 draggable 对应样式。先修 interactive guard，浏览器复验发现后者，再显式维护 -webkit-user-drag 并恢复原样式。实际 Collection number:1 从0移到2；jsdom仅验证样式写入/还原契约，不冒充浏览器拖放。
+3. 异步新增不返回 key 时，父级 items 可能尚未渲染，导致漏交接焦点；新增与删除的接受后整理移到 layout effect。返回 key/void、异步删除、多选、拒绝/过期结果均有最终探针。
+4. Tree 受控 focusedKey 改变原先只改tabIndex，不同步正在树行上的DOM焦点；现在仅树行持焦点时跟随，不抢改名/行操作/树外焦点。首次 Shift+方向键以当前焦点作为范围锚点，非法受控keys纠正请求去重。
+5. 删除 DataTable 聚焦行后跳过没有可用控件的行，优先后继再前驱；保留数字/字符串key差异。AssetPicker 的路径片段可重名，Breadcrumb ID改为累计路径。
+6. 全仓类型暴露 consumer 的 ES lib 不支持 Array.at，Tree End 导航改为下标访问。Panda曾将新旧Table故事的columns元数据解释为CSS，改为useMemo数据边界；没有屏蔽告警或改Panda提取配置。失败的verify-first.log、含告警的verify-build-warning.log及定向CSS零告警复验保留。
+7. 320px浏览器发现Tree故事默认centered布局把root撑到432px；该组ContractFrame切换fullscreen，内容加载后clientWidth/scrollWidth均317。组件API不变，最终静态再复验。
+
+8. 收尾复查发现旧 BreadcrumbItem 的 onClick 仍会在 current/disabled 状态冒泡触发；适配层同步屏蔽导航与点击。临时验证复现后，正常项键盘等价激活只回调一次、当前项与禁用项均不回调，共3组通过。
+
+### B07 验证与交付范围
+
+主迁移5项已验证，累计56/65；新增26个故事/6组。统一包184 stories/45组/6 docs，旧UI109/40/26，GUI34/7/1。架构审计无发现；全量verify、冻结安装、dedupe通过。90组临时探针按Tree28、集合25、导航表格14、拖放20、旧面包屑适配3分别记录；重跑不重复计数，分页组合168在14组内。
+
+生产浏览器实测：集合拒绝Base revised保持旧authority，Enter重试接受一次，删除后焦点到Detail、新增后聚焦并选择Layer4；表格数字1草稿Metal draft在反序后保留，删除Glass后聚焦Delete Metal；分页25缩至3页仅显示钳制，父page保持25，零结果无页码；Breadcrumb键盘返回Materials。Tree Notes拖入Archive后仍按notes身份选中、状态回idle且单次dropped；F2改名拒绝保稿，允许后Enter重试并回到行焦点。Provider隔离的放下仅outside，拒绝目标仅rejected，同步卸载源的接受只有received/dropped。旧AssetPicker拖动brick_normal选中且路径弹层正常，旧Table Open 2的Enter显示Kevin。
+
+最终浏览器26个故事交替light/dark加载；窄窗口集合/分页 clientWidth=scrollWidth=320，Tree/表格=317。生产预览6010的浏览器warning/error为空；开发6009热更新期间记录过一次Tree故事动态模块拉取失败（browser-dev-logs.json），最终生产26/26加载与交互未复现，不把开发诊断删除或混入生产零消息结论。浏览器验证和模拟DOM不替代真实Qt嵌入、系统文件拖入或平台辅助技术验收。只增加库组件、故事与文档；未增加业务页面、真实宿主桥接或独立测试文件。
+
+证据目录为系统 TEMP `pivot-blender-refactor-b07-20261023`：
+
+- [最终完整验证](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/verify-final.log)、[架构审计](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/architecture-audit.json)、[冻结安装](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/frozen-install.log)、[依赖去重](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/dedupe.log)。
+- [Tree 28组](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/tree-probe.log)、[Collection 25组](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/collection-final.log)、[导航/表格14组](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/navigation-table-probe.log)、[拖放20组](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/drag-hook-audit.log)、[旧面包屑3组](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/breadcrumb-adapter-after.log)。
+- [生产故事加载](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/static-all-stories-final.json)、[浏览器控制台](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/browser-final-logs.json)、[窄窗口数据](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/static-narrow-final.json)、[Tree拖放](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/static-tree-drag.txt)、[集合拒绝重试](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/static-collection-retry.txt)、[拖放终结](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b07-20261023/static-drag-terminal.txt)。
+
+代码/文档验收后正常运行提交、推送钩子；实际Git SHA、远程核对和clean状态以git-delivery.json为准，不提前声明已经推送。B08–B11未开始。

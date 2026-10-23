@@ -85,6 +85,10 @@ export function App() {
 - `ActionButton` no longer exposes the unused `as` prop.
 - `resetStyle()` was removed; load the Panda CSS pipeline instead.
 
+## B07 collection migration
+
+Breadcrumbs, Pagination, Table and Tree legacy entries delegate to the unified `@pivot-ui/react` implementation. Tree low-level props use the new TreeRoot collection/itemKey API; Table onClickRow becomes a focusable Open action. useDrag/useDrop only translate numeric layers; DragContext is removed. Use an explicit DragDropProvider and readonly useDragDropState for new code. See the [B07 migration guide](../../docs/refactor/blender-5.2/B07_COLLECTIONS.md).
+
 ## Documentation
 
 - [Documentation index](../../docs/README.md)

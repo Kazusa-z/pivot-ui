@@ -1,37 +1,25 @@
-import React from 'react'
-import { Meta, StoryFn } from '@storybook/react'
+import { useState } from 'react'
+import type { Meta, StoryObj } from '@storybook/react'
+import { Pagination, type PaginationProps } from './'
+import { Button } from '../Button'
 
-import { Pagination } from './'
-
-export default {
-  title: 'Navigation/Pagination',
-  tags: ['autodocs'],
-  argTypes: {
-    size: {
-      type: {
-        name: 'enum',
-        value: ['sm', 'md'],
-      },
-    },
-  },
-  component: Pagination,
-  args: {
-    totalCount: 10,
-    pageSize: 1,
-    siblingCount: 3,
-    size: 'sm',
-  },
-} as Meta<typeof Pagination>
-
-export const Overview: StoryFn<typeof Pagination> = (args) => {
-  return <Pagination {...args} />
-}
-
-export const Sizes: StoryFn<typeof Pagination> = (args) => {
+function PaginationExample({ size = 'sm' }: Pick<PaginationProps, 'size'>) {
+  const [currentPage, setCurrentPage] = useState(1)
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
-      <Pagination {...args} size="sm" />
-      <Pagination {...args} size="md" />
+    <div style={{ display: 'grid', gap: 12 }}>
+      <Pagination totalCount={100} pageSize={10} currentPage={currentPage} onPageChange={setCurrentPage} size={size} />
+      <output>Page: {currentPage}</output>
+      <Button onClick={() => setCurrentPage(1)}>Reset</Button>
     </div>
   )
+}
+export default { title: 'Navigation/Pagination' } satisfies Meta
+export const Overview: StoryObj = { render: () => <PaginationExample /> }
+export const Sizes: StoryObj = {
+  render: () => (
+    <div style={{ display: 'grid', gap: 20 }}>
+      <PaginationExample />
+      <PaginationExample size="md" />
+    </div>
+  ),
 }

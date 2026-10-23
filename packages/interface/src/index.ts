@@ -446,3 +446,84 @@ export {
 } from './values/geometry'
 export { getProportionalAxisRange, applyProportionalChange } from './values/proportion'
 export type { ProportionalRange, ProportionalChange } from './values/proportion'
+
+export {
+  DragDropProvider,
+  useDragDropState,
+  useDragDropCancel,
+  useDragSource,
+  useDropTarget,
+} from './interaction/drag-drop'
+export type {
+  DragDropProviderProps,
+  DragDropEventContext,
+  DragSourceOptions,
+  DragSourceBinding,
+  DropTargetOptions,
+  DropTargetBinding,
+} from './interaction/drag-drop'
+export type { DragPayload, DragCancelReason, DragResult, DragDropSnapshot, DropPosition } from './values/drag-drop'
+export { createCollection } from './values/collection'
+export type { CollectionKey, Collection } from './values/collection'
+export { createTreeCollection, canMoveTreeItems } from './values/tree'
+export type { TreeCollection, TreeCollectionOptions, TreeNode, TreeDropPosition } from './values/tree'
+export { getPaginationState, getPageCount, clampPage } from './values/pagination'
+export type { PaginationItem, PaginationOptions, PaginationState } from './values/pagination'
+export { Breadcrumbs, BreadcrumbItem } from './widgets/navigation/Breadcrumbs'
+export type { BreadcrumbEntry, BreadcrumbsProps, BreadcrumbItemProps } from './widgets/navigation/Breadcrumbs'
+export { Pagination } from './widgets/navigation/Pagination'
+export type { PaginationProps, PaginationLabels } from './widgets/navigation/Pagination'
+export {
+  Table,
+  TableHead,
+  TableBody,
+  TableFoot,
+  TableRow,
+  TableHeaderCell,
+  TableCell,
+  TableCaption,
+} from './widgets/collections/Table'
+export type {
+  TableProps,
+  TableSectionProps,
+  TableRowProps,
+  TableHeaderCellProps,
+  TableCellProps,
+  TableCaptionProps,
+} from './widgets/collections/Table'
+export { DataTable } from './widgets/collections/DataTable'
+export type {
+  DataTableProps,
+  DataTableColumn,
+  DataTableAction,
+  DataTableSelection,
+} from './widgets/collections/DataTable'
+export { CollectionTemplate } from './templates/collections/CollectionTemplate'
+export type {
+  CollectionTemplateProps,
+  CollectionItemContext,
+  CollectionReorder,
+} from './templates/collections/CollectionTemplate'
+export {
+  TreeRoot,
+  TreeItem,
+  TreeItemContent,
+  TreeGroup,
+  TreeItemIcon,
+  TreeDragPreview,
+  TreeInsertionIndicator,
+} from './widgets/collections/tree'
+export type {
+  TreeRootProps,
+  TreeItemProps,
+  TreeItemState,
+  TreeSelectionMode,
+  TreeItemContentProps,
+  TreeGroupProps,
+  TreeItemIconProps,
+  TreeDragPreviewProps,
+  TreeInsertionIndicatorProps,
+  TreeDragData,
+  TreeDropRequest,
+  TreeDragDropOptions,
+} from './widgets/collections/tree'

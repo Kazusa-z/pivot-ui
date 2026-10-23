@@ -121,7 +121,12 @@ export function AssetPickerContent<T extends BasicAssetType>(props: AssetPickerP
   const items = paths.map((path, i) => {
     return (
       <AssetGroupSection key={path}>
-        <Breadcrumbs items={path.split(',').map((p) => ({ id: p, label: p }))} />
+        <Breadcrumbs
+          items={path.split(',').map((part, index, segments) => ({
+            id: JSON.stringify(segments.slice(0, index + 1)),
+            label: part,
+          }))}
+        />
         <AssetList displayMode={displayMode}>
           {grouped[path].map((asset) => {
             return (

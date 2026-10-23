@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
+Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定；B07 提供集合模型、Tree、Table/DataTable、导航、CollectionTemplate 与类型化拖放。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
 
 ## 入口与依赖
 
@@ -317,3 +317,9 @@ Mock 位于 `stories/support/mock-property-access.ts`，只服务示例与临时
 InputNumber 的文本草稿、指针拖动与纯数值规则分别位于 widgets、interaction、values；Slider 与 DistributionSlider 使用同一轨道内核。NumericSlider 组合数值输入和滑块，NumericTupleInput 统一轴编辑；Vector2/3/4Input 与 RectInput 保留对象形状和各自语义。
 
 所有数值组件采用 onEditStart/onValueChange/onValueCommit/onEditCancel。受控值和取消回滚由调用者拥有；PropertyField 的 number 分支连接 EditSession，连续预览只在一次终结后产生一次历史。软/硬范围、精度、单位、比例零轴与旧包装退出约定见 [B06 接入指南](../../docs/refactor/blender-5.2/B06_NUMERIC.md)。
+
+## B07 集合与拖放
+
+Breadcrumbs、Pagination、TreeRoot/TreeItem/TreeItemContent/TreeGroup、Table 结构组件与 DataTable 从统一包导入；CollectionTemplate 替代旧 FormItemArray。数据、展开、选择和焦点使用稳定 key，应用通过回调接受变更。启用拖放时显式包裹 DragDropProvider；只读会话由 useDragDropState 观察，useDragDropCancel 负责取消，不暴露可变上下文。
+
+纯 collection/tree/pagination 模型也从 /values 导入。详细接口、键盘与异步约定、旧入口退出见 [B07 集合指南](../../docs/refactor/blender-5.2/B07_COLLECTIONS.md)。

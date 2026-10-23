@@ -1,6 +1,6 @@
 # Pivot UI Documentation
 
-Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. The unified `@pivot-ui/react` source package provides property contracts, visual foundations and B03 layouts: Flex, separators, scroll areas, explicit property rows, read-only presentation, disclosure and resizable panes. B04 adds overlays, menus, dialogs and application-owned services; B05 adds text/choice widgets and the first PropertyField bindings; B06 adds numeric editing, sliders, geometry templates and continuous property transactions. Unmigrated components remain in `@pivot-ui/editor` and `@pivot-ui/gui`; migrated legacy entries forward to the unified implementation. Batch acceptance status belongs in the live ledger.
+Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. The unified `@pivot-ui/react` source package provides property contracts, visual foundations and B03 layouts: Flex, separators, scroll areas, explicit property rows, read-only presentation, disclosure and resizable panes. B04 adds overlays, menus, dialogs and application-owned services; B05 adds text/choice widgets and the first PropertyField bindings; B06 adds numeric editing, sliders, geometry templates and continuous property transactions. B07 adds navigation, tree/table collections and typed scoped drag/drop. Unmigrated components remain in `@pivot-ui/editor` and `@pivot-ui/gui`; migrated legacy entries forward to the unified implementation. Batch acceptance status belongs in the live ledger.
 
 These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0`, `@pivot-ui/gui` `1.2.1` and `@pivot-ui/react` `0.1.0`.
 
@@ -26,6 +26,7 @@ The Blender 5.2 LTS alignment refactor runs on `feat-blender-5-2-refactor`. Its 
 | [B04 overlay and service migration](./refactor/blender-5.2/B04_OVERLAYS.md)                           | U24–U30 API boundaries, provider placement, lifecycle and explicit service injection  |
 | [B05 text, choice and property migration](./refactor/blender-5.2/B05_TEXT_CHOICES.md)                 | Text draft lifecycle, stable options, widget semantics and wrapper removal            |
 | [B06 numeric and geometry migration](./refactor/blender-5.2/B06_NUMERIC.md)                           | Numeric rules, pointer sessions, sliders, tuples and property transactions            |
+| [B07 collections and drag/drop](./refactor/blender-5.2/B07_COLLECTIONS.md)                            | Stable identity, navigation, Tree, DataTable, CollectionTemplate and drag lifecycle   |
 
 ## Project archive
 
