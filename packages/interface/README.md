@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 提供浮层、菜单、对话框和应用拥有的确认/通知服务；B05 提供文本与选择控件、统一文本草稿内核以及文本/布尔/枚举的 PropertyField 绑定；B06 提供数值编辑、滑块、几何模板和 number 属性绑定；B07 提供集合模型、Tree、Table/DataTable、导航、CollectionTemplate 与类型化拖放；B08 提供明确编码的颜色模型、ColorWidget/Picker/Input、HDR、单/双轨渐变和颜色分布模板；B09 提供曲线模型、CurveWidget/Picker、外部预设能力和数值分布模板；B10 提供纯资源描述符、AssetItem、ResourcePicker、AssetReferenceInput 与资源服务契约。旧入口仅作兼容适配，B11 收口时删除旧包。各批验收状态以实施台账为准。
+唯一组件源码包，按 values、contracts、foundation、interaction、widgets、layout、templates、property 分层。B11 完成复杂属性联调并移除旧 UI/GUI 包；当前 API 从本包根或明确子入口导入。应用拥有数据、命令、撤销、资源服务与未来 C++ / Qt 传输。
 
 ## 入口与依赖
 
@@ -14,7 +14,7 @@ Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、
 | `@pivot-ui/react/styling/css`、`/styling/jsx`、`/styling/tokens` | 直接指向生成的 Panda 运行模块                                        | 不经二次 re-export；需先生成 styled-system |
 | `@pivot-ui/react/styling/types`                                  | Panda 的 SystemStyleObject、RecipeVariantProps 等类型                | 仅类型，不作为运行时模块导入               |
 
-PropertyValue 当前只定义 string、number、boolean 和 string/number enum。B08/B09 已提供独立颜色、渐变、曲线和分布值模型；B10 的资源引用为 AssetId | null，资源展示与查询通过 ResourceProvider 提供；复杂属性绑定留 B11。数值硬范围与软范围分开；step、dragStep、precision 是描述元数据，B06 的纯数值规则与编辑行为负责解释它们。
+`PropertyValue` 保留 string/number/boolean 默认类型；`PropertyAccess<T>`、快照、会话和 `PropertyField<T>` 支持显式复杂 T。描述符覆盖几何、颜色/渐变/分布、曲线、资源引用、多选与集合；custom schema 的适配函数放在宿主 `PropertyValueAdapter<T>`，不放进描述符。复杂控件通过 typed render 组合，详见 [B11 接入指南](../../docs/refactor/blender-5.2/B11_INTEGRATION.md)。
 
 `ChoiceOption.key` 是 UI 选择身份，`value` 是属性值。从 key 查找对应 option 后取原始 value，不通过字符串猜测数字；`'001'`、`'1'`、`1` 因而可以保持不同身份。
 
@@ -61,9 +61,9 @@ Button 的 `async` 只是 Promise 便利回调；`onAsyncError` 接收失败，�
 
 Callout 的 `severity` 选择视觉等级，`role` 决定普通说明、`status` 或 `alert`，不会把所有静态说明都设为实时告警。Progress 的 `max` 必须为正有限数，非法范围退回 100；空值表示不定进度，确定进度按 `value / max` 显示。Spin 支持名称或装饰用途，并尊重减少动态效果偏好。
 
-全局 token 与预设继续以仓库 `panda/` 为唯一来源。包内直接导入生成的 `styled-system`；消费端使用 styling 子入口，并将 `packages/interface/src/**/*.{ts,tsx}` 与应用源码加入 Panda 扫描。通过旧 ui/gui 入口消费已迁移组件时也必须扫描统一包，不能只扫描适配器。
+全局 token 与预设继续以仓库 `panda/` 为唯一来源。包内直接导入生成的 `styled-system`；消费端使用 styling 子入口，并将 `packages/interface/src/**/*.{ts,tsx}` 与应用源码加入 Panda 扫描。
 
-首次使用源码链接或清理生成文件后，在本仓库运行 `pnpm --filter @pivot-ui/react panda` 生成样式模块；消费应用仍需执行自己的 Panda 提取和 PostCSS 构建。workspace app 与 Storybook 的前置脚本已处理生成步骤。demo 和三个 Storybook 都使用相同预设，只加载一个 layer 入口，详见[接入说明](../../docs/CONSUMING.md)。
+首次使用源码链接或清理生成文件后，在本仓库运行 `pnpm --filter @pivot-ui/react panda` 生成样式模块；消费应用仍需执行自己的 Panda 提取和 PostCSS 构建。workspace app 与 Storybook 的前置脚本已处理生成步骤。demo 和统一 Storybook 都使用相同预设，只加载一个 layer 入口，详见[接入说明](../../docs/CONSUMING.md)。
 
 ## 布局与字段结构
 
@@ -77,7 +77,7 @@ Callout 的 `severity` 选择视觉等级，`role` 决定普通说明、`status`
 | `justify`   | `start`（默认）、`center`、`end`、`between`、`around`、`evenly` | 主轴分布                        |
 | `wrap`      | `nowrap`（默认）、`wrap`、`wrap-reverse`                        | 换行方式                        |
 
-`orientation`、`flexDirection`、`spacing`、`justifyContent`、布尔 `wrap` 和 `align="v|h|both"` 只留在旧包适配器。新代码使用上述 API；宽高、边距等交给 `css` 或原生 `style`。旧适配器保持原来的默认换行行为。
+宽高、边距等交给 `css` 或原生 `style`，不再支持旧布局属性别名。
 
 `Separator` 是基础分隔线，支持 `orientation="horizontal|vertical"`，默认横向且具有 `separator` 语义；`decorative` 隐藏其辅助技术语义。竖线需要父容器提供高度。`SectionDivider` 是水平线与文字的组合，其 `children` 保持原有语义；需要章节标题时显式传入 `Title` 或原生 heading，不把文本塞进 `Separator`。
 
@@ -111,23 +111,7 @@ export function NameRow() {
 
 `PropertyLabel` 的 `startSlot` / `endSlot` 可放独立动作，标签 ID 只命名文字，不把动作名称拼入字段名称。`ReadonlyValue` 展示已格式化的 children，支持 `code` 和 `emptyText`；null、undefined、空字符串使用占位，数值 0 保留。`ImagePreview` 保留原生 img 属性与 ref，要求显式 `alt`，默认 `objectFit="contain"`、最大宽度 100%；资源解析、加载与失败策略由消费端负责。
 
-旧 `FormItem` 目前默认形成命名组。直接组合单控件并需要点击标签聚焦时，显式选择 `association="control"`，通过 render prop 把生成的 `id` 和 `aria-describedby` 传给真实控件；不再依赖自动 clone 或 DOM 扫描：
-
-```tsx
-import { FormItem } from '@pivot-ui/gui'
-
-export function LegacyNameRow() {
-  return (
-    <FormItem label="Name" info="Shown in the scene hierarchy." association="control">
-      {({ id, 'aria-describedby': describedBy }) => (
-        <input id={id} aria-describedby={describedBy} defaultValue="Camera" />
-      )}
-    </FormItem>
-  )
-}
-```
-
-B05 已删除文本、布尔、选项及按钮的七个 FormItem 包装；使用 PropertyRow 组合或 PropertyField 绑定，显式传递控件 id；组合字段负责各子控件名称。旧 `fieldColumn="color|number|asset|assetPreview|particle|particlePair"` 已移出通用行布局，专用网格在相应消费者中定义。
+字段直接使用上面的 PropertyRow 组合；需要宿主编辑会话时使用 PropertyField。专用网格列由相应模板或消费者显式定义。
 
 ## ScrollArea：布局与滚动视口
 
@@ -172,7 +156,7 @@ export function ScrollExample() {
 }
 ```
 
-便利组件 `ScrollArea` 使用同一实现：外层属性直接传入，滚动属性放入 `viewportProps`，滚动 ref 放入 `viewportRef`。例如 `<ScrollArea sizing="content" css={{ maxHeight: '180px' }} viewportProps={{ 'aria-label': 'Details' }}>…</ScrollArea>`。横向或双向内容可设 `viewportProps={{ contentLayout: 'intrinsic' }}` 并给内容明确宽度。旧 `ScrollArea` 适配器把 `type/dir/scrollHideDelay` 送到 Root，其余旧事件与样式仍送到 Viewport，旧 ref 也指向 Viewport。
+便利组件 `ScrollArea` 使用同一实现：外层属性直接传入，滚动属性放入 `viewportProps`，滚动 ref 放入 `viewportRef`。例如 `<ScrollArea sizing="content" css={{ maxHeight: '180px' }} viewportProps={{ 'aria-label': 'Details' }}>…</ScrollArea>`。横向或双向内容可设 `viewportProps={{ contentLayout: 'intrinsic' }}` 并给内容明确宽度。
 
 ## 折叠与标题动作
 
@@ -233,21 +217,19 @@ export function InspectorSplit() {
 
 省略 `children` 即独立区域模式，根节点沿调整轴占主面板尺寸加 6px，不使用剩余面板约束。`primaryAsChild` 省略额外主面板包装，但仍保留外层布局与分隔条；`primary` 必须是一个非 Fragment 元素，并转发原生 props/ref。尺寸由布局控制，子元素自己的 width/height 不覆盖调整结果。
 
-旧 `ResizablePanel` 仅作适配，`range.min/max` 是明确像素边界，默认尺寸现在为 240px、范围为 80–960px，不再按首次测量值生成 ±50px 范围。旧 `asChild` 映射到 `primaryAsChild`，对应 ref 指向实际主面板元素。
-
 ## 浮层、菜单与应用服务
 
-U24 的三个菜单家族位于 `widgets/menus`；U25–U27 的 Popover、Tooltip、HoverCard 位于 `widgets/overlays`；U28–U29 的 Dialog、AlertDialog 与确认服务位于 `widgets/dialogs`；U30 的通知服务、Provider、Toaster 和 ToastView 位于 `widgets/notifications`。从包根导入公开部件及对应 Props，旧 UI 入口继续作为适配层保留到 B11。
+U24 的三个菜单家族位于 `widgets/menus`；U25–U27 的 Popover、Tooltip、HoverCard 位于 `widgets/overlays`；U28–U29 的 Dialog、AlertDialog 与确认服务位于 `widgets/dialogs`；U30 的通知服务、Provider、Toaster 和 ToastView 位于 `widgets/notifications`。从包根导入公开部件及对应 Props。
 
 Popover、Tooltip、HoverCard 的便利版本用 `rootProps` 管开关行为、`triggerProps` 管触发元素、`portalProps` 管容器、`contentProps` 管定位/样式/原生内容事件。也可直接使用各自 Root、Trigger、Portal、Content、Arrow 等部件；Popover 另有 Anchor、Title、Description、Close。Dialog/AlertDialog 同样拆分配置，并提供 Overlay、Title、Description 和各自的关闭/确认部件。菜单的 DropdownMenu、ContextMenu、Menubar 保留不同触发和键盘行为，共享 item 的视觉及组合。
 
-TooltipProvider 必须由应用或独立组合边界统一提供，新旧 Tooltip 均不自行创建 Provider。共享 Storybook 装配不代替实际应用装配。portaled 内容读取局部 ThemeProvider 的解析主题，容器位置不会使它退回文档的另一套主题。
+TooltipProvider 必须由应用或独立组合边界统一提供，Tooltip 不自行创建 Provider。共享 Storybook 装配不代替实际应用装配。portaled 内容读取局部 ThemeProvider 的解析主题，容器位置不会使它退回文档的另一套主题。
 
-`PopoverRoot keepMounted` 保留状态与 DOM，并在关闭时通过 React Activity 暂停子树 effects/ref，释放焦点层和 modal 滚动锁；重新打开恢复同一内容。旧 `forceRender` 映射到这个契约，不再切换到 DocumentFragment。保持挂载不代表后台 effects 持续运行；调用方应提供稳定的 portal container。
+`PopoverRoot keepMounted` 保留状态与 DOM，并在关闭时通过 React Activity 暂停子树 effects/ref，释放焦点层和 modal 滚动锁；重新打开恢复同一内容。保持挂载不代表后台 effects 持续运行；调用方应提供稳定的 portal container。
 
-确认服务由应用创建：`createConfirmationService()` 配合一个 `<ConfirmationProvider service={service}>`，组件使用 `useConfirmation().request(options)`。结果为 confirmed/cancelled/closed/unmounted/unavailable，重复终结只产生同一个结果。**旧 `showAlert(props)` 必须改成 `showAlert(props, service)`**，返回 request 的 `result` 可等待；旧 zIndex/actionable 不再定制这个统一宿主。需要自定义展示时使用显式 AlertDialog 组合。
+确认服务由应用创建：`createConfirmationService()` 配合一个 `<ConfirmationProvider service={service}>`，组件使用 `useConfirmation().request(options)`。结果为 confirmed/cancelled/closed/unmounted/unavailable，重复终结只产生同一个结果。需要自定义展示时使用显式 AlertDialog 组合。原 showAlert 兼容入口已删除。
 
-通知使用 `<NotificationProvider service={service} hostProps={...}>` 与 `useNotifications()`；service 可由应用显式创建并注入，也可由 Provider 自己拥有。相同 id 更新同一通知，同一 service 只展示一个宿主；clear/dismiss/卸载使过期异步 UI 更新失效，不取消业务 operation。旧 `toast`/`Toaster` 仅作第三方调度的兼容入口。
+通知使用 `<NotificationProvider service={service} hostProps={...}>` 与 `useNotifications()`；service 可由应用显式创建并注入，也可由 Provider 自己拥有。相同 id 更新同一通知，同一 service 只展示一个宿主；clear/dismiss/卸载使过期异步 UI 更新失效，不取消业务 operation。`toast`/`Toaster` 是隔离的第三方调度入口；新应用优先使用作用域服务。
 
 完整部件清单、依赖、配置示例、服务结果和破坏性迁移说明见 [B04 接入文档](../../docs/refactor/blender-5.2/B04_OVERLAYS.md)。
 
@@ -293,7 +275,7 @@ async function setNumber(access: PropertyAccess<number>, next: number) {
 pnpm dev:interface                    # http://localhost:6009
 pnpm --filter @pivot-ui/react typecheck
 pnpm --filter @pivot-ui/react build-storybook
-pnpm verify                          # 完整仓库检查与三个 Storybook 构建
+pnpm verify                          # 完整仓库检查、demo 与统一 Storybook 构建
 ```
 
 `Contracts / Property editing` 提供生命周期、延迟/拒绝、编辑中外部更新、过期确认、对象切换、可编辑状态/宿主能力、选择身份等场景。每个场景可 Reset，并展示快照与结果。这组契约演示继续使用原生 HTML 控件；B05 的真实控件绑定另在 `Property / PropertyField` 展示，B06 在同组新增数值连续事务、延迟/拒绝、目标/版本、mixed 与 change 校验场景。
@@ -310,7 +292,7 @@ Mock 位于 `stories/support/mock-property-access.ts`，只服务示例与临时
 
 `Select` 是单选下拉；`Combobox` 负责搜索及明确的 single/multiple 值类型。`SegmentControl` 是不可取消的 radio；`ToggleGroup` 单选可取消，多选为数组。选项直接传 `ChoiceOption<T>[]`，稳定 key 与原始 value 分开，null 表示未选，空字符串仍是合法值。Checkbox 的 indeterminate 表示混合状态。
 
-`PropertyField access={access}` 为一个文本、布尔或枚举属性提供标签/控件/说明和 B01 编辑会话连接；可选 widget="textarea" / "combobox"。宿主权威值与历史仍由 access 管理。数值绑定已由 B06 接入，复杂值仍由后续批次完成。七个基础 FormItem 包装已删除，改用 PropertyRow 组合或 PropertyField。详情见 [B05 接入说明](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md)。
+`PropertyField access={access}` 为一个文本、布尔或枚举属性提供标签/控件/说明和 B01 编辑会话连接；可选 widget="textarea" / "combobox"。宿主权威值与历史仍由 access 管理。number 内置绑定和复杂值 typed render 均已接入同一会话。七个基础 FormItem 包装已删除，改用 PropertyRow 组合或 PropertyField。详情见 [B05 接入说明](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md)。
 
 ## B06 数值与几何
 
@@ -326,7 +308,7 @@ Breadcrumbs、Pagination、TreeRoot/TreeItem/TreeItemContent/TreeGroup、Table �
 
 ## 颜色与渐变
 
-使用 ColorWidget、ColorPicker、ColorInput、HDRColorInput、ColorRamp、ColorRampChannels、ColorRampPicker 和 ColorDistributionTemplate。ColorValue 显式声明 srgb/linear，采用归一化通道；HDR 允许 RGB 超过 1。选中停靠点、显示编码与模式缓存不混入当前属性值。能力由宿主注入，旧 UI 只转换 DTO，GUI 颜色包装退出。详见 [B08 颜色指南](../../docs/refactor/blender-5.2/B08_COLOR.md)。
+使用 ColorWidget、ColorPicker、ColorInput、HDRColorInput、ColorRamp、ColorRampChannels、ColorRampPicker 和 ColorDistributionTemplate。ColorValue 显式声明 srgb/linear，采用归一化通道；HDR 允许 RGB 超过 1。选中停靠点、显示编码与模式缓存不混入当前属性值。能力由宿主注入；旧 DTO 转换应留在应用边界，库内只使用明确值模型。详见 [B08 颜色指南](../../docs/refactor/blender-5.2/B08_COLOR.md)。
 
 ## 曲线与数值分布
 
@@ -335,3 +317,7 @@ CurveWidget 提供独立内联编辑；CurvePicker 组合浮层与 CurvePresets�
 ## 资源引用与选择
 
 AssetItem 仅展示 AssetDescriptor 并提供独立选择与改名。ResourcePicker 负责查询、筛选、分页及列表/网格；AssetReferenceInput 负责独立解析当前 ID、清空、定位、文件选择与可选内部拖放。ResourceProvider 由应用提供，控件不读取引擎对象或 localStorage；Mock 只在 stories/support。详见 [B10 资源指南](../../docs/refactor/blender-5.2/B10_RESOURCES.md)。
+
+## 纯工具与 ref 组合
+
+clamp 从包根或 /values 导入，保持 Math.min(Math.max(value, min), max) 的数值语义；调用方提供有效上下界。mergeRefs 从包根导入，组合对象与函数 ref，支持 React 19 callback cleanup；React 依赖不进入纯 values。图集图标统一使用 IconSpriteAtlasFile，旧拼写别名已删除。

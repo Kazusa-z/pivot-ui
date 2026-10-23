@@ -1,6 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useSyncExternalStore, type ReactNode } from 'react'
-import type { EditCancelReason, EditResult, EditSession, PropertyAccess, PropertyDescriptor } from '../contracts'
+import { useId, useRef, type ReactNode } from 'react'
+import type { EditResult, PropertyAccess, PropertyDescriptorSchema } from '../contracts/property'
 import type { ChoiceValue, PropertyValue } from '../values'
+import { usePropertyBinding, type PropertyBinding } from './usePropertyBinding'
 import {
   PropertyRow,
   PropertyLabel,
@@ -20,10 +21,32 @@ import { NumericSlider } from '../templates/numeric/NumericSlider'
 export type PropertyFieldWidget =
   'input' | 'textarea' | 'checkbox' | 'select' | 'combobox' | 'input-number' | 'numeric-slider'
 
-export interface PropertyFieldProps<T extends PropertyValue = PropertyValue> extends Omit<
-  PropertyRowProps,
-  'children'
-> {
+export interface PropertyFieldControlProps {
+  id: string
+  'aria-labelledby': string
+  'aria-describedby'?: string
+  'aria-errormessage'?: string
+  'aria-invalid': boolean
+  'aria-busy': boolean
+}
+
+export interface PropertyFieldRenderProps<T> extends PropertyBinding<T> {
+  /** Put these on the real control/group, not an arbitrary layout wrapper. */
+  controlProps: PropertyFieldControlProps
+  /** Standard preview/commit/cancel adapter shared by numeric, color and curve templates. */
+  editProps: PropertyFieldControlProps & {
+    value: T
+    resetKey: object
+    disabled: boolean
+    readOnly: boolean
+    onEditStart(): boolean
+    onValueChange(value: T): void
+    onValueCommit(value: T): Promise<void>
+    onEditCancel: PropertyBinding<T>['cancel']
+  }
+}
+
+export interface PropertyFieldProps<T = PropertyValue> extends Omit<PropertyRowProps, 'children'> {
   access: PropertyAccess<T>
   /** Defaults to input / input-number / checkbox / select according to the descriptor. */
   widget?: PropertyFieldWidget
@@ -34,10 +57,14 @@ export interface PropertyFieldProps<T extends PropertyValue = PropertyValue> ext
   /** Presentation of a mixed selection; the application owns aggregation and clears this after accepting a value. */
   mixed?: boolean
   onEditResult?: (result: EditResult<T>) => void
+  /** Complex properties are explicitly composed; this function receives one typed property session. */
+  render?: (field: PropertyFieldRenderProps<T>) => ReactNode
+  /** Custom compositions are groups by default. Use control only for a single labelable input. */
+  association?: 'control' | 'group'
 }
 
 /** Connects exactly one property to one widget. It does not build panels or own application data. */
-export function PropertyField<T extends PropertyValue>({
+export function PropertyField<T>({
   access,
   widget,
   controlId,
@@ -46,18 +73,17 @@ export function PropertyField<T extends PropertyValue>({
   placeholder,
   mixed = false,
   onEditResult,
+  render,
+  association = render ? 'group' : 'control',
   ...rowProps
 }: PropertyFieldProps<T>) {
-  const snapshot = useSyncExternalStore(access.subscribe, access.getSnapshot, access.getSnapshot)
+  const binding = usePropertyBinding({ access, mixed, onEditResult })
+  const { snapshot, resetKey, begin, change, commit, cancel } = binding
   const generatedId = useId()
   const id = controlId ?? generatedId
-  const session = useRef<{ access: PropertyAccess<T>; edit: EditSession<T>; submitted: boolean } | null>(null)
   const textChanged = useRef(false)
   const numericChanged = useRef(false)
-  const resultCallback = useRef(onEditResult)
-  resultCallback.current = onEditResult
-  const resetKey = useMemo(() => ({}), [access, snapshot.revision, mixed])
-  const descriptor = snapshot.descriptor as PropertyDescriptor
+  const descriptor = snapshot.descriptor as PropertyDescriptorSchema
   const selectedWidget =
     widget ??
     (descriptor.kind === 'number'
@@ -75,56 +101,6 @@ export function PropertyField<T extends PropertyValue>({
         : descriptor.kind === 'boolean'
           ? selectedWidget === 'checkbox'
           : descriptor.kind === 'enum' && (selectedWidget === 'select' || selectedWidget === 'combobox')
-
-  const cancel = (reason: EditCancelReason) => {
-    const current = session.current
-    // A successful host acknowledgement also advances revision. Let its reserved request
-    // report the result; resetting the local draft must not swallow that acknowledgement.
-    if (current?.submitted) return
-    session.current = null
-    if (current) void current.edit.cancel(reason)
-  }
-
-  useEffect(
-    () => () => {
-      const current = session.current
-      if (current?.access === access) {
-        session.current = null
-        if (!current.submitted) void current.edit.cancel('unmount')
-      }
-    },
-    [access]
-  )
-
-  const begin = () => {
-    const latest = access.getSnapshot()
-    const current = session.current
-    if (current?.access === access && current.edit.id === latest.edit?.sessionId && !current.submitted) return true
-    if (latest.readOnly || latest.disabled || latest.edit?.phase === 'pending') return false
-    const result = access.begin()
-    if (result.status !== 'started') return false
-    session.current = { access, edit: result.session, submitted: false }
-    return true
-  }
-
-  const change = (value: T) => {
-    if (!begin()) return null
-    return session.current!.edit.change(value)
-  }
-
-  const commit = async (value: T) => {
-    const changed = change(value)
-    if (!changed || changed.status === 'ignored') return
-    if (changed.status === 'invalid') throw new Error(changed.error.message)
-    const current = session.current!
-    current.submitted = true
-    const result = await current.edit.commit()
-    // Target changes and external updates never allow an old response to write UI state.
-    if (session.current !== current) return
-    session.current = null
-    resultCallback.current?.(result)
-    if (result.status === 'rejected') throw new Error(result.error.message)
-  }
 
   const editor = useTextEdit({
     value: descriptor.kind === 'string' ? (mixed ? '' : String(snapshot.value)) : '',
@@ -147,13 +123,13 @@ export function PropertyField<T extends PropertyValue>({
         cancel('reset')
         return
       }
-      return commit(value as T)
+      return commit(value as T).then(() => {})
     },
     onCancel: cancel,
   })
 
-  if (!validWidget) throw new Error(`PropertyField cannot render ${descriptor.kind} with ${selectedWidget}.`)
-  const pending = snapshot.edit?.phase === 'pending' || editor.phase === 'pending'
+  if (!render && !validWidget) throw new Error(`PropertyField cannot render ${descriptor.kind} with ${selectedWidget}.`)
+  const pending = binding.pending || editor.phase === 'pending'
   const error = snapshot.error?.message ?? editor.error
   const help = description ?? descriptor.description
   const describedBy =
@@ -172,7 +148,7 @@ export function PropertyField<T extends PropertyValue>({
   }
   const choose = (value: T | null) => {
     if (value !== null)
-      void commit(value).catch(() => {
+      void binding.submit(value).catch(() => {
         /* The access snapshot owns the displayed host rejection. */
       })
   }
@@ -181,8 +157,8 @@ export function PropertyField<T extends PropertyValue>({
     ...(descriptor.kind === 'number' ? descriptor.constraints : {}),
     // The widget owns its pending state. A submitted request must not invalidate
     // itself merely because its host publishes a pending snapshot.
-    readOnly: snapshot.readOnly || (pending && !session.current?.submitted),
-    value: (snapshot.edit?.previewValue ?? snapshot.value) as number,
+    readOnly: snapshot.readOnly || (pending && !binding.ownsPending),
+    value: binding.value as number,
     resetKey,
     mixed,
     placeholder: mixed ? 'Multiple values' : placeholder,
@@ -199,9 +175,36 @@ export function PropertyField<T extends PropertyValue>({
         cancel('reset')
         return
       }
-      return commit(value as T)
+      return commit(value as T).then(() => {})
     },
     onEditCancel: cancel,
+  }
+  const controlProps: PropertyFieldControlProps = {
+    id,
+    'aria-labelledby': common['aria-labelledby'],
+    'aria-describedby': common['aria-describedby'],
+    'aria-errormessage': common['aria-errormessage'],
+    'aria-invalid': common['aria-invalid'],
+    'aria-busy': common['aria-busy'],
+  }
+  const customField: PropertyFieldRenderProps<T> = {
+    ...binding,
+    controlProps,
+    editProps: {
+      ...controlProps,
+      value: binding.value,
+      resetKey,
+      disabled: snapshot.disabled,
+      readOnly: snapshot.readOnly || (pending && !binding.ownsPending),
+      onEditStart: begin,
+      onValueChange: (next) => {
+        change(next)
+      },
+      onValueCommit: async (next) => {
+        await commit(next)
+      },
+      onEditCancel: cancel,
+    },
   }
 
   return (
@@ -209,17 +212,20 @@ export function PropertyField<T extends PropertyValue>({
       {...rowProps}
       data-property-kind={descriptor.kind}
       data-edit-phase={pending ? 'pending' : (snapshot.edit?.phase ?? editor.phase)}>
-      <PropertyLabel id={`${id}-label`} htmlFor={id}>
+      <PropertyLabel id={`${id}-label`} htmlFor={association === 'control' ? id : undefined}>
         {label ?? descriptor.label}
       </PropertyLabel>
-      <PropertyControl association="control">
-        {descriptor.kind === 'number' &&
+      <PropertyControl {...(association === 'group' ? { association, labelledBy: `${id}-label` } : { association })}>
+        {render?.(customField)}
+        {!render &&
+          descriptor.kind === 'number' &&
           (selectedWidget === 'numeric-slider' ? (
             <NumericSlider {...numberProps} label={descriptor.label} unit={descriptor.unit} />
           ) : (
             <InputNumber {...numberProps} endSlot={descriptor.unit} />
           ))}
-        {descriptor.kind === 'string' &&
+        {!render &&
+          descriptor.kind === 'string' &&
           (selectedWidget === 'textarea' ? (
             <Textarea
               {...common}
@@ -235,14 +241,15 @@ export function PropertyField<T extends PropertyValue>({
               placeholder={mixed ? 'Multiple values' : placeholder}
             />
           ))}
-        {descriptor.kind === 'boolean' && (
+        {!render && descriptor.kind === 'boolean' && (
           <Checkbox
             {...common}
             checked={mixed ? 'indeterminate' : (snapshot.value as boolean)}
             onCheckedChange={(value) => choose(value as T)}
           />
         )}
-        {descriptor.kind === 'enum' &&
+        {!render &&
+          descriptor.kind === 'enum' &&
           (selectedWidget === 'combobox' ? (
             <Combobox<ChoiceValue>
               {...common}

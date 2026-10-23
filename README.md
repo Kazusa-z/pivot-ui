@@ -1,136 +1,59 @@
 # Pivot UI
 
-Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. It provides controls for scene properties, assets, colors, curves and hierarchical data, plus composable form items for application-owned state.
+面向 3D 编辑器的 React 组件库。统一包 `@pivot-ui/react` 提供基础控件、布局、颜色、曲线、集合、资源模板及属性编辑绑定；应用拥有数据、命令、撤销和宿主能力。
 
-## Highlights
+本轮 Blender 术语与分层改造收口到 B11。原 UI/GUI 包与兼容适配器已退出，后续开发使用统一入口。真实 C++ / Qt 接入、业务页面和完整编辑器工作区属于应用开发，不是组件库自动生成的功能。
 
-- **Editor-focused components** — color pickers, gradient and HDR sliders, bezier curve editing, asset views, trees, tables and inspector panels.
-- **Composable property layouts** — explicitly associate labels, controls and descriptions; combine sections, scrolling and resizable panes with application state.
-- **Consistent theming** — light and dark themes are driven by a shared design-token system.
-- **Accessible foundations** — interactive primitives are built on Radix UI and support keyboard navigation.
-- **Engine agnostic** — connect controlled inputs to local state or an application adapter for an engine backend.
-- **TypeScript first** — public component props are typed.
+## 开始开发
 
-## Packages
-
-| Package                                             | Role                                                                                                            |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views                                                    |
-| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                                                                |
-| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package: contracts, foundations, layouts, overlays, menus and scoped confirmation/notification services |
-| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                                                           |
-
-## Getting started
-
-### Prerequisites
-
-- Node.js `^22.18.0`, `^24.11.0` or `>=26.0.0`
-- pnpm `12.14.0`
-
-### Run the project
-
-After cloning the repository, run from its root:
+使用 Node.js `^22.18.0`、`^24.11.0` 或 `>=26.0.0`，pnpm `12.14.0`：
 
 ```bash
-pnpm install
-
-# Editor component explorer
-pnpm dev
-
-# GUI component explorer
-pnpm dev:gui
-
-# Unified package components and contract playground
-pnpm dev:interface
-
-# Demo application
-pnpm dev:demo
+pnpm install --frozen-lockfile
+pnpm dev                 # 统一 Storybook，http://localhost:6009
+pnpm dev:demo            # 现有 Vite 示例
+pnpm verify              # 格式、类型、demo 与统一 Storybook 生产构建
 ```
 
-Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. The unified package includes foundations, layouts, overlays, services, text and choice controls, numeric editing, sliders, geometry templates and PropertyField bindings, plus B07 collections/drag-drop and B08 color, HDR, ramp and color-distribution templates. B09 adds CurveWidget/CurvePicker, optional preset services and NumericDistributionTemplate. B10 adds pure resource descriptors, AssetItem, ResourcePicker and AssetReferenceInput with injected resource services. Migrated legacy entries remain adapters pending B11 cleanup. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
+`pnpm dev:interface` 与 `pnpm dev` 指向相同 Storybook。`Foundation / Tokens` 展示明暗主题和完整设计 token；`Foundation / Theme` 展示主题状态；`Property` 展示真实控件与模拟宿主的属性联调。
 
-### Build and verify
+## 包与职责
 
-```bash
-pnpm build:demo         # Production demo build
-pnpm build:storybook    # All three Storybook sites
-pnpm verify             # Formatting, types, demo build and Storybook builds
-```
+| 位置                                                 | 职责                                      |
+| ---------------------------------------------------- | ----------------------------------------- |
+| [packages/interface](./packages/interface/README.md) | `@pivot-ui/react`：唯一组件源码包         |
+| [app](./app)                                         | `@pivot-ui/demo`：Vite 消费与样式提取示例 |
+| [panda](./panda/README.md)                           | 唯一 token 源与共享 Panda 配置            |
+| [storybook](./storybook)                             | 浏览器展示的主题、Provider 与构建配置     |
 
-## Usage
+库内依赖从 `values / contracts` 向 `foundation / interaction / widgets / layout / templates / property` 逐层组合。布局不猜控件，控件不读引擎对象，模板不负责业务命令。
 
-### React components
+## 使用
+
+先按[接入指南](./docs/CONSUMING.md)配置源码扫描和 Panda PostCSS。普通受控组合可以先使用本地状态：
 
 ```tsx
 import { useState } from 'react'
-import { Button, Flex, Text } from '@pivot-ui/react'
-import { ColorPicker, type ColorValue } from '@pivot-ui/react'
+import { Section, Vector3Input } from '@pivot-ui/react'
 
-export function Toolbar() {
-  const [color, setColor] = useState<ColorValue>({ space: 'srgb', r: 30 / 255, g: 99 / 255, b: 238 / 255, a: 1 })
-
-  return (
-    <Flex gap="sm" align="center">
-      <Button>Save</Button>
-      <Text tone="muted">Scene settings</Text>
-      <ColorPicker value={color} onValueChange={setColor} />
-    </Flex>
-  )
-}
-```
-
-### Form items
-
-```tsx
-import { useId, useState } from 'react'
-import { FormItemGroup } from '@pivot-ui/gui'
-
-import { Input, Vector3Input, PropertyRow, PropertyLabel, PropertyControl } from '@pivot-ui/react'
-
-export function Inspector() {
-  const nameId = useId()
-  const positionId = useId()
-  const [name, setName] = useState('Camera')
+export function PositionExample() {
   const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
-
   return (
-    <FormItemGroup label="Camera">
-      <PropertyRow>
-        <PropertyLabel htmlFor={nameId}>Name</PropertyLabel>
-        <PropertyControl association="control">
-          <Input id={nameId} value={name} onValueChange={setName} />
-        </PropertyControl>
-      </PropertyRow>
-      <PropertyRow>
-        <PropertyLabel id={positionId}>Position</PropertyLabel>
-        <PropertyControl association="group" labelledBy={positionId}>
-          <Vector3Input value={position} onValueChange={setPosition} />
-        </PropertyControl>
-      </PropertyRow>
-    </FormItemGroup>
+    <Section title="Position">
+      <Vector3Input aria-label="Position" value={position} onValueChange={setPosition} />
+    </Section>
   )
 }
 ```
 
-Form items work with local state before a backend exists. The application owns data loading, commands and synchronization with a future engine or C++/Qt adapter.
+需要提交、拒绝、撤销边界和异步同步时，使用 `PropertyAccess<T>` 加 `PropertyField<T>`。Mock 只在 Storybook；应用实现相同契约即可先用内存数据驱动 UI，再换成 C++ / Qt 适配层。复杂值由 typed `render` 显式组合，避免恢复 GUIRoot 式的隐式页面生成。
 
-For new layouts, use `PropertyRow`, `PropertyLabel`, `PropertyControl` and `PropertyDescription` from `@pivot-ui/react`. Control IDs and help relationships are explicit; the layout does not inspect or clone controls. `Section` separates its disclosure trigger from header actions, and `ScrollAreaRoot` / `ScrollAreaViewport` separate layout from scroll events and refs. See the [unified package API guide](./packages/interface/README.md) for these compositions and the pixel-based `ResizableSplit` contract.
+## 文档
 
-Provide `TooltipProvider` at an application or composition boundary. Confirmation and notification services are also owned by the application; the legacy `showAlert` now requires an injected service. See the [B04 migration guide](./docs/refactor/blender-5.2/B04_OVERLAYS.md) for the separate overlay props, retained Popover lifecycle and service hosts.
+- [文档索引](./docs/README.md)
+- [组件 API](./packages/interface/README.md)
+- [开发与验证](./docs/DEVELOPMENT.md)
+- [B11 属性联调与最终接入](./docs/refactor/blender-5.2/B11_INTEGRATION.md)
+- [重构台账](./docs/refactor/blender-5.2/LEDGER.md)
 
-## Documentation
-
-- [Documentation index](./docs/README.md)
-- [Integration guide](./docs/CONSUMING.md)
-- [Development guide](./docs/DEVELOPMENT.md)
-- [Editor package](./packages/ui/README.md)
-- [GUI package](./packages/gui/README.md)
-- [Unified package](./packages/interface/README.md)
-
-## Technology
-
-Pivot UI is organized as a pnpm monorepo. Components are written in React 19 and TypeScript, styled with Panda CSS, and built on Radix UI primitives. Library packages are TypeScript source packages. The [active refactor ledger](./docs/refactor/blender-5.2/LEDGER.md) tracks migration into `@pivot-ui/react`.
-
-## License
-
-MIT License. See [LICENSE](./LICENSE).
+React 19、TypeScript、Panda CSS、Radix UI。当前按 workspace 或源码链接消费，不发布预构建 npm 包。许可证：[MIT](./LICENSE)。

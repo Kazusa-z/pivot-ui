@@ -128,7 +128,7 @@ export function CurvePresets({
   const [selection, setSelection] = useState(presets[0] ? `local:${presets[0].id}` : '')
   const [name, setName] = useState('')
   const [phase, setPhase] = useState<Operation | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<{ message: string; application: boolean } | null>(null)
   const [status, setStatus] = useState<string | null>(null)
   const mounted = useRef(true),
     epoch = useRef(0),
@@ -170,12 +170,17 @@ export function CurvePresets({
       token.service === latest.current.presetService
     )
   }
-  function finish(token: NonNullable<ReturnType<typeof start>>, message?: string, cause?: unknown) {
+  function finish(
+    token: NonNullable<ReturnType<typeof start>>,
+    message?: string,
+    cause?: unknown,
+    application = false
+  ) {
     if (!current(token)) return
     active.current = null
     loadValue.current = null
     setPhase(null)
-    if (cause !== undefined) setError(cause instanceof Error ? cause.message : String(cause))
+    if (cause !== undefined) setError({ message: cause instanceof Error ? cause.message : String(cause), application })
     else if (message) setStatus(message)
   }
   async function refresh() {
@@ -246,6 +251,7 @@ export function CurvePresets({
     if (!token) return
     const initial = copyCurveValue(latest.current.value)
     loadValue.current = initial
+    let application = false
     try {
       const loaded = selectedLocal ? copyCurveValue(selectedLocal.value) : await token.service!.load(selected.id)
       assertCurveValue(loaded)
@@ -256,10 +262,11 @@ export function CurvePresets({
       }
       active.current = 'applying'
       setPhase('applying')
+      application = true
       await latest.current.onApplyPreset?.(copyCurveValue(loaded))
       finish(token, 'Preset requested.')
     } catch (cause) {
-      finish(token, undefined, cause)
+      finish(token, undefined, cause, application)
     }
   }
   async function save() {
@@ -407,9 +414,9 @@ export function CurvePresets({
         </span>
       )}
       {status && <span role="status">{status}</span>}
-      {error && (
+      {error && !(error.application && props['aria-errormessage']) && (
         <span role="alert" className={css({ color: 'var(--colors-dangerText)', overflowWrap: 'anywhere' })}>
-          {error}
+          {error.message}
         </span>
       )}
     </div>

@@ -90,12 +90,14 @@ function RenameAction({
   readOnly,
   resetKey,
   onRename,
+  externalError,
 }: {
   label: string
   disabled: boolean
   readOnly: boolean
   resetKey: unknown
   onRename: (name: string) => Promise<void>
+  externalError?: string
 }) {
   const editor = useTextEdit({
     value: label,
@@ -143,7 +145,8 @@ function RenameAction({
           disabled={disabled}
           readOnly={readOnly || editor.phase === 'pending'}
           aria-invalid={editor.error ? true : undefined}
-          aria-describedby={editor.error ? errorId : undefined}
+          aria-describedby={editor.error ? (externalError ?? errorId) : undefined}
+          aria-errormessage={editor.error ? (externalError ?? errorId) : undefined}
           css={css.raw({ width: '140px', maxWidth: '100%' })}
           onKeyDown={(event) => {
             editor.inputProps.onKeyDown(event)
@@ -156,7 +159,7 @@ function RenameAction({
         />
       )}
       {editor.phase === 'pending' && <span role="status">Saving…</span>}
-      {editor.error && (
+      {editor.error && !externalError && (
         <span id={errorId} role="alert" className={errorClass}>
           {editor.error}
         </span>
@@ -521,6 +524,7 @@ export function CollectionTemplate<T>({
                     )}
                     {onRename && (canRename?.(item, key) ?? true) && (
                       <RenameAction
+                        externalError={props['aria-errormessage']}
                         label={name}
                         disabled={disabled}
                         readOnly={readOnly || (!!pending && !(pending.kind === 'rename' && pending.key === key))}
@@ -628,7 +632,7 @@ export function CollectionTemplate<T>({
           {addLabel}
         </Button>
       )}
-      {error && (
+      {error && !props['aria-errormessage'] && (
         <span role="alert" className={errorClass}>
           {error}
         </span>

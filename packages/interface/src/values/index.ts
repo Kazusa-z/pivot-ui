@@ -1,5 +1,8 @@
 export type PropertyValue = string | number | boolean
 export type ChoiceValue = string | number
+export { clamp } from './math'
+export type { PropertyData } from './property-data'
+export { clonePropertyData, arePropertyDataEqual } from './property-data'
 export type {
   AssetId,
   AssetStatus,

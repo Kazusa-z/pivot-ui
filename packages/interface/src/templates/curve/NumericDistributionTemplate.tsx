@@ -144,6 +144,7 @@ export function NumericDistributionTemplate({
     const owner = `number-${index}`
     return (
       <InputNumber
+        aria-errormessage={props['aria-errormessage']}
         {...constraints}
         value={number}
         disabled={disabled}
@@ -164,6 +165,7 @@ export function NumericDistributionTemplate({
     const owner = `curve-${index}`
     return (
       <CurvePicker
+        aria-errormessage={props['aria-errormessage']}
         value={curve}
         disabled={disabled}
         readOnly={readOnly || (editor.owner !== null && editor.owner !== owner)}
@@ -217,7 +219,9 @@ export function NumericDistributionTemplate({
           options={options}
           value={value.mode}
           aria-invalid={(editor.owner === 'mode' && !!editor.error) || undefined}
-          aria-errormessage={editor.owner === 'mode' && editor.error ? errorId : undefined}
+          aria-errormessage={
+            editor.owner === 'mode' && editor.error ? (props['aria-errormessage'] ?? errorId) : undefined
+          }
           disabled={disabled || editor.phase === 'pending'}
           readOnly={readOnly || (editor.owner !== null && editor.owner !== 'mode')}
           onValueChange={(mode) => {
@@ -264,7 +268,7 @@ export function NumericDistributionTemplate({
               : curveControl(value.curves[index], index)}
           </fieldset>
         ))}
-      {editor.error && editor.owner === 'mode' && (
+      {editor.error && editor.owner === 'mode' && !props['aria-errormessage'] && (
         <div className={css({ display: 'grid', gap: '6px', minWidth: 0 })}>
           <span
             id={errorId}

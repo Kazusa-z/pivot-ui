@@ -241,6 +241,7 @@ export const NumericTupleInput = forwardRef<HTMLDivElement, NumericTupleInputPro
                 min={proportional?.min ?? axis.min}
                 max={proportional?.max ?? axis.max}
                 id={axisId}
+                aria-errormessage={activeAxis === index ? props['aria-errormessage'] : undefined}
                 value={value[index]}
                 size={size}
                 endSlot={unit}

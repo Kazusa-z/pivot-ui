@@ -1,5 +1,7 @@
 # Pivot UI 基于 Blender 5.2 LTS 的重构方案
 
+> 本文是已采纳的迁移设计与原始组件处置快照。旧源码路径用于追溯，可从对应批次 Git 提交查看；B11 后的当前接入方式见 [最终指南](../refactor/blender-5.2/B11_INTEGRATION.md)，完成状态见 [实施台账](../refactor/blender-5.2/LEDGER.md)。
+
 日期：2026-10-22。状态：已采纳，按批次推进。盘点基线：当前工作树，包含尚未提交的 FormItem 修复及 GUI、GUIRoot、旧 Panel 删除。
 
 工作分支：`feat-blender-5-2-refactor`。实施范围与顺序见 [批次计划](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/BATCHES.md)，实际进度、验证和提交见 [实施台账](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/LEDGER.md)。

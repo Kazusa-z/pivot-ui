@@ -1,4 +1,6 @@
 export type { PropertyValue, ChoiceValue, ChoiceOption, NumericConstraints } from './values'
+export { clamp } from './values/math'
+export { mergeRefs } from './interaction/react/mergeRefs'
 export type {
   AssetId,
   AssetStatus,
@@ -29,6 +31,9 @@ export { getEditEndAction } from './contracts'
 export type {
   PropertyTarget,
   PropertyDescriptor,
+  PropertyDescriptorSchema,
+  PropertyNumericAxis,
+  PropertyValueAdapter,
   PropertyError,
   PropertyEditPreview,
   PropertySnapshot,
@@ -107,7 +112,6 @@ export {
   IconSpineFile,
   IconSpriteFile,
   IconSpriteAtlasFile,
-  IconSpriteAltasFile,
   IconUnknownFile,
   IconVrReferenceImageFile,
   IconPendingFile,
@@ -406,7 +410,16 @@ export type {
 export { createChoiceCollection } from './values/choice-options'
 export type { ChoiceCollection } from './values/choice-options'
 export { PropertyField } from './property/PropertyField'
-export type { PropertyFieldProps, PropertyFieldWidget } from './property/PropertyField'
+export type {
+  PropertyFieldProps,
+  PropertyFieldWidget,
+  PropertyFieldControlProps,
+  PropertyFieldRenderProps,
+} from './property/PropertyField'
+export { usePropertyBinding } from './property/usePropertyBinding'
+export type { PropertyBindingOptions, PropertyBinding } from './property/usePropertyBinding'
+export type { PropertyData } from './values/property-data'
+export { clonePropertyData, arePropertyDataEqual } from './values/property-data'
 
 export type { TextInputSize, TextInputState, TextInputVariant } from './widgets/inputs/text.styles'
 export type { ChoiceSize, ChoiceVariant } from './widgets/choices/choice.styles'

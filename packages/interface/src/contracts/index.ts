@@ -3,6 +3,9 @@ export type { ResourceQuery, ResourcePage, ResourceProvider, ResourceViewPrefere
 export type {
   PropertyTarget,
   PropertyDescriptor,
+  PropertyDescriptorSchema,
+  PropertyNumericAxis,
+  PropertyValueAdapter,
   PropertyError,
   PropertyEditPreview,
   PropertySnapshot,

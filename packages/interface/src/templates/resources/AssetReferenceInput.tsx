@@ -157,6 +157,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
   const [resolution, setResolution] = useState(0)
   const [phase, setPhase] = useState<Action | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [hostCommandError, setHostCommandError] = useState(false)
   const [invalidation, setInvalidation] = useState(0)
   const current = useRef<Operation | null>(null)
   const mounted = useRef(true)
@@ -188,6 +189,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
     retry.current = null
     setPhase(null)
     setError(null)
+    setHostCommandError(false)
     setInvalidation((old) => old + 1)
   }
   useLayoutEffect(() => {
@@ -278,7 +280,9 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
     current.current = operation
     setPhase(action)
     setError(null)
+    setHostCommandError(false)
     retry.current = null
+    let submitted = false
     try {
       if (action === 'locate') {
         if (!owner.value || !owner.provider.locate) throw Error('Asset location is unavailable.')
@@ -308,6 +312,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
         operation.expected = next?.id ?? null
         if (!isCurrent(operation)) return
         if (operation.expected !== owner.value) {
+          submitted = true
           const accepted = await owner.onValueChange?.(operation.expected, next)
           if (!isCurrent(operation)) return
           if (accepted === false) throw Error('The reference change was rejected. Retry the selection.')
@@ -327,6 +332,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
       }
     } catch (cause) {
       if (!isCurrent(operation)) return
+      setHostCommandError(submitted)
       if (action !== 'picker') {
         setError(message(cause))
         retry.current = {
@@ -352,8 +358,16 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
           type="button"
           disabled={disabled}
           aria-label={`${label}: ${name}`}
-          aria-invalid={!!(error || resolutionError) || undefined}
-          aria-errormessage={error ? errorId : resolutionError ? resolutionErrorId : undefined}
+          aria-invalid={!!(error || resolutionError || props['aria-invalid']) || undefined}
+          aria-errormessage={
+            error
+              ? hostCommandError && props['aria-errormessage']
+                ? props['aria-errormessage']
+                : errorId
+              : resolutionError
+                ? resolutionErrorId
+                : props['aria-errormessage']
+          }
           className={css({
             display: 'flex',
             alignItems: 'center',
@@ -462,6 +476,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
               disabled={disabled}
               readOnly={unavailable || (phase !== null && phase !== 'picker')}
               onSelect={(id) => run('picker', id)}
+              aria-errormessage={hostCommandError ? props['aria-errormessage'] : undefined}
             />
           </PopoverContent>
         </PopoverPortal>
@@ -481,7 +496,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
           </Button>
         </div>
       )}
-      {error && (
+      {error && !(hostCommandError && props['aria-errormessage']) && (
         <div>
           <span id={errorId} role="alert">
             {error}

@@ -142,6 +142,8 @@ TooltipProvider 由应用或组合边界共享提供。Popover 的 `keepMounted`
 
 ### B11 属性联调与收口
 
+最终接口与使用方式见 [B11 属性联调指南](./B11_INTEGRATION.md)；验收与环境清理限制见台账第 19 节。
+
 完成已逐步建立的 PropertyField 适配，统一 Storybook、demo、文档和命令；删除旧 ui/gui 包、过渡入口及空文件。核对全部公共类型、样式提取、锁文件和严格类型设置。
 
 退出条件：U/G 与共享事项全部销账；所有旧入口退出；生产源码、全部 stories、support 与 Storybook 配置类型检查通过；完整格式、构建、冻结锁文件安装与依赖检查通过；开发和静态生产预览均完成浏览器验收。

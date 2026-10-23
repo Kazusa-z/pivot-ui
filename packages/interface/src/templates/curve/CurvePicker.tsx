@@ -206,6 +206,7 @@ export const CurvePicker = forwardRef<HTMLButtonElement, CurvePickerProps>(funct
             )}
             <CurvePresets
               value={value}
+              aria-errormessage={externalError}
               presets={presets}
               presetService={presetService}
               disabled={disabled}

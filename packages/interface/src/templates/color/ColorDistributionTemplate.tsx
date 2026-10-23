@@ -118,6 +118,7 @@ export function ColorDistributionTemplate({
     const owner = `color-${index}`
     return (
       <ColorInput
+        aria-errormessage={props['aria-errormessage']}
         value={color}
         hdr={hdr}
         disabled={disabled}
@@ -138,6 +139,7 @@ export function ColorDistributionTemplate({
     const owner = `ramp-${index}`
     return (
       <ColorRampChannels
+        aria-errormessage={props['aria-errormessage']}
         value={ramp}
         hdr={hdr}
         disabled={disabled}
@@ -177,7 +179,9 @@ export function ColorDistributionTemplate({
           options={options}
           value={value.mode}
           aria-invalid={(editor.owner === 'mode' && !!editor.error) || undefined}
-          aria-errormessage={editor.owner === 'mode' && editor.error ? errorId : undefined}
+          aria-errormessage={
+            editor.owner === 'mode' && editor.error ? (props['aria-errormessage'] ?? errorId) : undefined
+          }
           disabled={disabled || editor.phase === 'pending'}
           readOnly={readOnly || (editor.owner !== null && editor.owner !== 'mode')}
           onValueChange={(mode) => {
@@ -215,7 +219,7 @@ export function ColorDistributionTemplate({
               : rampControl(value.ramps[index], index)}
           </fieldset>
         ))}
-      {editor.error && editor.owner === 'mode' && (
+      {editor.error && editor.owner === 'mode' && !props['aria-errormessage'] && (
         <span
           id={errorId}
           role="alert"

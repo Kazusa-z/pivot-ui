@@ -1,5 +1,7 @@
 # B09 曲线与数值分布
 
+> B11 收口说明：本文保留该批迁移记录；旧适配器、旧包与多 Storybook 指令已退出。当前属性联调和消费方式以 [B11 最终指南](./B11_INTEGRATION.md) 为准。历史验证数字不代表当前构建。
+
 本批对应 U40、G17 和 S05。统一入口为 `@pivot-ui/react`，纯模型也从 `@pivot-ui/react/values` 导入，预设能力类型也从 `@pivot-ui/react/contracts` 导入。验收和 Git 交付记录见 [实施台账](./LEDGER.md)。
 
 ## 模型与术语

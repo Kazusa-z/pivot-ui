@@ -1,6 +1,6 @@
 # Panda CSS infrastructure
 
-This directory contains the single Panda CSS preset and token source used by `@pivot-ui/react`, the transitional `@pivot-ui/editor` / `@pivot-ui/gui` packages, and the demo app. It is configuration infrastructure, not end-user documentation. B02 keeps this shared source instead of duplicating tokens inside the new package.
+This directory contains the single Panda CSS preset and token source used by `@pivot-ui/react` and the demo app. It is configuration infrastructure, not end-user documentation. The shared source remains outside the component package to avoid duplicate token ownership.
 
 For the migration record, see:
 
@@ -36,7 +36,7 @@ Panda owns the token snapshot in `designTokens.ts`. `panda/token-source/colors.t
 
 - Import runtime styling directly from `styled-system/jsx`, `styled-system/css` and `styled-system/tokens`. Do not create a local `styled` re-export facade; Panda's static extractor does not follow it.
 - Consumers may import the public `@pivot-ui/react/styling/css`, `/styling/jsx` and `/styling/tokens` subpaths. These resolve directly to generated modules and are registered alongside `styled-system` in `pandaBase.importMap`. Type-only helpers are available from `/styling/types`.
-- Every consumer must scan `packages/interface/src` as well as its own sources; older packages also scan this path while their entries forward to the new implementation. Generate the new package's styled-system before consuming it. Use one CSS layer entry per application.
+- Every consumer must scan `packages/interface/src` as well as its own sources. Generate the new package's styled-system before consuming it. Use one CSS layer entry per application.
 - Do not use variant names that collide with CSS properties. In particular, use `orientation`, `spacing` and `justify` rather than `direction`, `gap` and `justifyContent` on styled wrappers.
 - Do not pass SVG `d` through a Panda `styled` wrapper. `d` is consumed as the CSS `display` shorthand; use a `css()` class on a plain `<path>` instead.
 - Empty pseudo-element content must be written as `content: '""'`; an empty string is dropped.
@@ -48,8 +48,6 @@ Panda owns the token snapshot in `designTokens.ts`. `panda/token-source/colors.t
 ```bash
 node panda/generate-tokens.mjs
 
-pnpm --filter @pivot-ui/editor panda
-pnpm --filter @pivot-ui/gui panda
 pnpm --filter @pivot-ui/react panda
 ```
 

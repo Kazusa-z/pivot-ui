@@ -437,6 +437,7 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
   const childReset = useMemo(() => ({ provider, queryKey, resetKey }), [provider, queryKey, resetKey])
   const queryError = currentResult?.error
   const shownError = error ?? queryError
+  const ownsError = !error || !props['aria-errormessage']
   const fieldClass = css({ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: 0, fontSize: '12px' })
   const outsidePage = paginationTotal !== undefined && queryPage > Math.max(1, Math.ceil(paginationTotal / pageSize))
   return (
@@ -447,7 +448,9 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
       aria-label={props['aria-label'] ?? label}
       aria-busy={loading || busy || undefined}
       aria-describedby={
-        [props['aria-describedby'], shownError ? errorId : undefined].filter(Boolean).join(' ') || undefined
+        [props['aria-describedby'], shownError ? (ownsError ? errorId : props['aria-errormessage']) : undefined]
+          .filter(Boolean)
+          .join(' ') || undefined
       }
       className={cx(
         css(
@@ -532,7 +535,7 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
           Refresh resources
         </button>
       </div>
-      {shownError && (
+      {shownError && ownsError && (
         <div
           role="alert"
           id={errorId}

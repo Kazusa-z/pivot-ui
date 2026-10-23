@@ -1,5 +1,7 @@
 # B08 颜色、渐变与颜色分布
 
+> B11 收口说明：本文保留该批迁移记录；旧适配器、旧包与多 Storybook 指令已退出。当前属性联调和消费方式以 [B11 最终指南](./B11_INTEGRATION.md) 为准。历史验证数字不代表当前构建。
+
 本批对应 U38、U39、G15、G16 和 S04。公共入口为 `@pivot-ui/react`，纯模型也从 `@pivot-ui/react/values` 导入；能力类型也从 `@pivot-ui/react/contracts` 导入。验收与 Git 交付记录见 [实施台账](./LEDGER.md)。
 
 ## 颜色值约定
