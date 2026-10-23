@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 
 import { Flex } from '../Flex'
@@ -11,6 +11,10 @@ export default {
   component: Popover,
   tags: ['autodocs'],
   argTypes: {
+    forceRender: {
+      control: 'boolean',
+      description: 'Preserve state while closed; suspend content effects and focus/scroll layers.',
+    },
     side: {
       type: {
         name: 'enum',
@@ -31,16 +35,12 @@ export default {
 } as Meta<typeof Popover>
 
 function PopoverContent() {
-  useEffect(() => {
-    console.log('mount')
-    return () => {
-      console.log('unmount')
-    }
-  }, [])
+  const [count, setCount] = useState(0)
 
   return (
     <div>
       <p>Popover content</p>
+      <Button onClick={() => setCount((value) => value + 1)}>Count {count}</Button>
     </div>
   )
 }

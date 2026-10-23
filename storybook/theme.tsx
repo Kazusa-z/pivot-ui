@@ -5,13 +5,18 @@ import {
   createThemeStore,
   ThemeProvider,
 } from '../packages/interface/src/foundation/theme'
+import { TooltipProvider } from '../packages/interface/src/widgets/overlays'
 
 function ThemePreview({ mode, children }: { mode: 'dark' | 'light'; children: ReactNode }) {
   const [store] = useState(() =>
     createThemeStore({ initialPreference: mode, appearance: createBrowserThemeAppearance() })
   )
   useEffect(() => store.setPreference(mode), [mode, store])
-  return <ThemeProvider store={store}>{children}</ThemeProvider>
+  return (
+    <ThemeProvider store={store}>
+      <TooltipProvider>{children}</TooltipProvider>
+    </ThemeProvider>
+  )
 }
 
 const withTheme: Decorator = (Story, context) => (

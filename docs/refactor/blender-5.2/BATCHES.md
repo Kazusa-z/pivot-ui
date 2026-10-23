@@ -1,6 +1,6 @@
 # Blender 5.2 LTS 对齐重构批次计划
 
-更新日期：2026-10-22。工作分支：`feat-blender-5-2-refactor`。
+更新日期：2026-10-23。工作分支：`feat-blender-5-2-refactor`。
 
 本计划执行已采纳的 [重构方案](D:/QtProject/editor-ui-custom/docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md)，将重构划分为 B00–B11 共 12 批。每批完成实现、验证和台账更新后再推进其依赖批次；当前进度以 [实施台账](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/LEDGER.md) 为准。
 
@@ -71,6 +71,12 @@ B08 与 B09 满足前置后可并行；B10 与颜色/曲线工作无共同实现
 ### B04 浮层与菜单
 
 拆开 Root、Trigger、Content、Portal 与样式/定位 props。保留 Tooltip、HoverCard、Popover、Dialog、AlertDialog 各自语义。Menu 的三类行为适配共享视觉；确认和通知统一到应用装配的宿主。
+
+本批实现落点与迁移约定见 [B04 浮层、菜单与服务接入](./B04_OVERLAYS.md)。U24 进入 `widgets/menus`；U25–U27 进入 `widgets/overlays`；U28–U29 进入 `widgets/dialogs`；U30 进入 `widgets/notifications`。各目录通过统一包公开组件及对应 Props，旧 UI 目录保留薄适配到 B11。
+
+TooltipProvider 由应用或组合边界共享提供。Popover 的 `keepMounted` 使用 React Activity 保留状态与 DOM，关闭时暂停子树 effects/ref 和交互层；旧 `forceRender` 映射到该契约，Combobox 已选展示独立于浮层子树。隐藏状态不能仅靠 Radix `forceMount` 维持焦点层或滚动锁。
+
+`showAlert(props, service)` 是本批明确的调用迁移：服务由应用创建并交给一个 ConfirmationProvider，返回可等待且幂等结束的 request；不再创建独立 React root 或清空全局 body 样式。通知使用 NotificationProvider/useNotifications 或显式注入的 NotificationService；同一 service 的宿主去重，清理只影响自身作用域。旧 `toast`/`Toaster` 暂作调度兼容入口，不替代新服务注入方式。
 
 必验：受控/非受控开关、重复打开和关闭、卸载、嵌套、Escape、焦点恢复、portal 主题、StrictMode、确认服务幂等、通知重复创建。检查 console，不把独立新容器的 createRoot 与同容器重复创建混为一谈。
 

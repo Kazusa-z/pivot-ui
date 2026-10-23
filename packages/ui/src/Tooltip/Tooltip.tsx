@@ -1,43 +1,47 @@
-import React, { type PropsWithChildren } from 'react'
-import * as TooltipPrimitive from '@radix-ui/react-tooltip'
+import { forwardRef, type ReactNode } from 'react'
+import {
+  Tooltip as NextTooltip,
+  type TooltipContentProps,
+  type TooltipRootProps,
+  type TooltipPortalProps,
+} from '@pivot-ui/react'
 
-import { css } from '../../styled-system/css'
-
-const contentClass = css({
-  display: 'flex',
-  alignItems: 'center',
-  fontSize: '13px',
-  padding: '8px 12px',
-  backgroundColor: 'var(--colors-gray2)',
-  borderRadius: '8px',
-  color: 'var(--colors-gray12)',
-  boxShadow: 'inset 0 0 0 1px var(--colors-grayA4)',
-  transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
-  animationName: 'scaleIn',
-  animationDuration: '0.2s',
-  animationTimingFunction: 'ease',
-  animationFillMode: 'forwards',
-})
-
-export interface TooltipProps extends Omit<TooltipPrimitive.TooltipContentProps, 'content'> {
-  content?: React.ReactNode
+/** Requires a shared TooltipProvider at the application/composition boundary. */
+export interface TooltipProps extends Omit<TooltipContentProps, 'content'> {
+  content?: ReactNode
   delayDuration?: number
+  open?: boolean
+  defaultOpen?: boolean
+  onOpenChange?: TooltipRootProps['onOpenChange']
+  disableHoverableContent?: boolean
+  container?: TooltipPortalProps['container']
+  /** @deprecated Hidden tooltip content is unmounted to release its listeners. */
+  forceMount?: true
 }
 
-function Tooltip(props: PropsWithChildren<TooltipProps>) {
-  const { children, content, side = 'bottom', sideOffset = 6, delayDuration = 0, ...rest } = props
+export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(function Tooltip(
+  {
+    children,
+    content,
+    delayDuration = 0,
+    open,
+    defaultOpen,
+    onOpenChange,
+    disableHoverableContent,
+    container,
+    forceMount: _forceMount,
+    ...contentProps
+  },
+  ref
+) {
   return (
-    <TooltipPrimitive.TooltipProvider>
-      <TooltipPrimitive.Root delayDuration={delayDuration} {...rest}>
-        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
-        <TooltipPrimitive.Portal>
-          <TooltipPrimitive.Content className={contentClass} sideOffset={sideOffset} side={side}>
-            {content}
-          </TooltipPrimitive.Content>
-        </TooltipPrimitive.Portal>
-      </TooltipPrimitive.Root>
-    </TooltipPrimitive.TooltipProvider>
+    <NextTooltip
+      ref={ref}
+      trigger={children}
+      rootProps={{ delayDuration, open, defaultOpen, onOpenChange, disableHoverableContent }}
+      portalProps={{ container }}
+      contentProps={contentProps}>
+      {content}
+    </NextTooltip>
   )
-}
-
-export { Tooltip }
+})

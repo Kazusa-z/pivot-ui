@@ -1,10 +1,2 @@
-export {
-  Dialog,
-  DialogCloseTrigger,
-  DialogTrigger,
-  // DialogHeader,
-  // DialogBody,
-  // DialogFooter,
-  // DialogTitle,
-  // DialogDescription,
-} from './Dialog'
+export { Dialog, DialogCloseTrigger, DialogTrigger } from './Dialog'
+export type { DialogProps } from './Dialog'

@@ -2,13 +2,13 @@
 
 Pivot UI is distributed from this repository as source packages. An application can consume it through the pnpm workspace or by linking a package directory.
 
-Use [`@pivot-ui/react`](../packages/interface/README.md) for migrated foundations and the current B03 layout APIs: Flex, Separator/SectionDivider, PropertyRow parts, ScrollArea, Accordion/Collapsible/Section, ReadonlyValue/ImagePreview and ResizableSplit. Pure property contracts and value types are available through `/contracts` and `/values`. The transitional `@pivot-ui/editor` and `@pivot-ui/gui` packages still provide unmigrated controls and form items. The unified package has no Qt bridge; its Mock is Storybook-only support. See the refactor ledger for batch acceptance status.
+Use [`@pivot-ui/react`](../packages/interface/README.md) for migrated foundations, B03 layout APIs and current B04 overlays, menus, dialogs and confirmation/notification services. Pure property contracts and value types are available through `/contracts` and `/values`. The transitional `@pivot-ui/editor` and `@pivot-ui/gui` packages still provide unmigrated controls and form items. The unified package has no Qt bridge; its Mock is Storybook-only support. See the refactor ledger for batch acceptance status.
 
 ## Requirements
 
 - Node.js `^22.18.0`, `^24.11.0` or `>=26.0.0`
 - pnpm `12.14.0`
-- React and React DOM 19
+- React and React DOM `^19.3.1`, matching the package peer range; retained Popovers use React Activity
 
 ## Add a package
 
@@ -103,6 +103,20 @@ export function App() {
 ```
 
 `ThemeProvider` manages the `light-theme` / `dark-theme` class through an appearance adapter. `preference` is `light`, `dark` or `system`; `resolvedTheme` is always `light` or `dark`. Set `system` to follow OS changes without overwriting the stored preference. Consumers share a store, including nested Providers that do not supply another store. Storage, system detection and appearance adapters can be injected separately for mocks or a future host. The color values come from the shared Panda preset.
+
+## Overlay and service boundaries
+
+The new Popover, Tooltip and HoverCard split `rootProps`, `triggerProps`, `portalProps` and `contentProps`; Dialog and AlertDialog also separate Overlay, Title and Description. Menu families keep their own dropdown, context-menu or menubar behavior. Import the family parts and their Props from `@pivot-ui/react`.
+
+Place `TooltipProvider` around the application or an independent composition that uses tooltips. Individual new and legacy Tooltip components no longer create a provider. Portaled content receives the resolved theme of its local ThemeProvider, including when mounted in another DOM container.
+
+`PopoverRoot keepMounted` preserves state and DOM through React Activity while suspending hidden effects/refs and interaction layers. Reopening restores them; it is not a background-effect host. The old Popover `forceRender` maps to this behavior. Keep the portal container stable when retaining content.
+
+Create a stable confirmation service and inject it into exactly one `ConfirmationProvider`; components request a decision through `useConfirmation()`. The legacy call **must change from `showAlert(props)` to `showAlert(props, service)`**. It returns a request with an awaitable, idempotent result instead of creating an independent React root. `zIndex/actionable` no longer customize this service host; use an explicit AlertDialog composition when needed.
+
+Use `NotificationProvider` and `useNotifications()` for scoped notifications. An external `createNotificationService()` can be injected for application ownership; otherwise the Provider creates its own service. `hostProps` configures the host, equal notification IDs update one item, and cleanup is scoped to the service. Legacy `toast`/`Toaster` remain transitional scheduler entry points.
+
+See [B04 overlay and service migration](./refactor/blender-5.2/B04_OVERLAYS.md) for examples, result statuses, repeated-host rules and async completion behavior.
 
 ## First component
 

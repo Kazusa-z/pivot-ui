@@ -1,44 +1,46 @@
-import { PropsWithChildren, ReactNode } from 'react'
-import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
-import { styled } from '../../styled-system/jsx'
+import { forwardRef, type ReactNode } from 'react'
+import {
+  HoverCard as NextHoverCard,
+  type HoverCardContentProps,
+  type HoverCardRootProps,
+  type HoverCardPortalProps,
+} from '@pivot-ui/react'
 
-const StyledContent = styled(HoverCardPrimitive.Content, {
-  base: {
-    all: 'unset',
-    display: 'block',
-    borderRadius: '8px',
-    backgroundColor: 'var(--colors-gray2)',
-    padding: '4px',
-    fontSize: '12px',
-    border: '1px solid var(--colors-gray5)',
-    animationName: 'slideRightAndFade',
-    animationDuration: '400ms',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    transformOrigin: 'var(--radix-hover-card-content-transform-origin)',
-    willChange: 'transform, opacity',
-    '&[data-side="top"]': { animationName: 'slideUpAndFade' },
-    '&[data-side="bottom"]': { animationName: 'slideDownAndFade' },
-    '&[data-side="left"]': { animationName: 'slideLeftAndFade' },
-    '&[data-side="right"]': { animationName: 'slideRightAndFade' },
-  },
-})
-
-interface HoverCardProps extends HoverCardPrimitive.HoverCardContentProps {
-  children: ReactNode
+export interface HoverCardProps extends HoverCardContentProps {
   trigger: ReactNode
+  children: ReactNode
+  open?: boolean
+  defaultOpen?: boolean
+  onOpenChange?: HoverCardRootProps['onOpenChange']
+  openDelay?: number
+  closeDelay?: number
+  container?: HoverCardPortalProps['container']
+  /** @deprecated Hidden previews are unmounted to release their listeners. */
+  forceMount?: true
 }
-
-const HoverCard = (props: PropsWithChildren<HoverCardProps>) => {
-  const { trigger, children, ...rest } = props
-
+export const HoverCard = forwardRef<HTMLDivElement, HoverCardProps>(function HoverCard(
+  {
+    trigger,
+    children,
+    open,
+    defaultOpen,
+    onOpenChange,
+    openDelay,
+    closeDelay,
+    container,
+    forceMount: _forceMount,
+    ...contentProps
+  },
+  ref
+) {
   return (
-    <HoverCardPrimitive.Root>
-      <HoverCardPrimitive.Trigger asChild>{trigger}</HoverCardPrimitive.Trigger>
-      <HoverCardPrimitive.Portal>
-        <StyledContent {...rest}>{children}</StyledContent>
-      </HoverCardPrimitive.Portal>
-    </HoverCardPrimitive.Root>
+    <NextHoverCard
+      ref={ref}
+      trigger={trigger}
+      rootProps={{ open, defaultOpen, onOpenChange, openDelay, closeDelay }}
+      portalProps={{ container }}
+      contentProps={contentProps}>
+      {children}
+    </NextHoverCard>
   )
-}
-
-export { HoverCard }
+})

@@ -1,6 +1,6 @@
 # Pivot UI Documentation
 
-Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. The unified `@pivot-ui/react` source package provides property contracts and visual foundations, including theme, buttons, feedback, typography and icons. B03 currently adds Flex, separators, scroll areas, explicit property rows, read-only presentation, disclosure and resizable panes. Unmigrated components remain in `@pivot-ui/editor` and `@pivot-ui/gui`; migrated legacy entries forward to the unified implementation. Batch acceptance status belongs in the live ledger.
+Pivot UI is a React component library for building 3D editor interfaces, inspectors and content tools. The unified `@pivot-ui/react` source package provides property contracts, visual foundations and B03 layouts: Flex, separators, scroll areas, explicit property rows, read-only presentation, disclosure and resizable panes. B04 currently adds overlays, menus, dialogs and application-owned confirmation/notification services. Unmigrated components remain in `@pivot-ui/editor` and `@pivot-ui/gui`; migrated legacy entries forward to the unified implementation. Batch acceptance status belongs in the live ledger.
 
 These documents apply to workspace `1.0.0`, `@pivot-ui/editor` `1.2.0`, `@pivot-ui/gui` `1.2.1` and `@pivot-ui/react` `0.1.0`.
 
@@ -23,6 +23,7 @@ The Blender 5.2 LTS alignment refactor runs on `feat-blender-5-2-refactor`. Its 
 | [Refactor architecture](D:/QtProject/editor-ui-custom/docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md) | Shared terminology, responsibilities, dependencies and complete component disposition |
 | [Implementation batches](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/BATCHES.md)          | Batch scope, prerequisites and acceptance criteria                                    |
 | [Implementation ledger](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/LEDGER.md)            | Inherited baseline, component progress, validation evidence and Git status            |
+| [B04 overlay and service migration](./refactor/blender-5.2/B04_OVERLAYS.md)                           | U24–U30 API boundaries, provider placement, lifecycle and explicit service injection  |
 
 ## Project archive
 

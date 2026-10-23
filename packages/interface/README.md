@@ -1,6 +1,6 @@
 # @pivot-ui/react
 
-Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 当前新增布局、字段结构、折叠组合、滚动和可调整分隔布局。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
+Blender 5.2 LTS 对齐重构的统一源码包。B01 提供基础属性契约、编辑会话、宿主能力接口和 Storybook Mock；B02 提供主题状态、按钮、反馈、排版、快捷键展示和图标；B03 提供布局、字段结构、折叠组合、滚动和可调整分隔布局；B04 当前新增浮层、菜单、对话框和应用拥有的确认/通知服务。尚未迁移的组件继续使用 `@pivot-ui/editor`、`@pivot-ui/gui`，已迁移的旧入口仅作兼容适配。各批验收状态以实施台账为准。
 
 ## 入口与依赖
 
@@ -131,14 +131,14 @@ export function LegacyNameRow() {
 
 `ScrollAreaRoot` 的 ref 指向外层布局 div，`ScrollAreaViewport` 的 ref 指向可执行 `scrollTo()` 的滚动元素。`onScroll` / `onScrollCapture` 属于 Viewport；Root 的类型不接受这两个事件。
 
-| 入口     | 属性                             | 行为                                        |
-| -------- | -------------------------------- | ------------------------------------------- |
-| Root     | `sizing="fill                    | content"`                                   | 默认 `fill` 填满有明确高度的父容器；`content` 随内容增长，并受 `maxHeight` 约束 |
-| Root     | `scrollbars="vertical            | horizontal                                  | both"`                                                                          | 启用原生滚动轴，默认 `both` |
-| Root     | `type="hover                     | always                                      | scroll                                                                          | auto"`、`scrollHideDelay`   | 滚动条可见策略，默认 `hover` |
-| Root     | `scrollbarVariant="subtle        | track"`、`shadows`                          | 默认轻量滚动条、无边缘阴影；阴影按实际剩余内容更新                              |
-| Viewport | `contentLayout="block            | intrinsic"`                                 | 默认 `block` 适合视口内换行；`intrinsic` 用于横向内容的固有尺寸                 |
-| Viewport | 原生事件、`tabIndex`、`css`、ref | 默认 `tabIndex=0`，保留浏览器键盘和滚动行为 |
+| 入口     | 属性                                                           | 行为                                                                            |
+| -------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Root     | `sizing`: `fill`、`content`                                    | 默认 `fill` 填满有明确高度的父容器；`content` 随内容增长，并受 `maxHeight` 约束 |
+| Root     | `scrollbars`: `vertical`、`horizontal`、`both`                 | 启用原生滚动轴，默认 `both`                                                     |
+| Root     | `type`: `hover`、`always`、`scroll`、`auto`；`scrollHideDelay` | 滚动条可见策略，默认 `hover`                                                    |
+| Root     | `scrollbarVariant`: `subtle`、`track`；`shadows`               | 默认轻量滚动条、无边缘阴影；阴影按实际剩余内容更新                              |
+| Viewport | `contentLayout`: `block`、`intrinsic`                          | 默认 `block` 适合视口内换行；`intrinsic` 用于横向内容的固有尺寸                 |
+| Viewport | 原生事件、`tabIndex`、`css`、ref                               | 默认 `tabIndex=0`，保留浏览器键盘和滚动行为                                     |
 
 ```tsx
 import { useRef, useState } from 'react'
@@ -232,6 +232,24 @@ export function InspectorSplit() {
 省略 `children` 即独立区域模式，根节点沿调整轴占主面板尺寸加 6px，不使用剩余面板约束。`primaryAsChild` 省略额外主面板包装，但仍保留外层布局与分隔条；`primary` 必须是一个非 Fragment 元素，并转发原生 props/ref。尺寸由布局控制，子元素自己的 width/height 不覆盖调整结果。
 
 旧 `ResizablePanel` 仅作适配，`range.min/max` 是明确像素边界，默认尺寸现在为 240px、范围为 80–960px，不再按首次测量值生成 ±50px 范围。旧 `asChild` 映射到 `primaryAsChild`，对应 ref 指向实际主面板元素。
+
+## 浮层、菜单与应用服务
+
+U24 的三个菜单家族位于 `widgets/menus`；U25–U27 的 Popover、Tooltip、HoverCard 位于 `widgets/overlays`；U28–U29 的 Dialog、AlertDialog 与确认服务位于 `widgets/dialogs`；U30 的通知服务、Provider、Toaster 和 ToastView 位于 `widgets/notifications`。从包根导入公开部件及对应 Props，旧 UI 入口继续作为适配层保留到 B11。
+
+Popover、Tooltip、HoverCard 的便利版本用 `rootProps` 管开关行为、`triggerProps` 管触发元素、`portalProps` 管容器、`contentProps` 管定位/样式/原生内容事件。也可直接使用各自 Root、Trigger、Portal、Content、Arrow 等部件；Popover 另有 Anchor、Title、Description、Close。Dialog/AlertDialog 同样拆分配置，并提供 Overlay、Title、Description 和各自的关闭/确认部件。菜单的 DropdownMenu、ContextMenu、Menubar 保留不同触发和键盘行为，共享 item 的视觉及组合。
+
+TooltipProvider 必须由应用或独立组合边界统一提供，新旧 Tooltip 均不自行创建 Provider。共享 Storybook 装配不代替实际应用装配。portaled 内容读取局部 ThemeProvider 的解析主题，容器位置不会使它退回文档的另一套主题。
+
+`PopoverRoot keepMounted` 保留状态与 DOM，并在关闭时通过 React Activity 暂停子树 effects/ref，释放焦点层和 modal 滚动锁；重新打开恢复同一内容。旧 `forceRender` 映射到这个契约，不再切换到 DocumentFragment。保持挂载不代表后台 effects 持续运行；调用方应提供稳定的 portal container。
+
+确认服务由应用创建：`createConfirmationService()` 配合一个 `<ConfirmationProvider service={service}>`，组件使用 `useConfirmation().request(options)`。结果为 confirmed/cancelled/closed/unmounted/unavailable，重复终结只产生同一个结果。**旧 `showAlert(props)` 必须改成 `showAlert(props, service)`**，返回 request 的 `result` 可等待；旧 zIndex/actionable 不再定制这个统一宿主。需要自定义展示时使用显式 AlertDialog 组合。
+
+通知使用 `<NotificationProvider service={service} hostProps={...}>` 与 `useNotifications()`；service 可由应用显式创建并注入，也可由 Provider 自己拥有。相同 id 更新同一通知，同一 service 只展示一个宿主；clear/dismiss/卸载使过期异步 UI 更新失效，不取消业务 operation。旧 `toast`/`Toaster` 仅作第三方调度的兼容入口。
+
+完整部件清单、依赖、配置示例、服务结果和破坏性迁移说明见 [B04 接入文档](../../docs/refactor/blender-5.2/B04_OVERLAYS.md)。
+
+嵌套浮层使用共享层级上下文，跨 Portal 保留父子顺序；外部 Radix Content 可在 Portal 内使用 `OverlayLayer asChild` 接入主题与层级。它不额外创建 DOM，也不管理开关或焦点；数字 `style.zIndex` 可指定本层基准。
 
 ## 编辑会话
 

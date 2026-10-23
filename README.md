@@ -13,12 +13,12 @@ Pivot UI is a React component library for building 3D editor interfaces, inspect
 
 ## Packages
 
-| Package                                             | Role                                                                                                        |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views                                                |
-| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                                                            |
-| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package: contracts, visual foundations, property layouts, disclosure, scrolling and resizable panes |
-| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                                                       |
+| Package                                             | Role                                                                                                            |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [`@pivot-ui/editor`](./packages/ui/README.md)       | Base components, overlays, color tools, asset and tree views                                                    |
+| [`@pivot-ui/gui`](./packages/gui/README.md)         | Composable React form items for property editors                                                                |
+| [`@pivot-ui/react`](./packages/interface/README.md) | Unified package: contracts, foundations, layouts, overlays, menus and scoped confirmation/notification services |
+| [`@pivot-ui/demo`](./app)                           | Vite demo application                                                                                           |
 
 ## Getting started
 
@@ -47,7 +47,7 @@ pnpm dev:interface
 pnpm dev:demo
 ```
 
-Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. B03 currently adds layout and field structure to the unified package; migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
+Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the unified package runs on `6009`. B04 currently adds overlays, menus, dialogs and scoped confirmation/notification services to the foundations and layouts introduced in B01–B03. Migrated legacy entries are adapters, and unmigrated controls remain in the existing packages. Acceptance status is tracked in the [refactor ledger](./docs/refactor/blender-5.2/LEDGER.md). See the [development guide](./docs/DEVELOPMENT.md) for the full command reference.
 
 ### Build and verify
 
@@ -101,6 +101,8 @@ export function Inspector() {
 Form items work with local state before a backend exists. The application owns data loading, commands and synchronization with a future engine or C++/Qt adapter.
 
 For new layouts, use `PropertyRow`, `PropertyLabel`, `PropertyControl` and `PropertyDescription` from `@pivot-ui/react`. Control IDs and help relationships are explicit; the layout does not inspect or clone controls. `Section` separates its disclosure trigger from header actions, and `ScrollAreaRoot` / `ScrollAreaViewport` separate layout from scroll events and refs. See the [unified package API guide](./packages/interface/README.md) for these compositions and the pixel-based `ResizableSplit` contract.
+
+Provide `TooltipProvider` at an application or composition boundary. Confirmation and notification services are also owned by the application; the legacy `showAlert` now requires an injected service. See the [B04 migration guide](./docs/refactor/blender-5.2/B04_OVERLAYS.md) for the separate overlay props, retained Popover lifecycle and service hosts.
 
 ## Documentation
 

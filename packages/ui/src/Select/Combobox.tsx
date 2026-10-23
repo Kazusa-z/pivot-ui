@@ -1,7 +1,6 @@
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { IconCheck, IconChevronDown, IconSearch } from '@tabler/icons-react'
 import React, { createContext, forwardRef, useContext, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { Tag } from '@pivot-ui/react'
 
 import { Checkbox } from '../Checkbox'
@@ -403,8 +402,6 @@ interface ComboboxContextProps {
   searchValue?: string
   setSearchValue?: (val: string) => void
 
-  valueNode: any
-  onValueNodeChange: (valueNode: any) => void
   maxDisplayCount?: number
   maxDisplayText?: string
   noneText?: string
@@ -419,8 +416,6 @@ const ComboboxContext = createContext<ComboboxContextProps>({
   open: false,
   setOpen: () => {},
 
-  valueNode: null,
-  onValueNodeChange: () => {},
   maxDisplayCount: 0,
   maxDisplayText: '{count} items selected',
   noneText: '',
@@ -438,9 +433,8 @@ export interface ComboboxTriggerProps extends React.ButtonHTMLAttributes<HTMLBut
 
 export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProps>(
   function ComboboxTrigger(props, forwardedRef) {
-    const { value, onValueNodeChange, placeholder, maxDisplayCount, maxDisplayText, noneText } =
-      useContext(ComboboxContext)
-    const { valueRenderer, startSlot, size, variant, disabled, ...rest } = props
+    const { value, placeholder, maxDisplayCount, maxDisplayText, noneText } = useContext(ComboboxContext)
+    const { valueRenderer, children, startSlot, size, variant, disabled, ...rest } = props
     const valueDescriptionId = React.useId()
 
     const valueArray = Array.isArray(value) ? value : value ? [value] : []
@@ -463,7 +457,8 @@ export const ComboboxTrigger = forwardRef<HTMLButtonElement, ComboboxTriggerProp
         </StyledComboboxTrigger>
         <StyledComboboxTriggerContent>
           {startSlot && <StyledComboboxSlot size={size}>{startSlot}</StyledComboboxSlot>}
-          <StyledComboboxValueNode id={valueDescriptionId} spacing="xxs" wrap={false} ref={onValueNodeChange}>
+          <StyledComboboxValueNode id={valueDescriptionId} spacing="xxs" wrap={false}>
+            {children}
             {shouldShowSummary && (
               <Text size="sm" css={{ padding: '0 6px' }}>
                 {summaryText}
@@ -524,22 +519,51 @@ export interface ComboboxItemProps extends React.HTMLAttributes<HTMLButtonElemen
   children: React.ReactNode
 }
 
+function collectComboboxItems(children: React.ReactNode): React.ReactElement<ComboboxItemProps>[] {
+  const items: React.ReactElement<ComboboxItemProps>[] = []
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement<ComboboxItemProps>(child)) return
+    if (child.type === React.Fragment) items.push(...collectComboboxItems(child.props.children))
+    else if (typeof child.props.value === 'string') items.push(child)
+  })
+  return items
+}
+
+// Selected labels belong to the trigger, outside the hidden dropdown lifecycle.
+// Keeping them here also avoids coupling value display to option mount effects.
+function ComboboxSelectedValue({ option }: { option: ComboboxItemProps }) {
+  const { value, valueRenderer, maxDisplayCount, disabled, selectValue, focusTrigger } = useContext(ComboboxContext)
+  if (!value.includes(option.value) || (maxDisplayCount > 0 && value.length > maxDisplayCount)) return null
+  const isDisabled = disabled || option.disabled
+  const text =
+    option.textValue ?? option.label ?? (typeof option.children === 'string' ? option.children : option.value)
+  return (
+    <Tag
+      disabled={isDisabled}
+      removeLabel={`Remove ${text}`}
+      onRemove={() => {
+        if (isDisabled) return
+        selectValue?.(option.value)
+        focusTrigger()
+      }}>
+      {valueRenderer ? valueRenderer(option.value, 'trigger') : option.children}
+    </Tag>
+  )
+}
+
 export function ComboboxItem(props: ComboboxItemProps) {
   const { value, children, index, label, textValue, disabled, onClick, onFocus, ...rest } = props
   const {
     value: selectedValue,
-    maxDisplayCount,
     focusedIndex,
     selectValue,
     close,
     setFocusedIndex,
     valueRenderer,
-    valueNode,
     searchValue,
     autoClose,
     options,
     disabled: controlDisabled,
-    focusTrigger,
   } = useContext(ComboboxContext)
   const isDisabled = disabled || controlDisabled
   const selectedValueArray = Array.isArray(selectedValue) ? selectedValue : selectedValue ? [selectedValue] : []
@@ -552,12 +576,6 @@ export function ComboboxItem(props: ComboboxItemProps) {
   const hasPrevSelected = !!prevValue && selectedValueArray.includes(prevValue)
   const hasNextSelected = !!nextValue && selectedValueArray.includes(nextValue)
 
-  const handleRemove = () => {
-    if (isDisabled) return
-    selectValue?.(value)
-    focusTrigger()
-  }
-
   function handleSelect(e) {
     onClick?.(e)
     if (isDisabled || e.defaultPrevented) return
@@ -566,9 +584,6 @@ export function ComboboxItem(props: ComboboxItemProps) {
     selectValue && selectValue(value)
     autoClose && close && close()
   }
-
-  const shouldCreateTag =
-    isSelected && valueNode && (maxDisplayCount === 0 || selectedValueArray.length <= maxDisplayCount)
 
   return (
     <>
@@ -597,14 +612,6 @@ export function ComboboxItem(props: ComboboxItemProps) {
           {isSelected && <IconCheck size="12px" />}
         </StyledComboBoxItem>
       )}
-      {shouldCreateTag
-        ? createPortal(
-            <Tag disabled={isDisabled} onRemove={handleRemove} removeLabel={`Remove ${searchableText}`}>
-              {valueRenderer ? valueRenderer(value, 'trigger') : children}
-            </Tag>,
-            valueNode
-          )
-        : null}
     </>
   )
 }
@@ -711,7 +718,6 @@ export function Combobox(props: ComboboxProps) {
   const openingFocusRef = useRef<'first' | 'last' | undefined>(undefined)
   const typeaheadRef = useRef({ text: '', time: 0 })
   const selectAllId = React.useId()
-  const [valueNode, setValueNode] = React.useState(null)
   const [focusedIndex, setFocusedIndex] = React.useState(-1)
   const [searchValue, setSearchValue] = React.useState('')
 
@@ -721,25 +727,13 @@ export function Combobox(props: ComboboxProps) {
     onChange: props.onValueChange,
   })
 
-  // Get all available options from children
-  const options = React.useMemo(() => {
-    const options: string[] = []
-    React.Children.forEach(children, (child) => {
-      if (React.isValidElement<{ value?: string }>(child) && child.props.value) {
-        options.push(child.props.value)
-      }
-    })
-    return options
-  }, [children])
-  const enabledOptions = React.useMemo(() => {
-    const options: string[] = []
-    React.Children.forEach(children, (child) => {
-      if (React.isValidElement<ComboboxItemProps>(child) && child.props.value && !child.props.disabled) {
-        options.push(child.props.value)
-      }
-    })
-    return options
-  }, [children])
+  // Fragments are transparent for value labels, keyboard indices and select-all alike.
+  const optionElements = React.useMemo(() => collectComboboxItems(children), [children])
+  const options = React.useMemo(() => optionElements.map((item) => item.props.value), [optionElements])
+  const enabledOptions = React.useMemo(
+    () => optionElements.filter((item) => !item.props.disabled).map((item) => item.props.value),
+    [optionElements]
+  )
   const allSelected = enabledOptions.length > 0 && enabledOptions.every((option) => value.includes(option))
 
   const selectValue = (val) => {
@@ -858,8 +852,6 @@ export function Combobox(props: ComboboxProps) {
         setOpen,
         close,
 
-        valueNode,
-        onValueNodeChange: setValueNode,
         autoClose,
         disabled,
         focusTrigger: () => triggerRef.current?.focus(),
@@ -897,8 +889,11 @@ export function Combobox(props: ComboboxProps) {
                 openingFocusRef.current = event.key === 'ArrowUp' ? 'last' : 'first'
                 setOpen(true)
               }
-            }}
-          />
+            }}>
+            {optionElements.map((child) => (
+              <ComboboxSelectedValue key={child.props.value} option={child.props} />
+            ))}
+          </ComboboxTrigger>
         }
         onOpenAutoFocus={handleOpenAutoFocus}
         onKeyDown={handleKeyDown}

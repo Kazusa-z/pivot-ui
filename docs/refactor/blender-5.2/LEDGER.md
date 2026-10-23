@@ -4,7 +4,7 @@
 
 架构依据：[已采纳方案](D:/QtProject/editor-ui-custom/docs/architecture/BLENDER_5_2_REFACTOR_PLAN.md)。批次范围和退出条件：[批次计划](D:/QtProject/editor-ui-custom/docs/refactor/blender-5.2/BATCHES.md)。
 
-**B03 布局与字段结构已验收**。累计完成 20/65 个 U/G 主迁移项；旧入口仍为薄适配，B11 收口。继承基线、B00–B02 已提交并推送；B03 交付提交按第 9 节唯一标题定位。B04–B11 尚未开始。
+**B04 浮层与菜单已验收**，累计完成 27/65 个 U/G 主迁移项。B00–B03 已提交并推送；B04 随本批提交，实际 SHA 与远程核验见交付消息和 Git 记录。旧入口仍为薄适配，B11 收口；B05–B11 尚未开始。
 
 ## 1 分支与继承基线
 
@@ -35,20 +35,20 @@
 
 ## 2 批次进度
 
-| 批次 | 名称             | 状态   | 前置          | 验证/交付记录             | 提交              |
-| ---- | ---------------- | ------ | ------------- | ------------------------- | ----------------- |
-| B00  | 启动与基线       | 已验收 | 无            | V00-01–V00-04 通过        | f2f2c98           |
-| B01  | 契约与统一包骨架 | 已验收 | B00           | V01-01–V01-08；见第 8 节  | bb3847e           |
-| B02  | 主题与视觉基础   | 已验收 | B01           | V02-01–V02-07；见第 10 节 | 60e12bb           |
-| B03  | 布局与字段结构   | 已验收 | B02           | V03-01–V03-07；见第 11 节 | 见第 9 节唯一标题 |
-| B04  | 浮层与菜单       | 待开始 | B02、B03      | —                         | —                 |
-| B05  | 文本与选择       | 待开始 | B03、B04      | —                         | —                 |
-| B06  | 数值与几何模板   | 待开始 | B05           | —                         | —                 |
-| B07  | 集合与拖放       | 待开始 | B03、B04、B05 | —                         | —                 |
-| B08  | 颜色与渐变模板   | 待开始 | B04、B06      | —                         | —                 |
-| B09  | 曲线与数值分布   | 待开始 | B04、B06      | —                         | —                 |
-| B10  | 资源引用与选择   | 待开始 | B04、B05、B07 | —                         | —                 |
-| B11  | 属性联调与收口   | 待开始 | B03–B10       | —                         | —                 |
+| 批次 | 名称             | 状态   | 前置          | 验证/交付记录             | 提交                |
+| ---- | ---------------- | ------ | ------------- | ------------------------- | ------------------- |
+| B00  | 启动与基线       | 已验收 | 无            | V00-01–V00-04 通过        | f2f2c98             |
+| B01  | 契约与统一包骨架 | 已验收 | B00           | V01-01–V01-08；见第 8 节  | bb3847e             |
+| B02  | 主题与视觉基础   | 已验收 | B01           | V02-01–V02-07；见第 10 节 | 60e12bb             |
+| B03  | 布局与字段结构   | 已验收 | B02           | V03-01–V03-07；见第 11 节 | 4b2264a             |
+| B04  | 浮层与菜单       | 已验收 | B02、B03      | V04-01–V04-07；见第 12 节 | 本批提交；见第 9 节 |
+| B05  | 文本与选择       | 待开始 | B03、B04      | —                         | —                   |
+| B06  | 数值与几何模板   | 待开始 | B05           | —                         | —                   |
+| B07  | 集合与拖放       | 待开始 | B03、B04、B05 | —                         | —                   |
+| B08  | 颜色与渐变模板   | 待开始 | B04、B06      | —                         | —                   |
+| B09  | 曲线与数值分布   | 待开始 | B04、B06      | —                         | —                   |
+| B10  | 资源引用与选择   | 待开始 | B04、B05、B07 | —                         | —                   |
+| B11  | 属性联调与收口   | 待开始 | B03–B10       | —                         | —                   |
 
 ## 3 组件迁移台账
 
@@ -79,13 +79,13 @@
 | U21  | Flex：`Flex`                                                                                                                                                 | 保留，收敛 API             | B03    | 已验证   | 薄适配保留；B11 删除 | layout/Flex；V03-03–V03-06                                                             |
 | U22  | Separator：`Separator`                                                                                                                                       | 拆分组合                   | B03    | 已验证   | 薄适配保留；B11 删除 | widgets/display/Separator + layout/SectionDivider；V03-03–V03-06                       |
 | U23  | ScrollArea：`ScrollArea`                                                                                                                                     | 拆分属性入口               | B03    | 已验证   | 薄适配保留；B11 删除 | widgets/display/ScrollArea、ScrollAreaRoot、ScrollAreaViewport；V03-03–V03-06          |
-| U24  | Menu：`Menubar`、`MenubarItem`、`DropdownMenu`、`ContextMenu`、`MenuItem`、`SubMenuItem`、`MenuSeparator`、`MenuCheckboxItem`、`MenuRadioGroup`、`MenuGroup` | 拆分                       | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
-| U25  | Popover：`Popover`、`PopoverCloseTrigger`                                                                                                                    | 拆分 API，重整生命周期     | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
-| U26  | Tooltip：`Tooltip`                                                                                                                                           | 局部重写                   | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
-| U27  | HoverCard：`HoverCard`                                                                                                                                       | 保留并拆属性层级           | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
-| U28  | Dialog：`Dialog`、`DialogTrigger`、`DialogCloseTrigger`                                                                                                      | 拆分                       | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
-| U29  | AlertDialog：`AlertDialog`、`showAlert`                                                                                                                      | 保留确认语义，重写服务入口 | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
-| U30  | Toast：`Toaster`、`toast`                                                                                                                                    | 保留并隔离适配             | B04    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
+| U24  | Menu：`Menubar`、`MenubarItem`、`DropdownMenu`、`ContextMenu`、`MenuItem`、`SubMenuItem`、`MenuSeparator`、`MenuCheckboxItem`、`MenuRadioGroup`、`MenuGroup` | 拆分                       | B04    | 已验证   | 薄适配保留；B11 删除 | widgets/menus：DropdownMenu*/ContextMenu*/Menubar*；V04-03–V04-07                      |
+| U25  | Popover：`Popover`、`PopoverCloseTrigger`                                                                                                                    | 拆分 API，重整生命周期     | B04    | 已验证   | 薄适配保留；B11 删除 | widgets/overlays：Popover*、OverlayLayer；V04-03–V04-07                                |
+| U26  | Tooltip：`Tooltip`                                                                                                                                           | 局部重写                   | B04    | 已验证   | 薄适配保留；B11 删除 | widgets/overlays：TooltipProvider、Tooltip*；V04-03–V04-07                             |
+| U27  | HoverCard：`HoverCard`                                                                                                                                       | 保留并拆属性层级           | B04    | 已验证   | 薄适配保留；B11 删除 | widgets/overlays：HoverCard*；V04-03–V04-07                                            |
+| U28  | Dialog：`Dialog`、`DialogTrigger`、`DialogCloseTrigger`                                                                                                      | 拆分                       | B04    | 已验证   | 薄适配保留；B11 删除 | widgets/dialogs：Dialog*；V04-03–V04-07                                                |
+| U29  | AlertDialog：`AlertDialog`、`showAlert`                                                                                                                      | 保留确认语义，重写服务入口 | B04    | 已验证   | 薄适配保留；B11 删除 | widgets/dialogs：AlertDialog*、ConfirmationProvider/service；V04-03–V04-07             |
+| U30  | Toast：`Toaster`、`toast`                                                                                                                                    | 保留并隔离适配             | B04    | 已验证   | 薄适配保留；B11 删除 | widgets/notifications：ToastView、Toaster、NotificationProvider/service；V04-03–V04-07 |
 | U31  | Accordion：`Accordion`、`AccordionItem`                                                                                                                      | 保留，合并视觉实现         | B03    | 已验证   | 薄适配保留；B11 删除 | widgets/disclosure/Accordion、AccordionItem；V03-03–V03-06                             |
 | U32  | Collapsible：`Collapsible`                                                                                                                                   | 保留并整理组合             | B03    | 已验证   | 薄适配保留；B11 删除 | widgets/disclosure/Collapsible；V03-03–V03-06                                          |
 | U33  | Breadcrumbs：`Breadcrumbs`、`BreadcrumbItem`                                                                                                                 | 重写语义结构               | B07    | 未迁移   | 未退出；最迟 B11     | —                                                                                      |
@@ -143,35 +143,41 @@ B01 为 S02 建立 Panda 生成/扫描骨架，为 S08 补齐检查范围并启�
 
 ## 5 验证记录
 
-| 记录   | 批次/日期        | 验证内容                                | 结果           | 证据或范围                                                                                                                                                                           |
-| ------ | ---------------- | --------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| V00-01 | B00 / 2026-10-22 | 启动时运行 pnpm verify                  | 通过，退出码 0 | Prettier、当前类型检查、demo、UI 与 GUI Storybook 构建；见下方日志                                                                                                                   |
-| V00-02 | B00 / 2026-10-22 | 读取两个静态 Storybook 索引             | 通过           | UI：107 stories / 40 组 / 28 docs；GUI：88 stories / 22 组 / 1 docs                                                                                                                  |
-| V00-03 | B00 / 2026-10-22 | 文档格式、链接、65 项唯一归属、批次依赖 | 通过           | 65/65 项无遗漏/重复；12 批依赖无环；本地链接有效；Prettier 通过                                                                                                                      |
-| V00-04 | B00 / 2026-10-22 | 本轮文件范围与生产代码不变              | 通过           | 第 1 节指纹一致，仅新增/更新约定的 4 份文档                                                                                                                                          |
-| V01-01 | B01 / 2026-10-22 | 补齐旧 UI stories 类型检查的首次结果    | 失败后修复     | 5 文件共 19 条诊断：Accordion 7、CascadeSlider 2、ColorSlider 2、Select 7、Slider 1；V01-03 复验通过                                                                                 |
-| V01-02 | B01 / 2026-10-22 | Mock 边界与纯类型临时验证               | 通过           | 29 组运行时验证、非法类型断言检查；含重入错误返回修复、会话幂等、过期确认、Reset、revision 上限                                                                                      |
-| V01-03 | B01 / 2026-10-22 | pnpm verify                             | 通过，退出码 0 | 全仓格式/类型、demo、UI/GUI/interface Storybook 构建；日志无警告或错误                                                                                                               |
-| V01-04 | B01 / 2026-10-22 | 冻结锁文件安装、pnpm dedupe --check     | 通过，退出码 0 | 安装使用 --frozen-lockfile --ignore-scripts；无新增依赖版本；生成命令由 verify 实际执行                                                                                              |
-| V01-05 | B01 / 2026-10-22 | tsc 文件覆盖、显式出口与依赖审计        | 通过           | 预期 TS/TSX/CJS 源/示例/support/config 零遗漏；4 个出口有效；纯模块无 React/DOM/Node/Qt/旧包导入，无环                                                                               |
-| V01-06 | B01 / 2026-10-22 | 开发预览 6009 浏览器实测                | 通过           | 7 个契约场景，preview/authority 分离、取消/拒绝/旧响应、对象切换、能力缺失、选项类型身份；明暗主题、控制台正常                                                                       |
-| V01-07 | B01 / 2026-10-22 | 静态预览 6010 浏览器实测与索引          | 通过           | 7/7 场景加载无警告/错误；数值提交和选项 0 提交通过，明暗主题有样式；旧 UI 107、GUI 88 stories 数量不变                                                                               |
-| V01-08 | B01 / 2026-10-22 | 5 组旧 UI 示例浏览器回归                | 通过           | Accordion 单/多开、Cascade 51/49/100 与 Reset、Select 多选与受控更新、颜色三组/HDR 同步、Slider 20/24px 与键盘 50→51                                                                 |
-| V02-01 | B02 / 2026-10-22 | 中途失败与构建警告                      | 修复后复验通过 | 详见第 10 节：Panda 类型/跨文件 raw 抽取、旧 as=div、Slot Fragment、样式覆盖、原型键、嵌套按钮、ES2020 API 兼容；保留各次日志                                                        |
-| V02-02 | B02 / 2026-10-22 | pnpm verify；冻结安装及去重             | 通过，退出码 0 | 最终 verify-accepted.log：全仓格式/类型、demo、三套 Storybook，无构建警告/错误；--frozen-lockfile --ignore-scripts 与 dedupe --check 通过，未新增依赖版本                            |
-| V02-03 | B02 / 2026-10-22 | TEMP 单元级/SSR 探针及架构审计          | 通过           | 主题 14 项、按钮/反馈 23 项、排版/图标/快捷键 23 项及 3 个特殊键名；50 源文件/104 依赖边、6 个纯层文件、9 个出口、零循环和旧包反向导入                                               |
-| V02-04 | B02 / 2026-10-22 | 开发浏览器与主题生命周期                | 通过           | 24 个新故事：主题同步/系统/存储/多 Provider/StrictMode 清理，按钮异步/键盘/ref/asChild，受控 Tag，Progress 范围，图标命名、排版语义、快捷键、8 方向 Arrow；组件控制台无新增告警/错误 |
-| V02-05 | B02 / 2026-10-22 | 静态预览与 demo 浏览器                  | 通过           | 31/31 故事交替明暗加载，组件控制台无告警/错误；实测主题同步、按钮尺寸与 18px 覆盖、Tag 接受/拒绝删除、公共 styling 提取、demo 计数和主题切换                                         |
-| V02-06 | B02 / 2026-10-22 | 旧消费者浏览器回归                      | 通过           | FormItemArray 重命名/删除/新增及焦点恢复；Combobox 无嵌套 button、受控拒绝、禁用、Enter/Space 删除、ArrowDown/Enter 选择、Escape 恢复与浮层定位                                      |
-| V02-07 | B02 / 2026-10-22 | 静态索引与交付范围                      | 通过           | UI 108 stories / 40 组 / 28 docs；GUI 88 / 22 / 1；interface 31 / 10 / 1（本批新增 24）；无独立测试、日志、截图或临时脚本进入项目                                                    |
-
-| V03-01 | B03 / 2026-10-23 | 中途失败与交叉审查 | 修复后复验通过 | 首次格式检查两处失败；修复可选 id 覆盖、说明 ID 合并、asChild 分隔引用；详见第 11 节 |
-| V03-02 | B03 / 2026-10-23 | pnpm run verify、冻结安装、去重 | 通过，退出码 0 | verify-final-independent.log：全仓格式/类型、demo、三套 Storybook；构建告警/错误 0；offline frozen ignore-scripts 安装与 dedupe --check 通过 |
-| V03-03 | B03 / 2026-10-23 | TEMP SSR/事件探针与架构审计 | 通过 | PropertyRow/适配 13 项，布局/展示 10 项，Disclosure/Section 21 项，split ID 3 项，模拟 DOM 指针清理/取消 11 项；新包 63 文件、101 去重依赖边、环 0、新→旧依赖 0 |
-| V03-04 | B03 / 2026-10-23 | 28 个新故事的开发浏览器 | 通过 | 单控件/组/说明、禁用、窄栏长文本、折叠模式/独立动作/键盘/RTL、ref/滚动事件/缩短内容、尺寸受控拒绝/拖动/边界/RTL/standalone；组件控制台无告警/错误 |
-| V03-05 | B03 / 2026-10-23 | 生产 Storybook 预览 | 通过 | 59/59 故事交替明暗加载；实际验证 PropertyRow 名称/只读、拖动实时更新与单次结束、受控拒绝、独立动作、滚动 ref/事件与复位；组件控制台无告警/错误 |
-| V03-06 | B03 / 2026-10-23 | 旧消费者浏览器回归 | 通过 | GUI 22 组概览无悬空标签引用/嵌套按钮；输入标签聚焦/回写、Select 选项提交、Vector3 键盘、Array 重命名/焦点恢复/折叠/新增；旧 UI 12 故事加载，滚动及尺寸边界通过 |
-| V03-07 | B03 / 2026-10-23 | 交付范围、出口与静态索引 | 通过 | UI 108 stories / 40 组 / 28 docs；GUI 88 / 22 / 1；interface 59 / 20 / 1（新增 28/10）；17 组件 + 17 Props + 4 辅助类型公开；无独立测试或临时产物进入项目 |
+| 记录   | 批次/日期        | 验证内容                                | 结果           | 证据或范围                                                                                                                                                                                                               |
+| ------ | ---------------- | --------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| V00-01 | B00 / 2026-10-22 | 启动时运行 pnpm verify                  | 通过，退出码 0 | Prettier、当前类型检查、demo、UI 与 GUI Storybook 构建；见下方日志                                                                                                                                                       |
+| V00-02 | B00 / 2026-10-22 | 读取两个静态 Storybook 索引             | 通过           | UI：107 stories / 40 组 / 28 docs；GUI：88 stories / 22 组 / 1 docs                                                                                                                                                      |
+| V00-03 | B00 / 2026-10-22 | 文档格式、链接、65 项唯一归属、批次依赖 | 通过           | 65/65 项无遗漏/重复；12 批依赖无环；本地链接有效；Prettier 通过                                                                                                                                                          |
+| V00-04 | B00 / 2026-10-22 | 本轮文件范围与生产代码不变              | 通过           | 第 1 节指纹一致，仅新增/更新约定的 4 份文档                                                                                                                                                                              |
+| V01-01 | B01 / 2026-10-22 | 补齐旧 UI stories 类型检查的首次结果    | 失败后修复     | 5 文件共 19 条诊断：Accordion 7、CascadeSlider 2、ColorSlider 2、Select 7、Slider 1；V01-03 复验通过                                                                                                                     |
+| V01-02 | B01 / 2026-10-22 | Mock 边界与纯类型临时验证               | 通过           | 29 组运行时验证、非法类型断言检查；含重入错误返回修复、会话幂等、过期确认、Reset、revision 上限                                                                                                                          |
+| V01-03 | B01 / 2026-10-22 | pnpm verify                             | 通过，退出码 0 | 全仓格式/类型、demo、UI/GUI/interface Storybook 构建；日志无警告或错误                                                                                                                                                   |
+| V01-04 | B01 / 2026-10-22 | 冻结锁文件安装、pnpm dedupe --check     | 通过，退出码 0 | 安装使用 --frozen-lockfile --ignore-scripts；无新增依赖版本；生成命令由 verify 实际执行                                                                                                                                  |
+| V01-05 | B01 / 2026-10-22 | tsc 文件覆盖、显式出口与依赖审计        | 通过           | 预期 TS/TSX/CJS 源/示例/support/config 零遗漏；4 个出口有效；纯模块无 React/DOM/Node/Qt/旧包导入，无环                                                                                                                   |
+| V01-06 | B01 / 2026-10-22 | 开发预览 6009 浏览器实测                | 通过           | 7 个契约场景，preview/authority 分离、取消/拒绝/旧响应、对象切换、能力缺失、选项类型身份；明暗主题、控制台正常                                                                                                           |
+| V01-07 | B01 / 2026-10-22 | 静态预览 6010 浏览器实测与索引          | 通过           | 7/7 场景加载无警告/错误；数值提交和选项 0 提交通过，明暗主题有样式；旧 UI 107、GUI 88 stories 数量不变                                                                                                                   |
+| V01-08 | B01 / 2026-10-22 | 5 组旧 UI 示例浏览器回归                | 通过           | Accordion 单/多开、Cascade 51/49/100 与 Reset、Select 多选与受控更新、颜色三组/HDR 同步、Slider 20/24px 与键盘 50→51                                                                                                     |
+| V02-01 | B02 / 2026-10-22 | 中途失败与构建警告                      | 修复后复验通过 | 详见第 10 节：Panda 类型/跨文件 raw 抽取、旧 as=div、Slot Fragment、样式覆盖、原型键、嵌套按钮、ES2020 API 兼容；保留各次日志                                                                                            |
+| V02-02 | B02 / 2026-10-22 | pnpm verify；冻结安装及去重             | 通过，退出码 0 | 最终 verify-accepted.log：全仓格式/类型、demo、三套 Storybook，无构建警告/错误；--frozen-lockfile --ignore-scripts 与 dedupe --check 通过，未新增依赖版本                                                                |
+| V02-03 | B02 / 2026-10-22 | TEMP 单元级/SSR 探针及架构审计          | 通过           | 主题 14 项、按钮/反馈 23 项、排版/图标/快捷键 23 项及 3 个特殊键名；50 源文件/104 依赖边、6 个纯层文件、9 个出口、零循环和旧包反向导入                                                                                   |
+| V02-04 | B02 / 2026-10-22 | 开发浏览器与主题生命周期                | 通过           | 24 个新故事：主题同步/系统/存储/多 Provider/StrictMode 清理，按钮异步/键盘/ref/asChild，受控 Tag，Progress 范围，图标命名、排版语义、快捷键、8 方向 Arrow；组件控制台无新增告警/错误                                     |
+| V02-05 | B02 / 2026-10-22 | 静态预览与 demo 浏览器                  | 通过           | 31/31 故事交替明暗加载，组件控制台无告警/错误；实测主题同步、按钮尺寸与 18px 覆盖、Tag 接受/拒绝删除、公共 styling 提取、demo 计数和主题切换                                                                             |
+| V02-06 | B02 / 2026-10-22 | 旧消费者浏览器回归                      | 通过           | FormItemArray 重命名/删除/新增及焦点恢复；Combobox 无嵌套 button、受控拒绝、禁用、Enter/Space 删除、ArrowDown/Enter 选择、Escape 恢复与浮层定位                                                                          |
+| V02-07 | B02 / 2026-10-22 | 静态索引与交付范围                      | 通过           | UI 108 stories / 40 组 / 28 docs；GUI 88 / 22 / 1；interface 31 / 10 / 1（本批新增 24）；无独立测试、日志、截图或临时脚本进入项目                                                                                        |
+| V03-01 | B03 / 2026-10-23 | 中途失败与交叉审查                      | 修复后复验通过 | 首次格式检查两处失败；修复可选 id 覆盖、说明 ID 合并、asChild 分隔引用；详见第 11 节                                                                                                                                     |
+| V03-02 | B03 / 2026-10-23 | pnpm run verify、冻结安装、去重         | 通过，退出码 0 | verify-final-independent.log：全仓格式/类型、demo、三套 Storybook；构建告警/错误 0；offline frozen ignore-scripts 安装与 dedupe --check 通过                                                                             |
+| V03-03 | B03 / 2026-10-23 | TEMP SSR/事件探针与架构审计             | 通过           | PropertyRow/适配 13 项，布局/展示 10 项，Disclosure/Section 21 项，split ID 3 项，模拟 DOM 指针清理/取消 11 项；新包 63 文件、101 去重依赖边、环 0、新→旧依赖 0                                                          |
+| V03-04 | B03 / 2026-10-23 | 28 个新故事的开发浏览器                 | 通过           | 单控件/组/说明、禁用、窄栏长文本、折叠模式/独立动作/键盘/RTL、ref/滚动事件/缩短内容、尺寸受控拒绝/拖动/边界/RTL/standalone；组件控制台无告警/错误                                                                        |
+| V03-05 | B03 / 2026-10-23 | 生产 Storybook 预览                     | 通过           | 59/59 故事交替明暗加载；实际验证 PropertyRow 名称/只读、拖动实时更新与单次结束、受控拒绝、独立动作、滚动 ref/事件与复位；组件控制台无告警/错误                                                                           |
+| V03-06 | B03 / 2026-10-23 | 旧消费者浏览器回归                      | 通过           | GUI 22 组概览无悬空标签引用/嵌套按钮；输入标签聚焦/回写、Select 选项提交、Vector3 键盘、Array 重命名/焦点恢复/折叠/新增；旧 UI 12 故事加载，滚动及尺寸边界通过                                                           |
+| V03-07 | B03 / 2026-10-23 | 交付范围、出口与静态索引                | 通过           | UI 108 stories / 40 组 / 28 docs；GUI 88 / 22 / 1；interface 59 / 20 / 1（新增 28/10）；17 组件 + 17 Props + 4 辅助类型公开；无独立测试或临时产物进入项目                                                                |
+| V04-01 | B04 / 2026-10-23 | 中途失败与交叉审查                      | 修复后复验通过 | 格式、forceMount 锁、首次通知/重入、窄屏按钮、跨 Portal 层级、Fragment 标签、曲线删除边界、嵌套 css 抽取；见第 12 节                                                                                                     |
+| V04-02 | B04 / 2026-10-23 | 完整 verify、冻结安装与去重             | 通过，退出码 0 | verify-final-accepted.log：全仓格式/类型、Demo、三套 Storybook；告警/错误匹配 0。offline frozen ignore-scripts、dedupe --check 通过，检查前后 manifests/lock 哈希不变                                                    |
+| V04-03 | B04 / 2026-10-23 | TEMP 行为/类型/SSR 探针                 | 通过           | 菜单 13 DOM + 7 SSR、100 非法 Slot、9 forceMount 类型；浮层 5；确认服务 11、Dialog DOM 14、forceMount/长内容；通知 10 与交叉复验；层级 7、旧 Select 5、曲线删除 7；另有 Fragment 与样式提取探针                          |
+| V04-04 | B04 / 2026-10-23 | 新组件开发浏览器                        | 通过           | 30 新故事加载与 2 个层级场景；实际覆盖菜单键盘/禁用/单选/勾选/RTL/局部主题、Popover 保留/释放、Tooltip focus/Escape、HoverCard 受控开关、嵌套 Dialog、确认 FIFO/幂等、通知宿主交接/清理/隔离                             |
+| V04-05 | B04 / 2026-10-23 | 生产 Storybook 预览                     | 通过           | 91/91 故事交替 light/dark 加载；样式修复后另验受影响层级故事。实际 zIndex 200→210→220、嵌套动作只执行一次、Popover 状态保持与关闭 effects=0、确认 FIFO、320px 可见 Cancel、通知主题与隔离；最终组件 console warn/error 0 |
+| V04-06 | B04 / 2026-10-23 | 旧消费者浏览器回归                      | 通过           | 旧 Popover forceRender、showAlert 注入/回调一次、Toast 关闭/Undo；Dialog 内 Select 鼠标选择与 50→60 层级；Fragment 标签键盘移除/受控拒绝；GUI 资源搜索/选择/清空、颜色回写；曲线删除边界修复后无崩溃                     |
+| V04-07 | B04 / 2026-10-23 | 架构、出口、索引、清理                  | 通过           | 87 源文件/156 依赖边，环 0、新→旧 0，pure 6 无 React/DOM；90 组件 + 90 Props + 5 函数 + 12 类型，23 package targets、8 薄适配。UI 109/40/28、GUI 88/22/1、interface 91/26/1；本批新增 32/6；无独立测试或临时源码入库     |
 
 构建日志：[baseline-verify.log](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b00-20261022/baseline-verify.log)。
 
@@ -249,7 +255,9 @@ B02 从主题状态、token、按钮、图标和展示反馈开始。旧包、�
 
 B02 验收：已通过。提交：60e12bbf3773a47ee158fb1068e7ab953e70cbf0，标题 `feat(B02): unify theme and visual foundations`；已推送 origin/feat-blender-5-2-refactor，收尾时远程 SHA 与本地 HEAD 一致，工作树干净。
 
-B03 验收：已通过。交付提交唯一标题为 `feat(B03): rebuild layout and explicit property rows`，包含本记录；推送目标为 `origin/feat-blender-5-2-refactor`。本记录在提交前写入，不预测自身 SHA；本轮收尾执行提交、推送和远程 HEAD 一致性检查，实际 SHA 与推送结果由交付回复记录，下一批回填。
+B03 验收：已通过。提交 4b2264a18c66c433c0bbeb4ac4ca738f0fd2c968，标题 `feat(B03): rebuild layout and explicit property rows`；已推送 origin/feat-blender-5-2-refactor，本地/远程 HEAD 一致，工作树干净。
+
+B04 验收：已通过。本批提交标题为 `feat(B04): unify overlays, menus and application-owned services`；使用正常 pre-commit/pre-push hooks，并推送同一分支。提交不能包含自身 SHA，实际 SHA、推送结果与远程一致性在本次交付消息核验，下一批启动时回填。
 
 ## 10 B02 执行记录
 
@@ -320,3 +328,41 @@ B03 验收：已通过。交付提交唯一标题为 `feat(B03): rebuild layout 
 证据均在系统 TEMP： [最终 verify](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b03-20261023/verify-final-independent.log)、[架构审计](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b03-20261023/architecture-audit.json)、[59 个静态故事](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b03-20261023/static-all-stories.json)、[旧 GUI 概览](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b03-20261023/legacy-gui-overviews.json)、[指针取消探针](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b03-20261023/split-events-probe.log)、[生产字段截图](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b03-20261023/static-property-row.png)。项目没有新增独立测试、日志、截图或临时脚本；开发入口 6007/6008/6009 保留，临时静态预览 6010 验收后停止。
 
 B04 是下一批；旧适配与剩余消费者留在各主批次及 B11 清理。此次未启动 B04。
+
+## 12 B04 执行记录
+
+开始日期：2026-10-23。前置 B02/B03 已验收、提交并推送，工作树干净。范围为 U24–U30：三类菜单适配、Popover/Tooltip/HoverCard、Dialog/AlertDialog、注入式确认服务与通知宿主。统一 Root/Trigger/Content/Portal 责任，局部主题随 portal 保留；旧入口仅薄适配，必要生产消费者同步接入。
+
+必验：受控/非受控、重复开关、卸载、嵌套、Escape、焦点恢复、portal 主题与容器、StrictMode、确认队列幂等、通知重复宿主。验证脚本与输出使用系统 TEMP 的 pivot-blender-refactor-b04-20261023，不新增独立测试文件；本批不推进文本选择或数值业务重构。
+
+### B04 实际交付与兼容边界
+
+- 菜单分为 DropdownMenu、ContextMenu、Menubar 三套明确的 Root/Trigger/Portal/Content 与条目部件，复用视觉 recipe，保留各自开关、键盘和选择语义。ContextMenu 支持 Shift+F10/ContextMenu 键；禁用单选项正确透传。旧 Menu 只做命名和结构转换，BezierCurveEditor 的菜单使用明确的 ContextMenu 组合。
+- Popover、Tooltip、HoverCard 分离 rootProps、triggerProps、portalProps、contentProps。TooltipProvider 放在应用边界共享延迟。Popover keepMounted 用 React Activity 保留 DOM/state，隐藏时断开 effects/ref、焦点层和滚动锁。旧 forceRender 映射到同一实现；旧 Combobox 标签移出隐藏浮层，支持 Fragment 内选项。
+- Dialog/AlertDialog 提供组合部件和便捷入口，保留标题、可选说明、初始焦点、遮罩行为和 Escape 差异。长确认内容在独立区域滚动，标题与操作按钮保持可见。Dialog、AlertDialog 和菜单不公开原始 forceMount，运行时也拦截该参数。
+- createConfirmationService/ConfirmationProvider 实现注入式 FIFO 队列与幂等结果。无宿主立即 unavailable，真实卸载结束为 unmounted；StrictMode 重连不误结束。旧 showAlert 必须显式接收 service，不再创建独立 React root，也不清空 body.pointerEvents。此调用方式是明确的破坏性迁移，详见 B04_OVERLAYS.md。
+- ToastView 负责展示，Toaster 适配第三方调度；NotificationProvider 注入隔离服务并选出单一可见宿主。相同 ID 更新一条通知，clear/dismiss/最后卸载/后续同 ID 写入会使迟到完成失效。多个作用域互不清理，业务 Promise 不因 UI 卸载而被取消。
+- Portal 主题直接继承局部 ThemeProvider；浮层通过 React context 传递层级，子浮层高于父层。数字 style/css.zIndex 参与基准计算；动态 CSS 表达式无法作为静态数字基准，调用方需显式给定数字层级。UI/GUI 仍是过渡入口，本批不开始 B05–B11，也不接入真实 C++/Qt 后端。
+
+### B04 中途发现与修复
+
+1. 两次完整 verify 的首次格式阶段分别发现尚在编辑的 LEDGER/DropdownMenu 和 B04_OVERLAYS 文档格式；格式化后类型和 Demo/三套 Storybook 构建通过。最终冻结后另行完整复验，不以中途构建代替验收。
+2. 原始 Radix forceMount 会让关闭的模态内容继续渲染、锁滚动或屏蔽页面；TEMP 前后对比后移除新 API 的该参数并拦截运行时透传，Popover 用 Activity 单独实现安全保留状态。
+3. 通知 Provider 的 passive effect 晚于子组件首次通知，导致通知丢失；改为 SSR 安全的 layout effect。Promise 文案回调中的 clear/dismiss/同 ID 更新可能被旧完成覆盖，增加回调后的有效性复查。临时交叉探针复验通过。
+4. 320×640 浏览器发现长确认框 Cancel 已获焦但落在屏幕外；便捷 AlertDialog 改为独立正文滚动，标题和按钮固定在容器内，原始组合 Content 保持自由布局。
+5. 实际嵌套检查发现 Dialog 中的浮层层级不完整；新增共享的层级传递与正反向嵌套故事，旧 Select 的独立 Radix Content 也纳入必要消费者适配。
+6. Combobox 选项改从 trigger 渲染标签后，一层 Children.map 漏掉合法 Fragment；改为递归展开 Fragment，选项、可选项索引和标签共用同一列表。保留禁用项、全选、受控拒绝和移除后的焦点行为。
+7. 曲线菜单回归暴露基线已有的 2→1 关键帧崩溃：序列化后被解析成无控制点的线性数据，Bezier 预览读取 null.x。按现有可播放曲线模型保留最少两个关键帧，并统一菜单、键盘和内部删除守卫；不提前扩展 B09 的单点/空曲线模型。
+8. 生产预览发现嵌套 contentProps.css 的数字层级对象未被 Panda 抽取，虽然运行时有原子 className，实际 zIndex 仍为 auto。故事改用显式 css.raw，文档同步嵌套样式的抽取要求，重新构建后验证实际计算样式。
+
+### B04 验证记录与交接
+
+完成日期：2026-10-23。使用 bundled pnpm 11.25.0（pm_on_fail=ignore），仓库 packageManager 声明不变。最终完整 verify、冻结安装、去重与架构审计全部退出 0，最终构建日志警告/错误匹配 0。
+
+生产预览 91 个故事均加载成功；新增 32 个故事覆盖 6 组。实际验证默认层级 50→60→70 及数字覆盖 200→210→220，局部浅色菜单及子菜单在深色页面保持浅色；Popover 关闭后 effects=0，输入和计数再次打开保持；确认队列结果依次 confirmed/cancelled，焦点回到原按钮。320×640 下确认框宽 288、高 608，Cancel 位于可视区域内；通知作用域分别使用 light/dark，清理一个后只保留另一个。
+
+旧 UI 保留 109 个故事，GUI 保留 88 个故事。实际回归范围见 V04-06。旧 HoverCard 没有已有故事或生产消费者，因此其视觉使用新包 HoverCard 故事，兼容入口通过类型检查与薄适配审查；不宣称检查了不存在的旧故事。曲线删除到一个点的首次错误保留在 browser-intermediate-errors.json，修复后新浏览器会话无 warning/error。控制台结论针对组件 iframe，Storybook 管理端上游提示仍按 R07 登记。
+
+证据均在系统 TEMP： [最终完整验证](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b04-20261023/verify-final-accepted.log)、[最终架构与出口审计](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b04-20261023/architecture-audit.json)、[91 个生产故事](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b04-20261023/static-all-stories.json)、[数字层级计算样式](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b04-20261023/static-layers.json)、[320px 确认框](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b04-20261023/static-dialog-narrow.png)、[旧 Select 层级修复](C:/Users/74053/AppData/Local/Temp/pivot-blender-refactor-b04-20261023/legacy-dialog-select-fixed.png)。项目没有新增独立测试、日志、截图或临时验证脚本；临时静态预览 6010 验收后停止，开发服务 6007/6008/6009 保留。
+
+累计完成 27/65 个主迁移项，B05 是下一批。本批只为现有浮层消费者补必要兼容与删除边界；文本/选择、曲线纯模型及其它业务重构仍归原主批次。

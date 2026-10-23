@@ -7,6 +7,7 @@ import * as SelectPrimitive from '@radix-ui/react-select'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { IconCheck, IconChevronDown, IconChevronUp } from '@tabler/icons-react'
 import React, { forwardRef } from 'react'
+import { OverlayLayer } from '@pivot-ui/react'
 
 import { styled } from '../../styled-system/jsx'
 import { css } from '../../styled-system/css'
@@ -576,19 +577,21 @@ function Select(props: SelectProps) {
           )}
         </SelectTrigger>
         <SelectPrimitive.Portal>
-          <SelectPrimitive.Content
-            className={selectContentClass}
-            position={position}
-            sideOffset={sideOffset}
-            collisionPadding={4}>
-            <SelectScrollUpButton>
-              <IconChevronUp size="14px" />
-            </SelectScrollUpButton>
-            <SelectViewport>{props.children}</SelectViewport>
-            <SelectScrollDownButton>
-              <IconChevronDown size="14px" />
-            </SelectScrollDownButton>
-          </SelectPrimitive.Content>
+          <OverlayLayer asChild>
+            <SelectPrimitive.Content
+              className={selectContentClass}
+              position={position}
+              sideOffset={sideOffset}
+              collisionPadding={4}>
+              <SelectScrollUpButton>
+                <IconChevronUp size="14px" />
+              </SelectScrollUpButton>
+              <SelectViewport>{props.children}</SelectViewport>
+              <SelectScrollDownButton>
+                <IconChevronDown size="14px" />
+              </SelectScrollDownButton>
+            </SelectPrimitive.Content>
+          </OverlayLayer>
         </SelectPrimitive.Portal>
       </SelectPrimitive.Root>
     </SelectContext.Provider>

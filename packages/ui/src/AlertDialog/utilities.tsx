@@ -1,64 +1,26 @@
-import { createRoot } from 'react-dom/client'
-import { AlertDialog, type IAlertDialogProps } from './AlertDialog'
-import { useState } from 'react'
+import type { ConfirmationService, ConfirmationRequest } from '@pivot-ui/react'
+import type { IAlertDialogProps } from './AlertDialog'
 
-let portalCounter = 0
-
-function genPortalId() {
-  return `editor-portal-id-${++portalCounter}`
+/**
+ * @deprecated Inject a service hosted by ConfirmationProvider and prefer service.request.
+ * Callbacks run once after settlement. No provider returns an unavailable result.
+ * zIndex/actionable were presentation options of the removed standalone React root;
+ * the injected host now owns presentation and always offers explicit confirm/cancel actions.
+ */
+export function showAlert(
+  props: Omit<IAlertDialogProps, 'trigger'>,
+  service: ConfirmationService
+): ConfirmationRequest {
+  const request = service.request({
+    title: props.title,
+    description: props.description,
+    cancelLabel: props.cancelText,
+    confirmLabel: props.confirmText,
+    critical: true,
+  })
+  void request.result.then((result) => {
+    if (result.status === 'confirmed') props.onConfirm?.()
+    else props.onClose?.()
+  })
+  return request
 }
-
-function showAlert(props: Omit<IAlertDialogProps, 'trigger'>) {
-  const el = document.createElement('span')
-  el.id = genPortalId()
-  document.body.appendChild(el)
-  const root = createRoot(el)
-
-  const cleanup = () => {
-    root.unmount()
-    el.remove()
-    document.body.style.pointerEvents = ''
-  }
-
-  const Wrapper = () => {
-    const [open, setOpen] = useState(true)
-
-    const close = () => {
-      setOpen(false)
-      cleanup()
-      props.onClose?.()
-    }
-
-    const confirm = () => {
-      setOpen(false)
-      cleanup()
-      props.onConfirm?.()
-    }
-
-    return (
-      <AlertDialog
-        {...props}
-        trigger={null}
-        onClose={close}
-        onConfirm={confirm}
-        open={open}
-        onOpenChange={(o) => {
-          if (!o) {
-            close()
-          }
-        }}
-      />
-    )
-  }
-
-  root.render(<Wrapper />)
-
-  return {
-    close: () => {
-      cleanup()
-      props.onClose?.()
-    },
-  }
-}
-
-export { showAlert }

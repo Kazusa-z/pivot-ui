@@ -1,29 +1,28 @@
-import React, { useState } from 'react'
-import { Meta, StoryFn } from '@storybook/react'
-
+import { useState } from 'react'
+import type { Meta, StoryObj } from '@storybook/react'
 import { Flex } from '../Flex'
 import { Button } from '../Button'
 import { Select, SelectItem } from '../Select'
 import { Text, Title } from '../Typography'
-
 import { Dialog } from '.'
 
-export default {
-  title: 'Dialog',
-} as Meta<typeof Dialog>
-
-export const Overview: StoryFn<typeof Dialog> = (args) => {
+function OverviewExample() {
   const [open, setOpen] = useState(false)
-
   return (
     <Flex gap="md">
-      <Button variant="outline" size="md" onClick={() => setOpen(true)}>
-        Open Dialog
-      </Button>
-      <Dialog open={open} closable onOpenChange={(open) => setOpen(false)}>
+      <Dialog
+        title="Register"
+        open={open}
+        closable
+        onOpenChange={setOpen}
+        trigger={
+          <Button variant="outline" size="md">
+            Open Dialog
+          </Button>
+        }>
         <Flex direction="column" gap="xs" css={{ marginBottom: '24px' }}>
           <Title size={2}>Register</Title>
-          <Text>Register use password or OAuth2.0</Text>
+          <Text>Register using password or OAuth2.0</Text>
         </Flex>
         <Select placeholder="Select Fruits..." defaultValue="apple" width="initial">
           <SelectItem value="apple">Apple</SelectItem>
@@ -36,3 +35,7 @@ export const Overview: StoryFn<typeof Dialog> = (args) => {
     </Flex>
   )
 }
+const meta = { title: 'Dialog', component: Dialog } satisfies Meta<typeof Dialog>
+export default meta
+type Story = StoryObj<typeof meta>
+export const Overview: Story = { render: () => <OverviewExample /> }

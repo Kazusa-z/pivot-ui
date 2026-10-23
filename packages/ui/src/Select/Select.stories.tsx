@@ -287,7 +287,10 @@ function MultipleTagRemovalExample() {
   const [disabled, setDisabled] = React.useState(false)
   return (
     <Flex direction="column" gap="sm" style={{ width: 'min(440px, 100%)' }}>
-      <p>Tab 到标签的移除按钮，按 Enter 或 Space 删除。Banana 被禁用；父级拒绝更新时，标签必须保留。</p>
+      <p>
+        选项包含嵌套 Fragment。Tab 到标签的移除按钮，按 Enter 或 Space 删除。Banana
+        被禁用；父级拒绝更新时，标签必须保留。
+      </p>
       <Flex gap="sm">
         <label>
           <input type="checkbox" checked={rejectChanges} onChange={(event) => setRejectChanges(event.target.checked)} />{' '}
@@ -309,6 +312,7 @@ function MultipleTagRemovalExample() {
       <Select
         multiple
         searchable
+        showSelectAll
         value={value}
         disabled={disabled}
         placeholder="Choose fruits"
@@ -316,11 +320,15 @@ function MultipleTagRemovalExample() {
           setLastRequest(nextValue)
           if (!rejectChanges) setValue(nextValue)
         }}>
-        <SelectItem value="apple">Apple</SelectItem>
-        <SelectItem value="banana" disabled>
-          Banana
-        </SelectItem>
-        <SelectItem value="blueberry">Blueberry</SelectItem>
+        <>
+          <SelectItem value="apple">Apple</SelectItem>
+          <>
+            <SelectItem value="banana" disabled>
+              Banana
+            </SelectItem>
+            <SelectItem value="blueberry">Blueberry</SelectItem>
+          </>
+        </>
         <SelectItem value="grapes">Grapes</SelectItem>
         <SelectItem value="pineapple">Pineapple</SelectItem>
       </Select>

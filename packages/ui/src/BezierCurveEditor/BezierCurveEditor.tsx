@@ -22,9 +22,17 @@ import { ActionButton, ActionButtonGroup } from '../ActionButton'
 import { IconPlayerPlayFilled, IconZoomInFilled, IconZoomOutFilled, IconZoomReset } from '@tabler/icons-react'
 import { Flex } from '../Flex'
 import { CurveAnimation, CurveAnimationRef } from './CurveAnimation'
-import { ContextMenu, MenuItem } from '../Menu'
+import {
+  ContextMenuRoot,
+  ContextMenuTrigger,
+  ContextMenuPortal,
+  ContextMenuContent,
+  ContextMenuItem,
+} from '@pivot-ui/react'
 
 const BOUNDARY_SNAP_EPSILON = 1e-4
+// Both playback and cubic serialization require a curve with at least two keyframes.
+const MIN_KEYFRAME_COUNT = 2
 const DEFAULT_GRID_TICK_Y = 10
 const Y_TICK_ANCHOR_X = -10
 const Y_TICK_ANCHOR_Y = -3.5
@@ -310,7 +318,7 @@ function _BezierCurveEditor(props: BezierCurveEditorProps, forwardedRef: React.R
 
   const handleRemovePoint = (pointId: string) => {
     setPoints((prevPoints) => {
-      if (prevPoints!.length <= 1) return prevPoints
+      if (prevPoints!.length <= MIN_KEYFRAME_COUNT) return prevPoints
       const pointIds = ensurePointIds(prevPoints.length)
       const idx = pointIds.indexOf(pointId)
       if (idx === -1) return prevPoints
@@ -338,7 +346,11 @@ function _BezierCurveEditor(props: BezierCurveEditorProps, forwardedRef: React.R
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.target instanceof HTMLInputElement) return
-    if ((event.key === 'Delete' || event.key === 'Backspace') && hoveredPointRef.current && points.length > 1) {
+    if (
+      (event.key === 'Delete' || event.key === 'Backspace') &&
+      hoveredPointRef.current &&
+      points.length > MIN_KEYFRAME_COUNT
+    ) {
       event.preventDefault()
       handleRemovePoint(hoveredPointRef.current)
     }
@@ -376,12 +388,12 @@ function _BezierCurveEditor(props: BezierCurveEditorProps, forwardedRef: React.R
   const pointIds = points ? ensurePointIds(points.length) : []
 
   return (
-    <ContextMenu
+    <ContextMenuRoot
       onOpenChange={(open: boolean) => {
         contextMenuOpenRef.current = open
         if (!open) containerRef.current!.focus()
-      }}
-      trigger={
+      }}>
+      <ContextMenuTrigger asChild>
         <BezierCurveContainer ref={containerRef} tabIndex={0} onKeyDown={handleKeyDown}>
           <svg
             className={svgRootClass}
@@ -519,14 +531,17 @@ function _BezierCurveEditor(props: BezierCurveEditorProps, forwardedRef: React.R
             </ActionButtonGroup>
           </Flex>
         </BezierCurveContainer>
-      }
-      asChild>
-      <MenuItem
-        name="Delete Keyframe"
-        disabled={points.length <= 1}
-        onSelect={() => contextPointRef.current && handleRemovePoint(contextPointRef.current)}
-      />
-    </ContextMenu>
+      </ContextMenuTrigger>
+      <ContextMenuPortal>
+        <ContextMenuContent>
+          <ContextMenuItem
+            disabled={points.length <= MIN_KEYFRAME_COUNT}
+            onSelect={() => contextPointRef.current && handleRemovePoint(contextPointRef.current)}>
+            Delete Keyframe
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenuPortal>
+    </ContextMenuRoot>
   )
 }
 

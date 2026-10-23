@@ -23,7 +23,7 @@ panda/               shared Panda configuration, tokens and reset
 docs/                integration, development and archive documentation
 ```
 
-Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts and B02 visual foundations. B03 currently adds layout, explicit property-row parts, read-only/image presentation, disclosure, scroll areas and resizable panes. Migrated `ui` and `gui` entries forward to the unified implementation; other components remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
+Library packages are source packages. They are consumed through `workspace:*` or a package link; the repository does not produce a `dist` bundle or an npm release. `@pivot-ui/react` provides property contracts, B02 visual foundations and B03 layouts, property-row parts, display, disclosure, scrolling and resizable panes. B04 currently adds overlays, menus, dialogs and scoped confirmation/notification services. Migrated `ui` and `gui` entries forward to the unified implementation; other components remain in the transitional packages until their migration batch. The ledger records acceptance status separately from the available API.
 
 ## Commands
 
@@ -45,6 +45,8 @@ The Editor Storybook runs on port `6007`; the GUI Storybook runs on `6008`; the 
 All explorers share the **Theme** toolbar in `storybook/theme.tsx`. It switches the actual document theme, including portaled menus and dialogs. The editor's **Foundations / Design System / Overview** story compares light and dark surfaces and documents colors, sizes, spacing, typography, radii and shadows using the current Panda tokens.
 
 The toolbar uses the unified theme store and Provider. It supplies its own appearance adapter without browser persistence, so changing a story does not overwrite the application's theme preference. Theme examples use scoped appearance adapters to demonstrate system changes and shared consumers without competing for the document theme.
+
+The shared decorator also provides TooltipProvider for all three Storybooks. This is an explorer composition boundary; actual applications still provide their own boundary. B04 surfaces attach the inherited resolved theme directly to portaled content, so local providers can differ from the document theme. Confirmation and notification stories create/inject their own services and clean up their own hosts.
 
 All explorers share `storybook/vite.ts`. Their prebundled preview and docs runtimes use a 1200 kB chunk warning budget; the demo keeps Vite's default budget. Only the irrelevant `use client` module-directive warnings are filtered in these browser-only explorers. Other build warnings remain enabled.
 
@@ -107,6 +109,8 @@ Git and Prettier use LF line endings on every platform. Refactor verification sc
 For B03, inspect both the unified stories and legacy consumers. Required checks include label-click focus and description IDs, group and per-control names, long labels and narrow widths, disclosure keyboard/action focus, native scroll events matching the viewport ref, horizontal/vertical scrolling and height limits, and resizable separator keyboard/pointer cancellation. A controlled split must not move unless the parent accepts `onSizeChange`; its commit callback still reports the requested size. Exercise standalone and `primaryAsChild` sizing, both primary sides and RTL, disabled/boundary cases, and light/dark styles. Record actual results in the batch ledger instead of treating the presence of a story as verification.
 
 Property-row implementations must not scan the DOM or infer child control types. Legacy FormItem adapters use explicit control render props or named groups; business-specific column rules remain in consumers. Keep root layout refs separate from input/scroll viewport refs, and put disclosure actions beside, not inside, the trigger button.
+
+For B04, exercise the new Menus, Overlays, Dialogs and Notifications stories plus legacy consumers. Check controlled rejection, repeated open/close, nested Escape order, focus restoration, real unmount, StrictMode, custom portal containers and local light/dark themes. Retained Popovers must preserve state/DOM while closed content effects/refs, focus layers and scroll locks are suspended. Confirm service results settle once, reject duplicate confirmation hosts, and isolate notification IDs/cleanup across services; clear/dismiss/unmount must prevent stale promise completions from recreating notices. Check console diagnostics and Panda extraction as well as screenshots. API and migration details are in the [B04 guide](./refactor/blender-5.2/B04_OVERLAYS.md); record actual evidence in the ledger.
 
 Each refactor batch finishes with its own verified Git commit and a push to the remote branch. Update the batch ledger and clean temporary project files before committing; confirm the remote commit before starting the next batch.
 

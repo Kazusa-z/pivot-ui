@@ -1,145 +1,65 @@
-import React, { forwardRef, useLayoutEffect } from 'react'
-import { createPortal } from 'react-dom'
-import * as PopoverPrimitive from '@radix-ui/react-popover'
-import type { PopoverContentProps as PrimitiveContentProps } from '@radix-ui/react-popover'
-import { useControllableState } from '@radix-ui/react-use-controllable-state'
+import { forwardRef, type ReactNode } from 'react'
+import {
+  Popover as NextPopover,
+  PopoverClose,
+  type PopoverContentProps,
+  type PopoverRootProps,
+  type PopoverPortalProps,
+} from '@pivot-ui/react'
 
-import { css } from '../../styled-system/css'
-import { styled } from '../../styled-system/jsx'
-import type { SystemStyleObject } from '../../styled-system/types'
-import { composeEventHandlers } from '../utils/composeEventHandler'
-
-const StyledContent = styled(PopoverPrimitive.Content, {
-  base: {
-    backgroundColor: 'var(--colors-overlayBg)',
-    borderRadius: '6px',
-    boxShadow: 'var(--shadows-popContainer)',
-    border: '1px solid var(--colors-border)',
-    transformOrigin: 'var(--radix-popover-content-transform-origin)',
-    animationName: 'scaleIn',
-    animationDuration: '300ms',
-    animationTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
-    willChange: 'transform, opacity',
-    padding: '8px',
-    fontSize: '12px',
-    color: 'var(--colors-text)',
-    minWidth: '160px',
-    outline: 'none',
-    '&[data-state="open"]': {
-      '&[data-side="top"]': { animationName: 'slideDownAndFade' },
-      '&[data-side="right"]': { animationName: 'slideLeftAndFade' },
-      '&[data-side="bottom"]': { animationName: 'slideUpAndFade' },
-      '&[data-side="left"]': { animationName: 'slideRightAndFade' },
-    },
-  },
-  variants: {
-    compact: {
-      true: { padding: 0 },
-    },
-    constrainSize: {
-      true: {
-        width: 'var(--radix-popover-trigger-width)',
-        maxHeight: 'var(--radix-popover-content-available-height)',
-      },
-    },
-  },
-})
-const disabledTriggerClass = css({ pointerEvents: 'none', userSelect: 'none' })
-
-export type PopoverProps = PopoverContentProps & {
-  trigger: React.ReactNode
+/** Compatibility entry. New consumers separate root, trigger, portal and content props. */
+export interface PopoverProps extends PopoverContentProps {
+  trigger: ReactNode
   disabled?: boolean
-  onOpenChange?: (open: boolean) => void
   open?: boolean
-  compact?: boolean
-  constrainSize?: boolean
-  css?: SystemStyleObject
-  container?: Element
-}
-
-interface PopoverContentProps extends PrimitiveContentProps {
-  children?: React.ReactNode
-  open?: boolean
+  defaultOpen?: boolean
+  onOpenChange?: PopoverRootProps['onOpenChange']
+  modal?: boolean
+  /** Preserves state; hidden content has no active effects, focus layer or scroll lock. */
   forceRender?: boolean
-  container?: Element
-  compact?: boolean
-  constrainSize?: boolean
-  css?: SystemStyleObject
+  /** @deprecated Use forceRender here, or keepMounted on the new PopoverRoot. */
+  forceMount?: true
+  container?: PopoverPortalProps['container']
 }
 
-const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(function PopoverContent(
-  props: PopoverContentProps,
-  forwardedRef
-) {
-  const {
+export const Popover = forwardRef<HTMLDivElement, PopoverProps>(function Popover(
+  {
+    trigger,
     children,
+    disabled,
     open,
+    defaultOpen,
+    onOpenChange,
+    modal,
+    forceRender,
+    forceMount,
     container,
-    forceRender = false,
-    compact,
-    constrainSize,
-    css: cssProp,
-    className,
-    ...rest
-  } = props
-
-  const [fragment, setFragment] = React.useState<DocumentFragment>()
-
-  useLayoutEffect(() => {
-    setFragment(new DocumentFragment())
-  }, [])
-
-  if (!open && forceRender) {
-    const frag = fragment as unknown as Element | undefined
-    return frag ? createPortal(children, frag) : null
-  }
-
+    onWheel,
+    onTouchMove,
+    ...contentProps
+  },
+  ref
+) {
   return (
-    <PopoverPrimitive.Portal container={container}>
-      <StyledContent
-        {...rest}
-        ref={forwardedRef}
-        compact={compact}
-        constrainSize={constrainSize}
-        css={cssProp}
-        className={className}>
-        {children}
-      </StyledContent>
-    </PopoverPrimitive.Portal>
+    <NextPopover
+      ref={ref}
+      trigger={trigger}
+      rootProps={{ open, defaultOpen, onOpenChange, modal, keepMounted: forceRender || forceMount }}
+      triggerProps={{ disabled }}
+      portalProps={{ container }}
+      contentProps={{
+        ...contentProps,
+        onWheel(event) {
+          event.stopPropagation()
+          onWheel?.(event)
+        },
+        onTouchMove(event) {
+          event.stopPropagation()
+          onTouchMove?.(event)
+        },
+      }}>
+      {children}
+    </NextPopover>
   )
 })
-
-const Popover = forwardRef<HTMLDivElement, PopoverProps>(function Popover(props: PopoverProps, forwardedRef) {
-  const { trigger, children, disabled, open: propOpen, onOpenChange, sideOffset = 6, ...rest } = props
-
-  const [open, setOpen] = useControllableState({
-    prop: propOpen,
-    defaultProp: false,
-    onChange: onOpenChange,
-  })
-
-  function stopPropagation(e: React.MouseEvent | React.TouchEvent) {
-    e.stopPropagation()
-  }
-
-  return (
-    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
-      <PopoverPrimitive.Trigger asChild disabled={disabled} className={disabled ? disabledTriggerClass : undefined}>
-        {trigger}
-      </PopoverPrimitive.Trigger>
-      <PopoverContent
-        {...rest}
-        sideOffset={sideOffset}
-        open={open}
-        ref={forwardedRef}
-        onWheel={composeEventHandlers(stopPropagation, rest.onWheel)}
-        onTouchMove={composeEventHandlers(stopPropagation, rest.onTouchMove)}>
-        {children}
-      </PopoverContent>
-    </PopoverPrimitive.Root>
-  )
-})
-
-const PopoverCloseTrigger = PopoverPrimitive.Close
-
-export { Popover, PopoverCloseTrigger }
+export const PopoverCloseTrigger = PopoverClose

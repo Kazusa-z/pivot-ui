@@ -46,7 +46,7 @@ export default {
   tags: ['autodocs'],
 } as Meta<typeof ContextMenu>
 
-export const Overview = (args) => {
+export const Overview = () => {
   return (
     <Flex gap="lg">
       <DropdownMenu size="xs" trigger={<Button>menu</Button>}>
@@ -61,13 +61,13 @@ export const Overview = (args) => {
 
 Overview.args = {}
 
-export const DropdownMenuDemo: StoryFn<any> = () => {
+export const DropdownMenuDemo: StoryFn<typeof DropdownMenu> = () => {
   return (
     <Flex gap="md">
       <DropdownMenu
         size="sm"
         trigger={
-          <ActionButton>
+          <ActionButton aria-label="Open menu">
             <IconMenu />
           </ActionButton>
         }>
@@ -117,7 +117,7 @@ ContextMenuDemo.storyName = 'ContextMenu'
 
 ContextMenuDemo.argTypes = {}
 
-export const ContextMenuInList = (args) => {
+function ContextMenuListExample() {
   const [options, setOptions] = useState<Record<number, string>>({})
   const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({})
   return (
@@ -180,3 +180,5 @@ export const ContextMenuInList = (args) => {
     </Flex>
   )
 }
+
+export const ContextMenuInList = () => <ContextMenuListExample />
