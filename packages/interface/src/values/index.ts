@@ -97,3 +97,33 @@ export {
   rememberColorDistribution,
   switchColorDistributionMode,
 } from './color-distribution'
+export type { CurvePointId, CurveCoordinate, CurvePoint, CurveValue, CurveViewport, CurveTick } from './curve'
+export {
+  assertCurveValue,
+  copyCurveValue,
+  areCurvesEqual,
+  sampleCurve,
+  assertCurveViewport,
+  fitCurveViewport,
+  getCurveTicks,
+  createCurvePath,
+  getCurvePointBounds,
+  updateCurvePoint,
+  addCurvePoint,
+  removeCurvePoints,
+  setCurveInterpolation,
+} from './curve'
+export type {
+  NumericDistributionValue,
+  NumericDistributionMode,
+  NumericDistributionCache,
+} from './numeric-distribution'
+export {
+  numericDistributionModes,
+  assertNumericDistributionValue,
+  copyNumericDistributionValue,
+  areNumericDistributionsEqual,
+  copyNumericDistributionCache,
+  rememberNumericDistribution,
+  switchNumericDistributionMode,
+} from './numeric-distribution'

@@ -119,3 +119,7 @@ Built with:
 ## B08 color migration
 
 Legacy ColorPicker/GradientSlider/ParticleSlider/HDRSlider delegate to the unified color templates. New code uses normalized ColorValue with an explicit encoding and stable stop IDs; legacy byte-range and intensity conversions stay in this compatibility package. Browser capabilities are application-owned. See the [B08 guide](../../docs/refactor/blender-5.2/B08_COLOR.md).
+
+## B09 curve migration
+
+BezierCurveEditor now delegates to CurvePicker. The adapter converts the old flat cubic point layout and preserves stable IDs plus independent handle metadata in callback values. It does not own a curve renderer or preset storage. Y scale formats ticks only. New code uses CurveValue and the explicit optional CurvePresetService. See the [B09 guide](../../docs/refactor/blender-5.2/B09_CURVES.md).

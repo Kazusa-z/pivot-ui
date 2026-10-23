@@ -1,173 +1,99 @@
-import React, { useState, useRef, useLayoutEffect, forwardRef, useEffect } from 'react'
-import { useControllableState } from '@radix-ui/react-use-controllable-state'
+import { useRef, useState } from 'react'
+import { CurvePicker, InputNumber, type CurvePresetService, type CurvePreset } from '@pivot-ui/react'
+import { fromLegacyCurve, toLegacyCurve } from './helper'
+import type { IPoint } from './types'
 
-import { BezierCurveEditor as Editor } from './BezierCurveEditor'
-import { convertPointsToBezierPoints, denormalizePoint, generateCurve, generateLineByPoints } from './helper'
-
-import { mergeRefs } from '../utils/merge-refs'
-import { styled } from '../../styled-system/jsx'
-import { IPoint, BezierCurveEditorProps as InnerBezierCurveEditorProps } from './types'
-import { Popover } from '../Popover'
-import { BezierCurvePresets } from './Preset'
-
-const BezierCurveEditorTrigger = styled('div', {
-  base: {
-    display: 'flex',
-    height: '24px',
-    width: '100%',
-    background: 'var(--colors-grayA3)',
-    borderRadius: '4px',
-    overflow: 'hidden',
-    fontSize: '12px',
-    cursor: 'pointer',
-    '& > svg': { stroke: 'var(--colors-orange9)', fill: 'none' },
-  },
-})
-
-type CurveScaleProps = Pick<
-  InnerBezierCurveEditorProps,
-  | 'axisLabel'
-  | 'yTickScale'
-  | 'yRangeMode'
-  | 'onYTickScaleChange'
-  | 'onYTickScaleCommit'
-  | 'yTickScaleMin'
-  | 'yTickScaleMax'
->
-
-export interface BezierCurveEditorProps extends CurveScaleProps {
+export interface BezierCurveEditorProps {
   value?: IPoint[]
   defaultValue?: IPoint[]
   onChange?: (value: IPoint[]) => void
   algo?: 'linear' | 'bezier'
+  axisLabel?: string
+  yTickScale?: number
+  yRangeMode?: 'symmetric' | 'positive'
+  onYTickScaleChange?: (value: number) => void
+  onYTickScaleCommit?: () => void
+  yTickScaleMin?: number
+  yTickScaleMax?: number
+  disabled?: boolean
+  readOnly?: boolean
+  presetService?: CurvePresetService
+  presets?: readonly CurvePreset[]
 }
-
-const defaultPoints = [
+const initial: IPoint[] = [
   { x: 0, y: 0 },
   { x: 0.25, y: 0.25 },
   { x: 0.75, y: 0.75 },
   { x: 1, y: 1 },
 ]
 
-interface EditorTriggerProps {
-  points: IPoint[]
-  algo?: 'linear' | 'bezier'
-}
-
-const EditorTrigger = forwardRef<HTMLDivElement, EditorTriggerProps>(function EditorTrigger(
-  props: EditorTriggerProps,
-  forwardedRef
-) {
-  const { points, algo, ...rest } = props
-  const rootRef = useRef<HTMLDivElement>(null)
-  const [size, setSize] = useState({ width: 0, height: 0 })
-
-  useLayoutEffect(() => {
-    rootRef.current && setSize(rootRef.current.getBoundingClientRect())
-  }, [])
-
-  let path = ''
-  if (size.width !== 0 && points.length) {
-    const bezierPoint = convertPointsToBezierPoints(denormalizePoint(points, size.width, size.height), algo)
-    const generatePath = algo === 'bezier' ? generateCurve : generateLineByPoints
-    path = generatePath(bezierPoint, 1, 0, size.width)
+/** Compatibility boundary only. Rendering, editing and optional presets belong to the unified package. */
+export function BezierCurveEditor({
+  value,
+  defaultValue,
+  onChange,
+  algo = 'bezier',
+  axisLabel = 'time',
+  yTickScale = 1,
+  yRangeMode = 'symmetric',
+  onYTickScaleChange,
+  onYTickScaleCommit,
+  yTickScaleMin = 0.01,
+  yTickScaleMax,
+  disabled,
+  readOnly,
+  presetService,
+  presets,
+}: BezierCurveEditorProps) {
+  const [local, setLocal] = useState(() => defaultValue ?? initial.map((point) => ({ ...point })))
+  const curve = fromLegacyCurve(value ?? local, algo)
+  const beforeEdit = useRef<IPoint[] | null>(null)
+  const publish = (next: IPoint[]) => {
+    if (value === undefined) setLocal(next)
+    onChange?.(next)
   }
-
   return (
-    <BezierCurveEditorTrigger ref={mergeRefs([rootRef, forwardedRef])} {...rest}>
-      {!!size.width && (
-        <svg width={size.width} height={size.height} viewBox={`0 -${size.height} ${size.width} ${size.height}`}>
-          <path d={path} />
-        </svg>
+    <div style={{ minWidth: 0, width: '100%' }}>
+      <CurvePicker
+        value={curve}
+        label="Edit curve"
+        disabled={disabled}
+        readOnly={readOnly}
+        presetService={presetService}
+        presets={presets}
+        showInterpolationSelector={false}
+        xLabel={axisLabel}
+        formatYTick={(value) => Number((value * yTickScale).toPrecision(6)).toString()}
+        bounds={{ xMin: 0, xMax: 1, yMin: yRangeMode === 'positive' ? 0 : -1, yMax: 1 }}
+        defaultViewport={{ xMin: 0, xMax: 1, yMin: yRangeMode === 'positive' ? 0 : -1, yMax: 1 }}
+        onEditStart={() => {
+          beforeEdit.current = toLegacyCurve(curve)
+        }}
+        onValueChange={(next) => publish(toLegacyCurve(next))}
+        onValueCommit={() => {
+          beforeEdit.current = null
+        }}
+        onEditCancel={(reason) => {
+          const snapshot = beforeEdit.current
+          beforeEdit.current = null
+          if (snapshot && ['escape', 'pointer-cancel', 'window-blur', 'disabled', 'read-only'].includes(reason))
+            publish(snapshot)
+        }}
+      />
+      {onYTickScaleChange && (
+        <InputNumber
+          aria-label="Curve Y display scale"
+          value={yTickScale}
+          min={yTickScaleMin}
+          max={yTickScaleMax}
+          step={0.01}
+          disabled={disabled}
+          readOnly={readOnly}
+          onValueChange={onYTickScaleChange}
+          onValueCommit={onYTickScaleCommit}
+        />
       )}
-    </BezierCurveEditorTrigger>
-  )
-})
-
-const CurveWrapper = styled('div', {
-  base: { borderRadius: '6px', backgroundColor: 'var(--colors-gray1)', padding: '8px' },
-})
-
-const LocalStorageKey = '_bezier_curve_presets'
-
-export const BezierCurveEditor = function BezierCurveEditor(props: BezierCurveEditorProps) {
-  const {
-    onChange,
-    value,
-    defaultValue,
-    algo = 'bezier',
-    axisLabel,
-    yTickScale = 1,
-    yRangeMode = 'symmetric',
-    onYTickScaleChange,
-    onYTickScaleCommit,
-    yTickScaleMin = 0.01,
-    yTickScaleMax,
-  } = props
-  const resolvedAxisLabel = axisLabel ?? 'time'
-  const [presets, setPresets] = useState<IPoint[][]>([])
-  const [points, setPoints] = useControllableState<IPoint[]>({
-    prop: value,
-    defaultProp: defaultValue || defaultPoints,
-    onChange: onChange,
-  })
-
-  useEffect(() => {
-    const getLocalPresets = localStorage.getItem(LocalStorageKey)
-    if (getLocalPresets) {
-      setPresets(JSON.parse(getLocalPresets))
-    }
-  }, [])
-
-  function applyPreset(points: IPoint[]) {
-    setPoints(points)
-  }
-
-  function addPreset() {
-    const newPresets = [...presets, points]
-    setPresets(newPresets)
-    localStorage.setItem(LocalStorageKey, JSON.stringify(newPresets))
-  }
-
-  function onDeletePreset(index: number) {
-    setPresets((state) => {
-      const newPresets = [...state]
-      newPresets.splice(index, 1)
-      localStorage.setItem(LocalStorageKey, JSON.stringify(newPresets))
-      return newPresets
-    })
-  }
-
-  return (
-    <Popover
-      trigger={<EditorTrigger points={points} algo={algo} />}
-      sideOffset={2}
-      compact
-      onOpenAutoFocus={(event) => event.preventDefault()}>
-      <CurveWrapper>
-        <Editor
-          algo={algo}
-          width={400}
-          height={220}
-          points={points}
-          yTickScale={yTickScale}
-          yRangeMode={yRangeMode}
-          onYTickScaleChange={onYTickScaleChange}
-          onYTickScaleCommit={onYTickScaleCommit}
-          yTickScaleMin={yTickScaleMin}
-          yTickScaleMax={yTickScaleMax}
-          axisLabel={resolvedAxisLabel}
-          onPointsChange={setPoints}
-        />
-        <BezierCurvePresets
-          presets={presets}
-          onApplyPreset={applyPreset}
-          onAddPreset={addPreset}
-          onDeletePreset={onDeletePreset}
-        />
-      </CurveWrapper>
-    </Popover>
+    </div>
   )
 }
-
 export type { IPoint, IBezierPoint } from './types'

@@ -602,3 +602,49 @@ export type {
   ColorDistributionEditSource,
   ColorDistributionCommitReason,
 } from './templates/color/ColorDistributionTemplate'
+export type { CurvePointId, CurveCoordinate, CurvePoint, CurveValue, CurveViewport, CurveTick } from './values/curve'
+export {
+  assertCurveValue,
+  copyCurveValue,
+  areCurvesEqual,
+  sampleCurve,
+  assertCurveViewport,
+  fitCurveViewport,
+  getCurveTicks,
+  createCurvePath,
+  getCurvePointBounds,
+  updateCurvePoint,
+  addCurvePoint,
+  removeCurvePoints,
+  setCurveInterpolation,
+} from './values/curve'
+export type {
+  CurveEditSource,
+  CurveCommitReason,
+  CurveCancelReason,
+  CurveEditCallbacks,
+} from './interaction/curve/types'
+export { CurveWidget, type CurveWidgetProps } from './widgets/curve/CurveWidget'
+export { CurvePicker, type CurvePickerProps } from './templates/curve/CurvePicker'
+export { CurvePresets, defaultCurvePresets, type CurvePresetsProps } from './templates/curve/CurvePresets'
+export type { CurvePresetSummary, CurvePreset, CurvePresetSaveInput, CurvePresetService } from './contracts/curve'
+export {
+  NumericDistributionTemplate,
+  type NumericDistributionTemplateProps,
+  type NumericDistributionEditSource,
+  type NumericDistributionCommitReason,
+} from './templates/curve/NumericDistributionTemplate'
+export type {
+  NumericDistributionValue,
+  NumericDistributionMode,
+  NumericDistributionCache,
+} from './values/numeric-distribution'
+export {
+  numericDistributionModes,
+  assertNumericDistributionValue,
+  copyNumericDistributionValue,
+  areNumericDistributionsEqual,
+  copyNumericDistributionCache,
+  rememberNumericDistribution,
+  switchNumericDistributionMode,
+} from './values/numeric-distribution'

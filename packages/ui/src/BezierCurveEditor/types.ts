@@ -1,29 +1,16 @@
-export interface IPoint extends Record<string, number> {
+import type { CurveCoordinate } from '@pivot-ui/react'
+
+/** Legacy flat point DTO; optional metadata preserves stable identity and independent handles. */
+export interface IPoint {
   x: number
   y: number
+  id?: string
+  /** Encoding of values emitted by the adapter; absent on original legacy data. */
+  interpolation?: 'linear' | 'bezier'
+  inHandle?: CurveCoordinate
+  outHandle?: CurveCoordinate
 }
-
 export interface IBezierPoint {
   point: IPoint
-  controlPoint: IPoint
-}
-
-export interface BezierCurveEditorProps {
-  algo?: 'bezier' | 'linear'
-  width: number
-  height: number
-  yTickScale?: number
-  yRangeMode?: 'symmetric' | 'positive'
-  onYTickScaleChange?: (value: number) => void
-  onYTickScaleCommit?: () => void
-  yTickScaleMin?: number
-  yTickScaleMax?: number
-  zoomable?: boolean
-  zoomSpeed?: number
-  zoomLimit?: [number, number]
-  points?: IPoint[]
-  defaultPoints?: IPoint[]
-  onPointsChange?: (value: IPoint[]) => void
-  doubleControlPoint?: boolean
-  axisLabel?: string
+  controlPoint: IPoint | null
 }

@@ -15,3 +15,4 @@ export type {
 } from './property'
 export type { HostCapabilities, HostFileReference, HostFileRequest } from './capabilities'
 export type { ColorCapabilities } from './color'
+export type { CurvePresetSummary, CurvePreset, CurvePresetSaveInput, CurvePresetService } from './curve'

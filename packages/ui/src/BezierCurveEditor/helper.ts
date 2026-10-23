@@ -1,169 +1,78 @@
-import { IBezierPoint, IPoint } from './types'
+import { assertCurveValue, type CurveValue, type CurvePoint } from '@pivot-ui/react'
+import type { IPoint } from './types'
 
-function scalePoints(points: IBezierPoint[], zoom: number): IBezierPoint[] {
-  return points.map((point) => ({
-    point: { x: point.point.x / zoom, y: point.point.y / zoom },
-    controlPoint: point.controlPoint ? { x: point.controlPoint.x / zoom, y: point.controlPoint.y / zoom } : null,
-  }))
-}
-
-export function generateCurve(points: IBezierPoint[], zoom = 1, extendLeftX?: number, extendRightX?: number): string {
-  const scaled = scalePoints(points, zoom)
-  const first = scaled[0]
-  const last = scaled[scaled.length - 1]
-
-  let d =
-    extendLeftX !== undefined
-      ? `M ${extendLeftX} ${first.point.y} L ${first.point.x} ${first.point.y}`
-      : `M ${first.point.x} ${first.point.y}`
-
-  d += ` C ${first.controlPoint.x} ${first.controlPoint.y}, ${scaled[1].controlPoint.x} ${scaled[1].controlPoint.y} ${scaled[1].point.x} ${scaled[1].point.y}`
-  d += scaled
-    .slice(2)
-    .map((point) => ` S ${point.controlPoint.x} ${point.controlPoint.y}, ${point.point.x} ${point.point.y}`)
-    .join('')
-
-  if (extendRightX !== undefined) {
-    d += ` L ${extendRightX} ${last.point.y}`
-  }
-
-  return d
-}
-
-export function generateLineByPoints(
-  points: IBezierPoint[],
-  zoom = 1,
-  extendLeftX?: number,
-  extendRightX?: number
-): string {
-  const scaled = scalePoints(points, zoom)
-  const first = scaled[0]
-  const last = scaled[scaled.length - 1]
-
-  let d =
-    extendLeftX !== undefined
-      ? `M ${extendLeftX} ${first.point.y} L ${first.point.x} ${first.point.y}`
-      : `M ${first.point.x} ${first.point.y}`
-
-  d += scaled
-    .slice(1)
-    .map((point) => ` L ${point.point.x} ${point.point.y}`)
-    .join('')
-
-  if (extendRightX !== undefined) {
-    d += ` L ${extendRightX} ${last.point.y}`
-  }
-
-  return d
-}
-
-export function convertPointsToBezierPoints(points: IPoint[], algo: 'bezier' | 'linear' = 'bezier'): IBezierPoint[] {
-  if (points.length <= 3) {
-    algo = 'linear'
-  }
-
-  if (algo === 'linear') {
-    return points.map((point) => ({ point, controlPoint: null }))
-  }
-
-  const [point, controlPoint, ...restPoints] = points
-  const bezierPoints: IBezierPoint[] = [{ point, controlPoint }]
-  const restLength = restPoints.length
-
-  for (let index = 0; index < restLength; index += 2) {
-    const [controlPoint, point] = restPoints.slice(index, index + 2)
-    bezierPoints.push({ point, controlPoint })
-  }
-
-  return bezierPoints
-}
-
-export function convertBezierPointToPoint(
-  bezierPoints: IBezierPoint[],
-  algo: 'bezier' | 'linear' = 'bezier'
-): IPoint[] {
-  if (algo === 'linear') {
-    return bezierPoints.map((bezierPoint) => bezierPoint.point)
-  }
-  const result: IPoint[] = []
-  for (const bezierPoint of bezierPoints) {
-    if (result.length === 0) {
-      result.push(bezierPoint.point, bezierPoint.controlPoint)
-    } else {
-      result.push(bezierPoint.controlPoint, bezierPoint.point)
+/** The old flat cubic encoding was P0,C0,C1,P1,C2,P2,... with mirrored intermediate outgoing handles. */
+export function fromLegacyCurve(points: readonly IPoint[], interpolation: 'linear' | 'bezier'): CurveValue {
+  interpolation = points[0]?.interpolation ?? interpolation
+  const encoded = interpolation === 'bezier' && (points.length >= 4 || points[0]?.interpolation === 'bezier')
+  if (encoded && points.length % 2 !== 0) throw new Error('Legacy cubic curves require pairs of anchors and handles.')
+  const anchors: CurvePoint[] = []
+  if (encoded) {
+    for (let index = 0; index < points.length / 2; index++) {
+      const anchor = points[index === 0 ? 0 : index * 2 + 1]
+      const handle = points[index === 0 ? 1 : index * 2]
+      anchors.push({
+        id: anchor.id ?? `legacy-point-${index}`,
+        x: anchor.x,
+        y: anchor.y,
+        ...(anchor.interpolation
+          ? {
+              ...(anchor.inHandle ? { inHandle: { ...anchor.inHandle } } : {}),
+              ...(anchor.outHandle ? { outHandle: { ...anchor.outHandle } } : {}),
+            }
+          : {
+              ...(index > 0 ? { inHandle: { x: handle.x, y: handle.y } } : {}),
+              ...(index < points.length / 2 - 1
+                ? {
+                    outHandle:
+                      index === 0
+                        ? { x: handle.x, y: handle.y }
+                        : { x: 2 * anchor.x - handle.x, y: 2 * anchor.y - handle.y },
+                  }
+                : {}),
+            }),
+      })
     }
+  } else
+    for (const [index, point] of points.entries())
+      anchors.push({
+        id: point.id ?? `legacy-point-${index}`,
+        x: point.x,
+        y: point.y,
+        ...(point.inHandle ? { inHandle: { ...point.inHandle } } : {}),
+        ...(point.outHandle ? { outHandle: { ...point.outHandle } } : {}),
+      })
+  const value: CurveValue = {
+    interpolation: encoded || points.length === 0 ? interpolation : 'linear',
+    points: anchors,
   }
-  return result
+  assertCurveValue(value)
+  return value
 }
 
-export function denormalizePoint(points: IPoint[], scaleX: number, scaleY: number, zoom = 1): IPoint[] {
-  return points.map((point) => {
-    return {
-      x: point.x * scaleX * zoom,
-      y: -point.y * scaleY * zoom,
+/** Preserve the legacy pair layout, plus explicit metadata for handles the old mirrored form could not express. */
+export function toLegacyCurve(value: CurveValue): IPoint[] {
+  assertCurveValue(value)
+  if (value.interpolation === 'linear')
+    return value.points.map(({ id, x, y, inHandle, outHandle }) => ({
+      id,
+      x,
+      y,
+      interpolation: 'linear',
+      ...(inHandle ? { inHandle: { ...inHandle } } : {}),
+      ...(outHandle ? { outHandle: { ...outHandle } } : {}),
+    }))
+  return value.points.flatMap((point, index) => {
+    const incoming = point.inHandle ?? { x: point.x, y: point.y }
+    const outgoing = point.outHandle ?? { x: point.x, y: point.y }
+    const anchor: IPoint = {
+      id: point.id,
+      interpolation: 'bezier',
+      x: point.x,
+      y: point.y,
+      ...(point.inHandle ? { inHandle: { ...point.inHandle } } : {}),
+      ...(point.outHandle ? { outHandle: { ...point.outHandle } } : {}),
     }
+    return index === 0 ? [anchor, { ...outgoing }] : [{ ...incoming }, anchor]
   })
-}
-
-export function normalizePoint(points: IPoint[], scaleX: number, scaleY: number, zoom = 1): IPoint[] {
-  return points.map((point) => {
-    return {
-      x: (point.x / scaleX) * zoom,
-      y: (-point.y / scaleY) * zoom,
-    }
-  })
-}
-
-export function getDefaultOffset(height: number) {
-  return {
-    x: 0,
-    y: -Math.round(height / 2),
-  }
-}
-
-function factorial(num: number) {
-  if (num === 0) return 1
-  let result = 1
-  for (let i = 2; i <= num; i++) {
-    result *= i
-  }
-  return result
-}
-
-export function getPointOnLinear(points: IPoint[], t: number): IPoint {
-  if (points.length < 2) {
-    throw new Error('At least 2 points are required to calculate the point on a linear curve')
-  }
-
-  t = Math.max(0, Math.min(1, t))
-
-  const segments = points.length - 1
-
-  const segment = Math.min(Math.floor(t * segments), segments - 1)
-
-  const segmentT = t * segments - segment
-
-  const p0 = points[segment]
-  const p1 = points[segment + 1]
-
-  return {
-    x: p0.x + (p1.x - p0.x) * segmentT,
-    y: p0.y + (p1.y - p0.y) * segmentT,
-  }
-}
-
-export function getPointOnCurve(points: IPoint[], t: number): IPoint {
-  const n = points.length - 1 // Degree of the curve
-  let x = 0
-  let y = 0
-
-  // Compute the point on the Bezier curve using the Bernstein polynomial
-  for (let i = 0; i <= n; i++) {
-    const binomialCoefficient = factorial(n) / (factorial(i) * factorial(n - i))
-    const term = binomialCoefficient * Math.pow(t, i) * Math.pow(1 - t, n - i)
-    x += term * points[i].x
-    y += term * points[i].y
-  }
-
-  return { x, y }
 }
