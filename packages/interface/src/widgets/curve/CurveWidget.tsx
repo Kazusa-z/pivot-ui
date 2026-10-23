@@ -51,7 +51,7 @@ export interface CurveWidgetProps
   viewport?: CurveViewport
   defaultViewport?: CurveViewport
   onViewportChange?: (viewport: CurveViewport) => void
-  /** Editing bounds do not change existing points or viewport. An unreachable x interval keeps its current x. */
+  /** 限制用户编辑点时可达到的范围。已有点与视口保持原样；若某点无法在当前 x 范围内移动，请调整边界或相邻点。 */
   bounds?: Partial<CurveViewport>
   xStep?: number
   yStep?: number
@@ -782,7 +782,7 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
         id={helpId}
         className={css({ margin: 0, fontSize: '11px', lineHeight: 1.5, color: 'var(--colors-textMuted)' })}>
         Select a point; drag it or use arrow keys. Shift adds to selection. Double-click the graph to add. Drag empty
-        space to pan; wheel zooms. Escape cancels an edit. Selection and view changes do not edit the curve.
+        space to pan; wheel zooms. Escape cancels an edit. Use pan and zoom to inspect different parts of the curve.
       </p>
       {selectedPoint && (
         <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '8px' })}>
@@ -825,7 +825,7 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
                   }
                   onEditCancel={edit.cancel}
                 />
-                {unreachable && <span>No editable X interval within these bounds.</span>}
+                {unreachable && <span>Adjust the X limits or neighboring points to move this point horizontally.</span>}
               </label>
             )
           })}

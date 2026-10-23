@@ -21,6 +21,14 @@ const initial: readonly Layer[] = [
   { id: 3, name: 'Highlights', weight: 0.2, enabled: false },
 ]
 const meta = {
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'CollectionTemplate 用于编辑带稳定标识的条目列表，例如图层、材质槽或规则集合。它提供展开、选择、重命名、增删和排序入口，条目内容由 renderItem 组合。应用在 onAdd、onDelete、onRename、onReorder 中更新 items，并分别保存选择与展开状态；异步失败可通过 Promise rejection 显示错误并保留重试入口。',
+      },
+    },
+  },
   title: 'Templates/CollectionTemplate',
   component: CollectionTemplate<Layer>,
   tags: ['autodocs'],
@@ -83,10 +91,10 @@ function CollectionExample({
     <div className={frameClass}>
       <p className={css({ margin: 0, fontSize: '12px', color: 'var(--colors-textMuted)' })}>
         {async
-          ? 'The mock host waits 600 ms and rejects the first rename. The draft stays available for Enter retry. Reset ignores old completions.'
+          ? '重命名通过 onRename 交给应用保存。此例等待 600ms 并拒绝首次请求，错误出现后保留草稿，按 Enter 可重试；Reset 更新请求版本，应用据此忽略此前结果。'
           : refusal
-            ? 'The parent refuses order, selection and expansion requests. The displayed state remains authoritative.'
-            : 'Numeric key 1 and string key "1" are distinct. Expand, select, rename, delete and move controls are separate keyboard targets.'}
+            ? '应用记录排序、选择和展开请求，但保持原来的 items、selectedKeys 与 expandedKeys。组件继续显示传入状态，应用接受请求时再回写对应值。'
+            : '此列表把数字 key 1 与字符串 key `1` 作为两个条目。展开、选择、重命名、删除和移动各有独立的键盘入口；应用在对应回调中更新条目数据与界面状态。'}
       </p>
       <div className={toolbarClass}>
         <Button size="sm" onClick={reset}>

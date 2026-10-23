@@ -14,6 +14,14 @@ const options: readonly ChoiceOption[] = [
 ]
 const frame = css({ display: 'grid', gap: '12px', width: 'min(360px, 100%)' })
 const meta = {
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Combobox 适合从较多选项中搜索并选择一项或多项。options 提供稳定 key、显示 label 和原始 value，onValueChange 返回选中的值；multiple 模式始终使用数组。搜索文字与选中值分开，应用通过 value 接受选择请求；数字与字符串保持各自类型，单选 null 表示未选择。',
+      },
+    },
+  },
   title: 'Widgets/Choices/Combobox',
   component: Combobox,
   tags: ['autodocs'],

@@ -55,7 +55,7 @@ function App() {
         </Button>
         <ThemeControls />
         <Text size="sm" tone="muted">
-          Check the bundle analyzer to verify tree-shaking is working correctly
+          Click the button to update the count, then choose a theme to preview the controls.
         </Text>
       </DemoRoot>
     </ThemeProvider>

@@ -10,7 +10,7 @@ export interface NotificationProviderProps {
   hostProps?: Omit<ToasterProps, 'toasterId' | 'onDismiss'>
 }
 
-/** Application boundary: owns a scoped service connection and a single elected visual host. */
+/** 为界面提供通知服务和展示位置。子组件通过 useNotifications 发送消息，可传入 service 与应用中的其他调用方共享通知。 */
 export function NotificationProvider({ children, service, hostProps }: NotificationProviderProps) {
   const [ownService] = useState(createNotificationService)
   const activeService = service ?? ownService

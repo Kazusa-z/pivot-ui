@@ -99,7 +99,7 @@ function message(error: unknown) {
   return error instanceof Error ? error.message : String(error)
 }
 
-/** Resource browsing is UI state. Selecting an ID is an atomic request to the host. */
+/** 浏览并选择资源，支持搜索、筛选、分页和列表/网格视图。通过 provider 加载资源，onSelectedIdChange 更新选中项，onSelect 请求应用接受资源 ID。 */
 export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(function ResourcePicker(
   {
     provider,

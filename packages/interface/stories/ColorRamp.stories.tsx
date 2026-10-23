@@ -35,8 +35,8 @@ function RampExample({
   const append = (text: string) => setEvents((current) => [...current.slice(-11), text])
   return (
     <ContractFrame
-      title="Color ramp"
-      description="重合blue/green停靠点拥有独立ID。选择不写value；箭头/Home/End编辑位置，按住后松开只提交一次。Delete删除焦点点；Escape取消拖动。色彩以模型的显式空间插值，显示只做预览裁剪。"
+      title="颜色渐变与停靠点"
+      description="先分别选择位于同一位置的 blue 和 green，再拖动其中一个点，观察渐变与下方数据。也可用方向键调整位置、Delete 删除或 Escape 撤销本次调整。接入时用 onValueChange 更新预览，在 onValueCommit 中保存整条渐变。"
       onReset={() => {
         setValue(initial)
         setSelected(empty ? null : 'blue')
@@ -93,7 +93,7 @@ function RampExample({
                 if (currentRevision.current !== revision) return
                 if (reject) {
                   setValue(initialValue)
-                  throw Error('Host rejected the color ramp. Change Commit to Accept and retry.')
+                  throw Error('渐变未保存，请将 Commit 切换为 Accept 后重试。')
                 }
               }
               if (!refuse) setValue(next)
@@ -105,7 +105,7 @@ function RampExample({
           />
         </StrictMode>
       )}
-      <StatePanel label="Ramp, selection and lifecycle" value={{ value, selected, revision, refuse, events }} />
+      <StatePanel label="渐变数据、当前选择与编辑事件" value={{ value, selected, revision, refuse, events }} />
     </ContractFrame>
   )
 }
@@ -122,8 +122,8 @@ function RampStates() {
   const [revision, setRevision] = useState(0)
   return (
     <ContractFrame
-      title="Read-only, disabled and narrow ramp"
-      description="只读停靠点仍可聚焦和选择以检查颜色，数值编辑不可用。disabled阻止所有交互。第三个编辑器限制到240px以检查换行。"
+      title="只读、禁用与窄空间布局"
+      description="比较只读、禁用和 240px 窄布局中的编辑器。可在只读示例里选择点查看颜色，再用 Tab 体验各控件的焦点；第三个示例可以直接编辑，方便观察窄表单中的换行效果。"
       onReset={() => setRevision((value) => value + 1)}>
       <ColorRamp value={initialRamp} readOnly aria-label="Read-only ramp" />
       <ColorRamp value={initialRamp} disabled aria-label="Disabled ramp" />
@@ -138,8 +138,8 @@ function RampPopup() {
   const [revision, setRevision] = useState(0)
   return (
     <ContractFrame
-      title="Ramp picker"
-      description="紧凑入口使用主题感知Popover；选中色的单色Picker可嵌套打开。关闭后再打开保留父级数值；触发器ref和原生属性可转发。"
+      title="弹出式渐变编辑器"
+      description="点击渐变预览打开编辑器，再点击当前颜色打开单色选择器。改好颜色后关闭并重新打开，查看保存的渐变；应用只需用 value/onValueChange 连接状态，就能把这种紧凑入口放进表单。"
       onReset={() => {
         setValue(initialRamp)
         setRevision((value) => value + 1)
@@ -152,9 +152,18 @@ function RampPopup() {
   )
 }
 const meta = {
+  tags: ['autodocs'],
   title: 'Templates/ColorRamp',
   component: ColorRamp,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ColorRamp 用于编辑随位置变化的颜色渐变；ColorRampPicker 提供紧凑按钮和弹出编辑器。每个停靠点都有稳定 id、0 到 1 的 position 和一个颜色值。\n\n选择停靠点只切换编辑对象；拖动、键盘移动、增删或改色通过 onValueChange 更新整个渐变，并由 onValueCommit 表示一次完整编辑。应用保存 value，并在受控取消时恢复编辑前的值。\n\ninterpolation 控制线性或阶梯过渡，同一位置可以有多个独立停靠点。颜色按声明的色彩空间插值；HDR 值保留在数据中，预览会限制到屏幕可显示范围。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof ColorRamp>
 export default meta
 type Story = StoryObj<typeof meta>

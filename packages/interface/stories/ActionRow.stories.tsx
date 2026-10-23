@@ -10,8 +10,8 @@ function ActionRowExample() {
   const [count, setCount] = useState(0)
   return (
     <ContractFrame
-      title="Application actions"
-      description="动作行只接收操作回调，不声明字符串字段值。多个动作通过显式名称关联。"
+      title="属性行中的操作"
+      description="将相关操作放在同一属性行，适合刷新预览或打开工具。点击 Refresh preview 会调用 onClick 并增加计数；Preview 为整组提供名称，按钮各自说明要执行的操作。"
       onReset={() => setCount(0)}>
       <PropertyRow>
         <PropertyLabel id={id}>Preview</PropertyLabel>
@@ -27,7 +27,19 @@ function ActionRowExample() {
   )
 }
 
-const meta = { title: 'Layout/Action row', component: ActionRowExample } satisfies Meta<typeof ActionRowExample>
+const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '动作行用于把刷新、打开工具等操作与属性面板的其他行对齐。用 PropertyRow、PropertyLabel 和 PropertyControl 组合一组 Button，点击后在 onClick 中执行应用操作。多个按钮用 association="group" 和 labelledBy 共享组名，每个按钮仍有自己的操作名称。',
+      },
+    },
+  },
+  title: 'Layout/Action row',
+  component: ActionRowExample,
+} satisfies Meta<typeof ActionRowExample>
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = {}

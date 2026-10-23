@@ -81,14 +81,14 @@ function ColorExample({ kind = 'inline' }: { kind?: Example }) {
       record(`commit:${reason}`)
       if (kind === 'async') await new Promise((resolve) => setTimeout(resolve, 650))
       if (currentRevision !== revisionRef.current) {
-        record('stale completion ignored by host')
+        record('应用忽略较早的保存结果')
         return
       }
       if (rejectNext.current) {
         rejectNext.current = false
         setValue(start.current)
         record('rejected')
-        throw new Error('Host rejected this color. Retry with Enter or edit again.')
+        throw new Error('颜色未保存，请按 Enter 重试或继续修改。')
       }
       if (kind !== 'frozen') setValue(next)
       record('accepted')
@@ -102,15 +102,15 @@ function ColorExample({ kind = 'inline' }: { kind?: Example }) {
   const { hdr: _hdr, ...hdrCommon } = common
   return (
     <ContractFrame
-      title={`Single color · ${kind}`}
+      title={`单色编辑 · ${kind}`}
       description={
         kind === 'hdr'
-          ? 'RGB is the sole HDR value. Peak RGB is derived in the declared encoding; display/HEX clip only the preview. Pure black has no stored hue, so increasing its peak creates neutral RGB.'
+          ? '调整 Peak RGB，观察 RGB 三个通道按比例变亮或变暗，以及下方数值如何保留大于 1 的亮度。屏幕预览和 HEX 显示的是可显示范围内的颜色；把颜色设为纯黑后再提高亮度，可以看到中性灰色的起始效果。'
           : kind === 'async'
-            ? 'Mock capabilities and commits are delayed. Reject next commit retains an editable draft; Enter retries. External update/Reset/Disable invalidates late capability results.'
+            ? '试试取色或修改一个颜色通道，体验等待保存的过程。点击 Reject next commit 后再编辑，会看到错误提示并可按 Enter 重试。下方事件记录展示每次编辑；应用可在 onValueCommit 返回 Promise 来接入自己的保存操作。'
             : kind === 'frozen'
-              ? 'The host records requests without accepting previews. Numeric/graphical rendering stays authoritative; a submitted text draft returns to the accepted value.'
-              : 'Drag the SV plane or Hue slider; RGB/HSV fields provide keyboard editing. HEX is always sRGB. Display encoding is UI state; the stored space never changes.'
+              ? '拖动取色区域或输入 RGB，比较事件记录与保持原色的预览。这个示例让应用保留原值，用来展示受控组件的接法：在 onValueChange 中更新 value 后，颜色就会跟随编辑。'
+              : '拖动饱和度/明度区域或色相滑块调整颜色，也可用键盘编辑 RGB、HSV 和 HEX。HEX 始终按 sRGB 解释；显示空间切换只改变查看方式，value.space 仍由应用决定。'
       }
       onReset={() => {
         revisionRef.current++
@@ -166,20 +166,26 @@ function ColorExample({ kind = 'inline' }: { kind?: Example }) {
           </ControlButton>
         )}
       </div>
-      <StatePanel
-        label="Authoritative color / UI state"
-        value={{ value, displaySpace: space, revision, disabled, readOnly }}
-      />
-      <StatePanel label="Edit events" value={events} />
+      <StatePanel label="当前颜色与显示状态" value={{ value, displaySpace: space, revision, disabled, readOnly }} />
+      <StatePanel label="编辑事件" value={events} />
     </ContractFrame>
   )
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Widgets/Color',
   component: ColorWidget,
   args: { value: blue },
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '这组组件用于编辑单个颜色：ColorWidget 提供完整颜色面板，ColorPicker 放在弹层中，ColorInput 组合紧凑输入，HDRColorInput 额外提供亮度倍率输入。\n\n颜色值包含 space、r、g、b、a。普通 RGB 与 alpha 使用 0 到 1，启用 hdr 后 RGB 可大于 1。onValueChange 用于实时预览，onValueCommit 用于保存一次编辑；受控用法中，应用通过 onEditCancel 恢复编辑前的值。\n\nHEX 输入始终使用 sRGB，显示空间切换不会改变存储空间。剪贴板与屏幕取色通过 capabilities 注入；未提供的方法对应操作不可用。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof ColorWidget>
 export default meta
 type Story = StoryObj<typeof meta>

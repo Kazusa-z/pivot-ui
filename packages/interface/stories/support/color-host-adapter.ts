@@ -1,7 +1,7 @@
 import { convertColorSpace, type ColorSpace, type ColorValue } from '../../src/values/color'
 import type { ColorRampChannelsValue } from '../../src/values/color-ramp'
 
-/** Example host DTO: normalized channels, explicit storage encoding and stable engine IDs. */
+/** 示例颜色数据，展示应用如何传递归一化通道、颜色编码和稳定资源 ID。 */
 export interface HostColorChannels {
   color: readonly { id: string; time: number; value: { r: number; g: number; b: number; a: number } }[]
   alpha: readonly { id: string; time: number; value: number }[]

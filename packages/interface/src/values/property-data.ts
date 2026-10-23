@@ -1,8 +1,8 @@
-/** Serializable property metadata; this is not the default PropertyAccess value type. */
+/** 属性描述中可保存的普通元数据。属性的实际值类型通过 PropertyAccess<T> 的 T 指定。 */
 export type PropertyData =
   null | boolean | string | number | undefined | readonly PropertyData[] | { readonly [key: string]: PropertyData }
 
-/** Copies plain data without invoking accessors or retaining mutable host instances. Cycles are rejected. */
+/** 深拷贝普通属性数据，生成可共享的快照。传入由基础值、数组和普通对象组成的无环数据；自定义实例请先由应用转换。 */
 export function clonePropertyData<T>(value: T): T {
   const active = new Set<object>()
   function copy(input: unknown): unknown {

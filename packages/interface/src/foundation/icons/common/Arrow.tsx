@@ -27,7 +27,7 @@ const animatedClass = css({
   '@media (prefers-reduced-motion: no-preference)': { transition: 'transform 0.2s' },
 })
 
-/** A decorative direction marker. The containing control owns its interaction. */
+/** 显示方向提示，适合折叠按钮或菜单项。点击与键盘操作由包含它的按钮处理。 */
 export const Arrow = forwardRef<SVGSVGElement, ArrowProps>(function Arrow(
   { direction = 'down', size = 'sm', animate, css: cssProp, className, style, ...props },
   ref

@@ -7,9 +7,19 @@ import { css } from '../styled-system/css'
 const frame = css({ display: 'grid', gap: '12px', width: 'min(460px, 100%)', minWidth: 0 })
 const rollback = (reason: NumericCancelReason) =>
   ['escape', 'pointer-cancel', 'window-blur', 'read-only', 'disabled'].includes(reason)
-const meta = { title: 'Templates/NumericSlider', component: NumericSlider, tags: ['autodocs'] } satisfies Meta<
-  typeof NumericSlider
->
+const meta = {
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'NumericSlider 把数值输入框和滑块连接到同一个值，适合既要快速拖动又要精确输入的参数。\n\nvalue/onValueChange 控制实时值，onValueCommit 表示完成一次编辑；输入框与滑块共用这组回调。min/max 是硬范围，softMin/softMax 可单独限定滑块的可见范围，文本仍可输入硬范围内的值。\n\n受控取消由应用恢复编辑前的值。异步提交可返回 Promise，拒绝后可继续编辑或重试；切换对象时更新 resetKey。id 对应数值输入框，滑块有单独的可访问名称。',
+      },
+    },
+  },
+  title: 'Templates/NumericSlider',
+  component: NumericSlider,
+  tags: ['autodocs'],
+} satisfies Meta<typeof NumericSlider>
 export default meta
 type Story = StoryObj<typeof meta>
 function SliderExample({ reject = false }: { reject?: boolean }) {
@@ -63,7 +73,10 @@ function SoftRangeExample() {
   const start = useRef(value)
   return (
     <div className={frame}>
-      <p>Text permits −200…200. The slider shows −50…50. Cancel restores the value captured at edit start.</p>
+      <p>
+        在输入框填入 150，观察数值和滑块端点的显示，再拖动滑块尝试 −50…50 内的快速调整。
+        需要同时支持大范围输入和小范围拖动时，可分别设置 min/max 与 softMin/softMax。
+      </p>
       <NumericSlider
         label="Offset"
         value={value}
@@ -116,7 +129,7 @@ function AsyncExample() {
           if (reject) {
             setValue(authority)
             record('rejected')
-            throw new Error('The host rejected this value. Change the value or retry.')
+            throw new Error('数值未保存，请继续修改或重试。')
           }
           setAuthority(next)
           setValue(next)

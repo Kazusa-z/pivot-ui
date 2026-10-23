@@ -8,12 +8,12 @@ function CalloutExample() {
   const [saved, setSaved] = useState(false)
   return (
     <ContractFrame
-      title="Callout"
-      description="视觉 severity 和语义 role 分开。普通说明默认 note；动态结果显式选择 status；紧急信息才使用 alert。长内容保持换行与可选择。"
+      title="在内容旁展示说明和结果"
+      description="Callout 适合把说明或操作结果放在相关内容旁。severity 决定颜色，role 决定辅助技术的播报方式：普通说明用 note，保存结果用 status，紧急错误用 alert。点击 Save 可更新结果说明。"
       onReset={() => setSaved(false)}>
       {(['info', 'warning', 'error', 'success'] as const).map((severity) => (
         <Callout key={severity} severity={severity} title={`${severity} note`} icon={<span>ⓘ</span>}>
-          This is descriptive content. A longer explanation can wrap without clipping in a narrow inspector.
+          说明文字会随容器宽度换行，适合放在窄侧栏中帮助理解当前操作。
         </Callout>
       ))}
       <Button onClick={() => setSaved(true)}>Save</Button>
@@ -21,7 +21,7 @@ function CalloutExample() {
         {saved ? 'Saved successfully.' : 'No changes saved.'}
       </Callout>
       <Callout role="alert" severity="error" title="Explicit alert">
-        This example deliberately requests an assertive announcement.
+        需要立即处理的错误可以使用 alert，让辅助技术及时播报。
       </Callout>
       <StatePanel label="Status" value={{ saved }} />
     </ContractFrame>
@@ -34,8 +34,8 @@ function ProgressExample() {
   const [indeterminate, setIndeterminate] = useState(false)
   return (
     <ContractFrame
-      title="Progress"
-      description="50 / 200 应为 25%，视觉宽度与 ARIA 数值使用同一范围。Indeterminate 不发布 aria-valuenow；无动画的条纹表示进度未知。"
+      title="展示任务完成比例"
+      description="Progress 根据 value 与 max 显示任务完成比例，例如 50 / 200 为 25%。应用在任务推进时更新 value；完成量未知时将 value 设为 null，以条纹表示等待，并省略具体进度播报。"
       onReset={() => {
         setValue(50)
         setMax(200)
@@ -89,8 +89,8 @@ function ProgressExample() {
 function SpinExample() {
   return (
     <ContractFrame
-      title="Spin"
-      description="独立 Spin 提供 Loading 名称；在已有 busy 状态的按钮内部使用 decorative。系统 prefers-reduced-motion 开启时停止转动，保留静态标识。"
+      title="提示正在加载"
+      description="Spin 用于提示正在加载。独立使用时提供描述任务的 label；放在已有名称和 busy 状态的按钮里时可设 decorative。系统开启减少动态效果后，图标以静态形式保留加载提示。"
       onReset={() => {}}>
       <div className={contractStyles.row}>
         <Spin size="xs" label="Loading thumbnail" />
@@ -107,7 +107,19 @@ function SpinExample() {
   )
 }
 
-const meta = { title: 'Widgets/Feedback', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Feedback',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Callout 显示持续可见的说明或结果，Progress 显示任务进度，Spin 表示正在等待。应用更新这些组件的内容和状态；它们适合与保存、加载或校验流程一起使用。根据消息紧急程度选择 note、status 或 alert；已有名称和忙碌状态的控件内部可把加载图标设为 decorative。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Callouts: Story = { render: () => <CalloutExample /> }

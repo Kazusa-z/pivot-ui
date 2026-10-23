@@ -9,8 +9,8 @@ function BadgeExample() {
   const [requests, setRequests] = useState(0)
   return (
     <ContractFrame
-      title="Badge and controlled Tag"
-      description="Badge 纯展示。Tag 的原生移除按钮仅发出 onRemove，数据由父级删除；Keep me 演示父级保留项。可用 Tab + Enter/Space 操作移除按钮。"
+      title="状态徽标与可移除标签"
+      description="Badge 用颜色和短文字显示分类；Tag 另外提供移除入口。点击移除按钮或用 Tab、Enter/Space 激活后，onRemove 通知应用更新数组。Keep me 的回调只记录请求，数组保持不变，因此标签仍然显示。"
       onReset={() => {
         setTags(['Mesh', 'Material', 'Texture'])
         setRequests(0)
@@ -57,7 +57,19 @@ function BadgeExample() {
   )
 }
 
-const meta = { title: 'Widgets/Badge and Tag', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Badge and Tag',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Badge 用于显示状态、数量或分类，Tag 适合表示可以移除的已选项。颜色、尺寸和外形影响展示；Tag 的移除按钮通过 onRemove 通知应用。应用在接受移除后更新标签数组，保留数组则标签继续显示；图标或缩写内容应配上能理解的名称。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <BadgeExample /> }

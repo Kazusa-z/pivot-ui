@@ -85,5 +85,5 @@ export function Toaster({
   )
 }
 
-/** Transitional scheduler API. New applications should inject a NotificationService. */
+/** 直接使用 react-hot-toast 调度通知，需配合 Toaster 展示。需要按应用区域共享服务时，使用 NotificationProvider 和 useNotifications。 */
 export { toast } from 'react-hot-toast'

@@ -24,8 +24,8 @@ function SingleControlExample() {
   const [help, setHelp] = useState(true)
   return (
     <ContractFrame
-      title="Explicit single control"
-      description="点击 Name 聚焦输入；说明直接呈现并通过 aria-describedby 关联。布局不查找或改写控件。"
+      title="标签关联单个输入"
+      description="点击 Name 会聚焦与 htmlFor 对应的输入框。帮助文字显示在行下方，并通过 aria-describedby 关联；组合时由应用把 id 和描述属性传给真实输入控件。"
       onReset={() => {
         setValue('Object')
         setDisabled(false)
@@ -51,7 +51,7 @@ function SingleControlExample() {
             onChange={(e) => setValue(e.currentTarget.value)}
           />
         </PropertyControl>
-        {help && <PropertyDescription id={`${id}-help`}>This field accepts a human-readable name.</PropertyDescription>}
+        {help && <PropertyDescription id={`${id}-help`}>输入便于识别的显示名称。</PropertyDescription>}
       </PropertyRow>
       <StatePanel label="State" value={{ value, disabled, help }} />
     </ContractFrame>
@@ -64,8 +64,8 @@ function ControlGroupExample() {
   const [locked, setLocked] = useState(false)
   return (
     <ContractFrame
-      title="Explicit control group"
-      description="Coordinates 命名整个组；X/Y 保留自己的名称。标签旁的按钮是独立操作，不混入组名称。"
+      title="为多个输入提供组名"
+      description="Coordinates 为坐标组提供共享名称，X 和 Y 分别说明每个输入的含义。标签旁的锁定按钮是独立操作，拥有自己的名称与回调。"
       onReset={() => {
         setCoordinates({ x: '10', y: '20' })
         setLocked(false)
@@ -101,7 +101,7 @@ function ControlGroupExample() {
             </label>
           ))}
         </PropertyControl>
-        <PropertyDescription id={`${id}-help`}>Each axis has its own control name.</PropertyDescription>
+        <PropertyDescription id={`${id}-help`}>每个坐标输入都有独立的名称。</PropertyDescription>
       </PropertyRow>
       <StatePanel label="State" value={{ coordinates, locked }} />
     </ContractFrame>
@@ -114,8 +114,8 @@ function NarrowExample() {
   const [value, setValue] = useState('Long value')
   return (
     <ContractFrame
-      title="Narrow rows and long content"
-      description="200px 容器内标签与说明可换行；无标签行显式声明 withoutLabel。"
+      title="窄属性行与长说明"
+      description="在 200px 容器中，标签和说明随宽度换行；可切换为标签位于控件上方的布局。全宽操作行使用 withoutLabel，并为按钮本身提供清晰名称。"
       onReset={() => {
         setColumn(false)
         setValue('Long value')
@@ -149,7 +149,19 @@ function NarrowExample() {
   )
 }
 
-const meta = { title: 'Layout/PropertyRow', component: PropertyRow } satisfies Meta<typeof PropertyRow>
+const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'PropertyRow 用于把标签、控件和说明排列成属性行。单个输入框用 PropertyLabel 的 htmlFor 关联真实控件 id；多个控件用 PropertyControl 的 group 关联共享标签，并给每个控件单独命名。输入值和回调继续由应用传给控件，帮助文字通过 aria-describedby 与对应控件关联。',
+      },
+    },
+  },
+  title: 'Layout/PropertyRow',
+  component: PropertyRow,
+} satisfies Meta<typeof PropertyRow>
 export default meta
 type Story = StoryObj<typeof meta>
 export const SingleControl: Story = { render: () => <SingleControlExample /> }

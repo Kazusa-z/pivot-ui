@@ -74,7 +74,7 @@ function splitKeys(value: string): string[] {
   return parts
 }
 
-/** Formats labels only. This module has no platform detection or input listeners. */
+/** 将按键或手势转换为可展示的快捷键标记。应用选择平台对应的按键，并通过键盘事件注册实际命令。 */
 export function formatShortcut(
   shortcuts: ShortcutInput | undefined,
   letterCase: ShortcutLetterCase = 'upper'

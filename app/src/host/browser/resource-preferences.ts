@@ -1,7 +1,7 @@
 import type { ResourceViewPreferences } from '@pivot-ui/react/contracts'
 import type { ResourceViewMode } from '@pivot-ui/react/values'
 
-/** The application chooses the storage and key. Components never read localStorage themselves. */
+/** 保存资源选择器的列表或网格偏好。传入存储和 key，将读写结果连接到受控 viewMode。 */
 export function createBrowserResourceViewPreferences(
   storage: Pick<Storage, 'getItem' | 'setItem'>,
   key = 'pivot.resource-view.v1'

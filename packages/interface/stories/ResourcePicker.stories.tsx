@@ -74,8 +74,8 @@ function PickerExample({
   }
   return (
     <ContractFrame
-      title="Resource picker"
-      description="Search, filters, grouping and paging are independent UI state. Selection is an ID request; the host accepts, refuses or rejects it. Rename and query failures can be retried without losing the current reference."
+      title="搜索和选择资源"
+      description="输入关键词，切换类型、分组或页码来查找资源，然后点击一项查看选中高亮与下方记录。再点击 Reject selection asynchronously 体验保存失败后的重试。此例用 onSelect 处理选择请求，成功后由 onSelectedIdChange 更新 selectedId；provider 提供查询和改名。"
       onReset={reset}>
       <div className={contractStyles.row}>
         <ControlButton onClick={() => setReadOnly((value) => !value)}>
@@ -137,14 +137,14 @@ function PickerExample({
               (token.revision !== context.current.revision || token.host !== context.current.host)
             )
               return false
-            if (reject) throw Error('The host rejected this resource. Retry after enabling acceptance.')
+            if (reject) throw Error('此资源未被接受，请取消拒绝选项后重试。')
             return !refuse
           }}
           onSelectSuccess={(id) => log(`selection completed ${id}`)}
         />
       </div>
       <StatePanel
-        label="Authoritative selection and UI state"
+        label="当前选择与浏览状态"
         value={{ selectedId, queryText, kinds, groupId, viewMode, page, readOnly, disabled, events }}
       />
     </ContractFrame>
@@ -152,9 +152,18 @@ function PickerExample({
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Templates/Resources/ResourcePicker',
   component: PickerExample,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ResourcePicker 是可嵌入弹层或页面的资源浏览器，支持搜索、类型与分组筛选、分页，以及列表和网格显示。\n\n用 selectedId 表示选中资源，在 onSelectedIdChange 中更新这个 ID。onSelect(id, asset) 可先校验或异步保存选择：返回 true 或 void 后会调用 onSelectedIdChange 与 onSelectSuccess，返回 false 或抛出错误则显示提示并保留原选择。\n\nprovider 提供查询和可选改名方法。queryText、viewMode、kinds、groupId 和 page 可由 React 状态控制；需要记住浏览偏好时，应用保存这些状态即可。readOnly 适合只浏览资源的界面。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof PickerExample>
 export default meta
 type Story = StoryObj<typeof meta>

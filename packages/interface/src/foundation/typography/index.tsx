@@ -49,7 +49,7 @@ const textRecipe = cva({
 })
 
 export interface TextProps extends HTMLAttributes<HTMLElement> {
-  /** HTML meaning is independent of font size. */
+  /** 选择段落、行内文字或代码等 HTML 语义；视觉字号通过 size 设置。 */
   as?: 'p' | 'span' | 'div' | 'small' | 'code' | 's' | 'del'
   size?: TextSize
   tone?: TextTone
@@ -118,7 +118,7 @@ const titleRecipe = cva({
 })
 
 export interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
-  /** Select heading hierarchy without changing its visual size. */
+  /** 按文档层级选择 h1–h6，视觉字号通过 size 设置。 */
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   size?: 1 | 2 | 3 | 4 | 5 | 6
   weight?: TextWeight

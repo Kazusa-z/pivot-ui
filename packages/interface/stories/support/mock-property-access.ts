@@ -361,7 +361,7 @@ function assertDelay(delay: number): void {
   }
 }
 
-/** Story-only in-memory host. It is deliberately absent from the component package exports. */
+/** 为 Storybook 提供可订阅的内存属性数据，演示预览、保存、拒绝和外部更新。生产应用可按 PropertyAccess 接口实现自己的数据服务。 */
 export function createMockPropertyAccess<T>(options: MockPropertyOptions<T>): MockPropertyAccess<T> {
   const target = Object.freeze({ objectId: options.target.objectId, propertyId: options.target.propertyId })
   if (!target.objectId?.trim() || !target.propertyId?.trim())

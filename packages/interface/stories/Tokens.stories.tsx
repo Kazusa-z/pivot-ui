@@ -121,7 +121,7 @@ function ThemeShowcase({ mode }: { mode: 'dark' | 'light' }) {
         {(['surface', 'surfaceSubtle', 'surfaceStrong', 'softBg', 'panelBg'] as const).map((token) => (
           <Surface key={token} style={{ backgroundColor: `var(--colors-${token})` }}>
             <strong>{token}</strong>
-            <TokenValue>Panels, controls and text share semantic color roles.</TokenValue>
+            <TokenValue>面板、控件与文字通过语义颜色角色保持一致。</TokenValue>
           </Surface>
         ))}
         <Input aria-label={`${mode} theme input`} placeholder="Edit a value…" />
@@ -148,22 +148,29 @@ function SizeScale({ tokens }: { tokens: (keyof typeof sizes)[] }) {
 export default {
   title: 'Foundation/Tokens',
   tags: ['autodocs'],
-  parameters: { layout: 'fullscreen', controls: { disable: true } },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '主题 token 为颜色、尺寸、间距、字体、圆角和阴影提供统一命名。组件优先使用 text、border、surface 等语义角色，切换主题时相同角色会得到对应颜色。此页可对照明暗主题和各尺寸目录；自定义样式通过 css 或 CSS 变量引用 token，并由应用选择合适的密度与层级。',
+      },
+    },
+    layout: 'fullscreen',
+    controls: { disable: true },
+  },
 } satisfies Meta
 
 export const Overview: StoryFn = () => (
   <Page>
     <header>
-      <TokenValue>FOUNDATIONS</TokenValue>
-      <h1 style={{ fontSize: '32px', fontWeight: 600 }}>Design System</h1>
-      <p>Semantic colors, surfaces, control sizes, spacing, typography and elevation for Pivot UI.</p>
+      <TokenValue>基础样式</TokenValue>
+      <h1 style={{ fontSize: '32px', fontWeight: 600 }}>主题与样式目录</h1>
+      <p>在这里查看颜色、表面、控件尺寸、间距、文字与阴影的命名和效果。</p>
     </header>
 
     <Section>
-      <h2>Theme Surfaces</h2>
-      <p>
-        Compare both themes below. Use the Theme toolbar to switch the entire preview, including popovers and menus.
-      </p>
+      <h2>主题表面</h2>
+      <p>下方并排展示明暗主题。使用 Theme 工具栏可切换整个预览，弹出面板和菜单也会随之更新。</p>
       <Grid>
         <ThemeShowcase mode="dark" />
         <ThemeShowcase mode="light" />
@@ -171,8 +178,8 @@ export const Overview: StoryFn = () => (
     </Section>
 
     <Section>
-      <h2>Semantic Colors</h2>
-      <p>Use semantic roles for components so their colors follow the selected theme.</p>
+      <h2>语义颜色</h2>
+      <p>通过语义角色引用颜色，使自定义组件随所选主题一起变化。</p>
       <TokenGrid>
         {semanticSwatches.map((token) => (
           <Card key={token}>
@@ -185,23 +192,23 @@ export const Overview: StoryFn = () => (
     </Section>
 
     <Section>
-      <h2>Control Sizes</h2>
+      <h2>控件尺寸</h2>
       <Grid>
         <Card>
-          <h3>Public Control Heights</h3>
+          <h3>控件高度</h3>
           <SizeScale tokens={['xs', 'sm', 'md', 'lg', 'xl']} />
         </Card>
         <Card>
-          <h3>Dense Editor Controls</h3>
+          <h3>紧凑控件尺寸</h3>
           <SizeScale tokens={['controlXs', 'controlSm', 'controlMd', 'controlLg']} />
-          <h3>Icon Sizes</h3>
+          <h3>图标尺寸</h3>
           <SizeScale tokens={['iconXs', 'iconSm', 'iconMd', 'iconLg']} />
         </Card>
       </Grid>
     </Section>
 
     <Section>
-      <h2>Spacing Rhythm</h2>
+      <h2>间距</h2>
       <Card>
         {(['0_5', '1', '1_5', '2', '3', '4', '5', '6', '7', '8', '10'] as const).map((token) => (
           <ScaleRow key={token}>
@@ -214,10 +221,10 @@ export const Overview: StoryFn = () => (
     </Section>
 
     <Section>
-      <h2>Typography and Shape</h2>
+      <h2>文字与形状</h2>
       <Grid>
         <Card>
-          <h3>Font Sizes</h3>
+          <h3>字号</h3>
           {(['0_5', '1', '1_5', '2', '3', '4', '5', '6'] as const).map((token) => (
             <ScaleRow key={token}>
               <span style={{ overflowWrap: 'anywhere' }}>{token}</span>
@@ -227,7 +234,7 @@ export const Overview: StoryFn = () => (
           ))}
         </Card>
         <Card>
-          <h3>Radii</h3>
+          <h3>圆角</h3>
           <TokenGrid>
             {(['xs', 'sm', 'md', 'lg', 'xl', 'round'] as const).map((token) => (
               <div key={token}>
@@ -250,7 +257,7 @@ export const Overview: StoryFn = () => (
     </Section>
 
     <Section>
-      <h2>Shadows and Focus</h2>
+      <h2>阴影与焦点</h2>
       <TokenGrid>
         {(['1', '2', '3', 'focus', 'subtleFocus'] as const).map((token) => (
           <Card key={token}>

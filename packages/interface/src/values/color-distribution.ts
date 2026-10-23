@@ -14,7 +14,7 @@ export type ColorDistributionValue =
   | { readonly mode: 'two-gradient'; readonly ramps: readonly [ColorRampChannelsValue, ColorRampChannelsValue] }
 
 export type ColorDistributionMode = ColorDistributionValue['mode']
-/** Inactive mode drafts are separate from the one authoritative distribution value. */
+/** 保存各模式的编辑值，方便切回某模式时恢复内容。当前正在使用的值通过 ColorDistributionValue 传入。 */
 export type ColorDistributionCache = {
   readonly [Mode in ColorDistributionMode]?: Extract<ColorDistributionValue, { mode: Mode }>
 }
@@ -57,7 +57,7 @@ export function assertColorDistributionValue(
 const copyColor = (color: ColorValue): ColorValue => Object.freeze({ ...color })
 const copyRamp = cloneColorRampChannelsValue
 
-/** Validated deep snapshot; no quantization, RGB range conversion or engine DTO mapping. */
+/** 校验并深拷贝颜色分布，保留通道精度和颜色编码。需要映射到渲染引擎的数据格式时，由应用转换结果。 */
 export function copyColorDistributionValue(value: ColorDistributionValue): ColorDistributionValue {
   assertColorDistributionValue(value)
   switch (value.mode) {

@@ -14,8 +14,8 @@ function NativeInputExample() {
   const [refs, setRefs] = useState('Not checked')
   return (
     <ContractFrame
-      title="Native Input"
-      description="受控值保持字符串身份；onChange 收到原生 React ChangeEvent，onValueChange 单独返回字符串。普通输入无提交事务。"
+      title="普通单行文本输入"
+      description="Input 适合普通字符串输入。onChange 接收 React ChangeEvent，onValueChange 直接返回字符串；应用可回写 value，或用 defaultValue 让输入框保存当前值。需要确认后保存的流程可组合 useTextEdit。"
       onReset={() => {
         setValue('001')
         setNativeEvents(0)
@@ -64,8 +64,8 @@ function NativeTextareaExample() {
   const input = useRef<HTMLTextAreaElement>(null)
   return (
     <ContractFrame
-      title="Native Textarea"
-      description="Enter 正常换行，Escape 不建立事务。rows、maxLength、name、ref 与原生事件都直接交给 textarea。"
+      title="普通多行文本输入"
+      description="Textarea 适合多行文字，Enter 插入换行。rows、maxLength、name、ref 与事件按原生 textarea 使用；应用在 onValueChange 中接收文本，提交和取消流程可按需要另外组合。"
       onReset={() => {
         setValue('First line\nSecond line')
         setEvents(0)
@@ -93,8 +93,8 @@ function AppearanceExample() {
   const [generation, setGeneration] = useState(0)
   return (
     <ContractFrame
-      title="Text sizes, slots, state and narrow width"
-      description="四种 Input 尺寸、三种表面与真实 disabled/readOnly。0 插槽可见，错误态带 aria-invalid；局部 CSS 覆盖只有一组最终原子样式。"
+      title="输入尺寸、插槽与可用状态"
+      description="根据面板密度选择尺寸和表面样式，startSlot 与 endSlot 可放单位、图标或数值。state=`invalid` 提供错误外观及 aria-invalid；disabled 表示不可操作，readOnly 允许查看和复制，css 用于局部样式调整。"
       onReset={() => setGeneration((n) => n + 1)}>
       <div key={generation} className={contractStyles.grid}>
         {(['xs', 'sm', 'md', 'lg'] as const).map((size) => (
@@ -142,8 +142,8 @@ function EditableExample() {
   }
   return (
     <ContractFrame
-      title="EditableText lifecycle"
-      description="点击或 Enter/Space 开始；Enter 或失焦仅提交一次，Escape 真取消。IME 输入候选确认不提交。父级接受后回写 value。"
+      title="从文字展示进入编辑"
+      description="EditableText 适合名称等平时以文字展示的字段。点击或按 Enter/Space 进入编辑，Enter 或失焦提交，Escape 取消；输入法确认候选时继续编辑。应用在 onCommit 中保存文字并回写 value。"
       onReset={() => {
         setValue('Camera 001')
         setEvents([])
@@ -184,8 +184,8 @@ function AsyncExample() {
   }
   return (
     <ContractFrame
-      title="Async acceptance and rejection"
-      description="提交后输入只读并显示 Saving。Reject 保留草稿与错误，可修改或重试；External update 取消本地会话，宿主也按请求版本忽略旧结果。"
+      title="异步保存与失败重试"
+      description="提交异步操作后，输入进入等待状态。Accept 保存并回写 value，Reject 显示错误并保留草稿，用户可修改后重试。外部更新通过 value 和 resetKey 开启新的数据版本，应用也按请求版本判断结果是否仍然有效。"
       onReset={() => {
         invalidate()
         setValue('Accepted name')
@@ -284,11 +284,11 @@ function SessionExample({ multiline = false }: { multiline?: boolean }) {
   }
   return (
     <ContractFrame
-      title={multiline ? 'Opt-in multiline editing session' : 'External revisions and availability'}
+      title={multiline ? '为多行文本添加提交与取消' : '编辑时接收外部数据更新'}
       description={
         multiline
-          ? 'Textarea 默认无事务；这里显式使用共享内核。Enter 换行，Ctrl/Meta+Enter 提交，Escape 回滚，blur 提交。'
-          : '按钮在 pointerdown 阻止焦点离开，便于测试正在编辑时发生外部更新、同值 revision、只读和禁用。草稿随外部权威版本取消。'
+          ? '多行文本需要明确提交时，可将 Textarea 与 useTextEdit 组合。Enter 换行，Ctrl/Meta+Enter 或失焦提交，Escape 取消；应用在 onCommit 保存文本，并在 onCancel 处理预览清理。'
+          : '编辑期间也可能收到外部值、同值的新版本或可用性变化。这里的按钮保留输入焦点，便于观察草稿如何结束；应用通过 value、resetKey、readOnly 和 disabled 传入这些变化。'
       }
       onReset={() => {
         editor.cancel('reset')
@@ -337,8 +337,8 @@ function AvailabilityExample() {
   const [events, setEvents] = useState<string[]>([])
   return (
     <ContractFrame
-      title="EditableText availability and unmount"
-      description="禁用按钮不可进入；只读可聚焦但不可开始。卸载活动编辑器会取消本地草稿，不触发提交。"
+      title="只读、禁用与移除编辑器"
+      description="disabled 表示字段暂不可用，readOnly 保留聚焦查看能力。正在编辑时卸载组件会通过取消回调结束草稿；应用可以据此清理预览，已经提交的保存请求仍按自己的异步流程处理。"
       onReset={() => {
         setMounted(true)
         setValue('Unmount me while editing')
@@ -362,7 +362,19 @@ function AvailabilityExample() {
   )
 }
 
-const meta = { title: 'Widgets/Text Inputs', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Text Inputs',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Input 和 Textarea 用于普通文本输入，onChange 接收 React 事件，onValueChange 接收字符串。EditableText 用于先展示、再进入编辑的文字，提交通过回调交给应用，失败可保留草稿重试。需要给原生输入增加提交与取消流程时组合 useTextEdit，并用 resetKey 表示外部版本变化。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const NativeInput: Story = { render: () => <NativeInputExample /> }

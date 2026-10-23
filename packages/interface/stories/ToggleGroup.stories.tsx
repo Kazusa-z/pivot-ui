@@ -15,8 +15,8 @@ function SingleToggle() {
   const [value, setValue] = useState<string | null>('move')
   return (
     <ContractFrame
-      title="Single toggle group"
-      description="toolbar 内的 button 使用 aria-pressed。点击当前按钮取消为 null；箭头只移动焦点，Space/Enter 才修改值。"
+      title="可以取消的单选工具"
+      description="单选工具组适合一次启用一个可取消的工具。点击当前按钮会请求 null；方向键移动焦点，Space/Enter 改变选择，onValueChange 将请求交给应用保存。"
       onReset={() => setValue('move')}>
       <ToggleGroup aria-label="Tool" type="single" options={options} value={value} onValueChange={setValue} />
       <StatePanel label="Value" value={value} />
@@ -34,8 +34,8 @@ function MultipleToggle() {
   ]
   return (
     <ContractFrame
-      title="Multiple toggle group"
-      description="多选 value/defaultValue 始终为数组；数字和字符串保持类型身份，每个按钮可独立取消。"
+      title="组合多个独立开关"
+      description="多选工具组适合组合多个开关。value 和 defaultValue 使用数组，每个按钮可独立启用或取消；onValueChange 返回完整选择，保留数字与字符串的原始类型。"
       onReset={() => setValue(['001', 1])}>
       <ToggleGroup
         aria-label="Values"
@@ -54,8 +54,8 @@ function ToggleModes() {
   const [requests, setRequests] = useState<(string | null)[]>([])
   return (
     <ContractFrame
-      title="Read only, disabled and rejected"
-      description="只读按钮仍可通过键盘访问；disabled 跳过焦点。父级拒绝单选/多选请求时视图保持原值。"
+      title="查看、禁用与应用拒绝修改"
+      description="readOnly 允许键盘查看，disabled 将不可用按钮从焦点导航中移除。固定 value 的示例记录请求并继续显示原值，应用接受修改时再回写单选值或多选数组。"
       onReset={() => setRequests([])}>
       <div className={contractStyles.stack}>
         <ToggleGroup
@@ -91,8 +91,8 @@ function ToggleComposition() {
   const [reset, setReset] = useState(0)
   return (
     <ContractFrame
-      title="Composition and empty groups"
-      description="Root/Item 用稳定字符串 key 支持图标和 Fragment 组合。非受控多选使用数组 defaultValue。"
+      title="自定义按钮内容与竖向排列"
+      description="需要自定义图标或内容时，可组合 ToggleGroupRoot 与 ToggleGroupItem，并使用稳定字符串 value 标识每个项目。多选的 defaultValue 使用数组；竖排工具组同样支持键盘聚焦与激活。"
       onReset={() => setReset((current) => current + 1)}>
       <div key={reset} className={contractStyles.stack}>
         <ToggleGroup aria-label="Empty toggles" type="multiple" options={[]} defaultValue={[]} />
@@ -122,7 +122,18 @@ function ToggleComposition() {
   )
 }
 
-export default { title: 'Widgets/Choices/ToggleGroup' } satisfies Meta
+export default {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ToggleGroup 用于一组可以独立按下或取消的工具按钮。单选模式的 value 为一个值或 null，多选模式始终使用数组；onValueChange 返回用户请求的新选择。方向键移动焦点，Enter 或 Space 激活按钮；应用回写 value 后显示更新，选项的 key 与原始 value 分开维护。',
+      },
+    },
+  },
+  title: 'Widgets/Choices/ToggleGroup',
+} satisfies Meta
 type Story = StoryObj
 export const Overview: Story = { render: () => <SingleToggle /> }
 export const MultipleTypedValues: Story = { render: () => <MultipleToggle /> }

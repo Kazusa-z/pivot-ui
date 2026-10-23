@@ -43,7 +43,7 @@ function BadgeFrame({
   )
 }
 
-/** A badge only presents information. Removal belongs to the controlled Tag component. */
+/** 展示状态、数量或分类名称。需要可移除的标签时使用 Tag，并通过 onRemove 更新列表。 */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(props, ref) {
   return <BadgeFrame {...props} elementRef={ref} />
 })

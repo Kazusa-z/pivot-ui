@@ -7,7 +7,7 @@ export type NumericDistributionValue =
   | { readonly mode: 'two-curve'; readonly curves: readonly [CurveValue, CurveValue] }
 
 export type NumericDistributionMode = NumericDistributionValue['mode']
-/** Saved, accepted values of inactive modes. This is not a second active property value. */
+/** 保存各模式最近接受的值，方便切回模式时恢复内容。当前显示值通过 NumericDistributionValue 传入。 */
 export type NumericDistributionCache = {
   readonly [Mode in NumericDistributionMode]?: Extract<NumericDistributionValue, { mode: Mode }>
 }
@@ -47,7 +47,7 @@ export function assertNumericDistributionValue(value: unknown): asserts value is
   }
 }
 
-/** Deep snapshot without unit scaling, quantization or host DTO conversion. */
+/** 校验并深拷贝数值分布，保留数值精度。业务单位换算或后端数据格式转换由应用在读写时处理。 */
 export function copyNumericDistributionValue(value: NumericDistributionValue): NumericDistributionValue {
   assertNumericDistributionValue(value)
   switch (value.mode) {

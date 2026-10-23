@@ -8,7 +8,7 @@ import {
 
 type PresetStorage = Pick<Storage, 'getItem' | 'setItem'>
 
-/** Explicit application opt-in. The controls never choose storage or migrate old keys themselves. */
+/** 创建可保存和加载曲线预设的浏览器服务。传入应用选定的存储和 key，再将服务交给 CurvePresets 或 CurvePicker。 */
 export function createBrowserCurvePresetService(
   storage: PresetStorage,
   key = 'pivot.curve-presets.v1',

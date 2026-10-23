@@ -12,7 +12,7 @@ export interface DropTargetOptions<T, E extends HTMLElement = HTMLDivElement> {
   onEnter?: (payload: DragPayload<T>, context: DragDropEventContext<E>) => void
   onLeave?: (payload: DragPayload<T>, context: DragDropEventContext<E>) => void
   onOver?: (payload: DragPayload<T>, context: DragDropEventContext<E>) => void
-  /** System files are a separate boundary; they are never treated as an internal payload. */
+  /** 接收从系统拖入的 File 数组。应用可使用 File API 读取内容，或将文件交给上传服务；应用内数据通过 onDrop 接收。 */
   onFilesDrop?: (files: readonly File[], context: DragDropEventContext<E>) => boolean | void
 }
 

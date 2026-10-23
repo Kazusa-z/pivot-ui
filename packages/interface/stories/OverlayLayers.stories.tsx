@@ -21,8 +21,8 @@ function MixedLayersExample({ raised = false }: { raised?: boolean }) {
   const [actions, setActions] = useState(0)
   return (
     <ContractFrame
-      title="Portals inherit overlay layers"
-      description="Dialog 内打开 Popover、菜单/子菜单、Tooltip 和 HoverCard，子浮层应在父浮层上方。反方向先开 Popover 再开 Dialog 也遵守同一层级。Escape 按最上层逐级关闭。"
+      title="在浮层中继续打开操作"
+      description="在 Dialog 内打开选择面板、菜单或提示，可继续完成局部操作；子浮层显示在父浮层上方。也可以从 Popover 打开 Dialog，再进入下一层面板。Escape 按最上层逐级关闭，应用分别接收各组件的开关请求。"
       onReset={() => {
         setGeneration((value) => value + 1)
         setActions(0)
@@ -85,7 +85,19 @@ function MixedLayersExample({ raised = false }: { raised?: boolean }) {
     </ContractFrame>
   )
 }
-const meta = { title: 'Widgets/OverlayLayers', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/OverlayLayers',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '浮层可以嵌套用于分层操作，例如在对话框中打开选择器或菜单。这里展示 Dialog、Popover、菜单、Tooltip 和 HoverCard 的组合：子浮层显示在父浮层上方，Escape 从最上层开始关闭。使用这些组件的 Portal 部件保留层级与主题传递，应用分别管理需要受控的 open 状态。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const MixedPortals: Story = { render: () => <MixedLayersExample /> }

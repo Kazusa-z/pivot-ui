@@ -1,77 +1,97 @@
-# B08 颜色、渐变与颜色分布
+# 颜色编辑
 
-> B11 收口说明：本文保留该批迁移记录；旧适配器、旧包与多 Storybook 指令已退出。当前属性联调和消费方式以 [B11 最终指南](./B11_INTEGRATION.md) 为准。历史验证数字不代表当前构建。
+颜色组件用于编辑单色、透明度、HDR 和渐变。可以选择紧凑输入、弹出面板或始终显示的编辑面板；它们使用同一套颜色数据。
 
-本批对应 U38、U39、G15、G16 和 S04。公共入口为 `@pivot-ui/react`，纯模型也从 `@pivot-ui/react/values` 导入；能力类型也从 `@pivot-ui/react/contracts` 导入。验收与 Git 交付记录见 [实施台账](./LEDGER.md)。
+## 选择组件
 
-## 颜色值约定
+| 组件                      | 界面                                  |
+| ------------------------- | ------------------------------------- |
+| ColorWidget               | 内联选色平面、Hue、RGB/HSV 和精确输入 |
+| ColorPicker               | 颜色预览按钮，点击打开单色面板        |
+| ColorInput                | 紧凑的颜色按钮、HEX 和透明度输入      |
+| HDRColorInput             | ColorInput 加派生的 Peak RGB 调整     |
+| ColorRamp                 | 带位置和颜色的渐变点                  |
+| ColorRampChannels         | 独立的颜色轨和透明度轨                |
+| ColorRampPicker           | 点击预览后打开单轨或双轨编辑器        |
+| ColorDistributionTemplate | 在单色、渐变、双颜色和双渐变之间选择  |
 
-`ColorValue = { space: 'srgb' | 'linear', r, g, b, a }`。RGB 和 alpha 使用归一化通道；普通 RGB 与 alpha 范围为 0–1。设置 `hdr` 后 RGB 可以是大于 1 的有限非负数，alpha 仍是 0–1。受控值不合约时报错；需要清洗输入时显式调用 `normalizeColor`。新 `normalizeColor` 是范围清洗，不是旧 UI 的除以 255。
+## 单色值
 
-`convertColorSpace` 保留 alpha 和 HDR，转换一次指定编码。`parseHexColor`/`formatColorHex` 的 HEX 固定为 sRGB；HSV 也以 sRGB 编码定义。`getDisplayColor`/`getColorCss` 仅为普通网页预览转换并裁剪，不能将预览值写回权威数据。这是有限的 sRGB/Linear 转换，不替代 Qt 渲染器的完整显示变换或 HDR 输出。
+`ColorValue` 使用 `{ space, r, g, b, a }`。space 为 `srgb` 或 `linear`；普通 RGB 和 alpha 都在 0–1 之间。
 
-RGB 字段的 `displaySpace` 是显示/编辑编码，切换它不修改 `value.space` 或属性值。HDRColorInput 的 Peak RGB 是当前编码下最大 RGB 通道的派生值，按比率修改通道；它不是另一份颜色权威值，也不宣称等同渲染曝光。纯黑没有可恢复的色相，提升 Peak RGB 从中性灰开始。
+```tsx
+import { useState } from 'react'
+import { ColorInput, type ColorValue } from '@pivot-ui/react'
 
-## 职责与依赖
+export function TintInput() {
+  const [color, setColor] = useState<ColorValue>({ space: 'srgb', r: 0.2, g: 0.5, b: 0.8, a: 1 })
+  return <ColorInput label="Tint" value={color} onValueChange={setColor} />
+}
+```
 
-| 模块                          | 职责                                                                                                             |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| values/color                  | 颜色类型、验证、归一化、sRGB/Linear、HEX、HSV、插值                                                              |
-| values/color-ramp             | 稳定停靠点、排序、采样与双轨模型                                                                                 |
-| values/color-distribution     | 当前模式判别联合、独立缓存、模式切换纯规则                                                                       |
-| contracts/ColorCapabilities   | 可选剪贴板、取色能力接口                                                                                         |
-| interaction/color、color-ramp | 编辑会话和指针手势，隔离迟到结果                                                                                 |
-| widgets/color/ColorWidget     | 独立内联单色编辑主体                                                                                             |
-| templates/color               | ColorPicker、ColorInput、HDRColorInput、ColorRamp、ColorRampChannels、ColorRampPicker、ColorDistributionTemplate |
+`onValueChange` 请求显示新颜色，应用应回传 value。选择点、切换显示编码和打开弹层不会修改颜色值。
 
-依赖方向是 `ColorInput → ColorPicker → ColorWidget`；ColorRamp 使用单色 ColorPicker，单色控件不导入渐变。ColorRampPicker 只负责将单轨或双轨编辑器放入弹层。模板不读取引擎对象或建立 Qt 连接。
+RGB 字段的 `displaySpace/onDisplaySpaceChange` 只控制当前显示和编辑的编码，不会自动改写 `value.space`。HEX 和 HSV 按 sRGB 定义。需要转换存储值时，显式使用 `convertColorSpace`。
 
-## 编辑与宿主能力
+## HDR 与显示预览
 
-颜色控件通过 `onValueChange` 请求实时值，通过 `onValueCommit` 表示一次完成，`onEditCancel` 表示尚未提交的编辑被取消。受控宿主负责接受预览以及取消/拒绝后的权威值恢复；模板不会伪造一次回滚 change。异步提交拒绝可保留草稿，resetKey、目标或外部更新使旧界面结果失效；已提交命令不能再收到第二次 cancel。
+设置 `hdr` 后，RGB 可以是大于 1 的有限非负数，alpha 仍在 0–1。HDRColorInput 自动使用 HDR 范围。
 
-`resetKey` 表示对象或版本身份。同值目标切换也应更新它。显示编码、选中停靠点和弹层开关均是 UI 状态，不产生颜色写入。`disabled` 禁止交互；`readOnly` 保留查看能力，禁止编辑。
+Peak RGB 是当前编码中最大 RGB 通道的派生值，调整它会按比率缩放通道；它不是额外存储的颜色字段，也不是曝光档位。`intensityMin/intensityMax/intensityStep` 控制该输入。纯黑没有色相可恢复，提升 Peak RGB 从中性灰开始。
 
-`ColorCapabilities` 可提供 clipboard.readText/writeText 与 eyeDropper.pick。未提供能力时对应操作不可用，控件不直接访问浏览器全局。应用示例适配位于 `app/src/host/browser/color.ts`，由应用创建并在拥有者销毁时调用 dispose；它处理浏览器能力检测、取色取消和资源释放。Storybook 使用明确的模拟能力，不会读取用户剪贴板或启动真实屏幕取色。
+`getColorCss/getDisplayColor` 会转换并裁剪到普通网页预览范围。不要把这种预览结果写回 HDR 数据。网页预览也不等同于渲染器的完整色彩管理或 HDR 输出。
 
-## 渐变与双轨
+## 渐变与透明度轨
 
-`ColorRampValue = { interpolation: 'linear' | 'constant', stops }`，每个 stop 为 `{id, position, color}`。同轨 ID 必须非空且唯一，position 范围 0–1。同一色轨采用统一编码；插值在该编码内进行。数组允许未排序与重合位置，采样采用稳定排序；恰好落在重合位置时最后一个 stop 生效。
+`ColorRampValue` 包含 `interpolation` 和 `stops`；interpolation 为 `linear` 或 `constant`。每点为 `{id,position,color}`，position 在 0–1，id 非空且在轨道内唯一。同一轨道的颜色采用同一种 space。
 
-`activeStopId/onActiveStopIdChange` 与值分离。选择、键盘切换选中点不调用 onValueChange。支持位置拖动、键盘和精确数字输入，增删通过明确按钮进行；空轨可以新增点。点 ID 不由位置或可编辑颜色推导。
+```tsx
+import { useState } from 'react'
+import { ColorRamp, type ColorRampValue } from '@pivot-ui/react'
 
-`ColorRampChannelsValue = { color: ColorRampValue, alpha: AlphaStop[] }`，AlphaStop 为 `{id, position, alpha}`。alpha 轨另有 `activeAlphaStopId/onActiveAlphaStopIdChange`，ID 在各自轨道内唯一。最终 alpha 为色轨自身 alpha 与独立 alpha 采样值的乘积；空 alpha 轨采样为 1。颜色与 alpha 位置独立。ColorRampPicker 使用 `variant='ramp'|'channels'` 对应明确的值和回调类型。
+export function GradientInput() {
+  const [value, setValue] = useState<ColorRampValue>({
+    interpolation: 'linear',
+    stops: [
+      { id: 'start', position: 0, color: { space: 'srgb', r: 0, g: 0, b: 0, a: 1 } },
+      { id: 'end', position: 1, color: { space: 'srgb', r: 1, g: 1, b: 1, a: 1 } },
+    ],
+  })
+  return <ColorRamp aria-label="Gradient" value={value} onValueChange={setValue} />
+}
+```
 
-## 分布模式与缓存
+点可以拖动、用键盘调整或输入精确位置。`activeStopId/onActiveStopIdChange` 单独控制选中点，选择不产生值修改。增删使用独立操作；空轨仍可新增点。
 
-ColorDistributionTemplate 的必填受控 value 只有一个生效分支：
+允许未排序和重合位置。采样会稳定排序，恰好位于重合位置时最后一个点生效。ID 不能用位置推导，否则移动或重合会丢失身份。
 
-| mode         | 当前有效数据          |
-| ------------ | --------------------- |
-| constant     | color                 |
-| gradient     | ramp（双轨）          |
-| two-constant | colors（两项元组）    |
-| two-gradient | ramps（两项双轨元组） |
+ColorRampChannels 的值为 `{ color: ColorRampValue, alpha: AlphaStop[] }`，alpha 点为 `{id,position,alpha}`。两个轨道独立选中和移动；最终透明度是颜色轨自身 alpha 与独立 alpha 轨采样值的乘积，空 alpha 轨按 1 处理。
 
-`cache/defaultCache/onCacheChange` 单独保存非当前模式的已接受值。首次访问某个模式从当前值推导，再次访问恢复缓存。宿主拒绝的请求不会变成已接受缓存；resetKey 清理缓存和旧操作状态，受控缓存由宿主接受清空请求。模式切换是一项明确编辑，选择渐变点不是模式或数据编辑。
+ColorRampPicker 使用 `variant="ramp"` 或 `variant="channels"`，值和回调与对应编辑器匹配。
 
-引擎 `time ↔ position`、颜色范围和存储编码转换在宿主边界完成。`stories/support/color-host-adapter.ts` 和 HostAdapterRoundTrip 故事演示带稳定引擎 ID 的归一化 DTO 往返；模板本身不理解引擎数据。
+## 颜色分布
 
-## 旧入口迁移
+ColorDistributionTemplate 的 value 只包含当前模式的数据：
 
-| 旧入口                                               | 本批处置                                                  |
-| ---------------------------------------------------- | --------------------------------------------------------- |
-| UI ColorPicker constant/hdr                          | 单次 DTO 转换后调用新单色 ColorPicker                     |
-| UI ColorPicker gradient/particle                     | 转为 ColorRampPicker 对应的单/双轨变体                    |
-| UI GradientSlider/ParticleSlider                     | 薄适配 ColorRamp/ColorRampChannels                        |
-| UI HDRSlider                                         | 薄适配 HDRColorInput；范围对应派生 Peak RGB               |
-| UI Color、HDRColor、helpers、useColorSpaceConversion | 仅兼容旧 0–255 与 base/intensity 形状，转换复用新纯模型   |
-| GUI FormItemColor/FormItemGradient                   | 实现、出口及专属故事删除；用 PropertyRow + 新颜色模板组合 |
+| mode         | 数据                            |
+| ------------ | ------------------------------- |
+| constant     | `color`                         |
+| gradient     | `ramp`，为双轨渐变              |
+| two-constant | `colors`，两个颜色组成的元组    |
+| two-gradient | `ramps`，两个双轨渐变组成的元组 |
 
-旧 HDR 强度在适配边界转成线性 RGB 倍率；新组件只接收实际 RGB。旧 Particle 的色轨 alpha 历史上不生效，适配时设为 1，由其独立 alpha 轨控制透明度。旧 stop 支持可选 id，回调会附带生成 ID；接收方应保留它。缺失 ID 的外部全量重建只能按数组位置映射，需稳定外部重排时直接迁到新模型。旧入口在 B11 删除。
+`cache/defaultCache/onCacheChange` 可以单独保存其它模式的数据。第一次切换时从当前值生成，之后恢复已接受的缓存；失败的请求不进入缓存。`resetKey` 变化清理当前编辑和模式缓存。受控 cache 需要应用接受相应更新。
 
-旧 ColorPicker 内部面板、透明图案、Thumb/Range 和浏览器取色 hook 已退出；不保留第二套颜色交互内核。原 colord/react-colorful 依赖随唯一消费者退出而删除。
+## 取色和剪贴板
 
-## 验证
+通过 `capabilities` 传入 `ColorCapabilities`：`clipboard.readText/writeText` 和 `eyeDropper.pick` 都是可选能力。没有提供时对应按钮不可用。组件不会自行读取用户剪贴板或启动屏幕取色。
 
-本批故事覆盖单色/HDR、编码、alpha、异步能力、单轨/双轨、重合点、受控拒绝、分布缓存、Reset 与宿主 DTO 适配。按台账运行格式、全仓类型、Demo/三套 Storybook 构建、依赖审计及浏览器键盘/指针/明暗/窄屏验证。临时探针和截图放系统 TEMP，不新增独立测试文件。
+应用可把这些接口连接浏览器或桌面功能。返回值需要遵循颜色数据格式；错误通过 Promise 拒绝反馈。切换目标、禁用或卸载后，过期能力结果不会覆盖当前界面。
+
+## 提交与取消
+
+`onEditStart/onValueChange/onValueCommit/onEditCancel` 分别表示开始、预览、完成和取消尚未提交的编辑。提交可以返回 Promise，失败后提供重试或取消路径。
+
+受控组件不额外发送恢复起点的 change。应用若实时接受预览，需要自行决定取消后恢复什么值，或者使用[PropertyField](./B11_INTEGRATION.md)连接统一属性数据。对象或版本改变时更新稳定的 `resetKey`；已经发出的保存请求不能通过关闭弹层撤回。
+
+`disabled` 禁止交互，`readOnly` 保留查看但禁止值修改。弹层尺寸受可用窗口限制，长内容可滚动。

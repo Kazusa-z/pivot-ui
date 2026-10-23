@@ -14,8 +14,8 @@ function SegmentOverview() {
   const [value, setValue] = useState<string | null>('local')
   return (
     <ContractFrame
-      title="Segment control"
-      description="互斥选项使用 radiogroup/radio。箭头移动并选择，Home/End 到边界；已选项不会再次点击取消。"
+      title="切换互斥模式"
+      description="SegmentControl 适合切换互斥模式。方向键移动并选择选项，Home/End 到首尾，onValueChange 返回新值；当前选项保持选中，再次点击仍表示同一选择。"
       onReset={() => setValue('local')}>
       <SegmentControl aria-label="Coordinate system" options={options} value={value} onValueChange={setValue} />
       <StatePanel label="Value" value={value} />
@@ -33,8 +33,8 @@ function SegmentTypedValues() {
   ]
   return (
     <ContractFrame
-      title="Typed option identity"
-      description="key 负责身份，value 保持原始 string/number；null 是未选择，空字符串是合法选项值。"
+      title="区分选项的原始值"
+      description="options 的 key 用于稳定识别项目，value 是应用收到的原始值。数字 1、字符串 1 和空字符串可以分别选择；需要清空选择时由应用把 value 设为 null。"
       onReset={() => setValue(null)}>
       <SegmentControl
         aria-label="Typed value"
@@ -52,8 +52,8 @@ function SegmentModes() {
   const [requests, setRequests] = useState<string[]>([])
   return (
     <ContractFrame
-      title="Read only, disabled and rejected"
-      description="只读组允许键盘浏览但不修改选中项；受控组不会在父级拒绝请求后漂移。"
+      title="查看、禁用与应用拒绝修改"
+      description="readOnly 组可通过键盘浏览，选中状态由应用提供。固定 value 的示例只记录 onValueChange 请求，展示应用保留原值时的结果；disabled 用于整个组暂不可用的情况。"
       onReset={() => setRequests([])}>
       <div className={contractStyles.stack}>
         <SegmentControl
@@ -80,8 +80,8 @@ function SegmentLayout() {
   const [reset, setReset] = useState(0)
   return (
     <ContractFrame
-      title="Empty and vertical"
-      description="空 options 渲染空组；非受控竖排、不同尺寸与窄布局保持完整 radio 语义。"
+      title="空选项与竖向排列"
+      description="比较空选项、不同尺寸和竖排布局。使用 defaultValue 时组件保存选择状态，竖排仍可通过方向键操作；选项加载由应用完成后传入 options。"
       onReset={() => setReset((current) => current + 1)}>
       <div key={reset} className={contractStyles.stack}>
         <SegmentControl aria-label="Empty" options={[]} />
@@ -106,7 +106,18 @@ function SegmentLayout() {
   )
 }
 
-export default { title: 'Widgets/Choices/SegmentControl' } satisfies Meta
+export default {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'SegmentControl 适合在少量互斥选项之间快速切换，例如坐标系或视图模式。它使用单选组语义，方向键移动并选择选项，onValueChange 返回所选原始值。应用通过 value 接受请求，null 表示未选择；需要再次点击取消或多选时使用 ToggleGroup。',
+      },
+    },
+  },
+  title: 'Widgets/Choices/SegmentControl',
+} satisfies Meta
 type Story = StoryObj
 export const Overview: Story = { render: () => <SegmentOverview /> }
 export const TypedValues: Story = { render: () => <SegmentTypedValues /> }

@@ -15,6 +15,14 @@ const axes = [
   { key: 'z', label: 'Z' },
 ] as const
 const meta = {
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'NumericTupleInput 用于编辑一组数值，axes 为每一项提供稳定 key、名称、单位和范围。Vector2Input、Vector3Input、Vector4Input 保留 x/y/z/w 对象形状，RectInput 保留 x/y/width/height。\n\nonValueChange 返回完整值和本次编辑轴；onValueCommit 表示一次完整编辑。比例联动由 linked 与 onLinkedChange 控制，并以本次开始编辑时的值计算比例。\n\n零值主轴只改变自身；可达到的比例范围会同时满足各轴限制。位置与尺寸可分别配置。受控用法由应用在取消时恢复起始值，并在外部重置时更新 resetKey。',
+      },
+    },
+  },
   title: 'Templates/NumericTupleInput',
   component: NumericTupleInput,
   tags: ['autodocs'],
@@ -76,8 +84,8 @@ function LinkedExample({ zero = false }: { zero?: boolean }) {
     <div className={frame}>
       <p>
         {zero
-          ? 'X starts at zero. Editing X changes only X; Y/Z keep their edit-start values.'
-          : 'The common ratio is limited by Y ≤ 10 and Z ≥ −12, so linked X can reach at most 4. Derived axes are not independently rounded.'}
+          ? '把起始为 0 的 X 改成 3，观察 Y/Z 保持原值；再切换联动开关，比较各轴的调整方式。应用通过 linked 和 onLinkedChange 保存开关状态，零值轴适合用来了解联动的起始行为。'
+          : '保持联动并提高 X，观察 Y/Z 按比例变化，直到 X=4、Y=8、Z=−12。这个例子为 Y 和 Z 设置了范围，联动会在可用比例内停止；应用可在 axes 中为每个轴配置范围和精度。'}
       </p>
       <Vector3Input
         value={value}

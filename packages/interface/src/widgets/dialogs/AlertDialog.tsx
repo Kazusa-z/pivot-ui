@@ -20,7 +20,7 @@ export type AlertDialogCancelProps = Primitive.AlertDialogCancelProps
 export type AlertDialogActionProps = Primitive.AlertDialogActionProps
 export const AlertDialogRoot = Primitive.Root
 export const AlertDialogTrigger = Primitive.Trigger
-/** Closed confirmations unmount so hidden modal effects cannot lock the document. */
+/** 显示需要明确确认的操作，例如删除项目。应用在确认回调中执行操作；关闭后内容卸载，需要保留的数据可放在父组件。 */
 export function AlertDialogPortal(props: AlertDialogPortalProps) {
   const { forceMount: _forceMount, ...portalProps } = props as Primitive.AlertDialogPortalProps
   return <Primitive.Portal {...portalProps} />

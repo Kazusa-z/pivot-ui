@@ -31,14 +31,14 @@ function AccordionExample({ multiple = false }: { multiple?: boolean }) {
           </Button>
         ) : undefined
       }>
-      <p>Content {index + 1}. Header actions do not change expanded state.</p>
+      <p>Content {index + 1}。标题操作按钮使用自己的回调，展开状态由标题触发按钮控制。</p>
       <ControlInput aria-label={`Field ${index + 1}`} defaultValue={`Value ${index + 1}`} />
     </AccordionItem>
   ))
   return (
     <ContractFrame
-      title={`Accordion: controlled ${multiple ? 'multiple' : 'single'}`}
-      description="点击或 Enter/Space 展开。方向键、Home/End 在触发按钮之间移动焦点；动作按钮独立 Tab 聚焦。"
+      title={`Accordion：受控展开 ${multiple ? 'multiple' : 'single'}`}
+      description="Accordion 适合按组浏览内容。点击标题或按 Enter/Space 展开，通过 onValueChange 保存当前展开项；方向键和 Home/End 在标题之间移动，标题操作按钮可单独用 Tab 聚焦。"
       onReset={() => {
         setSingle('first')
         setMany(['first'])
@@ -89,8 +89,8 @@ function UncontrolledExample() {
   const [open, setOpen] = useState(true)
   return (
     <ContractFrame
-      title="Uncontrolled disclosure"
-      description="状态由组件持有；下方输出仅记录回调。Reset 重新挂载并恢复 defaultValue/defaultOpen。"
+      title="设置初始展开状态"
+      description="使用 defaultValue 或 defaultOpen 设置初始展开状态，之后由组件保存状态。下方记录 onValueChange 和 onOpenChange 的通知；Reset 重新创建实例以恢复初始状态。"
       onReset={() => {
         setGeneration((value) => value + 1)
         setSingle('first')
@@ -100,10 +100,10 @@ function UncontrolledExample() {
       <div key={generation} className={contractStyles.stack}>
         <Accordion type="single" defaultValue="first" onValueChange={setSingle}>
           <AccordionItem value="first" title="Required single first">
-            Single mode without collapsible keeps one item open.
+            单选模式未开启 collapsible 时，始终保留一个展开项。
           </AccordionItem>
           <AccordionItem value="second" title="Required single second">
-            Selecting this closes the first.
+            展开此项时，前一个单选项会收起。
           </AccordionItem>
         </Accordion>
         <Accordion type="multiple" defaultValue={['first']} onValueChange={setMany}>
@@ -115,7 +115,7 @@ function UncontrolledExample() {
           </AccordionItem>
         </Accordion>
         <Collapsible title="Uncontrolled collapsible" defaultOpen onOpenChange={setOpen}>
-          This standalone item has its own boolean state.
+          这个独立区域使用自己的布尔值保存展开状态。
         </Collapsible>
       </div>
       <StatePanel label="Last reported values" value={{ single, multiple: many, open }} />
@@ -132,8 +132,8 @@ function CollapsibleExample() {
   const [changes, setChanges] = useState(0)
   return (
     <ContractFrame
-      title="Collapsible: state and trigger modes"
-      description="Disabled 只锁定折叠触发，不替内容或动作决定可编辑性。Fixed 保持内容展开并移除触发按钮；切回后恢复先前展开值。"
+      title="折叠入口与固定展开模式"
+      description="Collapsible 可用于带独立操作的单个内容区。Disabled 控制标题的折叠入口，内容控件与操作按钮的可用性由应用单独设置；Fixed 始终展示内容，切回可折叠模式时恢复先前的展开状态。"
       onReset={() => {
         setOpen(true)
         setDisabled(false)
@@ -190,8 +190,8 @@ function NarrowExample() {
   const [actions, setActions] = useState(0)
   return (
     <ContractFrame
-      title="Narrow headers and independent actions"
-      description="标题保持省略号，操作槽与折叠按钮平级。Tab 到重命名输入框并编辑或按 Space 不会展开/收起内容。"
+      title="窄标题中的独立操作"
+      description="缩小宽度后，标题截断显示，操作入口仍保留可用空间。重命名输入框和折叠按钮是独立控件：编辑标题调用输入回调，展开状态通过对应的折叠回调保存。"
       onReset={() => {
         setWidth(220)
         setOpen(true)
@@ -246,7 +246,7 @@ function NarrowExample() {
               })}
             />
           }>
-          Text and controls remain within the available width.
+          文字和控件会使用当前区域的可用宽度。
         </Collapsible>
       </div>
       <StatePanel label="Narrow state" value={{ width, accordion: value, open, name, actions }} />
@@ -262,8 +262,8 @@ function KeyboardExample() {
   const [open, setOpen] = useState('first')
   return (
     <ContractFrame
-      title="Accordion keyboard and disabled items"
-      description="纵向用 Up/Down，横向用 Left/Right（RTL 反向）；Home/End 定位首尾，跳过禁用项。Tab 仍可离开组件。"
+      title="用键盘浏览可展开标题"
+      description="选择纵向或横向排列，观察相应方向键在可用标题之间移动。Home/End 到首尾，RTL 会调整横向移动方向；Enter/Space 改变展开状态，Tab 可离开这组标题。"
       onReset={() => {
         setHorizontal(false)
         setRtl(false)
@@ -312,7 +312,19 @@ function KeyboardExample() {
   )
 }
 
-const meta = { title: 'Widgets/Disclosure', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Disclosure',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Accordion 用于管理一组可展开内容，Collapsible 用于单个可折叠区域。用户可以点击标题或使用键盘展开；受控模式通过 onValueChange 或 onOpenChange 接收新状态。标题旁的独立操作通过 actions 放置，内容中的表单值由应用各自保存；需要始终展开时使用固定展示模式。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const AccordionSingle: Story = { render: () => <AccordionExample /> }

@@ -51,12 +51,12 @@ function CurveExample({ kind = 'linear' }: { kind?: Kind }) {
       title={`CurveWidget · ${kind}`}
       description={
         kind === 'async'
-          ? 'Preview is immediate; commit waits 500 ms. Reject next, drag a point or edit a coordinate, then retry. External update/new revision invalidates old local completion.'
+          ? '拖动曲线点或输入坐标，先看实时预览，再等待 500 ms 完成保存。点击 Reject next commit 后重试一次编辑，可体验错误提示与恢复过程；下方列出编辑事件，接入异步保存时在 onValueCommit 返回 Promise。'
           : kind === 'bounds'
-            ? 'Hard editing range starts at X/Y 0…1. Shrinking X to 1.1…1.2 does not change existing data; the middle point has no reachable X interval between its neighbours, while Y remains editable.'
+            ? '先在 X/Y 0…1 范围内拖动曲线点，再点击 Toggle narrow bounds 缩小可编辑范围。此时可继续调整中间点的 Y，X 输入会受新范围与相邻点限制。应用可用 bounds 控制后续编辑的范围，已有曲线仍按原数据展示。'
             : kind === 'frozen'
-              ? 'The owner logs requests without accepting values. Graph geometry stays authoritative; local numeric drafts return to the accepted value after submission.'
-              : 'Point click, selection, viewport, ticks and animation are UI state only. Drag a point/handle or use its arrow keys. Shift changes keyboard steps ×10, Ctrl/Meta ×0.1. Double-click empty graph to add; Delete removes selected points.'
+              ? '尝试拖动点或修改坐标，比较下方的修改请求与保持原状的曲线。这个示例由应用保留原值；自己的受控编辑器可在 onValueChange 中更新 value，让曲线跟随操作。'
+              : '点击选中一个点，拖动它或控制柄来改变曲线；双击空白处新增点，Delete 删除选中点。也可用方向键微调，Shift 放大步长，Ctrl/⌘ 缩小步长。下方展示曲线数据与 X=0.25 的采样结果，便于观察编辑对曲线的影响。'
       }
       onReset={() => {
         revisionRef.current++
@@ -113,14 +113,14 @@ function CurveExample({ kind = 'linear' }: { kind?: Kind }) {
             const version = revisionRef.current
             if (kind === 'async') await new Promise((resolve) => setTimeout(resolve, 500))
             if (version !== revisionRef.current) {
-              record('host ignored stale completion')
+              record('应用忽略较早的保存结果')
               return
             }
             if (rejectNext.current) {
               rejectNext.current = false
               setValue(start.current)
               record('rejected')
-              throw new Error('The host rejected this curve. Retry or cancel the edit.')
+              throw new Error('曲线未保存，请重试或取消编辑。')
             }
             record('accepted')
           }}
@@ -170,17 +170,26 @@ function CurveExample({ kind = 'linear' }: { kind?: Kind }) {
           </ControlButton>
         )}
       </div>
-      <StatePanel label="Authoritative curve / sample at X 0.25" value={{ value, sample: sampleCurve(value, 0.25) }} />
+      <StatePanel label="当前曲线与 X=0.25 处的采样值" value={{ value, sample: sampleCurve(value, 0.25) }} />
       <StatePanel label="Independent selection / viewport" value={{ selection, viewport }} />
       <StatePanel label="Events" value={events} />
     </ContractFrame>
   )
 }
 const meta = {
+  tags: ['autodocs'],
   title: 'Widgets/Curve',
   component: CurveWidget,
   args: { value: linear },
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'CurveWidget 用于直接编辑二维曲线，支持 linear 折线和 bezier 曲线。value 保存带稳定 ID 的点及控制柄；选中点和 viewport 视图范围可以分别受控。\n\n拖动点、控制柄或编辑坐标时，onValueChange 返回预览曲线；onValueCommit 表示一次完整编辑。点选择、平移、缩放、刻度和动画预览只改变查看方式。\n\n应用保存曲线，并在受控取消时恢复编辑前的值。bounds 限制可编辑坐标，viewport 决定可见范围；切换对象或外部版本时更新 resetKey。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof CurveWidget>
 export default meta
 type Story = StoryObj<typeof meta>

@@ -11,7 +11,7 @@ function SliderOverview() {
   return (
     <ContractFrame
       title="Slider"
-      description="每次拖动一个开始/终结；实时请求由父级回传。Escape、pointercancel 或窗口失焦通知父级恢复预览。Ctrl/⌘ 拖动细调，键盘箭头/Page/Home/End 可操作。"
+      description="拖动时通过 onValueChange 连续请求新值，由父组件回传；松开时调用 onValueCommit。Escape、指针取消或窗口失焦调用 onEditCancel，由应用恢复预览。Ctrl/⌘ 可细调，也支持方向键、PageUp/PageDown 和 Home/End。"
       onReset={() => {
         setValue([25])
         setRevision((next) => next + 1)
@@ -38,7 +38,7 @@ function SliderOverview() {
           setEvents((current) => [...current, `cancel: ${reason}`])
         }}
       />
-      <StatePanel label="Value and lifecycle" value={{ value, revision, events }} />
+      <StatePanel label="当前值与编辑事件" value={{ value, revision, events }} />
     </ContractFrame>
   )
 }
@@ -47,8 +47,8 @@ function MultipleThumbs() {
   const [value, setValue] = useState([20, 60, 80])
   return (
     <ContractFrame
-      title="Multiple thumbs"
-      description="数组是已排序的位置。上方允许跨越换序；下方锁定顺序并保持至少10单位距离。每个thumb提供独立名称。"
+      title="多个滑块与间距限制"
+      description="把上方一个滑块拖过另一个，观察位置数组的顺序变化；再操作下方滑块，体验保留顺序和至少 10 单位间距的效果。每个滑块都可用 Tab 访问，应用可以按区间含义为它们提供名称。"
       onReset={() => setValue([20, 60, 80])}>
       <Slider
         aria-label="Range"
@@ -74,8 +74,8 @@ function SliderDirections() {
   const [key, setKey] = useState(0)
   return (
     <ContractFrame
-      title="Directions"
-      description="水平LTR/RTL与竖排分别保持键盘和指针方向；inverted反转视觉轴，尺寸由调用者约束。"
+      title="方向与反向刻度"
+      description="分别拖动横排、从右到左和竖排的滑块，再试试方向键，比较数值增加的方向。可通过 orientation、dir 和 inverted 选择布局与刻度方向，容器或样式用于设置长度。"
       onReset={() => setKey((current) => current + 1)}>
       <div key={key} className={contractStyles.stack}>
         <Slider aria-label="LTR" defaultValue={[30]} startSlot="LTR" />
@@ -93,8 +93,8 @@ function SliderRanges() {
   const [key, setKey] = useState(0)
   return (
     <ContractFrame
-      title="Ranges and rulers"
-      description="负范围和小数step使用共享数值规则；刻度最多199条。0/负rulerInterval回退自动间距。min=max保留固定可读值。"
+      title="范围、步长与刻度"
+      description="拖动带负数和小数刻度的滑块，观察 step 对调整幅度的影响。再比较下方不同刻度与固定值的外观；应用可以用 min/max 指定范围，用 rulerInterval 设置刻度间距。"
       onReset={() => setKey((current) => current + 1)}>
       <div key={key} className={contractStyles.stack}>
         <Slider
@@ -129,8 +129,8 @@ function SliderModes() {
   const [requests, setRequests] = useState<number[][]>([])
   return (
     <ContractFrame
-      title="Read only, disabled and controlled refusal"
-      description="只读保留键盘焦点但不写值；disabled跳过焦点。固定受控值不会伪装接受拖动，仍记录请求供宿主判断。"
+      title="只读、禁用与拒绝变化"
+      description="用 Tab 依次访问这些滑块，比较只读、禁用和正常可编辑状态。再拖动固定值示例，查看下方记录的修改请求；受控用法中，应用更新 value 后滑块才采用新位置。"
       onReset={() => setRequests([])}>
       <Slider
         aria-label="Read only"
@@ -173,8 +173,8 @@ function SliderPending() {
   }
   return (
     <ContractFrame
-      title="Pending and external updates"
-      description="拖动结束后等待模拟宿主。等待期间不开始第二次编辑；拒绝回到权威值并显示错误。外部revision使旧结果失效。"
+      title="异步保存与外部更新"
+      description="拖动滑块并松开，再点击 Accept 完成保存，或点击 Reject 体验恢复原值和错误提示。也可点击 External value 75，模拟应用传入新数据。下方记录展示每一步；接入时在 onValueCommit 返回 Promise，用 resetKey 标识外部更新。"
       onReset={reset}>
       <Slider
         aria-label="Async slider"
@@ -211,7 +211,7 @@ function SliderPending() {
           disabled={!pending}
           onClick={() => {
             setValue(initial.current)
-            request.current?.reject(new Error('Host rejected the value'))
+            request.current?.reject(new Error('数值未保存，请重新调整后重试。'))
             request.current = null
             setPending(false)
           }}>
@@ -231,7 +231,18 @@ function SliderPending() {
   )
 }
 
-export default { title: 'Widgets/Sliders/Slider' } satisfies Meta
+export default {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Slider 用于通过拖动或键盘调整一个或多个数值位置。value 数组中的每一项对应一个滑块，适合单值参数或区间选择。\n\n应用通过 onValueChange 接收预览数组，并在 onValueCommit 中保存一次完整调整。方向键、PageUp/PageDown、Home/End 可用于键盘操作；min/max 和 step 限制范围与步长。\n\n受控用法中，应用必须回传 value，并在 onEditCancel 中决定是否恢复编辑前的值。多滑块可配置顺序与最小间距；readOnly 保留焦点供查看，disabled 禁止交互。',
+      },
+    },
+  },
+  title: 'Widgets/Sliders/Slider',
+} satisfies Meta
 type Story = StoryObj
 export const Overview: Story = { render: () => <SliderOverview /> }
 export const Multiple: Story = { render: () => <MultipleThumbs /> }

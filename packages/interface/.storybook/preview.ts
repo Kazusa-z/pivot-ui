@@ -5,6 +5,7 @@ import { themePreview } from '../../../storybook/theme'
 const preview: Preview = {
   ...themePreview,
   parameters: {
+    docs: { story: { inline: false, height: '600px' } },
     controls: {
       matchers: { color: /(background|color)$/i, date: /Date$/ },
     },

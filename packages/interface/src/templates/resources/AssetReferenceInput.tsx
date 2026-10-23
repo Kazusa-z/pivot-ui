@@ -40,9 +40,9 @@ import { ResourcePicker, type ResourcePickerProps } from './ResourcePicker'
 export interface AssetReferenceInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'> {
   value: AssetId | null
   provider: ResourceProvider
-  /** Atomic command. false or rejection keeps the picker open; true/void indicates success. The value prop remains authoritative. */
+  /** 接收选中的资源 ID。接受后更新 value 并返回 true 或 void；返回 false 或抛出错误会保留选择器，方便用户重试。 */
   onValueChange?: (id: AssetId | null, asset: AssetDescriptor | null) => boolean | void | Promise<boolean | void>
-  /** Optional descriptor snapshot for this exact value ID; never supplies the reference value itself. */
+  /** 为当前 value 对应的资源提供可直接展示的描述，例如名称和缩略图；资源引用仍通过 value 指定。 */
   selectedAsset?: AssetDescriptor
   kinds?: readonly string[]
   groupId?: string | null
@@ -51,7 +51,7 @@ export interface AssetReferenceInputProps extends Omit<HTMLAttributes<HTMLDivEle
   placeholder?: string
   disabled?: boolean
   readOnly?: boolean
-  /** Requires an explicit DragDropProvider ancestor only when enabled. Internal payloads carry { id }, never engine objects. */
+  /** 启用应用内资源拖放。请包裹 DragDropProvider，拖动数据使用 { id }，应用通过 provider 查询资源详情。 */
   dropEnabled?: boolean
   open?: boolean
   defaultOpen?: boolean
@@ -114,7 +114,7 @@ function DropSurface({
 }
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error))
 
-/** The current reference resolves independently of the paged query; all mutations are explicit host commands. */
+/** 展示和更换一个资源引用，适合材质、图片等资源字段。通过 provider.get 加载当前 ID 的详情，通过回调请求更换或清空。 */
 export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInputProps>(function AssetReferenceInput(
   {
     value,
@@ -464,7 +464,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
             <PopoverTitle className={css({ margin: '0 0 4px', fontSize: '14px' })}>{label}</PopoverTitle>
             <PopoverDescription
               className={css({ margin: '0 0 12px', fontSize: '12px', color: 'var(--colors-textMuted)' })}>
-              Choose a ready asset. The reference changes only when its owner accepts the request.
+              Search or browse resources, then choose an available asset to use in this field.
             </PopoverDescription>
             <ResourcePicker
               {...pickerProps}

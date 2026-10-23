@@ -18,7 +18,7 @@ export type DialogPortalProps = Omit<Primitive.DialogPortalProps, 'forceMount'>
 export type DialogCloseProps = Primitive.DialogCloseProps
 export const DialogRoot = Primitive.Root
 export const DialogTrigger = Primitive.Trigger
-/** Closed dialogs unmount so hidden modal effects cannot lock the document. */
+/** 显示模态对话框，适合表单和详细操作。关闭后内容卸载；需要跨次打开保留的数据可放在父组件状态中。 */
 export function DialogPortal(props: DialogPortalProps) {
   const { forceMount: _forceMount, ...portalProps } = props as Primitive.DialogPortalProps
   return <Primitive.Portal {...portalProps} />

@@ -16,7 +16,7 @@ export type TextEditCancelReason =
 
 export interface UseTextEditOptions {
   value: string
-  /** Change this when the target or authoritative revision changes, including equal-valued updates. */
+  /** 切换编辑对象或收到外部数据版本时更新此值，以重新开始草稿；即使文本相同也可重置。 */
   resetKey?: unknown
   disabled?: boolean
   readOnly?: boolean
@@ -24,9 +24,9 @@ export interface UseTextEditOptions {
   multiline?: boolean
   onBegin?: () => boolean | void
   onDraftChange?: (draft: string) => void
-  /** Resolve after acceptance; reject to retain the draft and display an error. The owner updates value. */
+  /** 接收完成的草稿。应用保存并更新 value 后完成 Promise；抛出错误可保留草稿并显示错误，方便用户修正或重试。 */
   onCommit: (draft: string, reason: TextEditCommitReason) => void | Promise<void>
-  /** Called only before submission or after rejection returns to editing. Pending invalidation cannot cancel the host operation. */
+  /** 未提交或保存失败后取消编辑时接收原因。已发送的保存请求由应用继续处理，需要撤销时调用应用的撤销操作。 */
   onCancel?: (reason: TextEditCancelReason) => void
 }
 
@@ -40,8 +40,9 @@ type Session = {
 }
 
 /**
- * Local text draft only. It neither owns an authoritative value nor creates a property transaction.
- * Cancelling a pending edit ignores its completion; it cannot retract an already submitted host operation.
+ * 为文本输入提供草稿、提交、取消和错误提示，适合重命名或完成后保存的字段。
+ * 应用通过 onCommit 保存文本并更新 value；保存失败时可保留草稿供用户重试。
+ * 需要统一管理属性的校验与撤销时，可使用 PropertyField 连接应用数据服务。
  */
 export function useTextEdit(options: UseTextEditOptions) {
   const latest = useRef(options)

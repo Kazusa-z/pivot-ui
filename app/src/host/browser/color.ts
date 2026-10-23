@@ -5,7 +5,7 @@ interface BrowserEyeDropper {
 }
 type ColorBrowserWindow = Window & { EyeDropper?: new () => BrowserEyeDropper }
 
-/** Application-owned browser adapter. Call dispose when its owner is destroyed. */
+/** 为颜色控件提供浏览器取色能力。将返回的 capabilities 传给控件，并在应用清理时调用 dispose。 */
 export function createBrowserColorCapabilities(host: ColorBrowserWindow = window): {
   capabilities: ColorCapabilities
   dispose(): void

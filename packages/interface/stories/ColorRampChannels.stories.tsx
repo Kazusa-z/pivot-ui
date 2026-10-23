@@ -45,8 +45,8 @@ function ChannelsExample({ empty = false, popup = false }: { empty?: boolean; po
   }
   return (
     <ContractFrame
-      title="Color and alpha tracks"
-      description="色轨与alpha轨独立维护ID和选择，但整组只有一个编辑会话。颜色保留线性HDR值；预览alpha = 色值alpha × 独立alpha轨。空alpha轨表示全不透明。"
+      title="分别编辑颜色与透明度"
+      description="先拖动颜色轨上的点，再调整透明度轨上的点，比较两条轨道怎样共同影响预览。下方展示每次编辑后的完整 value，应用可直接保存这份双轨数据。此例使用线性 HDR 颜色，最终透明度由颜色自身 alpha 与透明度轨共同决定。"
       onReset={() => {
         setValue(initial)
         setRevision((next) => next + 1)
@@ -59,14 +59,23 @@ function ChannelsExample({ empty = false, popup = false }: { empty?: boolean; po
       ) : (
         <ColorRampChannels {...props} />
       )}
-      <StatePanel label="Both tracks and lifecycle" value={{ value, events }} />
+      <StatePanel label="双轨数据与编辑事件" value={{ value, events }} />
     </ContractFrame>
   )
 }
 const meta = {
+  tags: ['autodocs'],
   title: 'Templates/ColorRampChannels',
   component: ColorRampChannels,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ColorRampChannels 适用于颜色和透明度需要分别布点的渐变。value 包含 color 色轨与 alpha 透明度轨，每条轨道有独立的停靠点 ID 和当前选择。\n\n选择停靠点不会修改属性。编辑任一轨道时，onValueChange 和 onValueCommit 都返回完整的双轨数据，便于应用预览、保存与撤销一次编辑。\n\n最终透明度是颜色自身 alpha 与透明度轨采样值的乘积；空透明度轨按 1 处理。应用负责保存 value、处理取消和提供可选取色能力。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof ColorRampChannels>
 export default meta
 type Story = StoryObj<typeof meta>

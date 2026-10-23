@@ -1,47 +1,27 @@
-# B11 属性联调与最终接入
+# 属性数据与提交
 
-B11 是本轮组件库重构的最后一批。最终验收与 Git 记录见 [LEDGER](./LEDGER.md)。范围是 65 项组件处置和 S01–S10 共性事项收口；真实 C++ / Qt 传输、业务页面、应用命令/撤销及完整编辑器工作区由后续应用开发完成。
+普通 React 状态足以驱动组件。当应用需要统一处理预览、校验、保存、失败和撤销时，可以使用 `PropertyAccess<T>` 和 `PropertyField<T>`。
 
-## 最终结构
+`PropertyAccess` 是应用实现的数据接口；`PropertyField` 订阅这个接口，并把一个属性连接到一个控件。用普通 React 组合多个 PropertyField、Section 和布局组件，就能安排页面中的字段和编辑器。
 
-| 层          | 拥有的职责                                           | 可以依赖                        |
-| ----------- | ---------------------------------------------------- | ------------------------------- |
-| values      | 数据类型、校验、数值/颜色/曲线/集合等纯算法          | 其他纯值模块                    |
-| contracts   | 描述符、PropertyAccess、会话、宿主能力与资源服务接口 | values                          |
-| foundation  | token、图标、排版、主题 store 与显式浏览器适配器     | 纯模型与 React（纯 store 除外） |
-| interaction | 拖动、编辑生命周期、ref 组合等 React 行为            | contracts/values、foundation    |
-| widgets     | 独立控件、键盘和焦点行为                             | 下层基础与交互                  |
-| layout      | 属性行、区域、滚动与尺寸布局                         | 基础、必要结构控件              |
-| templates   | 几何、颜色、曲线、资源与集合的明确组合               | widgets/layout 和纯模型         |
-| property    | 一个属性和一个控件组合的会话连接                     | contracts 与上述展示层          |
-| application | 数据、对象选择、命令、历史、真实服务与 Qt bridge     | 公开包入口                      |
+## 先认识三个值
 
-仅 `packages/interface` 与 `app` 为 workspace 包。`pnpm dev` / `dev:interface` 运行端口 6009；`build:storybook` 仅构建统一 Storybook。旧 UI/GUI 源码、适配器、旧包命令和 lockfile importer 已删除。`GUI`、`GUIRoot`、旧 `Panel` 不恢复，也不建立空 Qt 或业务目录。
+| 名称                         | 含义                                                   |
+| ---------------------------- | ------------------------------------------------------ |
+| `snapshot.value`             | 应用已经接受的值，例如保存成功的值                     |
+| `snapshot.edit.previewValue` | 用户正在编辑的预览，还没有成为保存结果                 |
+| 控件的文本草稿               | 输入中的文字，可以暂时不是有效值，例如数字输入里的 `-` |
 
-## 泛型数据契约
+拖动时可以不断更新 preview，让界面立即响应；拖动结束再保存一次。应用决定一次成功保存如何加入撤销记录。
 
-`PropertyAccess<T>`、`PropertySnapshot<T>`、`EditSession<T>`、结果类型和 `PropertyField<T>` 共享同一个 T。省略 T 时仍默认标量 `PropertyValue`（string/number/boolean），没有将默认值放宽成 any/unknown。
+## 内置字段
 
-`PropertyDescriptor<T>` 是数据描述，不能包含 React 元素、函数、DOM 或引擎实例。`PropertyDescriptorSchema` 是运行时判别联合。已知 kind 包括：
-
-- number、string、boolean、enum、multi-enum；
-- vector2、vector3、vector4、rect、numeric-tuple、distribution；
-- color、color-ramp、color-ramp-channels、color-distribution；
-- curve、numeric-distribution、resource（ID 或 null）、collection；
-- custom（明确 schema 名及可选纯数据 metadata）。
-
-数值 axes/constraints、选项和资源筛选是元数据。复杂 renderer 显式把这些配置传给相应控件；PropertyField 不猜测页面结构或复制一套控件配置协议。可选宿主操作通过独立能力/服务参数注入。
-
-`PropertyValueAdapter<T>` 的 clone/equals/validate 函数属于宿主策略，不进入描述符。Mock 的 custom kind 必须显式提供 adapter；默认克隆只接受普通数据，拒绝循环、类实例、函数、symbol、稀疏数组、访问器和隐藏字段，并递归冻结。公开 `clonePropertyData` / `arePropertyDataEqual` 可用于已校验普通数据；结构相等不依赖对象键顺序。真实宿主可实现自己的快照策略，但必须保持稳定、不可变、无引擎实例泄漏的契约。
-
-## PropertyField 的两种接法
-
-标量沿用内置 renderer：
+字符串、数字、布尔和枚举有内置控件。需要不同显示时指定 widget。
 
 ```tsx
 import { PropertyField, type PropertyAccess } from '@pivot-ui/react'
 
-export function ScalarFields({ name, strength }: { name: PropertyAccess<string>; strength: PropertyAccess<number> }) {
+export function BasicFields({ name, strength }: { name: PropertyAccess<string>; strength: PropertyAccess<number> }) {
   return (
     <>
       <PropertyField access={name} />
@@ -51,7 +31,13 @@ export function ScalarFields({ name, strength }: { name: PropertyAccess<string>;
 }
 ```
 
-复杂值用同一个 PropertyField 的 typed render：
+默认 string 使用 Input，number 使用 InputNumber，boolean 使用 Checkbox，enum 使用 Select。可选 widget 包括 textarea、numeric-slider 和 combobox；不相容的类型与控件组合会报错。
+
+标签、说明、只读状态、禁用原因和错误由数据快照提供，也可以通过 PropertyField 的 label/description 等显示参数调整。
+
+## 复杂值由 render 组合
+
+几何、颜色、曲线等值明确选择对应编辑器。`field.editProps` 包含当前显示值、编辑回调、可用状态、resetKey 和可访问性关联。
 
 ```tsx
 import { PropertyField, Vector3Input, type PropertyAccess, type Vector3 } from '@pivot-ui/react'
@@ -66,9 +52,13 @@ export function PositionField({ access }: { access: PropertyAccess<Vector3> }) {
 }
 ```
 
-`field.editProps` 包含 value、resetKey、disabled/readOnly、编辑生命周期回调和实际控件的 ARIA 关联。它适用于现有数值、颜色、曲线模板，不另建各族 PropertyField 包装。`field.controlProps` 只含 ID/名称/说明/错误/等待关联，用于手动组合；不要只把它放在与控件无关的 wrapper 上。复杂组合默认 group，单个 labelable input 可设 association="control"。
+复杂组合默认作为一个有名称的 group。只包含一个可关联标签的输入时，可以设置 `association="control"`。`field.controlProps` 只提供 ID、标签、说明、错误和等待状态关联，供你手动组合时使用；把它放在真正的控件或控件组上。
 
-资源、集合、多选是明确的原子请求：
+在 render 中把范围、轴、单位、资源筛选和能力参数传给相应组件。这样可以直接使用各编辑器的完整 props，例如 Vector3Input 的 axes 或 ColorInput 的 capabilities。
+
+## 资源、集合和多选的完整赋值
+
+这类操作通常一次给出完整新值，用 `field.submit(nextValue)`。它在成功或无变化时返回 true，不可编辑、过期或未接受时返回 false，校验和保存失败时抛出错误。
 
 ```tsx
 import { AssetReferenceInput, PropertyField, type PropertyAccess, type ResourceProvider } from '@pivot-ui/react'
@@ -90,7 +80,7 @@ export function MaterialField({
           value={field.snapshot.value}
           resetKey={field.resetKey}
           disabled={field.snapshot.disabled}
-          readOnly={field.snapshot.readOnly}
+          readOnly={field.snapshot.readOnly || field.pending}
           onValueChange={field.submit}
         />
       )}
@@ -99,30 +89,56 @@ export function MaterialField({
 }
 ```
 
-`submit(next)` 在成功/无变化时返回 true；不可编辑、过期或未接受时返回 false；校验/宿主拒绝抛出原始错误供控件保留草稿和重试。集合重命名/增删/排序构造完整下一份集合值；视图选中、展开与浏览不调用 submit。普通多选 renderer 应自行处理 Promise rejection，字段错误仍由 access snapshot 展示。
+集合改名、增删和重排都构造完整的新数组再提交。选中、展开、翻页和浏览不需要提交属性。自定义多选的事件处理应捕获 submit 的 rejection；字段会从 snapshot 展示保存错误。
 
-更自由的布局可直接使用 `usePropertyBinding<T>`，复用相同的会话、预览和身份逻辑。不要在 renderer 中重新实现 begin/change/commit 协议。
+## 实现 PropertyAccess
 
-## 编辑与异步边界
+每个 access 固定到 `{objectId, propertyId}`，并在同一对象的正常渲染间保持实例稳定。应用提供以下三个方法：
 
-1. snapshot.value/revision 是权威状态，snapshot.edit.previewValue 是即时预览。控件只显示 preview，不能把每次拖动都变成命令。
-2. 连续操作开始一次、变化多次、终结一次；相等的复杂值不生成历史。已提交请求仍属于捕获的 target；卸载和切换不能假装撤销它。
-3. `committedSessionId` 可选地标记“当前权威 revision 由此会话接受”。自身成功 ACK 不轮换 resetKey，从而保留分布模式缓存；外部更新/reset 清除该标记并推进 revision，即使值相同也使旧 UI 草稿/缓存失效。未提供标记的适配器按 revision 变化安全地重置。
-4. 本地尚未处理完的提交回执阻止同一轮重复提交；异步拒绝不报告成功，过期回执不覆盖新对象和新会话。
-5. pending 自身操作由正在编辑的控件处理，不能因 pending 反过来使自身会话失效。其他控件/动作不能开启第二个并发写入。
-6. PropertyField 拥有宿主错误展示。模板接收到 aria-errormessage 时不重复展示同一拒绝；独立模板本地校验仍有自己的提示。ARIA 指向实际可见消息。
-7. mixed 是应用聚合状态，不是普通空值；应用在成功接受后清除。标量支持相应占位，复杂值的替换策略由 renderer 明确表达，`Mixed geometry` 故事给出示例。
+| 方法                  | 要求                                          |
+| --------------------- | --------------------------------------------- |
+| `getSnapshot()`       | 返回不可变快照；没有变化时返回同一个对象      |
+| `subscribe(listener)` | 数据变化时通知 listener，返回取消订阅函数     |
+| `begin()`             | 开始一次编辑，或返回只读/禁用导致的不可用结果 |
 
-## 能力保留和兼容退出
+快照包含 target、descriptor、value、revision、readOnly、disabled、unavailableReason、edit 和 error。revision 是数据版本号；外部数据替换时应推进，即使值相等，也能让正在编辑的控件识别新版本。
 
-`clamp` 位于纯 values 并从包根导出；保留既有数学裁剪语义。`mergeRefs` 位于 React interaction，支持对象 ref、普通 callback ref 和 React 19 cleanup。图集图标使用正确名称 `IconSpriteAtlasFile`，移除旧错拼别名。Panda runtime styling 使用明确子入口，CSS/VariantProps 类型仍可从根导入；StitchesComponent、旧 deep imports 与旧 DTO 适配器退出。
+begin 成功返回 session，session 保存本次目标、初值和开始版本，并提供：
 
-`Foundation / Tokens` 保留旧 Design System 的完整语义颜色、双主题面板、控件/图标尺寸、间距、字体、圆角和阴影展示。`Foundation / Theme` 保留主题 store 行为。布局、浮层、各控件/模板原有统一故事继续保留；新增 `Property / Complex bindings` 覆盖 18 个绑定场景。
+- `change(value)`：校验并更新预览，返回 changed、unchanged、invalid 或 ignored。
+- `commit()`：请求接受本次预览，返回 Promise。
+- `cancel(reason)`：取消尚未提交的预览，返回 Promise。
 
-B01–B10 文档和原架构表保留当时名称与验证数字，供追溯；当前使用方式以本文件、根文档及包 README 为准。不要按历史文档重新引入旧包。
+第一次 commit/cancel 决定本次编辑的结果，重复调用返回同一个 Promise。commit 开始后，保存请求继续针对本次目标执行；界面取消或卸载时，应用仍需处理它的返回结果。提交结果为 committed、unchanged、cancelled、rejected 或 superseded；每个结果带目标、会话 ID、当时的接受值和版本。
 
-## 验收与范围
+可以先在应用内存中实现这些方法，再接入服务器或桌面程序。Storybook 的模拟实现仅用于展示接口，不从公开包导出。
 
-运行格式、生产/stories/tooling/纯层/app 严格类型检查、demo 与统一 Storybook 生产构建、frozen install 和 dedupe。临时模型/ReactDOM/类型探针位于系统 TEMP；在浏览器验证实际编辑、拒绝、恢复、外部更新和主题，生产构建另行验证。最终结果与证据编号集中记录在台账，不以源码存在代替通过。
+## 描述符与值类型
 
-B11 的完成意味着这轮组件库改造结束。之后可以按真实业务启动 UI 驱动开发，先实现应用内存适配器，再接 C++ / Qt；不需要再保留一层旧 GUI 表单包装。
+`PropertyDescriptor<T>` 说明属性类型、标签和数据约束，不放 React 元素或函数。省略泛型时，PropertyAccess 的值默认为 string/number/boolean；复杂数据显式写 T。
+
+| kind                                                       | 值或用途                           |
+| ---------------------------------------------------------- | ---------------------------------- |
+| number、string、boolean、enum                              | 基本值；enum 带 options            |
+| multi-enum                                                 | 选项值数组                         |
+| vector2、vector3、vector4、rect                            | 对应几何对象                       |
+| numeric-tuple、distribution                                | 多轴数值数组、固定总量分段         |
+| color、color-ramp、color-ramp-channels、color-distribution | 对应颜色数据                       |
+| curve、numeric-distribution                                | 曲线或数值分布                     |
+| resource                                                   | 非空资源 ID 或 null                |
+| collection                                                 | 有稳定 key 的数组                  |
+| custom                                                     | 应用自己的数据类型及明确 schema 名 |
+
+几何 descriptor 的 axes 是带 key 的可选数组，允许部分配置和任意顺序，约束按字段 key 匹配；tuple 的 axes 按数组位置对应数值。几何控件本身接受按字段名配置的 axes 对象，因此 renderer 要按组件接口映射元数据。
+
+`PropertyValueAdapter<T>` 可以提供 clone/equals/validate，用于应用自己的复制、比较和校验策略，函数不放在 descriptor 中。`clonePropertyData` 复制并冻结普通数据，拒绝类实例、函数、循环和访问器；`arePropertyDataEqual` 比较已校验的普通数据。控件数据不要携带 DOM 或引擎实例。
+
+## 外部更新、等待与错误
+
+对象或外部版本改变时，当前草稿和过期异步结果会失效。`committedSessionId` 可选地标记当前 revision 来自哪次成功提交；提供它后，PropertyField 能保留这次编辑自身的模式缓存。没有标记时，revision 变化会安全地重置编辑状态。
+
+一个提交尚未完成时，不应再开始第二次写入。保存失败后，应用保留已接受的值，编辑器可以保留草稿供重试。字段负责展示应用错误，子编辑器通过 `aria-errormessage` 关联同一条消息。
+
+`mixed` 表示多个对象的值不一致，不是空字符串或 0。应用负责计算这个状态，并在成功赋值后清除。复杂值如何覆盖多个对象，由 renderer 和应用明确决定。
+
+需要更自由的布局时，可以直接使用 `usePropertyBinding<T>`，取得同一组 value、begin、change、commit、submit 和 cancel 方法，再组合自己的字段。不要同时在多个地方保存独立草稿和重复提交同一修改。

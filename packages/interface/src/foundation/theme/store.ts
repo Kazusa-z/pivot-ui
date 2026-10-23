@@ -35,7 +35,7 @@ export interface ThemeStore {
   getServerSnapshot(): ThemeSnapshot
   subscribe(listener: () => void): () => void
   setPreference(preference: ThemePreference): void
-  /** Retain the external adapters. The last release removes their listeners. */
+  /** 连接主题存储、系统主题和外观适配器，返回清理函数。与 ThemeProvider 配合使用时，由 Provider 调用和清理。 */
   connect(): () => void
 }
 
@@ -43,7 +43,7 @@ export function isThemePreference(value: unknown): value is ThemePreference {
   return value === 'light' || value === 'dark' || value === 'system'
 }
 
-/** Creation and snapshot reads never access adapters or mutate the DOM. */
+/** 创建可共享的主题状态，用于跟踪用户偏好和实际明暗主题。传给 ThemeProvider 后连接适配器；独立使用时调用 connect 并保留清理函数。 */
 export function createThemeStore(options: ThemeStoreOptions = {}): ThemeStore {
   const initialPreference = options.initialPreference ?? 'dark'
   let systemTheme = options.initialSystemTheme ?? 'dark'

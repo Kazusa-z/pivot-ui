@@ -13,8 +13,8 @@ function DropdownControlledExample() {
   const [changes, setChanges] = useState(0)
   return (
     <ContractFrame
-      title="Controlled dropdown"
-      description="Enter/Space 或方向键打开；Up/Down、Home/End、字母搜索移动；Enter 选择，Escape 关闭并回到触发按钮。"
+      title="由应用控制开关的操作菜单"
+      description="DropdownMenu 适合按钮展开的操作列表。聚焦按钮后按 Enter、Space 或方向键打开，用 Up/Down、Home/End 或字母定位项目；选择时 onSelect 执行对应操作，Escape 关闭后回到触发按钮。"
       onReset={() => {
         setOpen(false)
         setSelected('none')
@@ -60,8 +60,8 @@ function UncontrolledExample() {
   const [refTag, setRefTag] = useState('none')
   return (
     <ContractFrame
-      title="Uncontrolled and asChild"
-      description="组件保存 open；输出只记录通知。asChild 保留链接、ref 和键盘语义；内联 Content 不经过 Portal。"
+      title="简单菜单与链接菜单项"
+      description="省略 open 时由组件保存展开状态，onOpenChange 可用于观察变化。asChild 可让菜单项使用真实链接并保留 ref；此例将 Content 放在原位置，需要脱离容器裁切时可加入 Portal。"
       onReset={() => {
         setGeneration((n) => n + 1)
         setOpen(false)
@@ -103,8 +103,8 @@ function CheckedExample() {
   const [changes, setChanges] = useState(0)
   return (
     <ContractFrame
-      title="Controlled checkbox and radio"
-      description="勾选与单选由父级保存。preventDefault 保持菜单打开；禁用项跳过焦点且不改变值。"
+      title="在菜单中调整选项"
+      description="用 CheckboxItem 和 RadioGroup 在菜单中调整显示选项。应用在 onCheckedChange 或 onValueChange 中保存值；需要连续修改时，可在选择事件中调用 preventDefault 保持菜单打开。禁用项目会在键盘浏览时跳过。"
       onReset={() => {
         setVisible('indeterminate')
         setMode('solid')
@@ -160,8 +160,8 @@ function NestedExample() {
   const [selected, setSelected] = useState('none')
   return (
     <ContractFrame
-      title="Nested, long and narrow"
-      description="子菜单继承尺寸与主题。Right 打开子菜单，Left 返回；End 滚到末项。长标签在有限宽度内换行。"
+      title="子菜单、长列表与窄布局"
+      description="子菜单适合把相关操作分组。Right 进入子菜单，Left 返回，End 可到末项；子菜单沿用所在菜单的尺寸和主题。此例也展示长列表滚动和窄宽度下的标签换行。"
       onReset={() => {
         setSize('sm')
         setSelected('none')
@@ -225,8 +225,8 @@ function ContextExample() {
   const [checked, setChecked] = useState(false)
   return (
     <ContractFrame
-      title="Context menu"
-      description="右键或聚焦目标后 Shift+F10 / ContextMenu 键打开。Root 使用原生 open/onOpenChange，不接受 defaultOpen。"
+      title="目标元素的上下文操作"
+      description="ContextMenu 为目标元素提供上下文操作。可右键打开，也可聚焦目标后按 Shift+F10 或 ContextMenu 键；选择项目通过回调交给应用。需要从应用控制显示时，使用 open 与 onOpenChange。"
       onReset={() => {
         setOpen(false)
         setSelected('none')
@@ -288,8 +288,8 @@ function MenubarExample() {
   const [checked, setChecked] = useState(true)
   return (
     <ContractFrame
-      title="Menubar keyboard and RTL"
-      description="Left/Right 移动顶层菜单；Down 打开；子菜单、Escape 与焦点恢复使用 menubar 语义。RTL 下方向键反转。"
+      title="顶部菜单的键盘导航"
+      description="Menubar 适合应用顶部菜单。Left/Right 在顶层入口之间移动，Down 打开菜单，Escape 退回上一级；切换 RTL 后横向按键方向随界面阅读方向调整。"
       onReset={() => {
         setValue('')
         setRtl(false)
@@ -360,8 +360,8 @@ function ScopedMenu() {
   const [selected, setSelected] = useState('none')
   return (
     <ContractFrame
-      title="Scoped theme and portal container"
-      description="局部 ThemeProvider 与工具栏主题独立。切换主题后主菜单与子菜单的 Portal 均继承局部主题；可切换自定义容器。"
+      title="局部主题与菜单显示位置"
+      description="局部 ThemeProvider 可为一个区域选择独立主题。切换后，主菜单和子菜单即使通过 Portal 渲染，也沿用该区域的主题；自定义容器用于控制浮层放置位置。"
       onReset={() => {
         setPreference('light')
         setCustom(false)
@@ -416,8 +416,8 @@ function LifecycleExample() {
   const [selected, setSelected] = useState('none')
   return (
     <ContractFrame
-      title="StrictMode and unmount"
-      description="重复打开、Escape、卸载再挂载。卸载后所有 Portal 内容应消失，外部按钮继续可操作。"
+      title="移除并重新挂载菜单"
+      description="菜单随所属组件一起挂载和卸载。打开后可按 Escape 关闭，或移除整个菜单；对应浮层会一并移除，页面上的其他操作仍可使用。重新挂载后可再次打开。"
       onReset={() => {
         setMounted(true)
         setGeneration((n) => n + 1)
@@ -458,7 +458,19 @@ function LifecycleExample() {
   )
 }
 
-export default { title: 'Widgets/Menus', parameters: { layout: 'padded' } } satisfies Meta
+export default {
+  tags: ['autodocs'],
+  title: 'Widgets/Menus',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'DropdownMenu 用于按钮展开的操作列表，ContextMenu 用于目标元素的上下文操作，Menubar 用于应用顶部菜单。用户可通过键盘浏览和选择，onSelect、onCheckedChange、onValueChange 等回调把操作交给应用。应用保存勾选与单选状态；菜单内容可组合子菜单、快捷键提示和独立的 Portal 配置。',
+      },
+    },
+    layout: 'padded',
+  },
+} satisfies Meta
 export const DropdownControlled: StoryObj = { render: () => <DropdownControlledExample /> }
 export const UncontrolledAndAsChild: StoryObj = { render: () => <UncontrolledExample /> }
 export const CheckedAndRadio: StoryObj = { render: () => <CheckedExample /> }

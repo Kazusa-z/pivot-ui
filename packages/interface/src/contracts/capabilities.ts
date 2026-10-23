@@ -10,7 +10,7 @@ export interface HostFileRequest {
   readonly extensions?: readonly string[]
 }
 
-/** Optional capabilities are injected by the application. Absence means unavailable. */
+/** 将剪贴板、偏好保存和文件选择连接到应用环境。按需提供各方法，并为未提供的能力显示可用的替代操作或原因。 */
 export interface HostCapabilities {
   readonly clipboard?: {
     readText(): Promise<string>

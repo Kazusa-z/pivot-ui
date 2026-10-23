@@ -36,9 +36,9 @@ export interface ResizableSplitProps extends Omit<HTMLAttributes<HTMLDivElement>
   keyboardStep?: number
   disabled?: boolean
   separatorLabel?: string
-  /** Requests a size; a controlled parent decides whether to accept it. */
+  /** 返回交互中的尺寸；受控使用时将接受的结果写回 size。 */
   onSizeChange?: (size: number) => void
-  /** Final requested size on pointer release or a keyboard adjustment. */
+  /** 在指针释放或键盘调整后返回最终请求尺寸，应用可在此保存布局偏好。 */
   onSizeCommit?: (size: number) => void
   onResizeCancel?: (reason: ResizeCancelReason) => void
   primaryProps?: HTMLAttributes<HTMLDivElement>
@@ -70,7 +70,7 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
 
-/** A pixel-sized pane and optional remaining pane; no workspace or persistence state. */
+/** 通过拖动分隔条调整面板尺寸，适合侧栏或上下分区。尺寸回调使用 CSS 像素，应用可据此保存并恢复用户偏好。 */
 export const ResizableSplit = forwardRef<HTMLDivElement, ResizableSplitProps>(function ResizableSplit(
   {
     primary,

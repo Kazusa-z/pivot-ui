@@ -3,7 +3,7 @@ import { Collapsible, type CollapsibleProps } from '../widgets/disclosure/Collap
 
 export type SectionProps = CollapsibleProps
 
-/** A general titled layout section; content and its data remain owned by the caller. */
+/** 将相关字段或内容放入有标题的区域，默认展开。通过 children 组合内容，通过 actions 提供标题旁的操作。 */
 export const Section = forwardRef<HTMLDivElement, SectionProps>(function Section(
   { defaultOpen = true, ...props },
   ref

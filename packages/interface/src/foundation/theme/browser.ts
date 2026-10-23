@@ -24,7 +24,7 @@ export interface BrowserThemeAppearanceOptions {
 const getBrowserWindow = () => (typeof window === 'undefined' ? undefined : window)
 const getDocumentElement = () => (typeof document === 'undefined' ? undefined : document.documentElement)
 
-/** Browser access is deferred until read/write/subscribe, and denied storage is optional. */
+/** 使用浏览器存储保存主题偏好。在环境禁止访问存储时返回未保存状态，应用仍可在内存中切换主题。 */
 export function createBrowserThemeStorage(options: BrowserThemeStorageOptions = {}): ThemeStorageAdapter {
   const key = options.key ?? THEME_STORAGE_KEY
   const getWindow = options.getWindow ?? getBrowserWindow
@@ -79,7 +79,7 @@ export function createBrowserSystemTheme(options: BrowserSystemThemeOptions = {}
   }
 }
 
-/** Scope to documentElement for portals, or inject an element for an isolated preview. */
+/** 通过元素 class 应用明暗主题。默认作用于 documentElement；传入其他元素可为独立预览限定主题范围。 */
 export function createBrowserThemeAppearance(options: BrowserThemeAppearanceOptions = {}): ThemeAppearanceAdapter {
   const getTarget = options.getTarget ?? getDocumentElement
   let restore: (() => void) | undefined

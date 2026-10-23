@@ -112,11 +112,11 @@ const DragDropContext = createContext<DragDropStore | null>(null)
 
 export interface DragDropProviderProps {
   children?: ReactNode
-  /** Changing identity cancels the active local drag; it does not modify application data. */
+  /** 切换页面或数据目标时更新此值，以结束正在进行的拖动。已完成的列表修改由应用在对应回调中保存。 */
   resetKey?: unknown
 }
 
-/** A provider owns one local drag, independently of all other providers. */
+/** 为一个区域内的拖动来源和接收目标建立连接。在需要互相拖放的组件外包裹同一个 Provider。 */
 export function DragDropProvider({ children, resetKey }: DragDropProviderProps) {
   const [store] = useState(createStore)
   const previousReset = useRef(resetKey)

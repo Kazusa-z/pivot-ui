@@ -21,7 +21,7 @@ export interface DistributionSliderProps extends Omit<
   formatter?: (length: number, index: number, total: number) => string | number
 }
 
-/** Values are segment lengths, not thumb positions. There are exactly n - 1 boundaries. */
+/** 通过拖动分界点调整各段长度，同时保持总量。value 和回调使用长度数组，n 段对应 n - 1 个分界点。 */
 export const DistributionSlider = forwardRef<HTMLSpanElement, DistributionSliderProps>(function DistributionSlider(
   {
     value,

@@ -10,7 +10,7 @@ export interface ColorControlProps extends ColorEditCallbacks {
   readOnly?: boolean
   resetKey?: unknown
   capabilities?: ColorCapabilities
-  /** RGB presentation only. Changing this does not change the stored color encoding. HEX and HSV use sRGB. */
+  /** 选择 RGB 字段的显示编码。HEX 和 HSV 以 sRGB 显示；要转换应用保存的颜色编码，请使用 convertColorSpace。 */
   displaySpace?: ColorSpace
   defaultDisplaySpace?: ColorSpace
   onDisplaySpaceChange?: (space: ColorSpace) => void

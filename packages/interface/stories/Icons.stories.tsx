@@ -63,7 +63,18 @@ const fileIcons = {
   IconVrReferenceImageFile,
   IconPendingFile,
 }
-const meta = { title: 'Foundation/Icons' } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '图标组件用于标识文件类型、鼠标操作和工具状态，接收 SVG 的尺寸、颜色及其他原生属性。图标默认作为装饰；独立传达含义时可提供 title 或 aria-label。放入按钮时由按钮提供操作名称，图标本身保留展示职责。',
+      },
+    },
+  },
+  title: 'Foundation/Icons',
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 

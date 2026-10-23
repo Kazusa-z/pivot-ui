@@ -26,7 +26,7 @@ export interface ColorPickerProps extends ColorControlProps {
   css?: SystemStyleObject
 }
 
-/** A single-color trigger and popover; all editing is delegated to ColorWidget. */
+/** 以色块按钮打开颜色编辑浮层，适合紧凑字段。通过编辑回调接收颜色值，使用 value 更新显示。 */
 export const ColorPicker = forwardRef<HTMLButtonElement, ColorPickerProps>(function ColorPicker(
   {
     label = 'Color',
@@ -120,7 +120,7 @@ export const ColorPicker = forwardRef<HTMLButtonElement, ColorPickerProps>(funct
           <PopoverTitle className={css({ margin: '0 0 4px', fontSize: '14px' })}>{label}</PopoverTitle>
           <PopoverDescription
             className={css({ margin: '0 0 12px', fontSize: '11px', color: 'var(--colors-textMuted)' })}>
-            Single color · {control.value.space} storage{control.hdr ? ' · HDR' : ''}
+            Adjust color and opacity · {control.value.space} color{control.hdr ? ' · HDR' : ''}
           </PopoverDescription>
           <ColorWidget {...control} label={label} />
         </PopoverContent>

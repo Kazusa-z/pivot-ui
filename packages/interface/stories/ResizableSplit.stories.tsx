@@ -25,8 +25,8 @@ function Playground({ vertical = false, end = false }: { vertical?: boolean; end
   const [cancellations, setCancellations] = useState<ResizeCancelReason[]>([])
   return (
     <ContractFrame
-      title="Resizable split"
-      description="尺寸单位为 CSS px。拖动实时请求尺寸，松开结束；Escape/指针取消恢复起始尺寸。方向键调整，Shift 加速，Home/End 到边界。取消 Accept requests 可验证父级拒绝后视觉尺寸保持受控。"
+      title="调整相邻区域的尺寸"
+      description="拖动分隔条可实时调整主区域，松开结束本次调整；Escape 或指针取消会请求恢复起始尺寸。键盘方向键调整，Shift 加速，Home/End 到边界。应用接收以 CSS px 表示的尺寸请求并回写 size；取消 Accept requests 后，显示保持应用传入的尺寸。"
       onReset={() => {
         setSize(220)
         setAccept(true)
@@ -67,7 +67,7 @@ function Playground({ vertical = false, end = false }: { vertical?: boolean; end
             primary={
               <div className={pane}>
                 <h2>Primary pane</h2>
-                <p>Long content wraps within the available pane width.</p>
+                <p>较长内容按主区域的可用宽度换行。</p>
               </div>
             }
             primaryProps={{ 'aria-label': 'Primary pane' }}
@@ -89,7 +89,7 @@ function Playground({ vertical = false, end = false }: { vertical?: boolean; end
             onResizeCancel={(reason) => setCancellations((previous) => [...previous.slice(-7), reason])}>
             <div className={pane}>
               <h2>Secondary pane</h2>
-              <p>This pane consumes the remaining space.</p>
+              <p>这个区域占用调整后剩余的空间。</p>
             </div>
           </ResizableSplit>
         )}
@@ -103,8 +103,8 @@ function Standalone() {
   const [generation, setGeneration] = useState(0)
   return (
     <ContractFrame
-      title="Standalone resizable region"
-      description="未提供 secondary 时，只调整一个独立区域。primaryAsChild 保留原生 section 与 ref；它与双区域布局共用同一个尺寸与指针内核。"
+      title="调整独立区域的尺寸"
+      description="只需要调整一个面板时，可以省略 secondary。此例用 primaryAsChild 保留原生 section 作为区域根元素，通过分隔条拖动或键盘调整尺寸；ref 可继续指向该元素。"
       onReset={() => setGeneration((v) => v + 1)}>
       <ResizableSplit
         key={generation}
@@ -115,7 +115,7 @@ function Standalone() {
         separatorLabel="Resize standalone region"
         primary={
           <section aria-label="Standalone region" className={pane} style={{ height: 180 }}>
-            Drag this region or use its keyboard separator.
+            拖动分隔条，或聚焦分隔条后使用键盘调整区域大小。
           </section>
         }
       />
@@ -124,6 +124,15 @@ function Standalone() {
 }
 
 const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ResizableSplit 用于让用户调整相邻面板或单个区域的宽度、高度。分隔条支持指针拖动、方向键和 Home/End，尺寸以 CSS px 表示；尺寸请求通过回调交给应用保存。受控 size 决定实际显示，应用同时配置最小、最大尺寸及容器空间，取消手势后按回调恢复相应状态。',
+      },
+    },
+  },
   title: 'Layout/ResizableSplit',
   component: Playground,
   decorators: [

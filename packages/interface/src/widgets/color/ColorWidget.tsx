@@ -41,7 +41,7 @@ const selectClass = css({
   padding: '4px',
 })
 
-/** Inline single-color editor. Presentation modes never change the storage encoding. */
+/** 内联颜色编辑器，适合持续调整颜色的面板。通过编辑回调接收 ColorValue；显示模式决定输入方式，value.space 决定颜色编码。 */
 export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function ColorWidget(
   {
     value,
@@ -412,8 +412,8 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
       </div>
       {(!capabilities?.eyeDropper || !capabilities?.clipboard) && (
         <p className={css({ margin: 0, fontSize: '11px', color: 'var(--colors-textMuted)', overflowWrap: 'anywhere' })}>
-          {!capabilities?.eyeDropper && 'Screen picking unavailable. '}
-          {!capabilities?.clipboard && 'Clipboard unavailable.'}
+          {!capabilities?.eyeDropper && 'Screen picking unavailable; choose a color with the controls. '}
+          {!capabilities?.clipboard && 'Clipboard access unavailable; type or paste into the HEX field.'}
         </p>
       )}
       {toolStatus && (

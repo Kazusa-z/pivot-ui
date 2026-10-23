@@ -49,7 +49,7 @@ export interface ActionButtonGroupProps extends HTMLAttributes<HTMLDivElement> {
   css?: SystemStyleObject
 }
 
-/** Visual grouping only: callers can provide a group label, but this is not a toolbar. */
+/** 将相关动作按钮排列成组。可提供组名称，每个按钮保留自己的点击和键盘操作。 */
 export const ActionButtonGroup = forwardRef<HTMLDivElement, ActionButtonGroupProps>(function ActionButtonGroup(
   { direction = 'horizontal', css: cssProp, className, ...props },
   ref

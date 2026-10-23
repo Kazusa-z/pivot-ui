@@ -11,8 +11,8 @@ function SectionExample({ fixed = false }: { fixed?: boolean }) {
   const [actions, setActions] = useState(0)
   return (
     <ContractFrame
-      title={fixed ? 'Fixed and nested sections' : 'General layout section'}
-      description="Section 只组合标题、折叠与内容，默认展开，不绑定字段数据。标题操作不触发折叠；固定分组没有假禁用的折叠按钮。"
+      title={fixed ? '固定分组与嵌套分组' : '带标题的内容分组'}
+      description="Section 适合把相关控件放在同一个有标题的内容区，默认展开。onOpenChange 接收折叠请求，标题操作使用各自回调；collapsible={false} 时内容持续显示。内层分组和表单值分别由应用保存。"
       onReset={() => {
         setOpen(true)
         setNestedOpen(false)
@@ -39,7 +39,7 @@ function SectionExample({ fixed = false }: { fixed?: boolean }) {
             variant="transparent"
             open={nestedOpen}
             onOpenChange={setNestedOpen}>
-            <p>Nested content has an independent expanded state.</p>
+            <p>内层分组使用独立的展开状态。</p>
           </Section>
         </div>
       </Section>
@@ -48,7 +48,19 @@ function SectionExample({ fixed = false }: { fixed?: boolean }) {
   )
 }
 
-const meta = { title: 'Layout/Section', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Layout/Section',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Section 用于给一组内容添加标题、可选折叠和标题操作，适合侧栏或属性面板中的分组。onOpenChange 接收展开请求，actions 放置与折叠独立的按钮。应用保存内容中的数据；嵌套分组分别管理 open，需要常驻内容时设 collapsible={false}。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <SectionExample /> }

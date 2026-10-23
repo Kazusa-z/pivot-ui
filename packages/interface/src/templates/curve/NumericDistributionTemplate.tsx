@@ -27,7 +27,7 @@ export type NumericDistributionEditSource = CurveEditSource
 export type NumericDistributionCommitReason = CurveCommitReason
 export interface NumericDistributionTemplateProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'>, NumericConstraints {
-  /** Controlled preview. The owner restores its initial snapshot when cancelling or rejecting. */
+  /** 当前显示的分布值。应用在 onValueChange 中更新预览，在取消或保存失败时恢复应显示的值。 */
   value: NumericDistributionValue
   onValueChange?: (value: NumericDistributionValue) => void
   onEditStart?: (source: NumericDistributionEditSource) => boolean | void
@@ -41,7 +41,7 @@ export interface NumericDistributionTemplateProps
   unit?: string
   disabled?: boolean
   readOnly?: boolean
-  /** Curve coordinates and viewport are separate from constant-value constraints and host units. */
+  /** curveBounds 限制曲线编辑范围，curveViewport 控制视口。固定数值的范围通过 min/max 等属性配置，业务单位由应用在读写时转换。 */
   curveBounds?: Partial<CurveViewport>
   curveViewport?: CurveViewport
   onCurveViewportChange?: (viewport: CurveViewport, index: 0 | 1) => void
@@ -60,7 +60,7 @@ const modeLabels: Record<NumericDistributionMode, string> = {
 }
 const options = numericDistributionModes.map((mode) => ({ key: mode, value: mode, label: modeLabels[mode] }))
 
-/** One value and one edit owner; inactive mode values, selection and view state remain separate. */
+/** 编辑固定数值、随机范围或曲线，适合随时间或随机条件变化的参数。编辑回调返回当前模式的值，模式缓存可由应用单独保存。 */
 export function NumericDistributionTemplate({
   value,
   onValueChange,

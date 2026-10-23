@@ -95,7 +95,7 @@ function ComplexExample<T>({
   return (
     <ContractFrame
       title={title}
-      description="一个 typed PropertyAccess 对接一个显式控件组合。预览不改权威值；接受一次写入一条历史，拒绝保留草稿供重试。选择、展开与视图由组件独立拥有。"
+      description="操作下方字段，比较预览值与保存后的属性值；下方 history 会记录成功保存的次数。点击 Reject next commit 后再改一次，可体验错误提示和重试；Delay 500 ms 与 Switch target 用来体验等待保存和切换对象。接入自己的控件时，在 render 中连接 editProps；资源选择、集合增删等整项操作可以调用 submit。"
       onReset={() => {
         accesses.forEach((item) => item.reset())
         setTarget(0)
@@ -103,7 +103,7 @@ function ComplexExample<T>({
         setResult(null)
       }}>
       <div className={contractStyles.row}>
-        <Button size="xs" onClick={() => access.rejectNext('The host rejected this property edit.')}>
+        <Button size="xs" onClick={() => access.rejectNext('属性未保存，请修正后重试。')}>
           Reject next commit
         </Button>
         <Button size="xs" onClick={() => access.setDelay(500)}>
@@ -133,7 +133,7 @@ function ComplexExample<T>({
         render={render}
       />
       <StatePanel
-        label="Property snapshot"
+        label="属性数据与编辑状态"
         value={{
           target: snapshot.target,
           authority: snapshot.value,
@@ -209,7 +209,7 @@ function CollectionControl({ field }: { field: PropertyFieldRenderProps<readonly
           await field.submit(next)
         }}
         renderItem={(item) => (
-          <Section title="Item properties" variant="transparent">
+          <Section title="项目属性" variant="transparent">
             <InputNumber
               aria-label={`${item.name} weight`}
               aria-errormessage={field.controlProps['aria-errormessage']}
@@ -240,7 +240,7 @@ function CollectionControl({ field }: { field: PropertyFieldRenderProps<readonly
 function MixedControl({ field }: { field: PropertyFieldRenderProps<Vector3> }) {
   return field.mixed ? (
     <div {...field.controlProps}>
-      <span>Multiple vectors</span>
+      <span>多个向量值不一致</span>
       <Button
         disabled={field.snapshot.disabled || field.snapshot.readOnly || field.pending}
         onClick={() => {
@@ -254,13 +254,25 @@ function MixedControl({ field }: { field: PropertyFieldRenderProps<Vector3> }) {
   )
 }
 
-const meta = { title: 'Property/Complex bindings', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Property/Complex bindings',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '这些示例展示如何用 PropertyField 的 render 接入几何、颜色、渐变、曲线、资源、集合和多选字段。每个示例都把一个完整属性值连接到现成控件，适合组合自己的属性编辑表单。\n\nrender 参数中的 editProps 可直接连接支持预览、提交和取消的模板；资源、集合或多选等一次性操作可使用 submit。控件需要的范围、轴配置、资源查询和预设能力由调用代码明确传入。\n\n应用通过 PropertyAccess 保存数据并处理校验。onEditResult 可观察结果；外部更新与对象切换会使原编辑失效。多对象值不一致时，由 render 明确显示“多个值”并提供替换操作。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Vector2: Story = {
   render: () => (
     <ComplexExample<Vector2Value>
-      title="Vector 2 binding"
+      title="二维向量属性"
       descriptor={{ kind: 'vector2', id: 'position', label: 'Position' }}
       value={{ x: 1, y: 2 }}
       externalValue={{ x: 8, y: 9 }}
@@ -271,7 +283,7 @@ export const Vector2: Story = {
 export const Vector3Linked: Story = {
   render: () => (
     <ComplexExample<Vector3>
-      title="Vector 3 and proportional editing"
+      title="三维向量与比例联动"
       descriptor={{ kind: 'vector3', id: 'position', label: 'Position' }}
       value={{ x: 2, y: 4, z: -6 }}
       externalValue={{ x: 8, y: 9, z: 10 }}
@@ -282,7 +294,7 @@ export const Vector3Linked: Story = {
 export const Vector4: Story = {
   render: () => (
     <ComplexExample<Vector4Value>
-      title="Vector 4 binding"
+      title="四维向量属性"
       descriptor={{ kind: 'vector4', id: 'rotation', label: 'Rotation' }}
       value={{ x: 0, y: 0, z: 0, w: 1 }}
       render={(field) => <Vector4Input {...field.editProps} label="Rotation" />}
@@ -292,7 +304,7 @@ export const Vector4: Story = {
 export const Rectangle: Story = {
   render: () => (
     <ComplexExample<Rect>
-      title="Rectangle binding"
+      title="矩形位置与尺寸属性"
       descriptor={{ kind: 'rect', id: 'bounds', label: 'Bounds' }}
       value={{ x: -10, y: 20, width: 100, height: 50 }}
       render={(field) => <RectInput {...field.editProps} label="Bounds" sizeConstraints={{ min: 0 }} />}
@@ -306,7 +318,7 @@ const axes = [
 export const NumericTuple: Story = {
   render: () => (
     <ComplexExample<readonly number[]>
-      title="Numeric tuple binding"
+      title="按轴配置的数值组属性"
       descriptor={{ kind: 'numeric-tuple', id: 'uv', label: 'UV', axes }}
       value={[1, 2]}
       render={(field) => <NumericTupleInput {...field.editProps} axes={axes} label="UV" />}
@@ -316,7 +328,7 @@ export const NumericTuple: Story = {
 export const Distribution: Story = {
   render: () => (
     <ComplexExample<number[]>
-      title="Segment distribution binding"
+      title="分段权重属性"
       descriptor={{
         kind: 'distribution',
         id: 'weights',
@@ -331,7 +343,7 @@ export const Distribution: Story = {
 export const Color: Story = {
   render: () => (
     <ComplexExample<ColorValue>
-      title="Color binding"
+      title="颜色属性与取色能力"
       descriptor={{ kind: 'color', id: 'color', label: 'Color' }}
       value={color}
       externalValue={{ ...color, r: 1 }}
@@ -348,7 +360,7 @@ export const Color: Story = {
 export const HDRColor: Story = {
   render: () => (
     <ComplexExample<ColorValue>
-      title="HDR color binding"
+      title="HDR 颜色属性"
       descriptor={{ kind: 'color', hdr: true, id: 'emission', label: 'Emission' }}
       value={{ ...color, r: 3 }}
       render={(field) => <HDRColorInput {...field.editProps} label="Emission" />}
@@ -358,7 +370,7 @@ export const HDRColor: Story = {
 export const Ramp: Story = {
   render: () => (
     <ComplexExample<ColorRampValue>
-      title="Color ramp binding"
+      title="颜色渐变属性"
       descriptor={{ kind: 'color-ramp', id: 'ramp', label: 'Ramp' }}
       value={ramp}
       render={(field) => <ColorRamp {...field.editProps} />}
@@ -368,7 +380,7 @@ export const Ramp: Story = {
 export const RampChannels: Story = {
   render: () => (
     <ComplexExample<ColorRampChannelsValue>
-      title="Independent color and alpha binding"
+      title="颜色与透明度双轨属性"
       descriptor={{ kind: 'color-ramp-channels', id: 'ramp', label: 'Ramp channels' }}
       value={channels}
       render={(field) => <ColorRampChannels {...field.editProps} />}
@@ -378,7 +390,7 @@ export const RampChannels: Story = {
 export const ColorDistribution: Story = {
   render: () => (
     <ComplexExample<ColorDistributionValue>
-      title="Color distribution binding and mode cache"
+      title="颜色分布属性与模式缓存"
       descriptor={{ kind: 'color-distribution', id: 'color', label: 'Color distribution' }}
       value={{ mode: 'constant', color }}
       render={(field) => <ColorDistributionTemplate {...field.editProps} label="Color distribution" />}
@@ -388,7 +400,7 @@ export const ColorDistribution: Story = {
 export const Curve: Story = {
   render: () => (
     <ComplexExample<CurveValue>
-      title="Curve binding with injected presets"
+      title="带应用预设的曲线属性"
       descriptor={{ kind: 'curve', id: 'curve', label: 'Curve' }}
       value={curve}
       render={(field) => (
@@ -416,7 +428,7 @@ export const Curve: Story = {
 export const NumericDistribution: Story = {
   render: () => (
     <ComplexExample<NumericDistributionValue>
-      title="Numeric distribution binding"
+      title="数值分布属性"
       descriptor={{ kind: 'numeric-distribution', id: 'factor', label: 'Factor' }}
       value={{ mode: 'constant', value: 2 }}
       externalValue={{ mode: 'constant', value: 8 }}
@@ -427,7 +439,7 @@ export const NumericDistribution: Story = {
 export const Resource: Story = {
   render: () => (
     <ComplexExample<string | null>
-      title="Atomic resource property"
+      title="一次选择提交的资源引用属性"
       descriptor={{ kind: 'resource', id: 'material', label: 'Material' }}
       value="asset-15"
       render={(field) => <ResourceControl field={field} />}
@@ -437,7 +449,7 @@ export const Resource: Story = {
 export const Collection: Story = {
   render: () => (
     <ComplexExample<readonly Entry[]>
-      title="Collection commands and nested numeric preview"
+      title="集合操作与项目内数值编辑"
       descriptor={{ kind: 'collection', id: 'items', label: 'Items', keyField: 'id', labelField: 'name' }}
       value={entries}
       render={(field) => <CollectionControl field={field} />}
@@ -447,7 +459,7 @@ export const Collection: Story = {
 export const MultipleChoice: Story = {
   render: () => (
     <ComplexExample<readonly ChoiceValue[]>
-      title="Typed multiple-choice property"
+      title="保留值类型的多选属性"
       descriptor={{ kind: 'multi-enum', id: 'tags', label: 'Tags', options: choiceOptions }}
       value={['001']}
       render={(field) => (
@@ -469,7 +481,7 @@ export const MultipleChoice: Story = {
 export const DelayedTargetAndExternal: Story = {
   render: () => (
     <ComplexExample<Vector3>
-      title="Delayed geometry commit with target and revision changes"
+      title="异步保存时切换对象或更新数据"
       descriptor={{ kind: 'vector3', id: 'position', label: 'Position' }}
       value={{ x: 1, y: 2, z: 3 }}
       externalValue={{ x: 7, y: 8, z: 9 }}
@@ -481,7 +493,7 @@ export const DelayedTargetAndExternal: Story = {
 export const MixedGeometry: Story = {
   render: () => (
     <ComplexExample<Vector3>
-      title="Explicit mixed geometry replacement"
+      title="多个值不一致时的明确替换操作"
       descriptor={{ kind: 'vector3', id: 'position', label: 'Position' }}
       value={{ x: 1, y: 2, z: 3 }}
       mixed

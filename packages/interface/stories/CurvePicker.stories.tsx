@@ -49,7 +49,7 @@ function PickerExample({
       await new Promise((resolve) => setTimeout(resolve, 350))
       if (failNext.current) {
         failNext.current = false
-        throw Error(`Mock ${action} failed. Retry the operation.`)
+        throw Error(`Mock ${action} 失败，请重试。`)
       }
     }
     return {
@@ -60,7 +60,7 @@ function PickerExample({
       async load(id) {
         await delay('load')
         const item = entries.get(id)
-        if (!item) throw Error('Preset no longer exists.')
+        if (!item) throw Error('此预设已不存在，请刷新列表。')
         return copyCurveValue(item.value)
       },
       async save(input) {
@@ -100,7 +100,7 @@ function PickerExample({
           if (currentRevision.current !== revision) return
           if (reject) {
             setValue(snapshot)
-            throw Error('Host rejected the curve. Switch to Accept and retry.')
+            throw Error('曲线未保存，请切换为 Accept 后重试。')
           }
         }
       }}
@@ -112,8 +112,8 @@ function PickerExample({
   )
   return (
     <ContractFrame
-      title="Curve picker and presets"
-      description="CurvePicker只组合一个CurveWidget；选择预设不写曲线，Apply算一次编辑。示例存储是显式注入的内存服务。保存/删除仅改变服务预设，不触发曲线change或commit。Reset使旧请求失效。"
+      title="弹出式曲线编辑与预设"
+      description="点击曲线预览，在弹层里拖动曲线点，或选择预设后点击 Apply preset。下方事件列表展示预览与保存过程。带预设服务的示例还可保存、删除个人预设；接入时通过 presetService 提供这些方法。Reset 恢复本例的曲线和编辑状态。"
       onReset={() => {
         setValue(initial)
         setRevision((current) => current + 1)
@@ -149,7 +149,9 @@ function PickerExample({
             <PopoverPortal>
               <PopoverContent collisionPadding={12} style={{ width: 260, maxWidth: 'calc(100vw - 24px)' }}>
                 <PopoverTitle>Nested property</PopoverTitle>
-                <PopoverDescription>The curve popup shares the parent theme and overlay layer.</PopoverDescription>
+                <PopoverDescription>
+                  在弹层中打开曲线编辑器时，它会沿用当前主题，并显示在外层弹层上方。
+                </PopoverDescription>
                 {picker}
               </PopoverContent>
             </PopoverPortal>
@@ -158,7 +160,7 @@ function PickerExample({
       ) : (
         <StrictMode>{picker}</StrictMode>
       )}
-      <StatePanel label="Authoritative curve and events" value={{ value, revision, refuse, events }} />
+      <StatePanel label="当前曲线与编辑事件" value={{ value, revision, refuse, events }} />
     </ContractFrame>
   )
 }
@@ -185,8 +187,8 @@ function EmptyPresets() {
   const [revision, setRevision] = useState(0)
   return (
     <ContractFrame
-      title="Empty curve and explicit preset collection"
-      description="显式presets=[]替换内置预设。空曲线保持空值，不自动插入默认点；编辑器仍可新增点。无服务时存储按钮不可用。"
+      title="空曲线与空预设列表"
+      description="打开空曲线编辑器，双击画布新增点，从头画出一条曲线；下方可查看点坐标。此例传入 presets=[]，适合希望用户自行绘制的场景。需要提供起始曲线时，可通过 presets 传入预设列表。"
       onReset={() => {
         setValue({ interpolation: 'linear', points: [] })
         setRevision((current) => current + 1)
@@ -197,10 +199,19 @@ function EmptyPresets() {
   )
 }
 const meta = {
+  tags: ['autodocs'],
   title: 'Templates/CurvePicker',
   component: CurvePicker,
   args: { value: initial },
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'CurvePicker 是带预览的曲线输入控件，适合动画参数、变化趋势和空间有限的属性面板。点击预览即可打开编辑器，拖动点和控制柄来调整曲线。\n\n编辑时通过 `onValueChange` 接收预览值，完成时通过 `onValueCommit` 保存结果。也可以在预设列表中选一项，再点击 Apply preset 应用到当前曲线。父组件将接受的结果写回 `value`。\n\n通过 `presets` 提供预设列表，通过 `presetService` 接入个人预设的加载、保存和删除。应用在取消或保存失败时恢复显示值；只需手动编辑时可传入 `presets=[]`。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof CurvePicker>
 export default meta
 type Story = StoryObj<typeof meta>

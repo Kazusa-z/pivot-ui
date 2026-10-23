@@ -14,7 +14,7 @@ export interface ToastViewProps extends HTMLAttributes<HTMLDivElement> {
   css?: SystemStyleObject
 }
 
-/** Owns notification presentation; scheduler state and timing stay in the adapter. */
+/** 展示一条带状态、内容和操作的通知。需要定时关闭或任务进度更新时，配合 NotificationProvider 的服务使用。 */
 export const ToastView = forwardRef<HTMLDivElement, ToastViewProps>(function ToastView(
   {
     tone = 'info',

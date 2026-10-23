@@ -92,15 +92,15 @@ function ReferenceExample({
   }
   const content = (
     <ContractFrame
-      title="Asset reference"
+      title="资源引用选择"
       description={
         refuse
-          ? 'The owner explicitly returns false. Selection stays unchanged, the popup remains open, and the error can be retried.'
+          ? '打开弹层并选择一个资源，体验应用拒绝选择时的错误提示：输入框继续显示原资源，弹层中可以再次操作。此例通过 onValueChange 返回 false 模拟拒绝；实际接受选择时，在这个回调中更新 value。'
           : delayed
-            ? 'The host waits 450 ms and rejects the first request. A target or provider switch invalidates old local results; successful selection closes the popup.'
+            ? '打开弹层选择资源，等待 450 ms 后会看到第一次保存失败的提示；再次选择即可保存并关闭弹层。下方显示 value、历史次数和事件。还可在等待时点击 Load another target，体验切换对象；应用用 resetKey 标识这次切换。'
             : drag
-              ? 'Drag the ID-only sources into the input. The current provider resolves and validates the ID, kind, group and readiness before proposing a reference change. Picker selection is the keyboard alternative.'
-              : 'The current ID resolves independently from query pages and search. Optional locate/file capabilities are injected by the host; read-only mode still allows browsing and locating.'
+              ? '把上方资源拖入输入框，比较就绪纹理、其他类型和加载中资源的处理结果；也可以打开弹层用键盘选择。启用拖放时包裹 DragDropProvider，组件会调用 provider.get 读取拖入的资源，接受后通过 onValueChange 更新引用。'
+              : '打开资源弹层，尝试搜索、翻页并选择一项，再查看输入框中的名称与下方 value。清空按钮可移除引用，定位和文件按钮展示应用提供的附加操作。接入时用 value 保存资源 ID，在 onValueChange 中更新它；provider.get 负责读取当前资源名称。'
       }
       onReset={reset}>
       <div className={contractStyles.row}>
@@ -191,10 +191,10 @@ function ReferenceExample({
             if (version !== generation.current) return false
             if (reject) {
               record('rejected')
-              throw Error('The host rejected this reference. Select it again to retry.')
+              throw Error('选择未保存，请再次选择以重试。')
             }
             if (refuse) {
-              record('owner refused')
+              record('应用拒绝了本次选择')
               return false
             }
             setValue(next)
@@ -203,17 +203,26 @@ function ReferenceExample({
           }}
         />
       </div>
-      <StatePanel
-        label="Controlled reference and history"
-        value={{ value, history, revision, state, viewMode, events }}
-      />
-      <StatePanel label="Explicit provider calls" value={calls} />
+      <StatePanel label="当前引用与保存历史" value={{ value, history, revision, state, viewMode, events }} />
+      <StatePanel label="资源服务调用记录" value={calls} />
     </ContractFrame>
   )
   return drag ? <DragDropProvider>{content}</DragDropProvider> : content
 }
 
-const meta = { title: 'Templates/Resources/AssetReferenceInput', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Templates/Resources/AssetReferenceInput',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'AssetReferenceInput 用于表单中选择一个资源引用，例如纹理、材质或模型。value 保存资源 ID，null 表示未选择；provider.get 单独读取当前引用，搜索和翻页时仍可显示它的名称。\n\n在 onValueChange(nextId, asset) 中接受或拒绝选择，并更新 React 状态中的 value。回调可返回 Promise：返回 true 或 void 表示成功并关闭弹层，返回 false 或抛出错误会显示提示供重试。\n\nprovider 负责查询，也可提供 locate 与 chooseFile 启用定位和文件选择。拖放需要 DragDropProvider 和 dropEnabled，组件会检查拖入资源的状态与类型。readOnly 适合查看与定位，disabled 适合暂时停止交互；切换编辑对象时更新 resetKey。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <ReferenceExample /> }

@@ -54,10 +54,10 @@ export function getProportionalAxisRange(
   return { min: Math.max(own.min, Math.min(first, second)), max: Math.min(own.max, Math.max(first, second)) }
 }
 /**
- * Scale from the edit's fixed starting tuple. Clamp the common ratio, never each
- * derived component independently. Only the edited axis applies input precision.
- * A zero master changes itself and preserves the other axes; impossible linked
- * bounds return the starting tuple unchanged with status blocked.
+ * 根据编辑开始时的数值组按比例调整各项，返回调整后的值及状态。
+ * 比例受各项上下界共同限制，当前编辑项按输入精度处理。
+ * 当前编辑项为零时单独调整该项；范围冲突时返回起始值和 blocked 状态，
+ * 应用可提示用户调整范围或关闭比例联动。
  */
 export function applyProportionalChange(
   start: readonly number[],

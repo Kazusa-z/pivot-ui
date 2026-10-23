@@ -39,7 +39,7 @@ function PopoverForm({ name = 'Popover' }: { name?: string }) {
     <div className={contentStack}>
       <PopoverTitle className={headingClass}>{name}</PopoverTitle>
       <PopoverDescription className={contractStyles.note}>
-        Edit the draft, then close with Escape or Close.
+        编辑草稿后，可按 Escape 或点击 Close 关闭面板。
       </PopoverDescription>
       <ControlInput aria-label={`${name} draft`} value={value} onChange={(event) => setValue(event.target.value)} />
       <Button onClick={() => setCount((previous) => previous + 1)}>Count {count}</Button>
@@ -231,7 +231,7 @@ function HoverCardsExample() {
           rootProps={{ openDelay: 150, closeDelay: 150 }}>
           <div className={contentStack}>
             <strong>Brushed metal</strong>
-            <p className={contractStyles.note}>An optional material preview. It contains no required controls.</p>
+            <p className={contractStyles.note}>这里展示材质的补充预览，主要信息与操作入口保留在页面上。</p>
           </div>
           <HoverCardArrow />
         </HoverCard>
@@ -251,7 +251,7 @@ function HoverCardsExample() {
         <ControlButton onClick={() => setOpen((value) => !value)}>Toggle preview externally</ControlButton>
       </div>
       <p id="asset-summary" className={contractStyles.note}>
-        Visible material summary remains available without opening the card.
+        材质摘要直接显示在页面上，悬停卡片提供更多预览。
       </p>
       <StatePanel label="Hover card state" value={{ open }} />
     </>
@@ -344,15 +344,27 @@ function StrictModeExample() {
   )
 }
 
-const meta = { title: 'Widgets/Overlays', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Overlays',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Popover 用于点击后展开的小型表单或操作面板，Tooltip 用于悬停或聚焦时的短提示，HoverCard 用于补充预览。Root 的 open 和 onOpenChange 控制开关，便捷组合通过 rootProps 传入；Portal 容器和内容属性分别配置。TooltipProvider 放在共享提示的应用边界，必需信息与操作应放在页面或可主动打开的面板中。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const PopoverUncontrolled: Story = {
   render: () => (
     <ExampleFrame
-      title="Popover: uncontrolled"
-      description="Repeated opening, Close, Escape and outside clicks restore focus. Default content unmounts when closed.">
+      title="Popover：临时编辑面板"
+      description="Popover 适合临时编辑小段内容。点击触发按钮打开，用 Close 或 Escape 关闭后焦点回到触发按钮；也可点击外部区域继续页面操作。默认关闭时卸载内容，再次打开会创建新的表单状态。">
       {(key) => <UncontrolledExample key={key} />}
     </ExampleFrame>
   ),
@@ -360,8 +372,8 @@ export const PopoverUncontrolled: Story = {
 export const PopoverControlled: Story = {
   render: () => (
     <ExampleFrame
-      title="Popover: controlled"
-      description="Root owns open requests. Disable accepting requests to verify that Escape and Close cannot override the supplied state.">
+      title="Popover：由应用决定开关"
+      description="需要由应用决定是否关闭时，使用 open 和 onOpenChange。此例记录触发按钮、Escape 和 Close 发出的开关请求；取消 Accept requests 后应用保留原值，因此面板继续按传入状态显示。">
       {(key) => <ControlledExample key={key} />}
     </ExampleFrame>
   ),
@@ -369,8 +381,8 @@ export const PopoverControlled: Story = {
 export const PopoverKeepMounted: Story = {
   render: () => (
     <ExampleFrame
-      title="Popover: retained content"
-      description="Edit the draft/count, close and reopen: state remains. While closed, effects are zero, the page accepts focus/click/scroll, including after a modal open.">
+      title="Popover：关闭后保留表单状态"
+      description="keepMounted 适合需要在多次打开之间保留草稿的表单。修改文字或计数后关闭，再次打开仍保留状态；关闭期间内容隐藏、effect 暂停，页面恢复正常聚焦、点击与滚动。">
       {(key) => <KeepMountedExample key={key} />}
     </ExampleFrame>
   ),
@@ -378,8 +390,8 @@ export const PopoverKeepMounted: Story = {
 export const NestedPopovers: Story = {
   render: () => (
     <ExampleFrame
-      title="Nested popovers"
-      description="Open outer then inner. Escape closes the inner first and restores its trigger; the next Escape closes the outer.">
+      title="嵌套的小型操作面板"
+      description="嵌套 Popover 可把次级编辑放在当前操作旁。先打开外层再打开内层，Escape 会先关闭内层并返回它的触发按钮，再次按下则关闭外层。">
       {(key) => <NestedExample key={key} />}
     </ExampleFrame>
   ),
@@ -387,8 +399,8 @@ export const NestedPopovers: Story = {
 export const SharedTooltips: Story = {
   render: () => (
     <ExampleFrame
-      title="Tooltip: shared provider"
-      description="Hover or focus the buttons. A shared provider coordinates delay/skip-delay; Escape dismisses the hint without moving focus. Root control is separate from content position.">
+      title="Tooltip：共享等待时间的提示"
+      description="Tooltip 适合解释按钮或缩写。悬停或聚焦按钮即可查看提示；共享 TooltipProvider 协调多个提示的等待时间。Escape 收起提示并保留当前焦点，受控开关与内容位置分别配置。">
       {(key) => <TooltipsExample key={key} />}
     </ExampleFrame>
   ),
@@ -396,8 +408,8 @@ export const SharedTooltips: Story = {
 export const HoverCardPreview: Story = {
   render: () => (
     <ExampleFrame
-      title="HoverCard: optional preview"
-      description="Hover/focus the links or externally control the second preview. Pointer transfer into content keeps it visible; required information remains on the page.">
+      title="HoverCard：查看补充预览"
+      description="HoverCard 适合链接旁的补充预览。悬停链接后可以把指针移入卡片继续查看，也可通过 open 和 onOpenChange 从应用控制显示；主要信息和操作入口应直接放在页面中。">
       {(key) => <HoverCardsExample key={key} />}
     </ExampleFrame>
   ),
@@ -405,8 +417,8 @@ export const HoverCardPreview: Story = {
 export const PortalTheme: Story = {
   render: () => (
     <ExampleFrame
-      title="Local theme and portal container"
-      description="Change the local theme independently of Storybook. All three content surfaces inherit that theme inside the explicit portal container.">
+      title="浮层的局部主题与显示位置"
+      description="局部 ThemeProvider 可以让这组控件独立切换明暗主题。Popover、Tooltip 和 HoverCard 的内容都通过指定 Portal 容器显示，并沿用所在区域的主题。">
       {(key) => <PortalThemeExample key={key} />}
     </ExampleFrame>
   ),
@@ -414,8 +426,8 @@ export const PortalTheme: Story = {
 export const StrictModeLifecycle: Story = {
   render: () => (
     <ExampleFrame
-      title="StrictMode and unmount"
-      description="Open/close repeatedly, then unmount the modal from inside. Active effects return to zero and page actions/focus remain usable. Mount creates a fresh lifecycle.">
+      title="移除并重新挂载弹层"
+      description="此例展示弹层随所属组件挂载和卸载的行为。打开后可从内容中移除组件，浮层与活动 effect 会一并清理；页面操作仍可使用，重新挂载会建立新的表单状态。">
       {(key) => <StrictModeExample key={key} />}
     </ExampleFrame>
   ),

@@ -8,8 +8,8 @@ function PagesExample() {
   const [count, setCount] = useState(250)
   return (
     <ContractFrame
-      title="Controlled pages"
-      description="页码请求由父级回传。缩小结果时显示钳制后的有效页，不伪造onPageChange；零结果显示可本地化的空态。"
+      title="由应用加载并显示指定页"
+      description="点击页码后，onPageChange 将请求交给应用，本例回写 page。缩小结果总量时组件显示有效范围内的页码；应用可同步调整自己的查询状态。结果为零时显示 labels.empty。"
       onReset={() => {
         setPage(5)
         setCount(250)
@@ -29,8 +29,8 @@ function PageModes() {
   const [epoch, setEpoch] = useState(0)
   return (
     <ContractFrame
-      title="Uncontrolled, rejected and disabled"
-      description="原生button提供Tab/Enter/Space；固定page记录请求但保持显示。大结果只生成有界页码窗口。"
+      title="页码请求与可用状态"
+      description="页码按钮可通过 Tab、Enter 和 Space 操作。固定传入 page 的示例会记录请求并保留当前页；大结果使用有限的页码窗口，让导航保持紧凑。"
       onReset={() => {
         setRequests([])
         setEpoch((next) => next + 1)
@@ -70,8 +70,8 @@ function Localization() {
   }
   return (
     <ContractFrame
-      title="Labels and boundary results"
-      description="一页仍显示当前页及禁用前后按钮；空结果没有虚构的第1页。所有可访问名称可本地化。"
+      title="自定义名称与空结果"
+      description="只有一页时显示当前页，前后翻页按钮为禁用状态；空结果显示提示文字。应用可以按界面语言提供页码按钮名称和空态内容。"
       onReset={() => setEpoch((next) => next + 1)}>
       <div key={epoch} className={contractStyles.stack}>
         <Pagination totalCount={60} pageSize={10} labels={labels} />
@@ -81,7 +81,18 @@ function Localization() {
     </ContractFrame>
   )
 }
-export default { title: 'Widgets/Navigation/Pagination' } satisfies Meta
+export default {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Pagination 用于在分批结果之间导航。传入 totalCount 和 pageSize 后，它显示有效页码范围，并通过 onPageChange 请求新的页码；页码从 1 开始。应用负责加载该页数据并回写 page，通过 labels 配置空态文字与各按钮名称。',
+      },
+    },
+  },
+  title: 'Widgets/Navigation/Pagination',
+} satisfies Meta
 type Story = StoryObj
 export const Overview: Story = { render: () => <PagesExample /> }
 export const ModesAndLargeResults: Story = { render: () => <PageModes /> }

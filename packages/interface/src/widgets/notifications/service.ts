@@ -29,7 +29,7 @@ export interface NotificationService {
   loading(message: NotificationMessage, options?: NotificationOptions): string | null
   dismiss(id?: string): void
   clear(): void
-  /** Clearing or disconnecting invalidates UI completion, without cancelling the caller's operation. */
+  /** 根据 Promise 显示等待、成功或失败消息。清空通知后结束展示；需要取消任务时，应用调用对应操作的取消接口。 */
   promise<T>(operation: Promise<T>, messages: NotificationPromiseMessages<T>, options?: NotificationOptions): Promise<T>
   /** Provider lifecycle; reference counted so nested providers can share a service. */
   connect(): () => void
@@ -37,7 +37,7 @@ export interface NotificationService {
 
 let nextService = 0
 
-/** Scoped adapter for the third-party scheduler. Creation has no DOM or subscription side effects. */
+/** 创建可共享的通知服务。将服务传给 NotificationProvider 后，可从组件或应用任务中发送和更新消息。 */
 export function createNotificationService(): NotificationService {
   const id = `pivot-notifications-${++nextService}`
   let connections = 0

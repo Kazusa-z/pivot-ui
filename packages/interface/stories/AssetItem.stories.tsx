@@ -20,7 +20,7 @@ const initialAssets: readonly AssetDescriptor[] = [
     kind: 'texture',
     status: 'ready',
     thumbnailUrl: thumbnail,
-    description: 'A small preview supplied by the host.',
+    description: '应用提供的资源缩略图。',
   },
   {
     id: 'mesh',
@@ -65,7 +65,7 @@ function AssetExample({ kind = 'grid' }: { kind?: Kind }) {
             name: 'Unavailable resource',
             kind: 'mesh',
             status: 'error',
-            disabledReason: 'The resource provider could not load metadata.',
+            disabledReason: '资源信息加载失败，请重试。',
           },
           { id: 'missing', name: 'Missing resource', kind: 'material', status: 'missing' },
           {
@@ -74,7 +74,7 @@ function AssetExample({ kind = 'grid' }: { kind?: Kind }) {
             kind: 'mesh',
             status: 'ready',
             selectable: false,
-            disabledReason: 'This resource kind is not accepted by the host.',
+            disabledReason: '此应用不接受这种资源类型。',
           },
         ]
       : kind === 'target'
@@ -87,12 +87,12 @@ function AssetExample({ kind = 'grid' }: { kind?: Kind }) {
       title={`AssetItem · ${kind}`}
       description={
         kind === 'rename'
-          ? 'Edit a resource name. Reject next rename retains the draft and one error; Enter retries, Escape cancels. Enter followed by blur submits once.'
+          ? '编辑资源名称后按 Enter 或移开焦点保存。点击 Reject next rename 可模拟保存失败：输入内容会保留，按 Enter 重试或按 Escape 取消。应用在 onRename 成功后回传新名称。'
           : kind === 'target'
-            ? 'Start renaming, then switch the resource or update the same target externally. Local draft and pending completion belong to their original asset ID. A submitted host rename may still finish for that old asset.'
+            ? '修改名称时点击 Switch target，体验在两项资源之间切换；也可点击 External name，查看应用传入新名称后的显示。下方记录会标出每次改名对应的资源 ID，接入时可用这个 ID 找到要保存的资源。'
             : kind === 'fallback'
-              ? 'The first image fails to decode and uses a file fallback. Changing the URL allows a fresh image attempt; resource selection remains available.'
-              : 'Thumbnail selection, rename and host actions are separate native controls. Loading, error, missing and restricted resources cannot be selected. Read-only resources can be viewed and selected.'
+              ? '先查看缩略图加载失败时的占位图，再点击 Replace thumbnail URL 尝试另一个地址。点击资源仍可选择它，下方会显示选择结果；应用可以通过更新 thumbnailUrl 重新加载缩略图。'
+              : '点击缩略图选择资源，用 Switch grid/list 比较两种布局，再试试 Tab 在资源名称和操作按钮之间移动。下方记录展示选择和操作结果；应用在 onSelect 中更新选择，在 onRename 中保存名称。'
       }
       onReset={reset}>
       <div className={contractStyles.row}>
@@ -172,12 +172,12 @@ function AssetExample({ kind = 'grid' }: { kind?: Kind }) {
                     record('request:' + asset.id + ':' + name)
                     if (kind === 'rename' || kind === 'target') await new Promise((resolve) => setTimeout(resolve, 500))
                     if (version !== generation.current) {
-                      record('host ignored stale rename:' + asset.id)
+                      record('应用忽略较早的改名结果：' + asset.id)
                       return
                     }
                     if (rejected) {
                       record('rejected:' + asset.id)
-                      throw new Error('The host rejected this name. Press Enter to retry.')
+                      throw new Error('名称未保存。请修改后按 Enter 重试。')
                     }
                     setAssets((old) => old.map((item) => (item.id === asset.id ? { ...item, name } : item)))
                     record('accepted:' + asset.id)
@@ -193,7 +193,7 @@ function AssetExample({ kind = 'grid' }: { kind?: Kind }) {
           />
         ))}
       </div>
-      <StatePanel label="Accepted resources and selection" value={{ assets, selected, viewMode, readOnly, disabled }} />
+      <StatePanel label="当前资源与选择状态" value={{ assets, selected, viewMode, readOnly, disabled }} />
       <StatePanel label="Events" value={events} />
     </ContractFrame>
   )
@@ -202,8 +202,8 @@ function AssetPartsExample() {
   const [asset, setAsset] = useState(initialAssets[0])
   return (
     <ContractFrame
-      title="Asset display parts"
-      description="AssetThumbnail is display only. AssetName uses the same EditableText lifecycle as AssetItem; neither part queries resources."
+      title="单独使用缩略图和资源名称"
+      description="这里把缩略图和名称分开摆放。试着编辑名称并按 Enter，观察下方资源数据随之更新；自己的列表只需分别传入 asset，并在 AssetName 的 onRename 中保存新名称。"
       onReset={() => setAsset(initialAssets[0])}>
       <AssetThumbnail asset={asset} css={{ width: '96px' }} />
       <AssetName asset={asset} onRename={(name) => setAsset((old) => ({ ...old, name }))} />
@@ -212,10 +212,19 @@ function AssetPartsExample() {
   )
 }
 const meta = {
+  tags: ['autodocs'],
   title: 'Widgets/AssetItem',
   component: AssetItem,
   args: { asset: initialAssets[0] },
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'AssetItem 用于资源列表或网格中的单个项目，显示缩略图、名称、选择状态和操作按钮。AssetThumbnail 与 AssetName 可以单独使用。\n\n传入 asset 描述资源，用 selected 表示当前选择，并在 onSelect 中更新应用状态。提供 onRename 后可以编辑名称；返回的 Promise 成功后由应用回传新名称，失败时保留输入内容供重试。\n\n资源查询与保存由应用提供。readOnly 允许查看和选择但禁止改名；disabled 禁止交互。加载中、缺失、出错或不可选择的资源会明确显示状态。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta<typeof AssetItem>
 export default meta
 type Story = StoryObj<typeof meta>

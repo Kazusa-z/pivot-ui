@@ -25,7 +25,7 @@ import { ColorRampChannels } from './ColorRampChannels'
 export type ColorDistributionEditSource = ColorEditSource | 'mode'
 export type ColorDistributionCommitReason = ColorCommitReason | 'mode'
 export interface ColorDistributionTemplateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'> {
-  /** The owner accepts previews and restores its start snapshot when cancelling an edit. */
+  /** 当前显示的颜色分布。应用在 onValueChange 中更新预览，在取消或保存失败时恢复应显示的值。 */
   value: ColorDistributionValue
   onValueChange?: (value: ColorDistributionValue) => void
   onEditStart?: (source: ColorDistributionEditSource) => boolean | void
@@ -34,7 +34,7 @@ export interface ColorDistributionTemplateProps extends Omit<HTMLAttributes<HTML
   cache?: ColorDistributionCache
   defaultCache?: ColorDistributionCache
   onCacheChange?: (cache: ColorDistributionCache) => void
-  /** A new target/revision clears cached modes and invalidates old local completions. */
+  /** 切换对象或收到外部新版本时更新此值，以重置当前编辑和模式缓存。 */
   resetKey?: unknown
   label?: string
   hdr?: boolean
@@ -51,7 +51,7 @@ const modeLabels: Record<ColorDistributionMode, string> = {
 }
 const options = colorDistributionModes.map((mode) => ({ key: mode, value: mode, label: modeLabels[mode] }))
 
-/** One active distribution value. Saved values for other modes have a separate owner. */
+/** 编辑固定颜色、颜色范围或渐变，适合颜色随时间或随机条件变化的参数。编辑回调返回当前模式的值，应用可通过缓存恢复其他模式的内容。 */
 export function ColorDistributionTemplate({
   value,
   onValueChange,

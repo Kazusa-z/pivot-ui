@@ -26,7 +26,7 @@ export interface SliderProps
   readOnly?: boolean
   resetKey?: unknown
   precision?: number
-  /** Minimum step count from range endpoints; this does not change the visual axis. */
+  /** 设置滑块距范围端点的最少步数，用于在端点保留可操作空间；轨道仍显示完整范围。 */
   minStepsToEdges?: number
   compact?: boolean
   size?: 'xs' | 'sm' | 'md'
@@ -127,7 +127,7 @@ const slotClass = css({
   zIndex: 1,
 })
 
-/** Numeric array slider. Parent values remain authoritative, including when requests are rejected. */
+/** 用一个或多个滑块调整数值数组。回调返回请求值；受控使用时由父组件将接受的结果写回 value。 */
 export const Slider = forwardRef<HTMLSpanElement, SliderProps>(function Slider(
   {
     value,

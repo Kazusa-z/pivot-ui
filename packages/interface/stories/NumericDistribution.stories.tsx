@@ -113,15 +113,15 @@ function DistributionExample({
   }
   return (
     <ContractFrame
-      title="Numeric distribution"
+      title="数值与曲线分布"
       description={
         refuse
-          ? 'The owner refuses all previews. Requested values are visible in the events; the active value and accepted cache stay unchanged.'
+          ? '尝试输入数值或切换模式，观察下方的修改请求与控件保留的原值。这展示应用暂不接受修改时的效果；接入时在 onValueChange 中更新 value，控件就会显示接受后的结果。'
           : delayed
-            ? 'Commits wait 450 ms; the first one is rejected and rolled back. Retry the original draft with Enter. Load another target while pending to invalidate old local results.'
+            ? '修改数值并按 Enter，等待 450 ms 后会看到第一次保存失败的提示，再按 Enter 可重试。也可在等待时点击 Load another target，查看切换后的当前值和事件记录；应用通过 resetKey 标识当前对象。'
             : capabilities
-              ? 'An explicit in-memory service provides presets. Saving and deleting presets changes host storage only; loading a preset commits one value edit.'
-              : 'Edit, switch modes, and return to inspect the separate accepted cache. Point selection and curve viewport changes do not add property history. Reset clears cached modes.'
+              ? '切换到曲线模式，打开编辑器，选择一个预设后点击 Apply preset，观察曲线与事件记录。还可把当前曲线保存为预设，供下次选择。应用通过 curvePresetService 提供个人预设的读取、保存和删除方法。'
+              : '先输入一个固定数值，再切换到曲线模式画一条曲线，最后切回固定数值，查看先前的设置如何恢复。下方同时展示当前 value 和模式 cache；应用可分别保存它们，Reset 可重新开始。'
       }
       onReset={reset}>
       <div className={contractStyles.row}>
@@ -183,13 +183,13 @@ function DistributionExample({
             if (reject) {
               setValue(previous)
               record('rejected')
-              throw Error('Host rejected the numeric distribution. Retry the input or mode.')
+              throw Error('修改未保存，请重试输入或再次选择模式。')
             }
             if (!refuse) {
               setAuthority(next)
               if (!areNumericDistributionsEqual(previous, next)) setHistory((old) => old + 1)
             }
-            record(refuse ? 'owner kept previous value' : 'accepted')
+            record(refuse ? '应用保留原值' : 'accepted')
           }}
           onEditCancel={(reason) => {
             if (userCancellation.has(reason) && !refuse) setValue(start.current)
@@ -198,7 +198,7 @@ function DistributionExample({
         />
       </div>
       <StatePanel
-        label="Value, accepted modes, and transactions"
+        label="当前值、模式设置与编辑记录"
         value={{ value, authority, cache, history, viewport, revision, state, events }}
       />
     </ContractFrame>
@@ -223,8 +223,8 @@ function HostRoundTripExample() {
   const start = useRef(value)
   return (
     <ContractFrame
-      title="Host curve DTO round trip"
-      description="Only this host adapter maps time/value and handle coordinates to x/y while preserving IDs. The business multiplier remains separate metadata; changing it never rewrites curve points or viewport."
+      title="与应用曲线格式互相转换"
+      description="修改曲线点后，比较下方组件的 x/y 坐标与应用的 time/value 数据；再点击 Toggle business multiplier，查看独立保存的倍率。示例适配函数负责坐标转换，应用在计算最终结果时使用倍率。"
       onReset={() => {
         setHost(hostInitial)
         setValue({ mode: 'curve', curve: fromHostNumericCurve(hostInitial) })
@@ -250,13 +250,25 @@ function HostRoundTripExample() {
           }}
         />
       </div>
-      <StatePanel label="Host time/value DTO and independent multiplier" value={host} />
+      <StatePanel label="应用的 time/value 数据与独立倍率" value={host} />
       <StatePanel label="UI distribution" value={value} />
     </ContractFrame>
   )
 }
 
-const meta = { title: 'Templates/NumericDistribution', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Templates/NumericDistribution',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'NumericDistributionTemplate 用于在单个数值、曲线、两个数值和两条曲线之间切换，适合既允许固定参数又允许随时间变化的参数输入。\n\nvalue 是由 mode 区分的对象。onValueChange 用于预览，onValueCommit 用于保存一次编辑；独立的 cache 保存其他模式已接受的设置。曲线选择和视图变化不会生成属性修改。\n\n应用负责保存值、处理拒绝与取消，并在切换对象或重置时更新 resetKey。预设服务通过 curvePresetService 注入；业务倍率和 time/value 数据转换由应用单独处理。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <DistributionExample /> }

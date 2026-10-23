@@ -21,34 +21,34 @@ type EventEntry = { event: string; target: string; detail?: unknown }
 
 const descriptions: Record<Scenario, { title: string; description: string }> = {
   lifecycle: {
-    title: '编辑生命周期 / Edit lifecycle',
+    title: '开始、预览、提交与取消',
     description:
-      'Begin 后修改 Preview；authoritative 与 revision 在 Commit 前保持不变。Commit 完成一次事务；再次 Begin 并修改后 Cancel，预览恢复到已接受的值。',
+      '点击 Begin 开始编辑，再修改 Preview。预览会变化，但已保存值 authoritative 与版本号 revision 保持不变；Commit 接受后才保存并增加历史。再次编辑后点击 Cancel，界面恢复已保存的值。',
   },
   delayed: {
-    title: '延迟与拒绝 / Delayed and rejected commits',
+    title: '等待保存与拒绝结果',
     description:
-      '默认提交延迟 1800 ms。Begin → 修改 → Commit，可观察 pending。点击 Reject next commit 后再编辑提交，权威值和历史数量应保持不变，结果显示 rejected。',
+      '此例默认等待 1800 ms 保存，点击 Begin、修改数值后再 Commit，可看到 pending 等待状态。先点 Reject next commit 再提交，会得到 rejected 结果，已保存值和历史数量保持不变。应用可用这一结果提示用户或允许重试。',
   },
   'external-edit': {
-    title: '编辑中的外部更新 / External update while editing',
+    title: '编辑时收到外部更新',
     description:
-      'Begin → 修改 Preview → External update。新版本使旧编辑会话失效，显示外部权威值；再次 Begin 才能基于新 revision 编辑。',
+      '开始编辑并修改预览后，点击 External update 模拟应用收到新数据。字段改为显示外部值，原草稿失效；再次点击 Begin，会按新的 revision 版本号开始编辑。',
   },
   'external-pending': {
-    title: '过期确认 / External update while pending',
+    title: '等待保存时收到更新的数据',
     description:
-      'Begin → 修改 → Commit，然后在 1800 ms 内点击 External update。等待确认：旧提交返回 superseded，不能覆盖外部更新或增加有效历史。',
+      '提交后在 1800 ms 内点击 External update。较早的提交随后返回 superseded，表示已被新版本替代；它不会覆盖外部数据或增加历史。应用可以据此忽略过期的保存结果。',
   },
   targets: {
-    title: '固定提交目标 / Target switching',
+    title: '切换正在编辑的对象',
     description:
-      '编辑中切换目标会取消草稿。提交 pending 时切换到 B，原提交仍只更新 A；可以在等待 A 时对 B 发起独立编辑。下方同时展示两份快照。',
+      '尚未提交时切换对象会取消草稿；提交后再切换到 B，已发出的请求仍只更新 A。等待 A 时可独立编辑 B，下方两份快照帮助确认每次保存对应哪个对象。',
   },
   availability: {
-    title: '编辑能力变化 / Availability and missing capabilities',
+    title: '只读、禁用与可选应用能力',
     description:
-      'Begin → 修改，然后开启 Read only 或 Disabled，当前编辑应取消且权威值不变。关闭限制后可重新编辑。宿主能力缺失时，相应操作保持不可用。',
+      '开始编辑并修改预览后，开启 Read only 或 Disabled 会取消未提交的编辑，已保存值保持不变。关闭限制后可以重新编辑。剪贴板、文件选择和偏好保存需要应用提供相应方法，缺失时对应按钮不可用。',
   },
 }
 
@@ -240,8 +240,8 @@ function NumericContractPlayground({ scenario }: { scenario: Scenario }) {
       {delayed && (
         <div className={contractStyles.stack}>
           <p className={contractStyles.note}>
-            Commit locks the terminal request. Cancel during pending observes the same result; it cannot retract a
-            submitted commit. Reset discards the scenario state and ignores its old acknowledgement.
+            Commit 发出保存请求后，等待期间再调用 Cancel 会得到同一个结果，不能撤回已经提交的操作。 Reset
+            重置此示例，并忽略重置前请求返回的界面结果。
           </p>
           <div className={contractStyles.row}>
             <ControlField label="Commit delay (ms)">
@@ -263,7 +263,7 @@ function NumericContractPlayground({ scenario }: { scenario: Scenario }) {
             {scenario === 'delayed' && (
               <ControlButton
                 onClick={() => {
-                  access.rejectNext('Mock host rejected this value.')
+                  access.rejectNext('此例模拟保存失败，原值保持不变。')
                   record('next commit will be rejected', objectId)
                 }}>
                 Reject next commit
@@ -304,8 +304,8 @@ function NumericContractPlayground({ scenario }: { scenario: Scenario }) {
             Provide mock clipboard
           </label>
           <p className={contractStyles.note}>
-            Optional host capabilities start unavailable. Enable the mock clipboard to copy into its local memory; this
-            never changes the system clipboard.
+            可选操作需要应用提供对应方法。勾选 Provide mock clipboard 后，Copy value 会把内容写入本例的内存剪贴板；
+            正式应用可以在同一接口中连接系统剪贴板。
           </p>
           <div className={contractStyles.row}>
             <ControlButton
@@ -315,10 +315,10 @@ function NumericContractPlayground({ scenario }: { scenario: Scenario }) {
               }}>
               Copy value
             </ControlButton>
-            <ControlButton disabled={!capabilities.preferences} title="Preferences capability unavailable">
+            <ControlButton disabled={!capabilities.preferences} title="应用未提供偏好保存方法">
               Save preference
             </ControlButton>
-            <ControlButton disabled={!capabilities.files} title="File picker capability unavailable">
+            <ControlButton disabled={!capabilities.files} title="应用未提供文件选择方法">
               Choose file
             </ControlButton>
           </div>
@@ -352,8 +352,8 @@ function NumericContractPlayground({ scenario }: { scenario: Scenario }) {
       </div>
       {scenario === 'targets' && (
         <div className={contractStyles.grid}>
-          <StatePanel label="Object A snapshot" value={snapshotA} />
-          <StatePanel label="Object B snapshot" value={snapshotB} />
+          <StatePanel label="对象 A 的属性数据" value={snapshotA} />
+          <StatePanel label="对象 B 的属性数据" value={snapshotB} />
         </div>
       )}
       <StatePanel label="Events (latest 12)" value={events} />
@@ -422,9 +422,9 @@ function ChoiceIdentityPlayground() {
 
   return (
     <ContractFrame
-      title="选择值身份 / Choice identity"
+      title="选项 ID 与原始值类型"
       description={
-        'Begin 后分别选择 String "001"、String "1"、Number 1 或 Number 0，再 Commit。DOM 保存稳定 option key，按 key 查表恢复原值；右侧 type 与 value 可验证字符串和数字不会被混淆。Cancel 恢复原值。'
+        '点击 Begin 后选择字符串或数字选项，再 Commit。option.key 用来区分选项，option.value 保留应用原来的类型，因此字符串 "001"、字符串 "1" 与数字 1 是不同值。下方 type 和 value 展示结果，Cancel 可恢复原值。'
       }
       onReset={reset}>
       <div className={contractStyles.row}>
@@ -485,8 +485,17 @@ function ChoiceIdentityPlayground() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Contracts/Property editing',
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'PropertyAccess 是把 React 界面连接到应用数据的接口，适用于需要临时预览、异步保存、取消和版本检查的编辑器。这里用按钮逐步演示接口行为，不依赖具体输入组件。\n\nbegin 创建一次编辑，change 更新预览，commit 请求保存，cancel 结束尚未提交的编辑。getSnapshot 返回当前快照，subscribe 通知变化，可通过 useSyncExternalStore 读取。只有接受提交后，已保存值、revision 版本号和历史记录才更新。\n\n应用负责提供持久化、对象查找和可选能力。提交固定属于开始编辑的对象；外部新版本可以让过期请求失效。各故事使用内存实现，便于观察这些结果。',
+      },
+    },
+    layout: 'fullscreen',
+  },
 } satisfies Meta
 
 export default meta

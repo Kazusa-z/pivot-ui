@@ -32,14 +32,14 @@ const rowRecipe = cva({
 
 export interface PropertyRowProps extends HTMLAttributes<HTMLDivElement> {
   direction?: 'row' | 'column'
-  /** Explicitly reserve no label column. The row never inspects its children. */
+  /** 将整行空间用于内容，适合没有字段标签的布局。 */
   withoutLabel?: boolean
   /** Any CSS grid track size, for example 120px or minmax(0, 1fr). */
   labelWidth?: string
   css?: SystemStyleObject
 }
 
-/** Layout only: values, control identity and business-specific columns belong to the caller. */
+/** 将标签、控件和说明排成字段行。使用 PropertyLabel、PropertyControl 和 PropertyDescription 组合内容，并将标签 ID 关联到实际输入。 */
 export const PropertyRow = forwardRef<HTMLDivElement, PropertyRowProps>(function PropertyRow(
   { direction = 'row', withoutLabel, labelWidth, css: cssProp, className, style, ...props },
   ref

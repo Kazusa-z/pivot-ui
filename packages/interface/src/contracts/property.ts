@@ -62,7 +62,7 @@ type DescriptorSchemas =
     }
   | { readonly kind: 'custom'; readonly schema: string; readonly metadata?: PropertyData }
 
-/** Runtime schema union for rendering/validation. Metadata is plain data, never React nodes or callbacks. */
+/** 描述属性的名称、类型和编辑约束，用于生成字段及校验输入。metadata 使用普通数据；React 展示和事件处理通过 PropertyField 的属性配置。 */
 export type PropertyDescriptorSchema = PropertyDescriptorBase & DescriptorSchemas
 type SchemaKind<K extends DescriptorSchemas['kind']> =
   Extract<DescriptorSchemas, { kind: K }> extends never
@@ -70,7 +70,7 @@ type SchemaKind<K extends DescriptorSchemas['kind']> =
     : Extract<DescriptorSchemas, { kind: K }>
 type Match<T, Shape, Schema> = Extract<T, Shape> extends never ? never : Schema
 
-/** T is inferred from the access value, not widened to unknown. Custom models opt in with an explicit schema. */
+/** 为值类型 T 选择相应的属性描述。使用自定义数据模型时，指定 custom schema 并在 PropertyField.render 中提供控件。 */
 export type PropertyDescriptor<T = PropertyValue> = PropertyDescriptorBase &
   (
     | Match<T, number, SchemaKind<'number'>>
@@ -115,7 +115,7 @@ export type PropertyDescriptor<T = PropertyValue> = PropertyDescriptorBase &
     | SchemaKind<'custom'>
   )
 
-/** Host-side value behavior, separate from the serializable descriptor. Mock copies remain plain and deeply frozen. */
+/** 为自定义属性值提供复制、比较和校验函数，由应用的数据服务在处理值时调用。 */
 export interface PropertyValueAdapter<T> {
   clone?: (value: T) => T
   equals?: (first: T, second: T) => boolean
@@ -133,13 +133,13 @@ export interface PropertyEditPreview<T> {
   readonly previewValue: T
 }
 
-/** value/revision are authoritative. A preview never advances the authoritative revision. */
+/** 属性的当前状态。value 和 revision 表示应用已接受的值及版本，edit.previewValue 可用于显示正在编辑的预览。 */
 export interface PropertySnapshot<T = PropertyValue> {
   readonly target: PropertyTarget
   readonly descriptor: PropertyDescriptor<T>
   readonly value: T
   readonly revision: number
-  /** Set only when the current authoritative revision came from this session's successful commit. External updates/reset clear it. */
+  /** 标识产生当前版本的成功编辑。应用接受该会话时填入其 ID；外部更新或重置时清除此字段，让控件识别新的数据来源。 */
   readonly committedSessionId?: string
   readonly readOnly: boolean
   readonly disabled: boolean
@@ -177,7 +177,7 @@ export function getEditEndAction(reason: EditEndReason): 'commit' | 'cancel' {
 interface EditResultBase<T> {
   readonly sessionId: string
   readonly target: PropertyTarget
-  /** Latest authoritative value and revision at the time this result was settled. */
+  /** 操作完成时应用已接受的值；revision 是对应版本，可用于更新界面。 */
   readonly value: T
   readonly revision: number
 }
@@ -202,9 +202,9 @@ export interface EditSession<T = PropertyValue> {
   readonly baseRevision: number
   readonly initialValue: T
   change(value: T): EditChangeResult<T>
-  /** The first terminal request wins. Every later commit/cancel returns the identical promise. */
+  /** 提交当前预览并等待保存结果。首次 commit 或 cancel 决定本次编辑的结果，重复调用返回同一个 Promise。 */
   commit(): Promise<EditResult<T>>
-  /** After commit starts, cancellation cannot retract the submitted request. */
+  /** 结束尚未提交的编辑。已提交时返回提交结果；如需撤销已保存的数据，由应用执行相应的撤销命令。 */
   cancel(reason?: EditCancelReason): Promise<EditResult<T>>
 }
 
@@ -213,9 +213,9 @@ export type BeginEditResult<T = PropertyValue> =
   | { readonly status: 'unavailable'; readonly reason: 'read-only' | 'disabled'; readonly message: string }
 
 export interface PropertyAccess<T = PropertyValue> {
-  /** Returns the same immutable object until observable state changes. */
+  /** 读取当前属性状态。实现方应在值或状态变化时生成新的不可变快照，其余时间返回相同对象，以支持 React 订阅。 */
   getSnapshot(): PropertySnapshot<T>
   subscribe(listener: () => void): () => void
-  /** Captures this access object's target and current revision for the entire session. */
+  /** 开始编辑当前属性，返回编辑会话或不可用原因。会话保存本次编辑的目标和开始版本，供应用检查保存冲突。 */
   begin(): BeginEditResult<T>
 }

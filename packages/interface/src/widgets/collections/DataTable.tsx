@@ -51,7 +51,7 @@ const keyString = (key: CollectionKey) => `${typeof key}:${String(key)}`
 const controls =
   'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]:not(:disabled)'
 
-/** Small typed data adapter over native table parts. Sorting, loading and paging belong to the caller. */
+/** 按列配置展示数据的表格，支持选中和行操作。应用先对数据排序、分页或加载，再将结果传入 rows。 */
 export function DataTable<T>({
   rows,
   rowKey,

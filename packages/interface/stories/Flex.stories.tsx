@@ -16,7 +16,19 @@ const frame = css({
   padding: '8px',
   border: '1px solid var(--colors-border)',
 })
-const meta = { title: 'Layout/Flex', component: Flex } satisfies Meta<typeof Flex>
+const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Flex 用于沿一个方向排列内容，并控制间距、对齐和换行。direction 决定排列方向，gap 决定间距，align 和 justify 分别控制交叉轴与主轴对齐，wrap 控制是否换行。需要宽度、滚动或复杂网格时，在外层容器或 css 中设置相应布局约束。',
+      },
+    },
+  },
+  title: 'Layout/Flex',
+  component: Flex,
+} satisfies Meta<typeof Flex>
 export default meta
 type Story = StoryObj<typeof meta>
 

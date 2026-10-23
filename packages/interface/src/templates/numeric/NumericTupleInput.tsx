@@ -25,7 +25,7 @@ export interface NumericTupleInputProps
   onEditStart?: (source: NumericEditSource, axis: number) => boolean | void
   onValueCommit?: (value: readonly number[], reason: NumericCommitReason, axis: number) => void | Promise<void>
   onEditCancel?: (reason: NumericCancelReason, axis: number) => void
-  /** Controlled by the caller. Omit onLinkedChange to hide the link action. */
+  /** 控制比例联动开关，使用 onLinkedChange 更新状态；提供该回调时显示联动按钮。 */
   linked?: boolean
   onLinkedChange?: (linked: boolean) => void
   linkLabel?: string
@@ -44,7 +44,7 @@ interface TupleEdit {
 const sameTuple = (first: readonly number[], second: readonly number[]) =>
   first.length === second.length && first.every((value, index) => Object.is(value, second[index]))
 
-/** Geometry-free tuple editing; linked proportions use one immutable edit baseline. */
+/** 编辑多个命名的数值，适合尺寸、坐标或自定义参数组。回调返回完整数组，启用比例联动时按编辑开始时的比例调整各项。 */
 export const NumericTupleInput = forwardRef<HTMLDivElement, NumericTupleInputProps>(function NumericTupleInput(
   {
     axes,

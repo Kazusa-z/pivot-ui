@@ -15,8 +15,8 @@ function ButtonOverview() {
   const [clicks, setClicks] = useState(0)
   return (
     <ContractFrame
-      title="Buttons"
-      description="共享按钮行为，保留不同密度与强调方式。所有普通按钮默认 type=button；图标按钮提供可访问名称。"
+      title="文字按钮与图标按钮"
+      description="根据空间和操作重要程度选择 size 与 variant。点击可用按钮会增加下方计数；普通按钮默认 type=`button`，图标按钮通过 aria-label 告知操作名称。"
       onReset={() => setClicks(0)}>
       <div className={contractStyles.row}>
         {(['xs', 'sm', 'md', 'lg'] as const).map((size) => (
@@ -123,8 +123,8 @@ function AsyncButtonsExample() {
   }
   return (
     <ContractFrame
-      title="Async buttons"
-      description="启动后手动 Resolve 或 Reject。等待期间重复点击、键盘激活不会重复调用；取消外部 loading 不应解除仍在运行的内部请求。"
+      title="等待异步操作完成"
+      description="异步按钮适合保存或加载等需要等待的操作。点击 Start 后，用 Resolve 完成请求或用 Reject 返回错误；按钮等待 Promise 结束后恢复可用。应用可额外传入 loading，异步操作通过 async 传入，失败信息由 onAsyncError 接收。"
       onReset={reset}>
       <div className={contractStyles.row}>
         <label>
@@ -188,8 +188,8 @@ function AsChildExample() {
   const [refAttached, setRefAttached] = useState(false)
   return (
     <ContractFrame
-      title="asChild and keyboard"
-      description="Link 同时统计子元素与父按钮回调；禁用或 loading 时两者都不执行。Span button 支持 Enter/Space；Tab 始终允许移出。子元素 ref 和 className 会保留。"
+      title="组合链接与键盘操作"
+      description="asChild 可把按钮行为组合到链接或自定义元素上。此处记录子元素与外层按钮的回调次数；disabled 或 loading 会阻止激活。Span button 可用 Enter/Space 操作，Tab 可移到下一控件，子元素的 ref 和 className 继续有效。"
       onReset={() => {
         setDisabled(false)
         setLoading(false)
@@ -261,7 +261,8 @@ function AsChildExample() {
         <Button type="submit">Submit form</Button>
       </form>
       <p>
-        Wrapped button 默认不会提交表单；只有 Submit form 增加 formSubmits。包装组件必须向真实元素转发 props 和 ref。
+        Wrapped button 执行普通点击，Submit form 提交表单并增加 formSubmits。封装自己的按钮组件时，将收到的 props 和 ref
+        转发到真实 DOM 元素。
       </p>
       <StatePanel label="Composed behavior" value={{ calls, formSubmits, refAttached }} />
     </ContractFrame>
@@ -272,8 +273,8 @@ function ActionGroupExample() {
   const [selected, setSelected] = useState('move')
   return (
     <ContractFrame
-      title="Action button groups"
-      description="分组仅控制布局和边角，不实现 Toolbar 的方向键导航。每个按钮仍可用 Tab 独立聚焦。"
+      title="排列一组操作按钮"
+      description="ActionButtonGroup 将相关按钮排成一组并衔接边角，每个按钮通过 Tab 单独聚焦。本例在 onClick 中保存当前操作；需要方向键切换的工具组可使用 ToggleGroup。"
       onReset={() => setSelected('move')}>
       {(['horizontal', 'vertical'] as const).map((direction) => (
         <ActionButtonGroup key={direction} direction={direction} role="group" aria-label={`${direction} actions`}>
@@ -293,7 +294,19 @@ function ActionGroupExample() {
   )
 }
 
-const meta = { title: 'Widgets/Buttons', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Buttons',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Button 用于带文字的操作，ActionButton 用于紧凑的图标操作，ActionButtonGroup 用于排列一组按钮。onClick 接收普通点击，async 接收返回 Promise 的操作；等待期间按钮显示加载状态并阻止重复请求，失败交给 onAsyncError 处理。普通按钮默认 type="button"；提交表单时显式使用 type="submit"，图标按钮提供 aria-label。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <ButtonOverview /> }

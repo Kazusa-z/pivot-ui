@@ -6,13 +6,13 @@ import { InputNumber } from '../../widgets/inputs/InputNumber'
 import { ColorInput, type ColorInputProps } from './ColorInput'
 
 export interface HDRColorInputProps extends Omit<ColorInputProps, 'hdr'> {
-  /** Peak RGB multiplier in the value's declared encoding, not exposure stops. */
+  /** 设置强度字段的下限，使用当前颜色编码下的 RGB 峰值倍率；intensityMax 设置上限。若界面使用曝光档位，应用需先转换为倍率。 */
   intensityMin?: number
   intensityMax?: number
   intensityStep?: number
 }
 
-/** Intensity is derived from RGB; it is never a second authoritative color value. */
+/** 将颜色选择与 HDR 强度输入组合成一个字段。强度根据 RGB 计算，编辑回调返回完整 ColorValue。 */
 export const HDRColorInput = forwardRef<HTMLDivElement, HDRColorInputProps>(function HDRColorInput(
   {
     value,

@@ -124,7 +124,7 @@ function ThemeConsumer({ name }: { name: string }) {
           backgroundColor: 'var(--colors-successBg)',
           border: '1px solid var(--colors-successBorder)',
         })}>
-        Semantic colors follow resolvedTheme.
+        语义颜色随 resolvedTheme 使用对应的明暗配色。
       </div>
     </section>
   )
@@ -134,11 +134,11 @@ type Scenario = 'preferences' | 'providers' | 'lifecycle'
 
 const descriptions: Record<Scenario, string> = {
   preferences:
-    '选择 Light、Dark 或 System；两个消费者同步。模拟系统主题改变时，只有 System 模式的 resolvedTheme 跟随，preference 与存储始终保持 System。局部 DOM 作用域不会修改 Storybook 工具栏主题。',
+    '选择 Light、Dark 或 System，两个区域会同步显示。System 会根据系统主题解析出 resolvedTheme，同时保留用户的 System 偏好。此例把外观应用到局部容器，应用可选择自己的主题作用范围。',
   providers:
-    'A 和 B 使用同一 store，切换任意一侧会同步另一侧。单独卸载一个 Provider 不会移除另一侧仍需要的系统或存储监听；全部卸载后监听数量归零，再挂载会恢复最新值。',
+    'A 和 B 共享同一个 store，在任意一侧调用 setPreference 都会同步更新。移除一个 Provider 后另一个仍可使用；所有区域卸载后，store 清理系统和存储订阅，再挂载时读取最新值。',
   lifecycle:
-    '模拟来自其他窗口的存储通知，观察两个消费者同步。全部卸载后系统和存储监听数量为零；此时修改外部值，再挂载会读取新值。Clear storage 会回到初始 System 偏好。',
+    '外部存储更新可同步来自其他窗口的主题偏好。此例通过按钮发送通知，观察两个区域更新；所有区域卸载后修改存储，再挂载会读取新值。Clear storage 恢复创建 store 时的 System 偏好。',
 }
 
 function ThemePlayground({ scenario, onReset }: { scenario: Scenario; onReset: () => void }) {
@@ -149,7 +149,7 @@ function ThemePlayground({ scenario, onReset }: { scenario: Scenario; onReset: (
   const diagnostics = useSyncExternalStore(fixture.subscribeDiagnostics, fixture.getDiagnostics, fixture.getDiagnostics)
   return (
     <div ref={target} className={css({ backgroundColor: 'var(--colors-appBg)', minHeight: '100vh' })}>
-      <ContractFrame title="Theme store" description={descriptions[scenario]} onReset={onReset}>
+      <ContractFrame title="切换主题并同步多个区域" description={descriptions[scenario]} onReset={onReset}>
         <div className={contractStyles.row}>
           <ControlButton onClick={() => fixture.setSystemTheme('light')}>Simulate system light</ControlButton>
           <ControlButton onClick={() => fixture.setSystemTheme('dark')}>Simulate system dark</ControlButton>
@@ -200,7 +200,16 @@ function ThemeStory({ scenario }: { scenario: Scenario }) {
 const meta = {
   title: 'Foundation/Theme',
   tags: ['autodocs'],
-  parameters: { layout: 'fullscreen', controls: { disable: true } },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ThemeProvider 为组件提供浅色、深色或跟随系统的主题。useTheme 读取 preference 和最终 resolvedTheme，setPreference 发起切换；共享 store 的多个区域会同步更新。应用通过存储、系统主题和外观适配器接入运行环境，局部主题可用独立 Provider 限定作用范围。',
+      },
+    },
+    layout: 'fullscreen',
+    controls: { disable: true },
+  },
 } satisfies Meta
 
 export default meta

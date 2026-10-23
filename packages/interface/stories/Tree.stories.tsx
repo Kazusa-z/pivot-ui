@@ -98,23 +98,23 @@ function TreeExample({
     <ContractFrame
       title={
         dnd
-          ? 'Tree drag and drop'
+          ? '移动树中的条目'
           : asyncRename
-            ? 'Rename lifecycle'
+            ? '重命名与失败重试'
             : dynamic
-              ? 'Dynamic collection and focus'
+              ? '增删条目后的焦点位置'
               : freeze
-                ? 'Controlled selection refused'
+                ? '由应用决定是否接受选择'
                 : multiple
-                  ? 'Multiple selection'
-                  : 'Tree selection, expansion and focus'
+                  ? '选择多个条目'
+                  : '浏览、展开与选择树节点'
       }
       description={
         dnd
-          ? 'Drag row labels. Top/bottom quarters insert before/after; center inserts into a folder. Escape cancels. Self/descendant targets are rejected. The move buttons offer a keyboard-operable equivalent.'
+          ? '拖动行标签可请求移动条目：目标上、下区域表示插到前面或后面，中间表示移入文件夹。onDrop 把目标和位置交给应用更新数据；Escape 取消，模型会阻止移入自身或后代。上方移动按钮提供同样可用键盘完成的操作。'
           : asyncRename
-            ? 'F2 or double-click the label. Enter/blur commit once, Escape cancels. First submission is rejected after 300ms; allow rename and retry Enter. Reset invalidates old responses.'
-            : 'Arrow keys browse without selecting; Right/Left expand or move between parent and child. Space selects (toggles in multiple mode); Home/End and text search work. Actions are separate Tab stops.'
+            ? '按 F2 或双击标签进入重命名，Enter 或失焦提交，Escape 取消。onRename 可返回 Promise；此例在 300ms 后拒绝首次请求，开启 Allow rename 后可保留草稿重试。Reset 更新版本，应用据此忽略此前请求的结果。'
+            : '方向键浏览项目，Right/Left 用于展开、收起或在父子项之间移动；Space 选择，多选模式下可切换选中。Home/End 和文字搜索可快速定位，行内操作使用独立 Tab 入口。应用分别通过选择、展开和焦点回调保存状态。'
       }
       onReset={() => {
         setItems(initial)
@@ -256,8 +256,8 @@ function DefaultExample() {
   const collection = useMemo(() => createTreeCollection(initial, options), [])
   return (
     <ContractFrame
-      title="Uncontrolled defaults"
-      description="Default selection, expansion and focus each belong to TreeRoot. Keyboard focus does not change selection."
+      title="设置树的初始状态"
+      description="用 defaultSelectedKeys、defaultExpandedKeys 和 defaultFocusedKey 设置初始状态，之后由 TreeRoot 保存各自变化。方向键浏览只改变焦点，Space 才选择；下方分别记录三类回调。"
       onReset={() => {
         setRevision((n) => n + 1)
         setEvents([])
@@ -292,8 +292,8 @@ function IdentityExample() {
   )
   return (
     <ContractFrame
-      title="Typed stable identity"
-      description="Number 1, string 1 and string 001 are separate keys. Duplicate keys and nonfinite numbers are rejected at model creation."
+      title="用稳定标识区分节点"
+      description="数字 1、字符串 1 和字符串 001 是三个独立的 key，选择回调保留其类型。为每个条目提供唯一的非空字符串或有限数字；createTreeCollection 会在重复或无效标识进入模型时报告错误。"
       onReset={() => setSelected([])}>
       <TreeRoot
         collection={collection}
@@ -305,7 +305,19 @@ function IdentityExample() {
     </ContractFrame>
   )
 }
-const meta = { title: 'Widgets/Tree', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Tree',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Tree 用于展示文件目录、场景层级等可展开的树形数据。createTreeCollection 根据稳定 key 和子项关系建立模型，TreeRoot 分别管理选择、展开与焦点；对应回调把请求交给应用。重命名和拖放由应用更新原始数据，键盘浏览与选择分开，行内操作保留自己的焦点入口。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <TreeExample /> }

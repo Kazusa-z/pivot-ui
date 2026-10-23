@@ -31,9 +31,9 @@ export interface PropertyFieldControlProps {
 }
 
 export interface PropertyFieldRenderProps<T> extends PropertyBinding<T> {
-  /** Put these on the real control/group, not an arbitrary layout wrapper. */
+  /** 传给实际输入或控件组，使字段标签、帮助文字、错误和忙碌状态与控件关联。 */
   controlProps: PropertyFieldControlProps
-  /** Standard preview/commit/cancel adapter shared by numeric, color and curve templates. */
+  /** 可直接传给数值、颜色或曲线组件，连接显示值、可用状态以及预览、提交和取消回调。 */
   editProps: PropertyFieldControlProps & {
     value: T
     resetKey: object
@@ -48,22 +48,22 @@ export interface PropertyFieldRenderProps<T> extends PropertyBinding<T> {
 
 export interface PropertyFieldProps<T = PropertyValue> extends Omit<PropertyRowProps, 'children'> {
   access: PropertyAccess<T>
-  /** Defaults to input / input-number / checkbox / select according to the descriptor. */
+  /** 选择字段的输入方式；默认根据属性类型使用 input、input-number、checkbox 或 select。 */
   widget?: PropertyFieldWidget
   controlId?: string
   label?: ReactNode
   description?: ReactNode
   placeholder?: string
-  /** Presentation of a mixed selection; the application owns aggregation and clears this after accepting a value. */
+  /** 展示多个选中对象具有不同值的状态。应用计算是否混合，并在接受统一的新值后将它设为 false。 */
   mixed?: boolean
   onEditResult?: (result: EditResult<T>) => void
-  /** Complex properties are explicitly composed; this function receives one typed property session. */
+  /** 自定义字段内容，例如向量、颜色或资源选择器。参数提供当前值、控件关联属性和编辑方法。 */
   render?: (field: PropertyFieldRenderProps<T>) => ReactNode
-  /** Custom compositions are groups by default. Use control only for a single labelable input. */
+  /** 自定义内容默认使用 group 关联标签；内容是单个可标记输入时可选 control。 */
   association?: 'control' | 'group'
 }
 
-/** Connects exactly one property to one widget. It does not build panels or own application data. */
+/** 显示一个带标签、帮助文字和保存反馈的属性字段。通过 access 连接应用数据，使用 render 组合复杂控件；多个字段可放入 Section 构成面板。 */
 export function PropertyField<T>({
   access,
   widget,

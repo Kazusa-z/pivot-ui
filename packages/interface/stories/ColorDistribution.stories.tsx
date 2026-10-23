@@ -56,13 +56,13 @@ function DistributionExample({
   }
   return (
     <ContractFrame
-      title="Color distribution"
+      title="颜色分布与模式切换"
       description={
         refuse
-          ? 'The owner refuses all previews. Mode and color stay authoritative; requests are still visible below.'
+          ? '尝试切换模式或编辑颜色，再看下方出现的修改请求与保留原状的控件。这是应用暂不接受修改时的显示；接入时在 onValueChange 中更新 value，在 onValueCommit 中保存即可。'
           : delayed
-            ? 'Commit waits 450 ms and rejects the first request. The host restores its start snapshot; input drafts can be retried. Load another target while pending to ignore old UI results.'
-            : 'One discriminated value is active. Mode cache is separate: edit a color, switch away, then return. Reset and target revision clear the cache.'
+            ? '编辑颜色或切换模式，等待 450 ms 后体验第一次保存失败，再重试同一项操作。下方会记录拒绝和成功的结果；等待时也可点击 Load another target 体验对象切换，应用用 resetKey 标识正在编辑的对象。'
+            : '先编辑单色，再切换到渐变并调整颜色点，最后切回单色，查看之前的颜色如何恢复。下方分别展示当前 value 和各模式的 cache；需要由应用记住模式设置时，可连接 cache/onCacheChange。Reset 可重新开始。'
       }
       onReset={reset}>
       <div className={contractStyles.row}>
@@ -117,9 +117,9 @@ function DistributionExample({
             if (reject) {
               setValue(previous)
               record('rejected')
-              throw new Error('Host rejected the color edit. Retry the input or choose the mode again.')
+              throw new Error('颜色修改未保存，请重试输入或再次选择模式。')
             }
-            record(refuse ? 'owner kept previous value' : 'accepted')
+            record(refuse ? '应用保留原值' : 'accepted')
           }}
           onEditCancel={(reason) => {
             if (userCancellation.has(reason) && !refuse) setValue(start.current)
@@ -127,7 +127,7 @@ function DistributionExample({
           }}
         />
       </div>
-      <StatePanel label="Active value and separate mode cache" value={{ value, cache, revision, state, events }} />
+      <StatePanel label="当前值与各模式保留的值" value={{ value, cache, revision, state, events }} />
     </ContractFrame>
   )
 }
@@ -153,8 +153,8 @@ function HostRoundTripExample() {
   const start = useRef(value)
   return (
     <ContractFrame
-      title="Host color adapter round trip"
-      description="This example adapter alone maps normalized engine RGB/time to explicit UI color space/position. Editing gradient stops writes back the same stable IDs; changing distribution mode does not invent an engine DTO."
+      title="与应用颜色格式互相转换"
+      description="拖动渐变点或修改颜色，比较下方应用数据中的 time 与组件数据中的 position。此例的适配函数在编辑前后转换颜色格式和位置字段，并保留停靠点 ID；可在自己的数据读写入口采用同样的转换方式。"
       onReset={() => {
         setHost(hostInitial)
         setValue({ mode: 'gradient', ramp: fromHostColorChannels(hostInitial, 'linear') })
@@ -176,13 +176,25 @@ function HostRoundTripExample() {
           }}
         />
       </div>
-      <StatePanel label="Engine DTO with time and stable IDs" value={host} />
-      <StatePanel label="UI value with position" value={value} />
+      <StatePanel label="应用数据：time 与稳定 ID" value={host} />
+      <StatePanel label="组件数据：position" value={value} />
     </ContractFrame>
   )
 }
 
-const meta = { title: 'Templates/ColorDistribution', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Templates/ColorDistribution',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ColorDistributionTemplate 用于在单色、渐变、两种颜色和两组渐变之间切换，适合效果参数或随机颜色范围。value 的 mode 决定当前使用的数据形状。\n\nonValueChange 返回预览值，onValueCommit 表示保存一次编辑。cache 与当前 value 分开保存，让用户切换模式后可以找回该模式已接受的设置；需要外部管理时同时传入 cache 和 onCacheChange。\n\n切换编辑对象或重置时更新 resetKey。应用负责接受、拒绝和取消后的值恢复；业务系统使用的时间字段或颜色格式由应用适配代码转换。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <DistributionExample /> }

@@ -29,7 +29,7 @@ function Source({ disabled, onEnd }: { disabled: boolean; onEnd: (result: DragRe
       data-dragging={source.isDragging}
       className={tile}
       style={{ cursor: disabled ? 'default' : 'grab' }}>
-      Drag Cube
+      拖动 Cube
     </div>
   )
 }
@@ -63,9 +63,9 @@ function Snapshot() {
   return (
     <>
       <ControlButton disabled={state.phase === 'idle'} onClick={() => cancel('escape')}>
-        Cancel drag
+        取消拖放
       </ControlButton>
-      <StatePanel label="Drag session" value={state} />
+      <StatePanel label="当前拖放状态" value={state} />
     </>
   )
 }
@@ -81,8 +81,8 @@ function Lifecycle({ isolated = false }: { isolated?: boolean }) {
   }
   return (
     <ContractFrame
-      title={isolated ? 'Scoped drag sessions' : 'Drag lifecycle'}
-      description="原生桌面拖放；只传递本Provider拥有的类型化数据。Escape、失焦、禁用、卸载与Reset结束会话。另一Provider不能接收此会话。集合组件另提供键盘移动操作。"
+      title={isolated ? '独立区域之间的拖放范围' : '对象拖放与完成结果'}
+      description="拖放用于把对象交给目标区域，适合移动条目或建立资源关联。将 Cube 拖到不同目标，可观察类型匹配、接受和拒绝的结果。目标的 onDrop 接收 data，应用在其中完成操作；源端 onEnd 报告 dropped 或取消原因。源与目标需要共享 DragDropProvider，Escape、窗口失焦或源变为不可用时会取消拖动；应用可为同一操作另外提供键盘可用的移动按钮。"
       onReset={() => {
         setVersion((value) => value + 1)
         setDisabled(false)
@@ -92,14 +92,14 @@ function Lifecycle({ isolated = false }: { isolated?: boolean }) {
       }}>
       <div className={contractStyles.row}>
         <ControlButton onClick={() => setDisabled((value) => !value)}>
-          {disabled ? 'Enable source' : 'Disable source'}
+          {disabled ? '启用拖动源' : '禁用拖动源'}
         </ControlButton>
         <ControlButton onClick={() => setVisible((value) => !value)}>
-          {visible ? 'Unmount source' : 'Mount source'}
+          {visible ? '移除拖动源' : '显示拖动源'}
         </ControlButton>
         <label>
           <input type="checkbox" checked={removeOnDrop} onChange={(event) => setRemoveOnDrop(event.target.checked)} />{' '}
-          Remove source after drop
+          成功放置后移除源对象
         </label>
       </div>
       <DragDropProvider resetKey={version}>
@@ -115,19 +115,19 @@ function Lifecycle({ isolated = false }: { isolated?: boolean }) {
               }
             />
           )}
-          <Target label="Accept object" accept={['example-object']} onReceive={receive} />
-          <Target label="Reject on drop" accept={['example-object']} reject onReceive={receive} />
-          <Target label="Different type" accept={['example-material']} onReceive={receive} />
+          <Target label="接收对象" accept={['example-object']} onReceive={receive} />
+          <Target label="拒绝本次放置" accept={['example-object']} reject onReceive={receive} />
+          <Target label="接收其他类型" accept={['example-material']} onReceive={receive} />
         </div>
         <Snapshot />
       </DragDropProvider>
       {isolated && (
         <DragDropProvider>
-          <Target label="Other provider target" accept={['example-object']} onReceive={receive} />
+          <Target label="另一个区域的目标" accept={['example-object']} onReceive={receive} />
           <Snapshot />
         </DragDropProvider>
       )}
-      <StatePanel label="Completed events" value={events} />
+      <StatePanel label="已完成的操作" value={events} />
     </ContractFrame>
   )
 }
@@ -141,15 +141,15 @@ function FilesBoundary() {
   return (
     <>
       <div ref={drop.ref} data-over={drop.isOver} className={cx(tile, contractStyles.stack)}>
-        Drop system files here (names only)
+        将系统文件拖到这里，查看文件名
         <input
-          aria-label="Choose local files"
+          aria-label="选择本地文件"
           type="file"
           multiple
           onChange={(event) => setFiles(Array.from(event.target.files ?? []).map((file) => file.name))}
         />
       </div>
-      <StatePanel label="File names" value={files} />
+      <StatePanel label="文件名" value={files} />
     </>
   )
 }
@@ -157,8 +157,8 @@ function SystemFiles() {
   const [revision, setRevision] = useState(0)
   return (
     <ContractFrame
-      title="Explicit system-file boundary"
-      description="文件与内部payload分开接收；这里只显示文件名，不读取或上传内容。文件选择器提供键盘等价入口。"
+      title="拖入或选择系统文件"
+      description="把系统文件拖入区域，或通过文件选择器选取文件。onFilesDrop 接收 File 列表，本例取出文件名显示；应用可在该回调中校验文件，再按自己的流程读取或上传。文件选择器也可通过键盘操作。"
       onReset={() => setRevision((value) => value + 1)}>
       <DragDropProvider key={revision}>
         <FilesBoundary />
@@ -166,7 +166,19 @@ function SystemFiles() {
     </ContractFrame>
   )
 }
-export default { title: 'Interaction/Drag and drop', parameters: { layout: 'fullscreen' } } satisfies Meta
+export default {
+  tags: ['autodocs'],
+  title: 'Interaction/Drag and drop',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '这组 hooks 用于应用内部对象的桌面拖放，例如把资源放入槽位或移动列表条目。DragDropProvider 划定一次拖放可以到达的区域，useDragSource 提供 type 和 data，useDropTarget 按 accept 接收并通过 onDrop 交给应用处理；源端 onEnd 报告放置或取消。跨区域传递需共享同一个 Provider；文件使用 onFilesDrop 接收，键盘移动入口由应用结合具体操作提供。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export const LifecycleStory: StoryObj = { name: 'Lifecycle', render: () => <Lifecycle /> }
 export const ProviderIsolation: StoryObj = { render: () => <Lifecycle isolated /> }
 export const Files: StoryObj = { render: () => <SystemFiles /> }

@@ -16,7 +16,10 @@ function RequestControls({ onResult }: { onResult: (result: ConfirmationResult) 
     <ControlButton
       onClick={() => {
         void service
-          .request({ title: 'Apply settings?', description: 'The injected provider owns this dialog and its theme.' })
+          .request({
+            title: 'Apply settings?',
+            description: '此确认框由当前应用的 ConfirmationProvider 展示，并使用该区域的主题。',
+          })
           .result.then(onResult)
       }}>
       Request using context
@@ -32,15 +35,15 @@ function QueueExample() {
   const last = useRef<ConfirmationRequest | null>(null)
   const record = (result: ConfirmationResult) => setResults((values) => [...values, result])
   const enqueue = (title: string) => {
-    const request = service.request({ title, description: 'Requests are displayed in FIFO order.' })
+    const request = service.request({ title, description: '确认请求按发起顺序依次显示。' })
     last.current = request
     void request.result.then(record)
     return request
   }
   return (
     <ContractFrame
-      title="Injected confirmation queue"
-      description="两个请求依次显示；结束后焦点回到发起按钮。重复终结返回同一个 Promise 与不可变结果，不重复执行事务。服务结果与调用方回调独立。"
+      title="按顺序等待用户确认"
+      description="连续发起确认时，请求会按顺序显示。应用等待 request.result，再根据结果执行或取消操作；用户完成选择后焦点回到发起按钮。重复调用同一请求的 confirm、cancel 或 close 会取得同一个最终结果。"
       onReset={() => {
         for (const request of snapshot.requests) void request.close()
         setResults([])
@@ -96,8 +99,8 @@ function UnmountExample() {
   useEffect(() => () => clearTimeout(timer.current), [])
   return (
     <ContractFrame
-      title="Unmount settles the queue"
-      description="启动两个请求并在一秒后卸载 Provider；包括尚未显示的请求，全部返回 unmounted。无宿主调用立即返回 unavailable，不遗留 Promise。"
+      title="确认区域移除后的请求结果"
+      description="此例发起两个请求，并在一秒后移除显示它们的 Provider；所有请求随后返回 unmounted。应用应在挂载 ConfirmationProvider 后发起交互式确认；缺少 Provider 时，结果为 unavailable，可据此采用其他提示方式。"
       onReset={() => {
         clearTimeout(timer.current)
         setMounted(true)
@@ -144,7 +147,7 @@ function StrictRequest({ onResult }: { onResult: (result: ConfirmationResult) =>
     void service
       .request({
         title: 'StrictMode effect request',
-        description: 'The effect disconnect/reconnect must not cancel this request.',
+        description: '此请求来自组件的挂载 effect；请在弹窗中选择结果，下方会记录该决定。',
       })
       .result.then(onResult)
   }, [service, onResult])
@@ -156,8 +159,8 @@ function StrictExample() {
   const [results, setResults] = useState<ConfirmationResult[]>([])
   return (
     <ContractFrame
-      title="StrictMode lifecycle"
-      description="挂载时由子组件 effect 发起请求，StrictMode 的模拟清理不应产生 unmounted 或重复对话框。Confirm 后可重新挂载验证下一次请求。"
+      title="在 StrictMode 中发起确认"
+      description="子组件挂载后通过 effect 发起确认，外层启用 React StrictMode。确认后可重新挂载发起下一次请求；结果区显示每次用户决定，应用可据此继续对应操作。"
       onReset={() => {
         setMounted(false)
         setResults([])
@@ -193,8 +196,8 @@ function IndependentExample() {
   const [services, setServices] = useState(() => [createConfirmationService(), createConfirmationService()])
   return (
     <ContractFrame
-      title="Independent application hosts"
-      description="每个应用使用独立 service。一个实例只能连接一个 Provider；重复宿主抛出明确错误，且不会覆盖原队列。"
+      title="多个独立确认区域"
+      description="两个区域分别创建 service，因此各自的请求和主题独立。一个 service 对应一个 ConfirmationProvider；需要多个独立确认区域时分别创建服务实例，避免把同一实例连接到多个显示区域。"
       onReset={() => setServices([createConfirmationService(), createConfirmationService()])}>
       <div className={contractStyles.row}>
         {services.map((service, index) => (
@@ -204,7 +207,19 @@ function IndependentExample() {
     </ContractFrame>
   )
 }
-const meta = { title: 'Widgets/Confirmation', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Confirmation',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '确认服务适合在执行删除、覆盖等操作前等待用户决定。应用创建 createConfirmationService，并通过 ConfirmationProvider 展示请求；request(...).result 返回确认、取消或关闭等结果。多个请求按顺序显示，应用收到确认结果后再执行对应操作；每个应用区域应使用自己的服务实例。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Queue: Story = { render: () => <QueueExample /> }

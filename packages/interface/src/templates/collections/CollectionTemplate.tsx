@@ -53,11 +53,11 @@ export interface CollectionTemplateProps<T> extends Omit<HTMLAttributes<HTMLDivE
   defaultSelectedKeys?: readonly CollectionKey[]
   onSelectedKeysChange?: (keys: readonly CollectionKey[]) => void
   selectionMode?: 'none' | 'single' | 'multiple'
-  /** Resolve after the owner has accepted the addition. Returning its key makes the focus target explicit. */
+  /** 添加项目并更新 items 后完成 Promise；返回新项目的 key，可将焦点移到该项目。 */
   onAdd?: () => CollectionKey | void | Promise<CollectionKey | void>
   onDelete?: (item: T, key: CollectionKey) => void | Promise<void>
   onRename?: (item: T, name: string, key: CollectionKey) => void | Promise<void>
-  /** Requests a new item order. Dragging requires an ancestor DragDropProvider; buttons are always available. */
+  /** 接收排好序的项目，应用在此更新 items。拖动排序需要包裹 DragDropProvider，也可使用排序按钮。 */
   onReorder?: (items: readonly T[], change: CollectionReorder) => void | Promise<void>
   canDelete?: (item: T, key: CollectionKey) => boolean
   canRename?: (item: T, key: CollectionKey) => boolean
@@ -232,7 +232,7 @@ const rowClass = css({
   '&[data-drop-target]': { outline: '2px solid var(--colors-focusRing)' },
 })
 
-/** Flat item data with independent expansion, selection and item actions. The caller owns all item mutations. */
+/** 显示可选择、展开和编辑的项目列表，适合管理一组配置项。添加、删除、改名和排序通过回调通知应用更新 items。 */
 export function CollectionTemplate<T>({
   items,
   getKey,

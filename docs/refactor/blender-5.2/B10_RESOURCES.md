@@ -1,59 +1,77 @@
-# B10 资源引用与选择
+# 资源选择
 
-> B11 收口说明：本文保留该批迁移记录；旧适配器、旧包与多 Storybook 指令已退出。当前属性联调和消费方式以 [B11 最终指南](./B11_INTEGRATION.md) 为准。历史验证数字不代表当前构建。
+资源控件用于展示和选择一个资源引用，例如材质、图片或模型。表单保存稳定 ID 或 null，名称、缩略图和路径通过应用服务获取。
 
-B10 迁移 U41、G18、G23。资源引用是稳定 ID 或 null；资源名称、缩略图和路径是可以重新获取的展示快照。引擎实例留在应用侧。
+## 选择组件
 
-| 层                        | 入口                                                    | 职责                                                          |
-| ------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
-| values                    | AssetDescriptor、AssetId、AssetStatus、ResourceViewMode | 纯数据、复制与校验、过滤、分组；无 React、DOM、文件和引擎依赖 |
-| contracts                 | ResourceProvider、ResourceQuery、ResourcePage           | query/get 和可选 rename/locate/chooseFile；返回可展示的快照   |
-| widgets/collections/asset | AssetItem、AssetThumbnail、AssetName                    | 展示、独立选择按钮、名称编辑；没有查询和持久化                |
-| templates/resources       | ResourcePicker                                          | 检索、类型/分组筛选、分页、网格/列表、选择及改名              |
-| templates/resources       | AssetReferenceInput                                     | 当前引用、弹出选择器、清空、定位、文件选择和可选内部拖放      |
-| host / stories support    | 真实适配或 MockResourceProvider                         | 资源获取、缩略图 URL、文件对话框、改名写入、定位及显示偏好    |
+| 组件                | 用途                                          |
+| ------------------- | --------------------------------------------- |
+| AssetItem           | 展示一个资源，提供选择按钮、改名和附加动作    |
+| AssetThumbnail      | 单独展示缩略图及失败回退                      |
+| AssetName           | 单独展示和编辑名称                            |
+| ResourcePicker      | 搜索、筛选、分页、列表/网格、选择及改名       |
+| AssetReferenceInput | 展示当前 ID，打开选择器、清空、定位或选择文件 |
 
-依赖为 templates → widgets/interaction → values；templates 通过纯契约访问宿主。新实现不导入旧 UI/GUI 包。`AssetName` 复用 B05 EditableText；选择按钮、改名输入与附加动作是并列控件。
+AssetItem 不查询资源。ResourcePicker 需要 ResourceProvider；AssetReferenceInput 还会独立解析当前 ID，因此即使当前资源不在搜索结果页里，也能显示它。
 
-## 接入
+## 最小接法
 
 ```tsx
-import { AssetReferenceInput, ResourcePicker } from '@pivot-ui/react'
-import type { AssetId } from '@pivot-ui/react/values'
-import type { ResourceProvider } from '@pivot-ui/react/contracts'
+import { useState } from 'react'
+import { AssetReferenceInput, type AssetId, type ResourceProvider } from '@pivot-ui/react'
 
-// provider 由应用创建，value 从模拟状态或宿主快照提供。
-function Reference({
-  value,
-  provider,
-  assign,
-}: {
-  value: AssetId | null
-  provider: ResourceProvider
-  assign: (id: AssetId | null) => Promise<boolean>
-}) {
-  return <AssetReferenceInput value={value} provider={provider} onValueChange={assign} />
+export function MaterialReference({ provider }: { provider: ResourceProvider }) {
+  const [id, setId] = useState<AssetId | null>(null)
+  return (
+    <AssetReferenceInput label="Material" provider={provider} value={id} kinds={['material']} onValueChange={setId} />
+  )
 }
 ```
 
-`onValueChange(id, asset)` 是一次原子赋值命令。返回 false 或抛错表示拒绝，保留当前引用并显示错误；true/void 表示命令完成，实际回显始终来自 value。它不是连续拖动的 preview/commit 会话，不会因浏览查询或切换视图而写属性。已发出的宿主命令不能通过关闭弹层撤回；宿主负责命令自身的目标与版本校验。`resetKey` 用于对象身份切换，即便两个对象持有相同引用也应传入不同身份。
+provider 由应用创建并保持稳定。可以先使用内存数据，再连接服务器或桌面接口。组件不会创建资源库，也不会把外部引擎对象作为 value。
 
-`AssetDescriptor` 包含 id/name/kind/status，可选 thumbnailUrl/description/path/group/selectable/disabledReason。status 为 ready/loading/error/missing；只有 ready 且 selectable 不为 false 可以选择。kind 由宿主定义，组件不硬编码引擎枚举。路径是目录片段，不包含资源名；分组使用独立稳定 ID，重名路径和 `__proto__` 等字符串都不会覆盖其它组。控件不隐式删除文件扩展名。
+## 资源数据
 
-`ResourceProvider.query` 接收 text、kinds、groupId 和零基 offset/limit，返回 items/total/offset。`ResourcePicker` 的 page 是一基页码，内部转换一次；列表中 ID 必须唯一。默认每页 24 项。当前选中 ID 独立于查询结果，不因筛选、分页或空结果被清空。引用框通过 `get(id)` 单独解析当前值；丢失的资源保留 ID 和 missing 状态，可明确清空。`selectedAsset` 可提供与当前 ID 匹配的展示快照，快照新鲜度由提供方负责。
+`AssetDescriptor` 至少包含 `id/name/kind/status`。可选字段包括 `thumbnailUrl/description/path/group/selectable/disabledReason`。
 
-ResourcePicker 的 selectedId、queryText、kinds、groupId、viewMode、page 各自支持受控或 default 初值；对应 on…Change 请求由 owner 回显。`onSelect` 返回 false/拒绝时不改变选中项；`onSelectSuccess` 只在有效请求成功后触发。查询、对象、provider、可用性或 resetKey 变化后，过期结果不能覆盖新 UI。刷新按钮重新查询，改名成功后重新获取列表，失败保留编辑草稿供重试。只读模式允许浏览，不执行选择和改名。
+status 为 `ready/loading/error/missing`。只有 ready 且 selectable 不为 false 的资源可以选择。kind 是应用定义的字符串；path 是目录片段，不包含文件名；group 使用稳定 id 和显示 label。
 
-## 宿主能力与拖放
+缩略图 URL 由应用准备，加载失败时控件显示回退。缺失的资源仍保留当前 ID，用户可以明确清空它；查询结果为空不会自动清空引用。
 
-缺少 locate/chooseFile 时对应动作禁用；缺少 rename 时不呈现改名操作。`chooseFile()` 由宿主打开对话框并导入/解析资源，返回已进入资源库的描述符或 null 表示取消。组件再次通过 get 验证 ID、可用性与 kinds/groupId；搜索文本只影响浏览，不限制当前引用或拖入资源。缩略图 URL 在宿主/provider 侧准备，错误图片有展示回退。
+## 实现 ResourceProvider
 
-内部拖放显式启用 `dropEnabled` 并由应用包裹 `DragDropProvider`。使用 `ASSET_REFERENCE_DRAG_TYPE`，payload data 为 `{id}`，不传引擎对象；放下后再次向 provider 解析，拒绝不存在、未就绪或不符合筛选的资源。B07 的拖放 accepted 表示目标接收了投递，异步赋值仍可能被宿主拒绝并显示错误。普通引用框不要求拖放 Provider；系统文件拖入没有被伪装为内部资源引用。
+| 方法                 | 参数与结果                                                                |
+| -------------------- | ------------------------------------------------------------------------- |
+| `query`              | 接收 text、可选 kinds/groupId、零基 offset/limit；返回 items/total/offset |
+| `get`                | 接收 ID，返回描述符或 null                                                |
+| `rename`（可选）     | 接收 ID 和名称，返回更新后的描述符                                        |
+| `locate`（可选）     | 根据 ID 在应用中定位资源                                                  |
+| `chooseFile`（可选） | 打开文件选择并导入或解析资源，返回描述符；取消返回 null                   |
 
-显示偏好由应用用受控 viewMode 接线；`app/src/host/browser/resource-preferences.ts` 提供显式 Storage 适配。控件不读 localStorage；旧 `pivot-ui-gui-asset-picker-display-mode` 不自动迁移。Mock 位于 stories/support，不进入生产公开包；支持查询、独立 get、延迟、失败、改名、模拟定位和文件结果。示例引擎转换集中在 `stories/support/resource-host-adapter.ts`，用 ID Map 找回原实例。
+一次 query 结果的 ID 必须唯一。ResourcePicker 的 page 从 1 开始，内部转换为查询偏移；默认每页 24 项。分页、筛选和搜索只影响浏览结果，当前引用通过 get 独立解析。
 
-## 旧入口与后续
+## 选择、改名和异步结果
 
-删除 GUI FormItemAssetPicker、AssetPickerContent、AssetPickerPopover、PickableAssetItem、SearchBarBorder、BasicAssetType、重复 Props 及专属故事。旧 UI AssetItem/AssetName/AssetThumbnail 暂留展示 props 到新描述符的薄适配；expand 仍为外层组合，B11 删除旧包时收口。
+AssetReferenceInput 的 `onValueChange(id, asset)` 表示一次赋值请求。返回 false 或抛错可以拒绝；返回 true/void 表示请求完成，实际显示仍以父组件回传的 value 为准。
 
-故事位于 Widgets/AssetItem、Templates/Resources/ResourcePicker、Templates/Resources/AssetReferenceInput 和 Contracts/Resources。验证与 Git 交付见 [实施台账](./LEDGER.md)。B10 不实现真实 Qt/C++ 服务或业务页面；复杂资源 PropertyField 绑定与旧包最终删除属于 B11。
+ResourcePicker 用 `selectedId/onSelect` 管理选择，成功后可通过 `onSelectSuccess` 响应。`queryText/kinds/groupId/viewMode/page` 可受控，也可使用对应 default 初始值。父组件拒绝修改时，控件不会自行伪装已接受。
+
+改名回调可返回 Promise。成功后更新列表，失败保留输入草稿，用户可重试或取消。查询、provider、目标或可用状态变化后，过期结果不会覆盖当前界面。
+
+对象切换时更新稳定的 `resetKey`，即使新对象也引用同一个 ID。已经发出的赋值或改名请求不能通过关闭面板撤回；应用应在执行保存时校验目标和数据版本。
+
+## 只读和可选能力
+
+只读模式可以浏览和查看，不能选择或改名。AssetItem 在只读时禁止改名，是否提供查看用选择动作由调用方决定。disabled 停用相关交互。
+
+没有 rename 时不显示改名入口；没有 locate/chooseFile 时对应动作不可用。文件选择返回后会重新解析 ID，检查资源是否就绪并符合 kinds/groupId。搜索文字只限制浏览，不限制已选引用。
+
+需要记住列表/网格偏好时，由应用控制 viewMode 并保存它。控件不自行读取 localStorage。
+
+## 内部拖放
+
+设置 `dropEnabled`，并在外层使用 `DragDropProvider`。资源拖放使用 `ASSET_REFERENCE_DRAG_TYPE`，data 为 `{id}`；放下后通过 provider 再次解析，拒绝不存在、未就绪或不符合筛选的资源。
+
+接收放下后，应用继续处理异步赋值并反馈结果。接收系统文件时可另外组合 `useDropTarget` 的 `onFilesDrop`，由应用导入文件并取得资源 ID。普通引用输入没有启用拖放时不需要 DragDropProvider。
+
+将引用连接到统一属性保存时，见[属性数据与提交](./B11_INTEGRATION.md)。

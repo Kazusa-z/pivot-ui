@@ -1,31 +1,36 @@
-# Pivot UI 文档
+# Pivot UI 使用指南
 
-当前唯一组件包为 [`@pivot-ui/react`](../packages/interface/README.md) `0.1.0`，workspace `1.0.0`。B11 收口后的代码按 values、contracts、foundation、interaction、widgets、layout、templates、property 分工，不再维护 UI/GUI 双包。
+Pivot UI 提供 React 控件，帮助你组合表单、属性面板、颜色和曲线编辑器、树及资源选择器。组件负责显示和用户交互；你通过 props 提供数据，通过回调接收修改。
 
-## 当前指南
+如果只想先做界面，可以从 `useState` 开始，不需要先实现服务器或属性访问接口。
 
-| 文档                                                      | 内容                                      |
-| --------------------------------------------------------- | ----------------------------------------- |
-| [接入指南](./CONSUMING.md)                                | 源码消费、Panda、Provider、属性与宿主边界 |
-| [开发指南](./DEVELOPMENT.md)                              | 命令、分层、样式提取和验证                |
-| [组件 API](../packages/interface/README.md)               | 当前公开入口与组件组合                    |
-| [B11 属性联调](./refactor/blender-5.2/B11_INTEGRATION.md) | 泛型属性、复杂值绑定与最终迁移约定        |
-| [实施台账](./refactor/blender-5.2/LEDGER.md)              | 各批验收、剩余限制及 Git 交付             |
+## 从这里开始
 
-## 架构与批次记录
+1. [安装与第一个界面](./CONSUMING.md)：配置样式、主题和普通受控组件。
+2. [选择合适的组件](./architecture/BLENDER_5_2_REFACTOR_PLAN.md)：按界面需求查找控件和组合方式。
+3. [分步练习](./refactor/blender-5.2/BATCHES.md)：从一行输入扩展到可保存的属性表单。
+4. [运行示例与调试](./DEVELOPMENT.md)：启动 Storybook、构建应用和定位问题。
 
-[已采纳架构方案](./architecture/BLENDER_5_2_REFACTOR_PLAN.md)统一术语、职责和 65 项组件处置；[批次计划](./refactor/blender-5.2/BATCHES.md)记录 B00–B11 的范围。B11 为最后一批；真实 C++ / Qt 接入和业务页面属于之后的应用开发。
+## 按控件用途阅读
 
-以下指南保留迁移过程与具体接口说明。涉及“保留旧适配器”“三个 Storybook”“后续 B11 接入”的历史表述，以 B11 最终指南为准；已删除源码可从对应批次 Git 提交查看。
+| 你想做什么                             | 阅读                                                        |
+| -------------------------------------- | ----------------------------------------------------------- |
+| 输入文本、改名、单选或多选             | [文本和选项](./refactor/blender-5.2/B05_TEXT_CHOICES.md)    |
+| 编辑数值、范围、向量或矩形             | [数值和几何](./refactor/blender-5.2/B06_NUMERIC.md)         |
+| 打开菜单、提示、对话框或通知           | [浮层与消息](./refactor/blender-5.2/B04_OVERLAYS.md)        |
+| 展示树、可编辑列表、表格和分页         | [集合与导航](./refactor/blender-5.2/B07_COLLECTIONS.md)     |
+| 编辑单色、HDR、渐变和颜色分布          | [颜色编辑](./refactor/blender-5.2/B08_COLOR.md)             |
+| 编辑曲线、预设和数值分布               | [曲线编辑](./refactor/blender-5.2/B09_CURVES.md)            |
+| 选择、解析和展示资源引用               | [资源选择](./refactor/blender-5.2/B10_RESOURCES.md)         |
+| 将控件连接到应用的保存、校验和撤销逻辑 | [属性数据与提交](./refactor/blender-5.2/B11_INTEGRATION.md) |
 
-- [B04 浮层与服务](./refactor/blender-5.2/B04_OVERLAYS.md)
-- [B05 文本与选择](./refactor/blender-5.2/B05_TEXT_CHOICES.md)
-- [B06 数值与几何](./refactor/blender-5.2/B06_NUMERIC.md)
-- [B07 集合与拖放](./refactor/blender-5.2/B07_COLLECTIONS.md)
-- [B08 颜色与渐变](./refactor/blender-5.2/B08_COLOR.md)
-- [B09 曲线与数值分布](./refactor/blender-5.2/B09_CURVES.md)
-- [B10 资源引用](./refactor/blender-5.2/B10_RESOURCES.md)
+## 样式、示例和常见问题
 
-## 早期迁移归档
+- [主题与样式配置](./migration/README.md)：Panda CSS、主题、尺寸和局部样式。
+- [样式问题排查](./migration/LEDGER.md)：没有样式、浮层主题不一致、布局溢出等问题。
+- [键盘、窄窗口与可访问性](./migration/VISUAL_REGRESSION.md)：检查组合后的实际界面。
+- [交互示例索引](./refactor/blender-5.2/LEDGER.md)：在 Storybook 中尝试输入、异步保存和外部更新。
+- [能力与应用职责](./RELEASE_ARCHIVE.md)：哪些操作由组件提供，哪些服务需要你接入。
+- [公开组件与参数](../packages/interface/README.md)：按组件名称查找 API。
 
-[发布归档](./RELEASE_ARCHIVE.md)、[Panda 迁移台账](./migration/LEDGER.md)、[视觉报告](./migration/VISUAL_REGRESSION.md)和[原始数据](./migration/visual-regression-report.json)为历史证据，不代表当前包结构和安装方式。
+组件和类型从 `@pivot-ui/react` 导入。只需要数据类型或算法时，也可以使用 `@pivot-ui/react/values` 和 `@pivot-ui/react/contracts`。

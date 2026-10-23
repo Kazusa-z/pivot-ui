@@ -41,7 +41,7 @@ function PickerWidget(props: CurveWidgetProps) {
   return <CurveWidget {...props} defaultViewport={props.defaultViewport ?? initialViewport} />
 }
 
-/** A preview and popup composition. CurveWidget and preset application share one controlled edit owner. */
+/** 以曲线预览按钮打开编辑浮层，适合空间有限的属性面板。用户可编辑曲线或应用预设，应用通过编辑回调接收结果。 */
 export const CurvePicker = forwardRef<HTMLButtonElement, CurvePickerProps>(function CurvePicker(
   {
     value,
@@ -181,7 +181,7 @@ export const CurvePicker = forwardRef<HTMLButtonElement, CurvePickerProps>(funct
           <PopoverTitle className={css({ margin: '0 0 4px', fontSize: '14px' })}>{label}</PopoverTitle>
           <PopoverDescription
             className={css({ margin: '0 0 12px', fontSize: '11px', color: 'var(--colors-textMuted)' })}>
-            Edit curve points and handles, or apply a preset. View and point selection do not change the curve value.
+            Drag points and handles to shape the curve, or choose a preset and select Apply.
           </PopoverDescription>
           <div className={css({ display: 'grid', gap: '12px', minWidth: 0 })}>
             <PickerWidget

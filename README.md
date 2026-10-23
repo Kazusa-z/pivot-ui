@@ -1,36 +1,23 @@
 # Pivot UI
 
-面向 3D 编辑器的 React 组件库。统一包 `@pivot-ui/react` 提供基础控件、布局、颜色、曲线、集合、资源模板及属性编辑绑定；应用拥有数据、命令、撤销和宿主能力。
+用于搭建编辑器和工具面板的 React 组件库。`@pivot-ui/react` 提供按钮、输入框、布局、颜色与曲线编辑器、资源选择器，以及连接应用数据的属性字段。你可以从一个受控输入开始，逐步组合设置页、属性面板和资源浏览界面。
 
-本轮 Blender 术语与分层改造收口到 B11。原 UI/GUI 包与兼容适配器已退出，后续开发使用统一入口。真实 C++ / Qt 接入、业务页面和完整编辑器工作区属于应用开发，不是组件库自动生成的功能。
-
-## 开始开发
+## 先运行示例
 
 使用 Node.js `^22.18.0`、`^24.11.0` 或 `>=26.0.0`，pnpm `12.14.0`：
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm dev                 # 统一 Storybook，http://localhost:6009
-pnpm dev:demo            # 现有 Vite 示例
-pnpm verify              # 格式、类型、demo 与统一 Storybook 生产构建
+pnpm dev                 # Storybook：http://localhost:6009
+pnpm dev:demo            # Vite 示例应用
+pnpm verify             # 格式、类型、示例应用与 Storybook 构建检查
 ```
 
-`pnpm dev:interface` 与 `pnpm dev` 指向相同 Storybook。`Foundation / Tokens` 展示明暗主题和完整设计 token；`Foundation / Theme` 展示主题状态；`Property` 展示真实控件与模拟宿主的属性联调。
+在 Storybook 中按用途浏览组件：`Widgets` 是单个控件，`Layout` 用于组织页面，`Templates` 提供多个控件的组合，`Property` 展示如何将控件连接到应用数据。工具栏的 Theme 可切换明暗主题；`Foundation / Tokens` 可以查看颜色、间距和字号。
 
-## 包与职责
+## 在 React 中使用
 
-| 位置                                                 | 职责                                      |
-| ---------------------------------------------------- | ----------------------------------------- |
-| [packages/interface](./packages/interface/README.md) | `@pivot-ui/react`：唯一组件源码包         |
-| [app](./app)                                         | `@pivot-ui/demo`：Vite 消费与样式提取示例 |
-| [panda](./panda/README.md)                           | 唯一 token 源与共享 Panda 配置            |
-| [storybook](./storybook)                             | 浏览器展示的主题、Provider 与构建配置     |
-
-库内依赖从 `values / contracts` 向 `foundation / interaction / widgets / layout / templates / property` 逐层组合。布局不猜控件，控件不读引擎对象，模板不负责业务命令。
-
-## 使用
-
-先按[接入指南](./docs/CONSUMING.md)配置源码扫描和 Panda PostCSS。普通受控组合可以先使用本地状态：
+本库通过 workspace 或源码链接接入。先按[接入指南](./docs/CONSUMING.md)配置依赖和 Panda CSS，再导入组件。例如，用三个数值输入编辑位置：
 
 ```tsx
 import { useState } from 'react'
@@ -46,14 +33,25 @@ export function PositionExample() {
 }
 ```
 
-需要提交、拒绝、撤销边界和异步同步时，使用 `PropertyAccess<T>` 加 `PropertyField<T>`。Mock 只在 Storybook；应用实现相同契约即可先用内存数据驱动 UI，再换成 C++ / Qt 适配层。复杂值由 typed `render` 显式组合，避免恢复 GUIRoot 式的隐式页面生成。
+`value` 决定当前显示值，`onValueChange` 返回编辑后的值。普通界面可以直接使用 React 状态；需要保存确认、错误提示或撤销记录时，可以使用 `PropertyField<T>` 和 `PropertyAccess<T>` 连接应用的数据服务。后端尚未准备好时，也可以先实现内存数据服务，组件用法保持一致。
 
-## 文档
+页面内容由你通过 React 组合。保存文件、资源查询、持久化和撤销由应用提供实现，相关接口及示例见[属性与应用数据](./docs/refactor/blender-5.2/B11_INTEGRATION.md)。
 
-- [文档索引](./docs/README.md)
-- [组件 API](./packages/interface/README.md)
-- [开发与验证](./docs/DEVELOPMENT.md)
-- [B11 属性联调与最终接入](./docs/refactor/blender-5.2/B11_INTEGRATION.md)
-- [重构台账](./docs/refactor/blender-5.2/LEDGER.md)
+## 使用指南
 
-React 19、TypeScript、Panda CSS、Radix UI。当前按 workspace 或源码链接消费，不发布预构建 npm 包。许可证：[MIT](./LICENSE)。
+- [文档索引](./docs/README.md)：按使用目标选择指南。
+- [组件速查](./packages/interface/README.md)：选择控件，了解主要属性与回调。
+- [接入指南](./docs/CONSUMING.md)：配置源码依赖、样式提取和应用 Provider。
+- [主题与样式](./panda/README.md)：使用设计 token，定制应用外观。
+- [本地开发与检查](./docs/DEVELOPMENT.md)：运行示例、检查类型和构建产物。
+
+## 仓库目录
+
+| 位置                                                 | 用途                                        |
+| ---------------------------------------------------- | ------------------------------------------- |
+| [packages/interface](./packages/interface/README.md) | `@pivot-ui/react` 组件源码与 Storybook 示例 |
+| [app](./app)                                         | 展示如何在 Vite 应用中使用组件和主题        |
+| [panda](./panda/README.md)                           | 共享样式预设、颜色、间距和字号              |
+| [storybook](./storybook)                             | Storybook 的主题工具栏与预览配置            |
+
+技术依赖：React 19、TypeScript、Panda CSS、Radix UI。许可证：[MIT](./LICENSE)。

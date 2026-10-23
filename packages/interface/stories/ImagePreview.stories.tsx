@@ -10,8 +10,8 @@ function ImagePreviewExample() {
   const [width, setWidth] = useState(180)
   return (
     <ContractFrame
-      title="Image presentation"
-      description="src、alt、尺寸与适配方式独立；缩略图解析和资源状态由调用方提供。"
+      title="在有限区域展示图片"
+      description="切换 objectFit 可比较完整显示与裁切填满，调整宽度可观察容器约束。应用提供 src 和说明图片内容的 alt，并按需要设置尺寸；资源解析和加载状态由应用管理。"
       onReset={() => {
         setFit('contain')
         setWidth(180)
@@ -46,9 +46,20 @@ function ImagePreviewExample() {
   )
 }
 
-const meta = { title: 'Widgets/ImagePreview', component: ImagePreview, args: { alt: 'Image preview' } } satisfies Meta<
-  typeof ImagePreview
->
+const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ImagePreview 用于在限定区域内展示图片，适合缩略图、材质预览和详情面板。src 和 alt 提供图像及文字说明，objectFit 决定完整显示或裁切填满。应用负责取得图片地址并确定加载、错误等业务状态，尺寸由容器和组件样式控制。',
+      },
+    },
+  },
+  title: 'Widgets/ImagePreview',
+  component: ImagePreview,
+  args: { alt: 'Image preview' },
+} satisfies Meta<typeof ImagePreview>
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <ImagePreviewExample /> }

@@ -30,21 +30,21 @@ function NumberExample({
     <ContractFrame
       title={
         soft
-          ? 'Hard and soft numeric ranges'
+          ? '数值的输入范围与拖动范围'
           : frozen
-            ? 'Frozen controlled value'
+            ? '应用保留原值时的显示'
             : mixedInitially
-              ? 'Mixed numeric selection'
-              : 'InputNumber: text, drag and step'
+              ? '多个对象的数值不一致'
+              : '输入、拖动与步进调整'
       }
       description={
         soft
-          ? '硬范围 −100…100，软范围 0…10，起点25。向内一步到24，向外保持25；手动文本可输入80。拖动范围包含本次起点。'
+          ? 'min/max 设置硬范围 −100…100，softMin/softMax 设置调节范围 0…10。当前值为 25 时，向内一步到 24，向外保持 25；手动输入仍可填写硬范围内的 80，拖动也会包含本次起始值。'
           : frozen
-            ? '宿主记录请求但拒绝更新value。拖动显示始终是外部值；文本草稿可编辑，提交后恢复外部值，不伪装已接受。'
+            ? '拖动输入框或键入数值，比较下方的修改请求与显示的原值。此例让应用保留原值；接入时在 onValueChange 中更新 value，就可以接受用户的调整。'
             : mixedInitially
-              ? '混合态空占位；未修改的聚焦/失焦不写0。拖动和步进从有限实际值10开始，接受提交后清除mixed。'
-              : '未聚焦时横向拖动；短点击进入文本。Ctrl/Meta ×0.1细调，Shift ×10加速；Ctrl/Meta优先。Enter/blur一次提交，Escape由此故事宿主回滚preview。'
+              ? '输入一个值来替换多个对象的不同数值，或试着拖动、点击步进按钮，从参考值 10 开始调整。保存后下方 mixed 变为 false，输入框显示统一的值；应用可用这个标志控制多选对象的显示。'
+              : '未聚焦时可横向拖动，短点击进入文本编辑。按住 Ctrl/⌘ 使用 0.1 倍步长，Shift 使用 10 倍，前者优先。Enter 或失焦触发一次 onValueCommit；Escape 触发 onEditCancel，由应用恢复编辑前的值。'
       }
       onReset={() => {
         setValue(initial)
@@ -111,8 +111,8 @@ function DraftExample() {
   const [events, setEvents] = useState<string[]>([])
   return (
     <ContractFrame
-      title="Numeric drafts and native event"
-      description="中间文本 -、.、1e- 保留，不发送NaN；表达式1+2不求值。非法文本提交显示错误，可继续编辑或Escape恢复。输入1.005以两位精度请求1.01；原生onChange只观察真实输入事件。"
+      title="中间输入、校验与原生事件"
+      description="输入 -、. 或 1e- 时保留文本，暂不发送数值变化；1+2 会作为非法数值提示错误。可以继续修正或按 Escape 取消。precision=2 时，1.005 请求更新为 1.01；需要观察键入事件时可另用原生 onChange。"
       onReset={() => {
         setValue(2)
         setGeneration((n) => n + 1)
@@ -141,7 +141,7 @@ function DraftExample() {
         stepper
       />
       <ControlButton>Blur target</ControlButton>
-      <StatePanel label="Text draft events" value={{ value, events }} />
+      <StatePanel label="文本输入事件" value={{ value, events }} />
     </ContractFrame>
   )
 }
@@ -159,8 +159,8 @@ function PendingExample() {
   }
   return (
     <ContractFrame
-      title="Pending submission and rejection"
-      description="提交后pending。Reject先将宿主preview恢复起点（同revision），再拒绝Promise；控件保留草稿供重试。External revision使旧completion失效；pending不再发cancel。"
+      title="等待保存与失败重试"
+      description="输入数值并按 Enter，随后点击 Accept 完成保存，或点击“拒绝保存并恢复原值”体验失败提示；失败后可继续编辑或按 Enter 重试。下方记录展示等待和完成的过程，应用可在 onValueCommit 返回 Promise 来接入保存服务。"
       onReset={() => {
         setRevision((n) => n + 1)
         setValue(10)
@@ -209,11 +209,11 @@ function PendingExample() {
           disabled={!pending}
           onClick={() => {
             setValue(initial.current)
-            request.current?.reject(new Error('Host rejected this number'))
+            request.current?.reject(new Error('数值未保存，请修正后重试。'))
             request.current = null
             setPending(false)
           }}>
-          Reject and restore authority
+          拒绝保存并恢复原值
         </ControlButton>
         <ControlButton
           onPointerDown={(event) => event.preventDefault()}
@@ -227,7 +227,7 @@ function PendingExample() {
           {mounted ? 'Unmount' : 'Mount'}
         </ControlButton>
       </div>
-      <StatePanel label="Pending numeric state" value={{ value, revision, pending, mounted, events }} />
+      <StatePanel label="等待保存时的数值状态" value={{ value, revision, pending, mounted, events }} />
     </ContractFrame>
   )
 }
@@ -239,8 +239,8 @@ function AvailabilityExample() {
   const [events, setEvents] = useState<string[]>([])
   return (
     <ContractFrame
-      title="Uncontrolled cancellation and availability"
-      description="非受控模式由控件恢复手势起点。正在编辑时切换disabled/readOnly会取消；disabled不能聚焦，readOnly仍可选择文本。"
+      title="非受控取消、只读与禁用"
+      description="修改数值后按 Escape，观察使用 defaultValue 的输入框恢复原值；再切换只读和禁用按钮，用 Tab 比较焦点与文本选择体验。适合只需要初始值的表单可使用 defaultValue，需要同步应用数据时使用 value/onValueChange。"
       onReset={() => {
         setDisabled(false)
         setReadOnly(false)
@@ -269,7 +269,19 @@ function AvailabilityExample() {
   )
 }
 
-const meta = { title: 'Widgets/Input Number', parameters: { layout: 'fullscreen' } } satisfies Meta
+const meta = {
+  tags: ['autodocs'],
+  title: 'Widgets/Input Number',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'InputNumber 用于精确输入、拖动调节或逐步调整一个有限数值，适合尺寸、角度、强度等参数。\n\nvalue/onValueChange 用于受控值，defaultValue 用于非受控初值。onEditStart 标记开始编辑，onValueCommit 在 Enter、失焦或手势结束时通知保存，onEditCancel 通知取消。中间文本会留在输入框中，合法数值才发送变化。\n\nmin/max、softMin/softMax、step、dragStep 和 precision 分别控制范围、调节步长与精度。受控取消由应用恢复值；异步提交失败后保留草稿，resetKey 用于切换对象或重置编辑状态。',
+      },
+    },
+    layout: 'fullscreen',
+  },
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 export const Overview: Story = { render: () => <NumberExample /> }

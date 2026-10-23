@@ -12,8 +12,8 @@ function NavigationExample() {
   const [depth, setDepth] = useState(3)
   return (
     <ContractFrame
-      title="Breadcrumb navigation"
-      description="nav/ol/li保持层级；上级为原生按钮，当前页是aria-current文本。父级决定请求后的路径。"
+      title="沿层级返回上级位置"
+      description="点击上级位置可返回对应层级；当前页显示为带 aria-current 的文字。onNavigate 将目标项交给应用，本例接受请求后缩短路径。"
       onReset={() => setDepth(3)}>
       <Breadcrumbs
         items={path.slice(0, depth)}
@@ -27,8 +27,8 @@ function Variations() {
   const [requests, setRequests] = useState<unknown[]>([])
   return (
     <ContractFrame
-      title="Links, disabled and empty paths"
-      description="href保留原生链接语义；禁用项不触发导航，固定路径可拒绝请求。空列表仍是具名导航区域。"
+      title="链接、不可用位置与空路径"
+      description="带 href 的项使用浏览器链接行为。应用可通过 disabled 标出不可到达的位置，也可仅记录 onNavigate 请求而保留当前路径；空路径仍保留导航区域名称。"
       onReset={() => setRequests([])}>
       <div className={contractStyles.stack}>
         <Breadcrumbs
@@ -58,7 +58,18 @@ function Variations() {
     </ContractFrame>
   )
 }
-export default { title: 'Widgets/Navigation/Breadcrumbs' } satisfies Meta
+export default {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Breadcrumbs 显示当前位置的层级路径，适合文件目录或多层页面导航。上级项可以使用 href 导航，也可以通过 onNavigate 请求应用切换路径；当前项带有 aria-current。应用决定导航后的路径数据，禁用项用于表示当前无法到达的位置。',
+      },
+    },
+  },
+  title: 'Widgets/Navigation/Breadcrumbs',
+} satisfies Meta
 type Story = StoryObj
 export const Overview: Story = { render: () => <NavigationExample /> }
 export const LinksDisabledEmpty: Story = { render: () => <Variations /> }

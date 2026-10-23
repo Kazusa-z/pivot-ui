@@ -40,8 +40,8 @@ function OverviewExample() {
   const [generation, setGeneration] = useState(0)
   return (
     <ContractFrame
-      title="Application notification host"
-      description="Provider 提供一个通知服务和宿主；同一 id 更新同一条通知，主题由自有 ToastView 呈现。"
+      title="在应用中发送通知"
+      description="NotificationProvider 将服务连接到通知显示区域。点击不同按钮发送消息，同一任务使用相同 id 更新已有通知；应用通过 dismiss 关闭通知，或通过 clear 立即清除。"
       onReset={() => {
         service.clear()
         setGeneration((value) => value + 1)
@@ -89,8 +89,8 @@ function LifecycleExample() {
   }
   return (
     <ContractFrame
-      title="Notifications: lifecycle and duplicate hosts"
-      description="同一服务重复装配只呈现一个宿主。关闭通知、清理或真实卸载后，迟到结果不会重新出现；StrictMode 重连保留当前作用域。"
+      title="任务通知的更新与清除"
+      description="异步任务可以先显示等待提示，再用结果更新通知。此例提供完成、清除和卸载操作；应用结束这次任务的显示后，服务会忽略其迟到更新。多个 Provider 连接同一服务时，共享一处通知显示区域。"
       onReset={() => {
         sequence.current++
         service.clear()
@@ -153,8 +153,8 @@ function ScopedExample() {
   const [generation, setGeneration] = useState(0)
   return (
     <ContractFrame
-      title="Isolated themes and notification scopes"
-      description="两个应用域可使用相同通知 id；清理其中一个不影响另一个。Portal 到 body 后仍使用各自 Provider 的明暗主题。"
+      title="独立区域的通知和主题"
+      description="为两个区域分别创建通知服务，可以各自发送和清除消息。它们可使用相同 id 表示各自任务，通知浮层仍沿用所在 Provider 的明暗主题。"
       onReset={() => setGeneration((value) => value + 1)}>
       <div key={generation} className={contractStyles.row}>
         <ThemedScope mode="light" />
@@ -168,8 +168,8 @@ function PresentationExample() {
   const [actions, setActions] = useState(0)
   return (
     <ContractFrame
-      title="Toast presentation without scheduling"
-      description="ToastView 只负责展示与动作。状态/时长/队列由注入服务和通知调度适配器负责。"
+      title="自定义通知内容与动作"
+      description="ToastView 适合自定义通知外观与操作按钮。这里展示加载、成功、错误和撤销动作；应用决定消息内容及操作回调，显示时长和更新调度可交给通知服务。"
       onReset={() => setActions(0)}>
       <div style={{ width: 220, maxWidth: '100%' }} className={contractStyles.stack}>
         <ToastView>LongUnbrokenNotificationContentMustRemainInsideTheNarrowViewport</ToastView>
@@ -189,8 +189,17 @@ function PresentationExample() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Overlays/Notifications',
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '通知组件适合反馈保存结果、后台任务和短暂提示。应用创建 createNotificationService，并用 NotificationProvider 提供显示区域；useNotifications 获取服务后可发送、更新或关闭通知。同一 id 用于更新同一任务，ToastView 用于自定义展示，任务执行和结果处理由应用负责。',
+      },
+    },
+    layout: 'fullscreen',
+  },
   decorators: [
     (Story) => (
       <StrictMode>

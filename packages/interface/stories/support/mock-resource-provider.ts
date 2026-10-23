@@ -51,7 +51,7 @@ export const mockAssets: readonly AssetDescriptor[] = Array.from({ length: 18 },
   })
 })
 
-/** Deterministic host simulation. Each request snapshots its delay/failure/data at dispatch. */
+/** 为 Storybook 提供内存资源服务，可模拟加载延迟和操作失败。生产应用可按 ResourceProvider 接口接入自己的数据服务。 */
 export function createMockResourceProvider(
   options: { assets?: readonly AssetDescriptor[]; delayMs?: number } = {}
 ): MockResourceProvider {

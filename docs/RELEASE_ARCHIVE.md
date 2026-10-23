@@ -1,84 +1,30 @@
-# Release archive: Panda CSS migration
+# 能力与应用职责
 
-| Field                     | Value                              |
-| ------------------------- | ---------------------------------- |
-| Archive                   | `pivot-ui-panda-2026-10-22`        |
-| Archive tag               | `pivot-ui-panda-2026-10-22`        |
-| Status                    | Closed                             |
-| Archive date              | 2026-10-22                         |
-| Workspace version         | `1.0.0`                            |
-| `@pivot-ui/editor`        | `1.2.0`                            |
-| `@pivot-ui/gui`           | `1.2.1`                            |
-| Branch                    | `feat/panda-css-migration`         |
-| Migration baseline commit | `925a7bf`                          |
-| Distribution              | Source packages in this repository |
+组件库提供可组合的界面和交互。应用提供数据，并决定一次修改是否被接受。下表帮助你判断某个功能可以直接使用，还是需要先接入服务。
 
-## Scope
+| 功能           | 组件负责                             | 应用负责                            |
+| -------------- | ------------------------------------ | ----------------------------------- |
+| 文本和数值输入 | 焦点、输入草稿、键盘、拖动、范围显示 | 接受值、业务校验、保存              |
+| 颜色和曲线     | 图形编辑、精确输入、预览             | 存储编码、业务含义、保存            |
+| 树、集合和表格 | 展示、导航、选择、操作入口           | 提供稳定 ID，执行增删改名和排序     |
+| 资源选择       | 搜索界面、分页、当前引用、可用性反馈 | 查询、解析 ID、缩略图地址和文件操作 |
+| 对话框和通知   | 焦点管理、显示和用户决定             | 决定何时打开、确认后执行动作        |
+| 属性表单       | 将一次编辑连接到属性接口，展示错误   | 实现数据快照、提交、版本和撤销      |
+| 主题和尺寸     | 主题状态、语义颜色、布局控件         | 页面布局、偏好保存位置              |
+| 外部程序通信   | 接受接口和回调                       | 网络、C++ / Qt 通信、引擎对象映射   |
 
-This archive covers the complete move from Stitches to Panda CSS across the workspace:
+## 不需要后端也能使用
 
-- `@pivot-ui/editor` components, stories, reset, tokens and theme provider
-- `@pivot-ui/gui` components and the imperative GUI class
-- the demo application
-- both Storybook documentation sites
-- removal of the Stitches dependency and runtime
+普通控件直接使用 `useState`。需要演示资源、取色或保存时，可以在应用中实现返回 Promise 的内存服务。接口相同，数据来源可以不同。
 
-The migration was delivered in phases and batches. Every batch had an independent, revertible commit and a recorded exit criterion. The historical ledger is [migration/LEDGER.md](./migration/LEDGER.md).
+Storybook 的模拟服务展示了失败、延迟和外部更新的处理方式，但不是公开包导出。生产应用应创建自己的服务实例，并决定错误处理、权限和资源释放。
 
-## Final state
+## 几个容易混淆的边界
 
-- Panda CSS owns component styling, reset, tokens and theme variables.
-- `@stitches/react` is absent from the packages and lockfile.
-- `ThemeProvider` uses plain `light-theme` / `dark-theme` classes.
-- The runtime `resetStyle()` helper was removed.
-- The generated token snapshot is `panda/designTokens.ts`; Panda no longer imports Stitches token modules at runtime.
-- All tracked migration debt (TD-01 through TD-12) is resolved.
-- The workspace remains a source-package monorepo; there is no published package artifact, CI pipeline, `dist` bundle or UMD build.
+- `onValueChange` 是修改请求；固定受控 `value` 不会自动变化。
+- 关闭面板或卸载控件可以停止显示过期结果，不能撤销已经发送给服务器的操作。
+- `readOnly` 允许读取，禁止值修改；`disabled` 停用相应交互。不同组件的浏览能力在各自指南中说明。
+- 空字符串、未选择的 `null`、混合值和加载中是不同状态，不能都替换为数字 0 或空对象。
+- 曲线坐标、资源 ID、颜色编码等应保存为明确数据，不把 DOM 或引擎实例当作控件值。
 
-## Verification
-
-The archive state passes:
-
-```bash
-pnpm verify
-pnpm install --frozen-lockfile
-pnpm dedupe --check
-```
-
-`pnpm verify` covers formatting, TypeScript, the demo app build and both Storybook builds.
-
-### Visual regression
-
-The migration was compared against the last Stitches version (`4c8b588`) using 111 stories shared by both builds:
-
-| Result                                 | Count |
-| -------------------------------------- | ----: |
-| Compared stories                       |   111 |
-| Pixel-identical                        |    94 |
-| Subpixel/text antialias only (<= 0.2%) |    15 |
-| Reviewed exceptions                    |     2 |
-| Size changes                           |     0 |
-
-The two reviewed exceptions are documented in [migration/VISUAL_REGRESSION.md](./migration/VISUAL_REGRESSION.md):
-
-- `inputs-textarea--states`: an old Stitches CSS-injection-order inconsistency; Panda now renders deterministically and matches the larger `Matrix` fixture.
-- `display-tree--overview`: an intentional story-content change from Batch 3, not a component regression.
-
-## Integration notes
-
-- A consuming application must configure Panda/PostCSS and load the package CSS layer entry. See [CONSUMING.md](./CONSUMING.md).
-- Visual-regression screenshots are regenerated artifacts and are not stored in the repository; the per-story results are archived in `migration/visual-regression-report.json`.
-
-## Archive provenance
-
-- Archive tag: `pivot-ui-panda-2026-10-22`
-- Migration ledger: [migration/LEDGER.md](./migration/LEDGER.md)
-- Visual regression: [migration/VISUAL_REGRESSION.md](./migration/VISUAL_REGRESSION.md)
-
-## Artifacts
-
-- [Migration ledger](./migration/LEDGER.md)
-- [Visual regression report](./migration/VISUAL_REGRESSION.md)
-- [Visual regression raw results](./migration/visual-regression-report.json)
-- [Panda infrastructure notes](../panda/README.md)
-- [Repository README](../README.md)
+按用途选择组件见[组件选择指南](./architecture/BLENDER_5_2_REFACTOR_PLAN.md)，接入保存与撤销见[属性数据与提交](./refactor/blender-5.2/B11_INTEGRATION.md)。

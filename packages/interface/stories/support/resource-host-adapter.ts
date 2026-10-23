@@ -1,6 +1,6 @@
 import { copyAssetDescriptor, type AssetDescriptor } from '../../src/values/assets'
 
-/** Example of the application's engine boundary; never exported as a component API. */
+/** 示例资源记录，演示应用如何将引擎数据转换为控件需要的 ID、名称和展示地址。 */
 export interface EngineAssetFixture {
   readonly id: string
   readonly name: string

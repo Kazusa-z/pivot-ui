@@ -36,7 +36,7 @@ export function assertColorValue(value: unknown, { hdr = false }: ColorOptions =
   }
 }
 
-/** Explicit input sanitization. Controlled widgets validate their values instead of silently accepting invalid data. */
+/** 将颜色通道整理到有效范围。接收外部数据时可先调用此函数，再把结果传给颜色控件；space 应为 srgb 或 linear。 */
 export function normalizeColor(value: ColorValue, { hdr = false }: ColorOptions = {}): ColorValue {
   if (value.space !== 'srgb' && value.space !== 'linear') throw new TypeError('Color space must be srgb or linear.')
   return Object.freeze({
@@ -65,7 +65,7 @@ export function convertColorSpace(value: ColorValue, space: ColorSpace): ColorVa
   const convert = space === 'linear' ? srgbChannelToLinear : linearChannelToSrgb
   return Object.freeze({ space, r: convert(value.r), g: convert(value.g), b: convert(value.b), a: value.a })
 }
-/** Display-only clipping; the authoritative HDR value is never changed. */
+/** 返回适合屏幕预览的 sRGB 颜色，超出范围的通道裁剪至 0–1。应用继续保存原始 HDR 值以供渲染使用。 */
 export function getDisplayColor(value: ColorValue): ColorValue {
   return normalizeColor(convertColorSpace(value, 'srgb'))
 }
@@ -140,7 +140,7 @@ export function hsvToColor(value: HsvColor, space: ColorSpace = 'srgb', options:
     space
   )
 }
-/** Interpolate in the explicitly selected encoding; no implicit gamma transform is applied afterwards. */
+/** 在指定颜色编码中计算插值。应用根据颜色数据选择 srgb 或 linear，需要转换编码时使用 convertColorSpace。 */
 export function mixColors(a: ColorValue, b: ColorValue, amount: number, space: ColorSpace = a.space): ColorValue {
   if (!Number.isFinite(amount)) throw new RangeError('Color interpolation amount must be finite.')
   const first = convertColorSpace(a, space),

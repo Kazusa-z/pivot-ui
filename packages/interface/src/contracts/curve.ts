@@ -12,9 +12,9 @@ export interface CurvePresetSaveInput {
   readonly value: CurveValue
 }
 /**
- * Optional application-owned storage. IDs and duplicate-name policy belong to the host.
- * save creates a preset (or replaces one according to host policy); the returned ID is authoritative.
- * A widget ignores late results after invalidation, but cannot undo a storage operation already sent.
+ * 为曲线编辑器提供个人预设的列表、加载、保存和删除功能。
+ * 应用实现存储方式、预设 ID 和同名处理规则；save 返回保存后的预设名称与 ID。
+ * 关闭编辑器会结束当前展示；已发送的保存操作如需撤销，由应用提供相应操作。
  */
 export interface CurvePresetService {
   list(): Promise<readonly CurvePresetSummary[]>

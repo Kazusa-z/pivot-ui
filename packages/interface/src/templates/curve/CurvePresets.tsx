@@ -3,7 +3,7 @@ import { css, cx } from '../../../styled-system/css'
 import type { CurvePreset, CurvePresetService, CurvePresetSummary } from '../../contracts/curve'
 import { areCurvesEqual, assertCurveValue, copyCurveValue, type CurveValue } from '../../values/curve'
 
-/** Explicit input replaces this built-in collection; none of these entries require storage. */
+/** 可直接使用的曲线预设。通过 presets 属性传入自己的预设列表；需要保存个人预设时再提供 presetService。 */
 export const defaultCurvePresets: readonly CurvePreset[] = Object.freeze(
   (
     [
@@ -390,12 +390,13 @@ export function CurvePresets({
       </div>
       {!presetService && (
         <p className={css({ margin: 0, color: 'var(--colors-textMuted)' })}>
-          Preset storage unavailable. Provided presets remain available.
+          Choose a preset and select Apply to use it. Saving personal presets requires storage supplied by the
+          application.
         </p>
       )}
       {presetService && (!presetService.save || !presetService.remove) && (
         <p className={css({ margin: 0, color: 'var(--colors-textMuted)' })}>
-          This service does not support {!presetService.save && 'saving'}
+          Choose a preset and select Apply to use it. The application needs to enable {!presetService.save && 'saving'}
           {!presetService.save && !presetService.remove && ' or '}
           {!presetService.remove && 'deleting'} presets.
         </p>

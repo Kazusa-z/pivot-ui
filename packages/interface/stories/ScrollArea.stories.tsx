@@ -11,7 +11,19 @@ const frame = css({
   borderRadius: '4px',
 })
 const row = css({ padding: '12px', borderBottom: '1px solid var(--colors-border)', overflowWrap: 'anywhere' })
-const meta = { title: 'Display/ScrollArea', component: ScrollArea } satisfies Meta<typeof ScrollArea>
+const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'ScrollArea 用于在有限空间里浏览长内容，支持横向、纵向和双向滚动。Root 管理尺寸和滚动条，Viewport 承载实际滚动内容；把 onScroll 和用于 scrollTo 的 ref 放在 Viewport。固定区域设置明确尺寸，随内容增长的区域使用 sizing="content" 并提供 maxHeight 等上限。',
+      },
+    },
+  },
+  title: 'Display/ScrollArea',
+  component: ScrollArea,
+} satisfies Meta<typeof ScrollArea>
 export default meta
 type Story = StoryObj<typeof meta>
 
@@ -117,7 +129,7 @@ function ContentHeightExample() {
           </p>
         ))}
       </ScrollArea>
-      <span>The viewport grows with content and stops at 180px.</span>
+      <span>区域随内容增高，到 180px 后通过滚动浏览剩余内容。</span>
     </Flex>
   )
 }

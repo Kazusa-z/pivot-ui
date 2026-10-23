@@ -9,7 +9,7 @@ export interface HostNumericCurve {
     readonly incoming?: { readonly time: number; readonly value: number }
     readonly outgoing?: { readonly time: number; readonly value: number }
   }[]
-  /** Business evaluation metadata. It is deliberately outside CurveValue. */
+  /** 应用在计算曲线结果时使用的倍率，读取 CurveValue 后按业务单位换算。 */
   readonly multiplier: number
 }
 

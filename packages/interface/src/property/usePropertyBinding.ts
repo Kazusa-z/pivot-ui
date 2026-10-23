@@ -16,7 +16,7 @@ export interface PropertyBindingOptions<T> {
 
 export interface PropertyBinding<T> {
   readonly snapshot: PropertySnapshot<T>
-  /** Preview is separate from the authoritative snapshot.value. */
+  /** 当前应显示的值：编辑时使用预览，其余时间使用 snapshot.value 中已接受的值。 */
   readonly value: T
   readonly mixed: boolean
   readonly pending: boolean
@@ -25,12 +25,12 @@ export interface PropertyBinding<T> {
   begin(): boolean
   change(value: T): EditChangeResult<T> | null
   commit(value: T): Promise<EditResult<T> | undefined>
-  /** Atomic controls use this instead of publishing a separate preview. Rejections throw for their retry UI. */
+  /** 提交一次选择、添加或排序等完整操作。返回是否接受；校验或保存失败会抛出错误，调用方可据此显示错误并提供重试。 */
   submit(value: T): Promise<boolean>
   cancel(reason: EditCancelReason): void
 }
 
-/** One property session shared by scalar and explicitly composed controls. No widget or application state lives here. */
+/** 将自定义控件连接到应用属性，返回显示值、保存状态和编辑方法。应用通过 access 提供数据与保存逻辑。 */
 export function usePropertyBinding<T>({
   access,
   mixed = false,

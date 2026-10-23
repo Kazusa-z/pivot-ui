@@ -20,7 +20,7 @@ interface ScalarEdit {
   changed: boolean
 }
 
-/** One scalar value and edit lifecycle shared by a numeric input and a single-thumb slider. */
+/** 组合数值输入与滑块，适合同时需要精确输入和快速调整的参数。两种操作都通过相同的数值编辑回调返回结果。 */
 export const NumericSlider = forwardRef<HTMLInputElement, NumericSliderProps>(function NumericSlider(
   {
     value: controlledValue,

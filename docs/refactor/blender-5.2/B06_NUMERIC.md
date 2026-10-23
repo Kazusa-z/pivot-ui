@@ -1,59 +1,116 @@
-# B06 数值编辑、滑块与几何模板
+# 数值和几何
 
-> B11 收口说明：本文保留该批迁移记录；旧适配器、旧包与多 Storybook 指令已退出。当前属性联调和消费方式以 [B11 最终指南](./B11_INTEGRATION.md) 为准。历史验证数字不代表当前构建。
+InputNumber 适合精确输入和拖动微调；Slider 适合直接调整范围；向量和矩形输入把相关数字作为一个值编辑。所有数值都使用有限 number，不执行字符串表达式。
 
-新入口来自 `@pivot-ui/react`，纯值函数也可从 `@pivot-ui/react/values` 导入。本批对应 U05/U11/U12、G04–G10；验收和提交状态以 [实施台账](./LEDGER.md) 为准。
+## InputNumber
 
-## 分层与唯一状态所有者
+```tsx
+import { useState } from 'react'
+import { InputNumber } from '@pivot-ui/react'
 
-`values/numeric` 负责有限数解析、精度、硬/软范围、步进和网格量化；`values/distribution` 负责分段长度与累计边界；`values/geometry` 定义对象和元组转换；`values/proportion` 负责一次编辑起点上的比例策略。以上模块不依赖 React、DOM 或宿主实现。
+export function StrengthInput() {
+  const [value, setValue] = useState(2)
+  return (
+    <InputNumber
+      aria-label="Strength"
+      value={value}
+      onValueChange={setValue}
+      min={0}
+      max={100}
+      softMax={10}
+      step={0.1}
+      dragStep={0.01}
+      precision={2}
+      stepper
+    />
+  )
+}
+```
 
-`interaction/numeric` 将数值草稿、指针拖动和生命周期分开。InputNumber 是完整控件，Slider 是一组数值的轨道，DistributionSlider 在 Slider 上表达固定总量的分段长度。`templates/numeric` 组合 NumericSlider、NumericTupleInput、Vector2/3/4Input 和 RectInput；模板不创建自己的后端或撤销栈。
+点击进入文本编辑；未聚焦时按下并拖动可微调数字。已经聚焦的输入保留普通文本选择行为。方向键和可选 stepper 按钮按 `step` 调整，拖动按 `dragStep` 调整。
 
-`PropertyField` 绑定一个数值 PropertyAccess。默认 number 使用 InputNumber，指定 `widget="numeric-slider"` 使用复合输入。`descriptor.constraints` 与 `unit` 传给控件；快照的 preview 用于实时显示，权威 value 与 history 只在宿主接受 commit 后变化。
+| 参数              | 含义                                             |
+| ----------------- | ------------------------------------------------ |
+| `min/max`         | 硬范围，所有有效请求都受它限制                   |
+| `softMin/softMax` | 拖动和步进使用的范围，文本可输入硬范围内的其它值 |
+| `step`            | 键盘及 stepper 增量，默认 1                      |
+| `dragStep`        | 每像素拖动增量，默认 0.1                         |
+| `precision`       | 小数精度，0–15                                   |
+| `mixed`           | 多对象值不一致时显示占位，不代表数字 0           |
+| `resetKey`        | 目标或版本身份，变化后清理当前编辑               |
 
-## 公共编辑接口
+没有显式 precision 时通常使用 12，并根据较小步长最多提升到 15。Ctrl/⌘ 将微调量缩小到十分之一，Shift 放大到十倍，两者同时按下时细调优先。
 
-控件使用 `value/defaultValue/onValueChange`；受控值由调用者回传，固定 value 不会伪装接受拖动请求。文本草稿允许暂时不同于数值，但并不代表宿主已经接受它。
+软范围外的合法起点不会突然跳到端点。例如当前值 25、softMax 10，向内一步可以到 24，向外保持 25。输入中的 `-`、小数点或未完成指数可以暂时显示；只有完整有限数值才触发有效预览。Enter 或失焦提交时，非法文本显示错误。输入法组合期间 Enter 不提交。
 
-| 接口                         | 含义                                                                                            |
-| ---------------------------- | ----------------------------------------------------------------------------------------------- |
-| onEditStart(source)          | 第一次输入或手势开始；返回 false 可拒绝开始。source 为 text、drag、step 或 slider。             |
-| onValueChange(value)         | 当前有效预览请求；连续拖动可以多次触发。                                                        |
-| onValueCommit(value, reason) | 一次编辑的最终请求；reason 为 enter、blur、pointer-up 或 step。可返回 Promise；拒绝会显示错误。 |
-| onEditCancel(reason)         | 未提交编辑被取消。pending 已发出的提交不能再由取消回调撤回。                                    |
-| resetKey                     | 同值新版本、目标切换或重置的身份；变化后旧本地编辑失效。                                        |
+## Slider 与 NumericSlider
 
-受控取消只发送 onEditCancel，不额外伪造 onValueChange(initialValue)。使用本地状态模拟预览时，应用在 onEditStart 保存起点，在用户取消时回滚；external-update、reset、target-change 等外部状态替换应保留新权威值。非受控组件恢复内部起点。PropertyField 直接调用原 EditSession.cancel，由宿主恢复 preview。
+Slider 的值是 `number[]`。一个元素表示单滑块，两个或更多表示多个有顺序的滑块。使用有限 `min/max`、正 `step`，可以配置水平/垂直、RTL、`thumbLabels`、刻度及最小间距。
 
-原生 form reset 遵守 preventDefault：未阻止时，非受控控件和模板恢复首次默认值（InputNumber 按当前硬约束规范化）；受控值仍由应用决定，本地草稿与手势被清理。pending 的旧界面结果失效，不向已提交操作发送第二次终结通知。
+```tsx
+import { useState } from 'react'
+import { Slider, NumericSlider } from '@pivot-ui/react'
 
-Enter 与紧随其后的 blur 只提交一次；pending 时不允许第二次写入。拒绝后文本草稿可修改或 Enter 重试；滑块可开始新的手势。外部更新和对象切换使旧界面结果失效，已提交操作仍绑定原目标。卸载清理监听和捕获；它不会撤回已提交的宿主命令。
+export function RangeInputs() {
+  const [range, setRange] = useState([20, 80])
+  const [amount, setAmount] = useState(0.5)
+  return (
+    <>
+      <Slider
+        aria-label="Range"
+        thumbLabels={['Start', 'End']}
+        value={range}
+        onValueChange={setRange}
+        min={0}
+        max={100}
+      />
+      <NumericSlider label="Amount" value={amount} onValueChange={setAmount} min={0} max={1} step={0.01} />
+    </>
+  )
+}
+```
 
-## 数值规则与交互
+`minStepsBetweenThumbs` 限制相邻滑块间隔，`minStepsToEdges` 限制端点间隔。无法满足间距的请求不会改变值。NumericSlider 组合一个数字输入和滑块，两部分共用同一个标量；轨道可以使用软范围，文本仍可输入硬范围内的值。
 
-InputNumber 使用文本输入保存 `-`、小数点和指数的中间草稿；只接受有限十进制数，不执行表达式。完整文本产生数值预览，非法或不完整文本提交时显示错误，Escape 可取消。IME 组合期间 Enter 不提交。
+DistributionSlider 用于固定总量的分段。数组元素是每一段的长度，不是累计边界；配置 `total/minSegment/step`。N 段最多有 N−1 个可调分界，零长度段可以保留。输入数据必须有限、非负且满足总量要求。
 
-`min/max` 是硬范围；`softMin/softMax` 限制拖动与步进。文本可以超出软范围，但不能超出硬范围。软范围外的合法起点纳入本次手势的有效范围：例如起点 25、softMax 10，向内一步可到 24，向外保持 25，不突然跳到 10。
+## 向量、矩形与自定义轴
 
-`step` 用于键盘和可选 `stepper` 按钮，默认 1；`dragStep` 是每像素拖动增量，默认 0.1。Ctrl/⌘ 细调到十分之一，Shift 加速到十倍，细调优先。精度默认 12，根据更小的 step/dragStep 最多提升到 15；显式 precision 为 0–15。最终有效数值只走共享数值规则，不通过伪造 React change 事件。
+Vector2Input、Vector3Input、Vector4Input 分别使用 `{x,y}`、`{x,y,z}`、`{x,y,z,w}`。RectInput 使用 `{x,y,width,height}`。它们返回完整对象，不要求应用自行拼装其它轴。
 
-未聚焦时按下并移动超过阈值才开始拖动；点击进入文本编辑，聚焦后支持原生文本选择。拖动使用 pointer capture，Escape、pointercancel、捕获丢失、窗口失焦及不可用状态终止未提交手势。数值 mixed 为空占位，单纯聚焦/离开不会写入 0；明确输入 0 仍是有效编辑。
+```tsx
+import { useState } from 'react'
+import { Vector3Input, RectInput } from '@pivot-ui/react'
 
-Slider 使用 `number[]`，支持多 thumb、水平/垂直、RTL、键盘、最小 thumb 间距和保序。minStepsToEdges 限制端点间距而不改变视觉轴，无法满足的间距请求被忽略。轨道范围必须有限；刻度有明确上限，不按巨大范围逐整数循环。NumericSlider 的轨道显示软范围，文本仍可输入硬范围内的值；两部分共享一个标量值与同一组编辑回调。
+export function GeometryInputs() {
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
+  const [rect, setRect] = useState({ x: 0, y: 0, width: 100, height: 60 })
+  return (
+    <>
+      <Vector3Input label="Position" value={position} onValueChange={setPosition} axes={{ z: { min: 0, unit: 'm' } }} />
+      <RectInput label="Bounds" value={rect} onValueChange={setRect} sizeConstraints={{ min: 0 }} />
+    </>
+  )
+}
+```
 
-DistributionSlider 的数组表示每段长度，不能与累计边界混用。使用 `total`、`minSegment` 和 `step`；模型校验总量、有限非负分段与可达间隔，保留零段及总量。N 个分段最多对应 N−1 个可调边界。旧 CascadeSlider 的 max/onChange 只在适配边界映射为 total/onValueChange。
+几何控件的 `axes` 是按字段名配置的对象，允许只配置部分轴。RectInput 的 `positionConstraints/sizeConstraints` 分别作用于位置和尺寸，单轴配置可覆盖它们。
 
-## 元组、向量和矩形
+NumericTupleInput 适合自定义多个数值，使用数值数组和对应的 `axes` 数组。每轴有唯一 key、label、可选 unit、范围、精度、readOnly 和 disabled。数组顺序表示轴顺序。
 
-NumericTupleInput 接收数值数组与 axes；每轴有稳定 key、名称、单位和约束。Vector2/3/4Input 保留 `{ x, y, z, w }` 中对应维度的数据形状，内部只转换一次。`axes` 可对单轴配置范围和精度。
+`linked/onLinkedChange` 控制比例锁定。主轴非零时按本次编辑起点保持比例，缩放受各轴硬范围共同限制；主轴为零时只改变主轴。RectInput 不提供把位置和尺寸一起缩放的比例锁定。
 
-比例锁定使用受控 `linked/onLinkedChange`。比例始终从一次编辑的起始元组计算；主轴为零时只改变主轴，其他轴保持原值。非零主轴的共同缩放比例受所有轴硬范围交集限制，不分别钳制派生轴而破坏比例；派生轴也不重复做精度舍入。不可达的联动约束不产生写入。
+## 预览、提交和取消
 
-RectInput 保留 `{ x, y, width, height }`。`positionConstraints` 与 `sizeConstraints` 分别作用于位置和尺寸，单轴 axes 可覆盖；它不是带四个通用轴名的 Vector4，也不把位置和尺寸一起比例缩放。
+| 回调                           | 什么时候发生                           |
+| ------------------------------ | -------------------------------------- |
+| `onEditStart(source)`          | 编辑开始；返回 false 可以拒绝开始      |
+| `onValueChange(value)`         | 请求显示一个有效预览值，拖动可触发多次 |
+| `onValueCommit(value, reason)` | 一次编辑结束；可返回 Promise 等待保存  |
+| `onEditCancel(reason)`         | 尚未提交的编辑被取消                   |
 
-## 旧入口退出与验证
+source 包括 `text/drag/step/slider`；提交原因包括 `enter/blur/pointer-up/step`。元组和几何回调还提供编辑轴。Enter 后紧随的失焦不会重复提交。等待保存时阻止再次写入；失败后文本可重试，滑块可开始新手势。
 
-删除 FormItemInputNumber、FormItemSlider、FormItemCascadeSlider、FormItemVector2/3/4、FormItemRect 的实现、Props 出口和专属故事。使用 PropertyRow 组合新控件/模板；需要属性事务时使用 PropertyField。旧 UI InputNumber、Slider、CascadeSlider 留一层适配直到 B11，不保留旧数值状态 hook 或精度函数。颜色、曲线、集合和资源完整重构仍归后续批次。
+受控组件不会额外发送一个恢复起点的 `onValueChange`。如果应用把预览立即写入状态，需要在开始时保存起点，并在用户取消时恢复；外部数据更新或对象切换时应保留新数据。使用 PropertyField 可以把这部分连接到统一的属性接口，见[属性数据与提交](./B11_INTEGRATION.md)。
 
-统一 Storybook 位于 6009 的 Widgets、Templates 和 Property/PropertyField；现有 GUI Group/Array 示例同步使用新数值组件。故事覆盖受控结果、编辑记录、Reset 和可用性状态。临时事件探针、浏览器操作和完整检查的结果见台账；没有新增独立测试文件。
+原生 form reset 未被 `preventDefault()` 阻止时，非受控组件恢复默认值，受控值仍由应用决定；本地草稿和手势会被清理。关闭或卸载不能撤回已经发送的保存请求。

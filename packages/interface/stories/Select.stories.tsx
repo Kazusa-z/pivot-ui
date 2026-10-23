@@ -20,6 +20,14 @@ const options: readonly ChoiceOption[] = [
 ]
 const frame = css({ display: 'grid', gap: '12px', width: 'min(360px, 100%)' })
 const meta = {
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Select 适合从固定选项中选择一个值。options 分别提供稳定 key、显示 label 和原始 value，onValueChange 把用户选择交给应用，value 决定当前显示。数字、字符串和空字符串保持各自含义，null 表示未选择；需要搜索或多选时使用 Combobox。',
+      },
+    },
+  },
   title: 'Widgets/Choices/Select',
   component: Select,
   tags: ['autodocs'],
@@ -74,7 +82,7 @@ export const InDialog: Story = {
     <Dialog
       trigger={<button>Open choice dialog</button>}
       title="Choose a value"
-      description="The selection popup inherits the dialog theme and layer.">
+      description="选择列表显示在对话框上方，并使用该区域的主题。">
       <Select aria-label="Dialog choice" options={options} defaultValue={1} />
     </Dialog>
   ),

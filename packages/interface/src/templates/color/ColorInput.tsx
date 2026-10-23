@@ -14,7 +14,7 @@ export interface ColorInputProps
   css?: SystemStyleObject
 }
 
-/** Compact composition: a picker trigger, sRGB HEX and normalized alpha. */
+/** 紧凑颜色字段，包含取色浮层、HEX 和透明度输入。编辑回调返回完整颜色值，透明度使用 0–1。 */
 export const ColorInput = forwardRef<HTMLDivElement, ColorInputProps>(function ColorInput(
   {
     value,

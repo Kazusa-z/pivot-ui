@@ -1,4 +1,4 @@
-/** In-process typed data. Native dataTransfer carries only an opaque session marker. */
+/** 应用内拖放的数据：type 标识类型，data 携带接收回调所需的内容。跨应用文件拖入请使用 onFilesDrop。 */
 export interface DragPayload<T = unknown> {
   readonly type: string
   readonly data: T

@@ -62,7 +62,7 @@ export interface TreeRootProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, '
   disabled?: boolean
   /** Selection, rename and movement are read-only; browsing expansion remains available. */
   readOnly?: boolean
-  /** Requires an explicit DragDropProvider. Data updates remain the host's responsibility. */
+  /** 启用树节点拖放。外层包裹 DragDropProvider，应用在移动回调中更新树数据。 */
   dragDrop?: TreeDragDropOptions
   children?: ReactNode
   renderItem?: (node: TreeNode<T>, state: TreeItemState) => ReactNode
