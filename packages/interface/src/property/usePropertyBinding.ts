@@ -1,4 +1,4 @@
-import { useEffect, useRef, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react'
 import type {
   EditCancelReason,
   EditChangeResult,
@@ -36,7 +36,9 @@ export function usePropertyBinding<T>({
   mixed = false,
   onEditResult,
 }: PropertyBindingOptions<T>): PropertyBinding<T> {
-  const snapshot = useSyncExternalStore(access.subscribe, access.getSnapshot, access.getSnapshot)
+  const subscribe = useCallback((listener: () => void) => access.subscribe(listener), [access])
+  const getSnapshot = useCallback(() => access.getSnapshot(), [access])
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
   const session = useRef<{
     access: PropertyAccess<T>
     edit: EditSession<T>
@@ -45,6 +47,7 @@ export function usePropertyBinding<T>({
   } | null>(null)
   const latest = useRef({ access, onEditResult })
   const mounted = useRef(true)
+  const notificationVersion = useRef(0)
   latest.current = { access, onEditResult }
   const committedSession = useRef<string | undefined>(undefined)
   const identity = useRef({ access, target: snapshot.target, revision: snapshot.revision, mixed, key: {} })
@@ -72,6 +75,7 @@ export function usePropertyBinding<T>({
     mounted.current = true
     return () => {
       mounted.current = false
+      notificationVersion.current += 1
       const current = session.current
       if (current?.access === access) {
         session.current = null
@@ -94,6 +98,7 @@ export function usePropertyBinding<T>({
     if (now.disabled || now.readOnly || now.edit?.phase === 'pending') return false
     const result = access.begin()
     if (result.status !== 'started') return false
+    notificationVersion.current += 1
     session.current = { access, edit: result.session, submitted: false, changed: false }
     return true
   }
@@ -112,7 +117,26 @@ export function usePropertyBinding<T>({
     // A submitted command belongs to its captured host target. UI cancellation cannot retract it.
     if (current?.submitted) return
     session.current = null
-    if (current) void current.edit.cancel(reason)
+    const version = ++notificationVersion.current
+    const key = identity.current.key
+    const revision = access.getSnapshot().revision
+    void current.edit.cancel(reason).then((result) => {
+      if (
+        !mounted.current ||
+        latest.current.access !== access ||
+        notificationVersion.current !== version ||
+        identity.current.key !== key
+      )
+        return
+      const now = access.getSnapshot()
+      if (
+        now.target.objectId !== current.edit.target.objectId ||
+        now.target.propertyId !== current.edit.target.propertyId ||
+        now.revision !== revision
+      )
+        return
+      latest.current.onEditResult?.(result)
+    })
   }
 
   async function commit(value: T) {

@@ -167,6 +167,7 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
   const [playing, setPlaying] = useState(false)
   const svg = useRef<SVGSVGElement>(null)
   const gesture = useRef<Gesture | null>(null)
+  const pointerFocus = useRef(false)
   const keyboardOwner = useRef<string | null>(null)
   const lastCommitReason = useRef<CurveCommitReason>('enter')
   const idCounter = useRef(0)
@@ -345,7 +346,12 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
           ? selected
           : [pointId]
       select(next)
-      event.currentTarget.focus()
+      pointerFocus.current = true
+      try {
+        event.currentTarget.focus()
+      } finally {
+        pointerFocus.current = false
+      }
     }
     event.preventDefault()
     event.stopPropagation()
@@ -753,7 +759,7 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
                   })}
                   onPointerDown={(event) => startPointer(event, point.id)}
                   onFocus={() => {
-                    if (!selectedRef.current.includes(point.id)) select([point.id])
+                    if (!pointerFocus.current && !selectedRef.current.includes(point.id)) select([point.id])
                   }}
                   onKeyDown={(event) => pointKey(event, point)}
                   onKeyUp={(event) => {

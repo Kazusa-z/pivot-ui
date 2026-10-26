@@ -82,8 +82,13 @@ function SelectImpl<T extends ChoiceValue>(
     defaultProp: defaultOpen,
     onChange: onOpenChange,
   })
-  const selectedKey = value === null ? '' : (collection.keyForValue(value) ?? '')
+  let selectedKey = value === null ? '' : collection.keyForValue(value)
   const selected = selectedKey ? collection.optionForKey(selectedKey) : undefined
+  if (selectedKey === undefined) {
+    // Radix treats an empty key as an absent value and hides children behind the placeholder.
+    selectedKey = '__pivot_ui_unavailable__'
+    while (collection.optionForKey(selectedKey)) selectedKey += '_'
+  }
   const optionSizeClass = size === 'md' ? choiceClasses.optionMd : size === 'xs' ? choiceClasses.optionXs : undefined
   const locked = disabled || readOnly
   return (

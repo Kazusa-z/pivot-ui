@@ -98,16 +98,16 @@ export function useNumericDrag(options: DragOptions) {
         }
         gesture.dragging = true
       }
-      const delta =
-        (next.clientX - gesture.lastX) *
-        normalizeNumericConstraints(latest.current).dragStep *
-        numericModifierScale(next)
+      const rules = normalizeNumericConstraints(latest.current)
+      const delta = (next.clientX - gesture.lastX) * rules.dragStep * numericModifierScale(next)
       gesture.lastX = next.clientX
       const sum = gesture.value + delta
-      gesture.value = Number.isFinite(sum) ? sum : Math.sign(sum) * Number.MAX_VALUE
+      const finite = Number.isFinite(sum) ? sum : Math.sign(sum) * Number.MAX_VALUE
+      const origin = Math.min(rules.max, Math.max(rules.min, gesture.origin))
+      // Keep sub-precision movement, but discard overshoot so reversing at a limit responds immediately.
+      gesture.value = Math.min(Math.max(rules.softMax, origin), Math.max(Math.min(rules.softMin, origin), finite))
       const requested = latest.current.change(gesture.value, gesture.origin)
       if (requested === null) stopRef.current()
-      else gesture.value = requested
     }
     const up = (next: PointerEvent) => {
       if (next.pointerId === active.current?.id) stopRef.current(undefined, true)

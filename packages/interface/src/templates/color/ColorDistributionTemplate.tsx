@@ -19,6 +19,7 @@ import {
   type ColorDistributionValue,
 } from '../../values/color-distribution'
 import { SegmentControl } from '../../widgets/choices/SegmentControl'
+import { Button } from '../../widgets/buttons/Button'
 import { ColorInput } from './ColorInput'
 import { ColorRampChannels } from './ColorRampChannels'
 
@@ -159,6 +160,14 @@ export function ColorDistributionTemplate({
   return (
     <div
       {...props}
+      onKeyDown={(event) => {
+        props.onKeyDown?.(event)
+        if (!event.defaultPrevented && event.key === 'Escape' && editor.owner === 'mode') {
+          event.preventDefault()
+          event.stopPropagation()
+          editor.cancel('escape')
+        }
+      }}
       role="group"
       aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : label)}
       aria-disabled={disabled || undefined}
@@ -220,17 +229,32 @@ export function ColorDistributionTemplate({
               : rampControl(value.ramps[index], index)}
           </fieldset>
         ))}
-      {editor.error && editor.owner === 'mode' && !props['aria-errormessage'] && (
-        <span
-          id={errorId}
-          role="alert"
-          className={css({
-            color: 'var(--colors-dangerText)',
-            fontSize: 'var(--fontSizes-control)',
-            overflowWrap: 'anywhere',
-          })}>
-          {editor.error}
-        </span>
+      {editor.error && editor.owner === 'mode' && (
+        <div className={css({ display: 'grid', gap: 'var(--space-1_5)', minWidth: 0 })}>
+          {!props['aria-errormessage'] && (
+            <span
+              id={errorId}
+              role="alert"
+              className={css({
+                color: 'var(--colors-dangerText)',
+                fontSize: 'var(--fontSizes-control)',
+                overflowWrap: 'anywhere',
+              })}>
+              {editor.error}
+            </span>
+          )}
+          <Button
+            size="xs"
+            disabled={disabled || readOnly}
+            onClick={() => {
+              void editor.commit(editor.getRequested(), 'mode', 'mode').catch(() => {})
+            }}>
+            Retry mode edit
+          </Button>
+          <Button size="xs" onClick={() => editor.cancel('escape')}>
+            Cancel mode edit
+          </Button>
+        </div>
       )}
     </div>
   )
