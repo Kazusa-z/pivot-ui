@@ -98,7 +98,7 @@ export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(function
         if (collapsible && !disabled) setOpen(nextOpen)
       }}
       className={cx(getDisclosureSurfaceClass({ variant }, cssProp), className)}>
-      <div data-part="header" className={getDisclosureRowClass(variant)}>
+      <div data-part="header" className={getDisclosureRowClass(variant, size)}>
         {collapsible && triggerMode === 'icon' && trigger}
         {createElement(
           `h${headingLevel}`,

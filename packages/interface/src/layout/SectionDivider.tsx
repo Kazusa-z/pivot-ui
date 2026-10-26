@@ -20,14 +20,14 @@ export const SectionDivider = forwardRef<HTMLDivElement, SectionDividerProps>(fu
           {
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: 'var(--space-2)',
             width: '100%',
             minWidth: 0,
             color: 'var(--colors-textMuted)',
-            fontSize: '12px',
+            fontSize: 'var(--fontSizes-control)',
             '&::before, &::after': {
               content: '""',
-              flex: '1 0 24px',
+              flex: '1 0 var(--space-6)',
               borderBottom: '1px solid var(--colors-border)',
             },
           },

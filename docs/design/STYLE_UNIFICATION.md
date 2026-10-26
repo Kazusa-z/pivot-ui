@@ -388,17 +388,17 @@
 
 **验收**：核心控件只出现 20/24/32/36；ActionButton/Group 圆角一致；Input slot 字号一致；无原生 demo 控件；`pnpm verify` 通过。
 
-### Phase 3 — Layout 与面板（2 天）
+### Phase 3 — Layout 与面板（已完成 2026-10-26）
 
-- [ ] `layout/PropertyRow.tsx`：label 12/14、`textMuted`、minHeight 24/32、gap 4/8；新增 `density`。
-- [ ] `widgets/disclosure/disclosure.styles.ts`：头部 24/32；3px 圆角→4/6；`grayA2`→`surfaceSubtle`；hover `softBgHover`；focus -2。
-- [ ] `Accordion.tsx`、`Collapsible.tsx`、`Section.tsx`：连接/嵌套样式统一；actions 间距 4/8。
-- [ ] `SectionDivider.tsx`：12/14 字号、8px gap。
-- [ ] `Flex.tsx`：gap 只用 0/2/4/6/8/12/16。
-- [ ] `ResizableSplit.tsx`：handle 4px、focus ring、hover 颜色。
-- [ ] Stories：`PropertyRow`、`Section`、`SectionDivider`、`Disclosure`、`Flex`、`ResizableSplit`、`ActionRow`。
+- [x] `layout/PropertyRow.tsx`：label 12/14、`textMuted`、minHeight 24/32、gap 4/8；新增 `density`。
+- [x] `widgets/disclosure/disclosure.styles.ts`：头部 24/32；3px 圆角→4/6；`grayA2`→`surfaceSubtle`；hover `softBgHover`；focus -2。
+- [x] `Accordion.tsx`、`Collapsible.tsx`、`Section.tsx`：连接/嵌套样式统一；actions 间距 4/8。
+- [x] `SectionDivider.tsx`：12/14 字号、8px gap。
+- [x] `Flex.tsx`：gap 只用 0/2/4/6/8/12/16。
+- [x] `ResizableSplit.tsx`：handle 6px 命中区（见 D29）、focus ring、hover 颜色。
+- [x] Stories：`PropertyRow`、`Section`、`SectionDivider`、`Disclosure`、`Flex`、`ResizableSplit`、`ActionRow`。
 
-**验收**：27/28/30 头部消失；Section 头部与 24/32 控件对齐；PropertyRow 标签色不再用 `gray10`；build 通过。
+**验收**：27/28/30 头部消失；Section 头部与 24/32 控件对齐；PropertyRow 标签色不再用 `gray10`；`pnpm verify` 通过。
 
 ### Phase 4 — Overlays（3 天）
 

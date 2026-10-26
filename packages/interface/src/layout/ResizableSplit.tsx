@@ -52,7 +52,7 @@ export interface ResizableSplitProps extends Omit<HTMLAttributes<HTMLDivElement>
 const handleSize = 6
 const paneClass = css({ minWidth: 0, minHeight: 0, overflow: 'hidden', boxSizing: 'border-box' })
 const handleClass = css({
-  flex: '0 0 6px',
+  flex: '0 0 var(--space-1_5)',
   position: 'relative',
   touchAction: 'none',
   userSelect: 'none',

@@ -11,7 +11,7 @@
 | 0 计划与决策                      | 已完成 | 2026-10-26 | 2026-10-26 | 用户确认两档与 4 个默认项             |
 | 1 Tokens / Foundation / Story Kit | 已完成 | 2026-10-26 | 2026-10-26 | 12 个 story 已迁移，验收全绿          |
 | 2 核心表单控件                    | 已完成 | 2026-10-26 | 2026-10-26 | 10 个 story 迁移，Control matrix 新增 |
-| 3 Layout 与面板                   | 未开始 | —          | —          | —                                     |
+| 3 Layout 与面板                   | 已完成 | 2026-10-26 | 2026-10-26 | 7 个 story 迁移，验收全绿             |
 | 4 Overlays                        | 未开始 | —          | —          | —                                     |
 | 5 Collections 与 Navigation       | 未开始 | —          | —          | —                                     |
 | 6 Templates                       | 未开始 | —          | —          | —                                     |
@@ -35,7 +35,7 @@
 | D11 | Phase 1a | Phase 4    | `overlayFadeOut` 已删除，若后面需要退场动画，需在 Phase 4 重新引入并接 Radix forceMount                                                | Phase 4 评估是否需要退场                                                     | 待处理 |
 | D12 | Phase 1a | —          | Checkbox 仍是 14/18/22 三档元素尺寸；Kbd 已先改为 16/18/20                                                                             | Phase 2 已用 `sizes.iconSm/iconLg/5_5` token 化                              | 已解决 |
 | D13 | Phase 1c | —          | `!autodocs` 已在 SB10 验证：`foundation-theme--shared-providers` 与 `storage-and-cleanup` 的 index tags 不再包含 autodocs              | 已确认可用；后续 Phase 沿用该方式                                            | 已解决 |
-| D14 | Phase 1c | Phase 2–7  | 43 个 `ContractFrame` story 中，Phase 1 迁移 12 个、Phase 2 迁移 10 个；当前剩 30 个按组件 Phase 迁移                                  | 各 Phase 跟随组件修改                                                        | 进行中 |
+| D14 | Phase 1c | Phase 4–7  | 43 个 `ContractFrame` story 中，Phase 1 迁移 12 个、Phase 2 迁移 10 个、Phase 3 迁移 7 个；当前剩 25 个按组件 Phase 迁移               | 各 Phase 跟随组件修改                                                        | 进行中 |
 | D15 | Phase 1b | —          | Badge 的 `solid` 改为 filled tint（`*Bg + *Text`），surface 加 `*Border`，active 用 `primarySolid + 白字`；状态文字改用 12 阶          | 已按语义 token 迁移；orange/gold/violet 保留 categorical A 色，Phase 8 复核  | 已解决 |
 | D16 | Phase 1a | —          | Radix 亮色 blue8 只有 2.33:1，无法承载白字                                                                                             | 暗色 `primarySolid = blue8`，亮色 `primarySolid = blue11`，对比 5.07 / 4.77  | 已解决 |
 | D17 | Phase 1a | —          | `generate-tokens.mjs` 使用 `/tmp`，Windows 下生成到仓库 `tmp/` 且 file URL 失败                                                        | 改为 `node_modules/.cache` + `pathToFileURL`；`.gitignore` 增加 `tmp/`       | 已解决 |
@@ -49,6 +49,8 @@
 | D25 | Phase 2e | —          | Buttons 与 Control matrix 已迁移；TextInputs/InputNumber/Checkbox/Select/Combobox/Segment/Toggle/Slider/Distribution 的 story 已重写   | 已全部通过 typecheck 与 build                                                | 已解决 |
 | D26 | Phase 2c | —          | SegmentControl/ToggleGroup 没有 xs/20 档，档位是 24/32/36；Slider 没有 lg/36；DistributionSlider 类型上无 compact                      | 已在 stories 中按真实 API 说明，不新增无依据的档位                           | 已记录 |
 | D27 | Phase 2b | Phase 8    | InputNumber 没有暴露内部 phase/draft/error，story 的 StoryState 只能记录宿主可见的 value/mixed/events                                  | 保持 API 不变；Phase 8 再决定是否增加只读状态接口                            | 待处理 |
+| D28 | Phase 3  | Phase 7    | `PropertyRow` 已支持 density，但 `PropertyField` 内置控件仍按默认 size 渲染，未随 density 变成 sm/md                                   | Phase 7 在 PropertyField 内透传 size                                         | 待处理 |
+| D29 | Phase 3  | —          | `ResizableSplit` 的 handle 保持 6px 命中区，而不是计划里的 4px                                                                         | 保留 6px 以兼顾可点击性；视觉/命中区一致                                     | 已接受 |
 
 ## Phase 1 执行明细
 
@@ -162,7 +164,7 @@ Phase 2 已完成。`pnpm verify` 全绿；Buttons + 9 个核心控件 story 已
 
 - Button/ActionButton/ActionButtonGroup 两档尺寸、outline focus、disabled opacity、solid `primarySolid`；Group 新增 `size`，外角跟随本体。
 - status solid token 加深，critical/positive solid 白字对比达到 5.21/4.72（light）与 5.37/5.07（dark）。
-- Input/Textarea/EditableText/InputNumber 两档、focus outline、disabled opacity、valid/invalid 不再填底色；slot md 14、stepper 16/4。
+- Input/Textarea/EditableText/InputNumber 两档、focus outline、disabled opacity、valid/invalid 不再填底色；slot md 14、stepper 16/20。
 - Choice/Select/Combobox/Checkbox/Segment/Toggle 统一 20/24/32 与 4/6/8；选项实心选中；option 尺寸跟随触发器。
 - Slider/DistributionSlider 实心 range、20/24/32、focus offset 2、slot 11、error 12。
 - 10 个 story 全部使用 StoryPage；新增 `Foundation/Control matrix`。
@@ -173,3 +175,49 @@ Phase 2 已完成。`pnpm verify` 全绿；Buttons + 9 个核心控件 story 已
 - Checkbox 的元素尺寸仍是 14/18/22，但已 token 化；它不等于控件高度档位。
 - InputNumber 不暴露内部 phase/draft/error，StoryState 只记录宿主可见值，见 D27。
 - `warningSolid` 白字仍只有 1.8:1，但当前 Button 未使用；见 D23，Phase 8 处理。
+
+## Phase 3 执行明细
+
+### 3a PropertyRow
+
+- [x] 新增 `density?: 'compact' | 'regular'`；compact 24 / regular 32。
+- [x] 标签/说明改用 `textMuted`、12/14；gap 4/8；通过 CSS 变量向下传递。
+- [x] 删除 `gray10/gray11` 直接引用。
+
+### 3b Section / Disclosure
+
+- [x] Section/Collapsible 头部 24/32；radius 3→4/6；hover `softBgHover`。
+- [x] 头部背景 `grayA2`→`surfaceSubtle`；connected surface radius 6。
+- [x] static heading 使用 size 变量；icon-only 宽度随 24/32。
+- [x] `Accordion`/`Collapsible` header 传递 size。
+
+### 3c SectionDivider / Flex / ResizableSplit
+
+- [x] `SectionDivider` gap/字号/线宽 token 化。
+- [x] `Flex` gap 全部改用 `space-*`。
+- [x] `ResizableSplit` handle 6px 命中区、focus/disabled token。
+- [x] 7 个 story（PropertyRow/Section/SectionDivider/Disclosure/Flex/ResizableSplit/ActionRow，subagent 完成）。
+
+### 3d 验收
+
+- [x] stories 完成并 typecheck。
+- [x] `pnpm verify`。
+- [x] 更新计划文档 Phase 3 复选框。
+
+## Phase 3 结果
+
+Phase 3 已完成。`pnpm verify` 全绿；7 个 layout/disclosure story 已迁移，并用 headless Chrome 做了 DOM smoke test。
+
+**已完成**
+
+- `PropertyRow` 新增 `density`（24/32），标签/说明改 `textMuted` 12/14，gap 4/8 通过 CSS 变量向下传递。
+- Section/Collapsible/Accordion 头部 24/32，radius 3→4/6，header 背景 `surfaceSubtle`，hover/focus/disabled 统一。
+- `staticHeading` 跟随 size 变量；icon-only 触发宽度 24/32。
+- SectionDivider/Flex/ResizableSplit 的间距、字号、handle/focus 全部 token 化。
+- 7 个 story 全部使用 StoryPage；无 ContractFrame/native 演示控件。
+
+**偏差 / 记录**
+
+- `PropertyField` 的内置控件还没随 `PropertyRow` density 变成 sm/md，留到 Phase 7，见 D28。
+- `ResizableSplit` 保留 6px handle 命中区，而不是计划里的 4px，见 D29。
+- 剩余 25 个 ContractFrame story 按 Phase 4–7 迁移，见 D14。

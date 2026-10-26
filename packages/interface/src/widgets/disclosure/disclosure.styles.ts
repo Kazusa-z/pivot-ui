@@ -11,7 +11,7 @@ const surfaceRecipe = cva({
     position: 'relative',
     width: '100%',
     minWidth: 0,
-    borderRadius: '4px',
+    borderRadius: 'var(--radii-controlMd)',
     color: 'var(--colors-text)',
   },
   variants: {
@@ -24,8 +24,14 @@ const surfaceRecipe = cva({
       true: {
         borderRadius: 0,
         '&:not(:last-child)': { borderBottom: 'none' },
-        '&:first-child': { borderTopLeftRadius: '4px', borderTopRightRadius: '4px' },
-        '&:last-child': { borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' },
+        '&:first-child': {
+          borderTopLeftRadius: 'var(--radii-controlMd)',
+          borderTopRightRadius: 'var(--radii-controlMd)',
+        },
+        '&:last-child': {
+          borderBottomLeftRadius: 'var(--radii-controlMd)',
+          borderBottomRightRadius: 'var(--radii-controlMd)',
+        },
       },
     },
   },
@@ -40,37 +46,71 @@ const triggerRecipe = cva({
     width: '100%',
     minWidth: 0,
     alignItems: 'center',
-    gap: '8px',
+    gap: 'var(--space-2)',
     fontFamily: 'inherit',
     fontWeight: 500,
     color: 'inherit',
     textAlign: 'start',
     cursor: 'pointer',
-    borderRadius: '3px',
+    borderRadius: 'var(--radii-control)',
     userSelect: 'none',
-    transition: 'background-color .2s ease, color .2s ease',
-    '&:hover:not(:disabled)': { backgroundColor: 'var(--colors-grayA3)', color: 'var(--colors-textStrong)' },
+    transition: 'background-color 120ms ease-out, color 120ms ease-out',
+    '&:hover:not(:disabled)': { backgroundColor: 'var(--colors-softBgHover)', color: 'var(--colors-textStrong)' },
     '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '-2px' },
-    '&:disabled': { cursor: 'not-allowed', color: 'var(--colors-textMuted)' },
+    '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
     '&[data-state="open"] [data-disclosure-chevron]': { transform: 'rotate(90deg)' },
     '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
   },
   variants: {
     size: {
-      sm: { minHeight: '27px', padding: '0 8px', fontSize: '12px', lineHeight: '16px' },
-      md: { minHeight: '30px', padding: '0 12px', fontSize: '14px', lineHeight: '20px' },
+      sm: {
+        minHeight: 'var(--sizes-controlSm)',
+        padding: '0 var(--space-2)',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: 'var(--lineHeights-1)',
+        borderRadius: 'var(--radii-control)',
+      },
+      md: {
+        minHeight: 'var(--sizes-controlMd)',
+        padding: '0 var(--space-3)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        lineHeight: 'var(--lineHeights-2)',
+        borderRadius: 'var(--radii-controlMd)',
+      },
     },
-    iconOnly: { true: { width: '28px', padding: '0 7px', flexShrink: 0, justifyContent: 'center' } },
+    iconOnly: {
+      true: {
+        width: 'var(--sizes-controlSm)',
+        padding: 0,
+        flexShrink: 0,
+        justifyContent: 'center',
+      },
+    },
   },
   defaultVariants: { size: 'sm' },
+  compoundVariants: [
+    {
+      size: 'md',
+      iconOnly: true,
+      css: { width: 'var(--sizes-controlMd)' },
+    },
+  ],
 })
 
 const innerRecipe = cva({
   base: { minWidth: 0, overflowWrap: 'anywhere', color: 'var(--colors-text)' },
   variants: {
     size: {
-      sm: { padding: '8px', fontSize: '12px', lineHeight: '16px' },
-      md: { padding: '12px', fontSize: '12px', lineHeight: '20px' },
+      sm: {
+        padding: 'var(--space-2)',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: 'var(--lineHeights-1)',
+      },
+      md: {
+        padding: 'var(--space-3)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        lineHeight: 'var(--lineHeights-2)',
+      },
     },
   },
   defaultVariants: { size: 'sm' },
@@ -81,11 +121,11 @@ export const disclosureClasses = {
   title: css({ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }),
   staticHeading: css({
     display: 'block',
-    minHeight: '27px',
-    padding: '5px 8px',
+    minHeight: 'var(--disclosure-header-height, var(--sizes-controlSm))',
+    padding: 'var(--space-1) var(--space-2)',
     boxSizing: 'border-box',
-    fontSize: '12px',
-    lineHeight: '16px',
+    fontSize: 'var(--disclosure-header-font, var(--fontSizes-control))',
+    lineHeight: 'var(--lineHeights-1)',
   }),
   actions: css({
     display: 'flex',
@@ -94,16 +134,16 @@ export const disclosureClasses = {
     flexShrink: 0,
     minWidth: 0,
     maxWidth: '60%',
-    gap: '4px',
-    padding: '2px 8px 2px 0',
+    gap: 'var(--space-1)',
+    padding: 'var(--space-0_5) var(--space-2) var(--space-0_5) 0',
     '& > *': { minWidth: 0, maxWidth: '100%' },
   }),
   chevron: css({
-    width: '14px',
-    height: '14px',
+    width: 'var(--sizes-iconSm)',
+    height: 'var(--sizes-iconSm)',
     flexShrink: 0,
     transform: 'rotate(0deg)',
-    transition: 'transform .2s ease',
+    transition: 'transform 120ms ease-out',
     '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
   }),
   content: css({
@@ -111,7 +151,7 @@ export const disclosureClasses = {
     minWidth: 0,
     '&[data-state="open"]': {
       animationName: 'accordionSlideDown',
-      animationDuration: '200ms',
+      animationDuration: '180ms',
       animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
     },
     '&[data-state="closed"]': {
@@ -140,11 +180,18 @@ export function getDisclosureContentClass(size: DisclosureSize, overrides?: Syst
 export function getDisclosureRootClass(overrides?: SystemStyleObject) {
   return css({ display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 }, overrides)
 }
-export function getDisclosureRowClass(variant: DisclosureVariant) {
+export function getDisclosureRowClass(variant: DisclosureVariant, size: DisclosureSize = 'sm') {
+  const regular = size === 'md'
   return css(
-    { display: 'flex', alignItems: 'center', minWidth: 0 },
     {
-      backgroundColor: variant === 'transparent' ? 'transparent' : 'var(--colors-grayA2)',
+      display: 'flex',
+      alignItems: 'center',
+      minWidth: 0,
+      '--disclosure-header-height': regular ? 'var(--sizes-controlMd)' : 'var(--sizes-controlSm)',
+      '--disclosure-header-font': regular ? 'var(--fontSizes-controlLarge)' : 'var(--fontSizes-control)',
+    },
+    {
+      backgroundColor: variant === 'transparent' ? 'transparent' : 'var(--colors-surfaceSubtle)',
     }
   )
 }

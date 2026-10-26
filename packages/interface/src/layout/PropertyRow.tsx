@@ -7,13 +7,27 @@ const rowRecipe = cva({
     display: 'grid',
     width: '100%',
     minWidth: 0,
-    padding: '2px',
-    gap: '4px',
+    padding: 'var(--space-0_5)',
+    gap: 'var(--property-row-gap, var(--space-1))',
     alignItems: 'center',
     gridTemplateColumns: 'var(--property-label-width, minmax(0, 1.3fr)) minmax(0, 3fr)',
     '& > [data-property-part="description"]': { gridColumn: '2' },
   },
   variants: {
+    density: {
+      compact: {
+        '--property-row-gap': 'var(--space-1)',
+        '--property-label-min-height': 'var(--sizes-controlSm)',
+        '--property-font-size': 'var(--fontSizes-control)',
+        '--property-description-size': 'var(--fontSizes-control)',
+      },
+      regular: {
+        '--property-row-gap': 'var(--space-2)',
+        '--property-label-min-height': 'var(--sizes-controlMd)',
+        '--property-font-size': 'var(--fontSizes-controlLarge)',
+        '--property-description-size': 'var(--fontSizes-controlLarge)',
+      },
+    },
     direction: {
       row: {},
       column: {
@@ -28,12 +42,15 @@ const rowRecipe = cva({
       },
     },
   },
+  defaultVariants: { density: 'compact' },
 })
 
 export interface PropertyRowProps extends HTMLAttributes<HTMLDivElement> {
   direction?: 'row' | 'column'
   /** 将整行空间用于内容，适合没有字段标签的布局。 */
   withoutLabel?: boolean
+  /** 紧凑 24px 行或常规 32px 行。 */
+  density?: 'compact' | 'regular'
   /** Any CSS grid track size, for example 120px or minmax(0, 1fr). */
   labelWidth?: string
   css?: SystemStyleObject
@@ -41,14 +58,14 @@ export interface PropertyRowProps extends HTMLAttributes<HTMLDivElement> {
 
 /** 将标签、控件和说明排成字段行。使用 PropertyLabel、PropertyControl 和 PropertyDescription 组合内容，并将标签 ID 关联到实际输入。 */
 export const PropertyRow = forwardRef<HTMLDivElement, PropertyRowProps>(function PropertyRow(
-  { direction = 'row', withoutLabel, labelWidth, css: cssProp, className, style, ...props },
+  { direction = 'row', withoutLabel, density = 'compact', labelWidth, css: cssProp, className, style, ...props },
   ref
 ) {
   return (
     <div
       {...props}
       ref={ref}
-      className={cx(css(rowRecipe.raw({ direction, withoutLabel }), cssProp), className)}
+      className={cx(css(rowRecipe.raw({ direction, withoutLabel, density }), cssProp), className)}
       style={{ '--property-label-width': labelWidth, ...style } as CSSProperties}
     />
   )
@@ -78,12 +95,12 @@ export const PropertyLabel = forwardRef<HTMLDivElement, PropertyLabelProps>(func
           {
             display: 'flex',
             minWidth: 0,
-            minHeight: '24px',
+            minHeight: 'var(--property-label-min-height, var(--sizes-controlSm))',
             alignItems: 'center',
-            gap: '4px',
-            fontSize: '12px',
+            gap: 'var(--property-row-gap, var(--space-1))',
+            fontSize: 'var(--property-font-size, var(--fontSizes-control))',
             fontWeight: 500,
-            color: 'var(--colors-gray10)',
+            color: 'var(--colors-textMuted)',
           },
           cssProp
         ),
@@ -111,7 +128,12 @@ export type PropertyControlProps = Omit<HTMLAttributes<HTMLDivElement>, 'role' |
   }
 
 const controlRecipe = cva({
-  base: { display: 'grid', minWidth: 0, gap: '4px', alignItems: 'start' },
+  base: {
+    display: 'grid',
+    minWidth: 0,
+    gap: 'var(--property-row-gap, var(--space-1))',
+    alignItems: 'start',
+  },
   variants: {
     columns: {
       1: { gridTemplateColumns: 'minmax(0, 1fr)' },
@@ -153,7 +175,15 @@ export const PropertyDescription = forwardRef<HTMLDivElement, PropertyDescriptio
       ref={ref}
       data-property-part="description"
       className={cx(
-        css({ minWidth: 0, fontSize: '12px', color: 'var(--colors-gray11)', overflowWrap: 'anywhere' }, cssProp),
+        css(
+          {
+            minWidth: 0,
+            fontSize: 'var(--property-description-size, var(--fontSizes-control))',
+            color: 'var(--colors-textMuted)',
+            overflowWrap: 'anywhere',
+          },
+          cssProp
+        ),
         className
       )}
     />

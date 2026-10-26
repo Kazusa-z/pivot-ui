@@ -84,7 +84,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
       {...props}
       ref={ref}
       className={cx(getDisclosureSurfaceClass({ variant, connected: true }, cssProp), className)}>
-      <div data-part="header" className={getDisclosureRowClass(variant)}>
+      <div data-part="header" className={getDisclosureRowClass(variant, size)}>
         <Primitive.Header asChild>
           {createElement(
             `h${headingLevel}`,

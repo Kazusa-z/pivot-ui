@@ -13,11 +13,11 @@ const flexRecipe = cva({
     },
     gap: {
       none: { gap: '0' },
-      xxs: { gap: '2px' },
-      xs: { gap: '4px' },
-      sm: { gap: '8px' },
-      md: { gap: '12px' },
-      lg: { gap: '16px' },
+      xxs: { gap: 'var(--space-0_5)' },
+      xs: { gap: 'var(--space-1)' },
+      sm: { gap: 'var(--space-2)' },
+      md: { gap: 'var(--space-3)' },
+      lg: { gap: 'var(--space-4)' },
     },
     align: {
       start: { alignItems: 'flex-start' },
