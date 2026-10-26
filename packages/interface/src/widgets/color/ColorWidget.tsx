@@ -14,6 +14,7 @@ import {
   type ColorValue,
 } from '../../values/color'
 import { Button } from '../buttons/Button'
+import { Select } from '../choices/Select'
 import { InputNumber } from '../inputs/InputNumber'
 import { Slider } from '../sliders/Slider'
 import { ColorPlane } from './ColorPlane'
@@ -28,18 +29,15 @@ export interface ColorWidgetProps
   defaultModel?: 'rgb' | 'hsv'
   css?: SystemStyleObject
 }
-const stack = css({ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: 0 })
-const selectClass = css({
-  minWidth: 0,
-  flex: '1 1 100px',
-  font: 'inherit',
-  fontSize: '12px',
-  color: 'var(--colors-text)',
-  background: 'var(--colors-surfaceSubtle)',
-  border: '1px solid var(--colors-border)',
-  borderRadius: '4px',
-  padding: '4px',
-})
+const stack = css({ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', minWidth: 0 })
+const modelOptions = [
+  { key: 'rgb', value: 'rgb', label: 'RGB' },
+  { key: 'hsv', value: 'hsv', label: 'HSV (sRGB)' },
+] as const
+const spaceOptions = [
+  { key: 'srgb', value: 'srgb', label: 'sRGB display' },
+  { key: 'linear', value: 'linear', label: 'Linear display' },
+] as const
 
 /** 内联颜色编辑器，适合持续调整颜色的面板。通过编辑回调接收 ColorValue；显示模式决定输入方式，value.space 决定颜色编码。 */
 export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function ColorWidget(
@@ -211,7 +209,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
             color: 'var(--colors-text)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: 'var(--space-2)',
           },
           cssProp
         ),
@@ -222,7 +220,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         className={css({
           height: '48px',
           border: '1px solid var(--colors-border)',
-          borderRadius: '4px',
+          borderRadius: 'var(--radii-control)',
           overflow: 'hidden',
           background: 'repeating-conic-gradient(#bbb 0% 25%, #fff 0% 50%) 0 / 12px 12px',
         })}>
@@ -250,7 +248,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         onCancel={edit.cancel}
       />
       {hdr && (
-        <div className={css({ fontSize: '11px', color: 'var(--colors-textMuted)' })}>
+        <div className={css({ fontSize: 'var(--fontSizes-micro)', color: 'var(--colors-textMuted)' })}>
           SV brightness range: 0–{planeMaximum.toPrecision(3)} sRGB
         </div>
       )}
@@ -274,36 +272,42 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         onValueCommit={([next], reason) => edit.commit(channelValue('h', next), reason, 'hue')}
         onEditCancel={edit.cancel}
       />
-      <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '8px' })}>
-        <select
+      <div className={css({ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' })}>
+        <Select
           aria-label={`${label} color model`}
-          className={selectClass}
+          size="sm"
           value={model}
+          options={modelOptions}
           disabled={disabled || edit.phase !== 'idle'}
-          onChange={(event) => setModel(event.currentTarget.value as 'rgb' | 'hsv')}>
-          <option value="rgb">RGB</option>
-          <option value="hsv">HSV (sRGB)</option>
-        </select>
+          css={{ flex: '1 1 100px' }}
+          onValueChange={(next) => next && setModel(next as 'rgb' | 'hsv')}
+        />
         {model === 'rgb' && (
-          <select
+          <Select
             aria-label={`${label} display encoding`}
-            className={selectClass}
+            size="sm"
             value={displaySpace}
+            options={spaceOptions}
             disabled={disabled || edit.phase !== 'idle'}
-            onChange={(event) => {
-              const next = event.currentTarget.value as ColorSpace
-              if (controlledSpace === undefined) setLocalSpace(next)
-              onDisplaySpaceChange?.(next)
-            }}>
-            <option value="srgb">sRGB display</option>
-            <option value="linear">Linear display</option>
-          </select>
+            css={{ flex: '1 1 100px' }}
+            onValueChange={(next) => {
+              if (!next) return
+              const value = next as ColorSpace
+              if (controlledSpace === undefined) setLocalSpace(value)
+              onDisplaySpaceChange?.(value)
+            }}
+          />
         )}
       </div>
-      <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '6px' })}>
+      <div
+        className={css({
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          gap: 'var(--space-1_5)',
+        })}>
         {channels.map(({ key, label: channelLabel, value: number }) => (
           <label key={key} className={stack}>
-            <span className={css({ fontSize: '12px' })}>{channelLabel}</span>
+            <span className={css({ fontSize: 'var(--fontSizes-control)' })}>{channelLabel}</span>
             <InputNumber
               aria-label={`${label} ${channelLabel}`}
               value={number}
@@ -326,7 +330,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         ))}
       </div>
       <label className={stack}>
-        <span className={css({ fontSize: '12px' })}>Alpha</span>
+        <span className={css({ fontSize: 'var(--fontSizes-control)' })}>Alpha</span>
         <InputNumber
           aria-label={`${label} Alpha`}
           value={value.a}
@@ -346,7 +350,9 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         />
       </label>
       <label className={stack}>
-        <span className={css({ fontSize: '12px' })}>HEX · sRGB{hdr ? ' (display clipped)' : ''}</span>
+        <span className={css({ fontSize: 'var(--fontSizes-control)' })}>
+          HEX · sRGB{hdr ? ' (display clipped)' : ''}
+        </span>
         <HexColorField
           value={value}
           resetKey={childResetKey}
@@ -360,9 +366,9 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
           onEditCancel={edit.cancel}
         />
       </label>
-      <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '6px' })}>
+      <div className={css({ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-1_5)' })}>
         <Button
-          size="xs"
+          size="sm"
           disabled={
             disabled ||
             readOnly ||
@@ -377,7 +383,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
           Pick screen color
         </Button>
         <Button
-          size="xs"
+          size="sm"
           disabled={disabled || toolBusy || edit.phase !== 'idle' || !capabilities?.clipboard}
           onClick={() => {
             void copy()
@@ -385,7 +391,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
           Copy HEX
         </Button>
         <Button
-          size="xs"
+          size="sm"
           disabled={
             disabled ||
             readOnly ||
@@ -401,7 +407,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         </Button>
         {edit.owner === 'capability' && edit.phase === 'editing' && !toolBusy && (
           <Button
-            size="xs"
+            size="sm"
             onClick={() => {
               edit.cancel('escape')
               setToolStatus(null)
@@ -411,13 +417,19 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         )}
       </div>
       {(!capabilities?.eyeDropper || !capabilities?.clipboard) && (
-        <p className={css({ margin: 0, fontSize: '11px', color: 'var(--colors-textMuted)', overflowWrap: 'anywhere' })}>
+        <p
+          className={css({
+            margin: 0,
+            fontSize: 'var(--fontSizes-micro)',
+            color: 'var(--colors-textMuted)',
+            overflowWrap: 'anywhere',
+          })}>
           {!capabilities?.eyeDropper && 'Screen picking unavailable; choose a color with the controls. '}
           {!capabilities?.clipboard && 'Clipboard access unavailable; type or paste into the HEX field.'}
         </p>
       )}
       {toolStatus && (
-        <div role="status" className={css({ fontSize: '12px', overflowWrap: 'anywhere' })}>
+        <div role="status" className={css({ fontSize: 'var(--fontSizes-control)', overflowWrap: 'anywhere' })}>
           {toolStatus}
         </div>
       )}
@@ -425,7 +437,11 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
         <div
           id={errorId}
           role="alert"
-          className={css({ color: 'var(--colors-dangerText)', fontSize: '12px', overflowWrap: 'anywhere' })}>
+          className={css({
+            color: 'var(--colors-dangerText)',
+            fontSize: 'var(--fontSizes-control)',
+            overflowWrap: 'anywhere',
+          })}>
           {edit.error}
         </div>
       )}

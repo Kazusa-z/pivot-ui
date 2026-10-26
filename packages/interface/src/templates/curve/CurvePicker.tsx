@@ -112,13 +112,13 @@ export const CurvePicker = forwardRef<HTMLButtonElement, CurvePickerProps>(funct
             css({
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: 'var(--space-2)',
               minWidth: 0,
               maxWidth: '100%',
-              height: '32px',
-              padding: '2px 6px',
+              height: 'var(--sizes-controlMd)',
+              padding: 'var(--space-0_5) var(--space-1_5)',
               border: '1px solid var(--colors-borderStrong)',
-              borderRadius: '4px',
+              borderRadius: 'var(--radii-control)',
               color: 'var(--colors-text)',
               background: 'var(--colors-surfaceSubtle)',
               '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
@@ -141,7 +141,12 @@ export const CurvePicker = forwardRef<HTMLButtonElement, CurvePickerProps>(funct
             />
           </svg>
           <span
-            className={css({ fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' })}>
+            className={css({
+              fontSize: 'var(--fontSizes-control)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            })}>
             {label}
           </span>
         </button>
@@ -178,12 +183,18 @@ export const CurvePicker = forwardRef<HTMLButtonElement, CurvePickerProps>(funct
               edit.cancel('escape')
             }
           }}>
-          <PopoverTitle className={css({ margin: '0 0 4px', fontSize: '14px' })}>{label}</PopoverTitle>
+          <PopoverTitle className={css({ margin: '0 0 var(--space-1)', fontSize: 'var(--fontSizes-controlLarge)' })}>
+            {label}
+          </PopoverTitle>
           <PopoverDescription
-            className={css({ margin: '0 0 12px', fontSize: '11px', color: 'var(--colors-textMuted)' })}>
+            className={css({
+              margin: '0 0 var(--space-3)',
+              fontSize: 'var(--fontSizes-micro)',
+              color: 'var(--colors-textMuted)',
+            })}>
             Drag points and handles to shape the curve, or choose a preset and select Apply.
           </PopoverDescription>
-          <div className={css({ display: 'grid', gap: '12px', minWidth: 0 })}>
+          <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
             <PickerWidget
               {...widgetProps}
               label={label}
@@ -200,7 +211,10 @@ export const CurvePicker = forwardRef<HTMLButtonElement, CurvePickerProps>(funct
               onEditCancel={edit.cancel}
             />
             {edit.error && edit.owner === 'widget' && !externalError && (
-              <span id={errorId} role="alert" className={css({ color: 'var(--colors-dangerText)', fontSize: '12px' })}>
+              <span
+                id={errorId}
+                role="alert"
+                className={css({ color: 'var(--colors-dangerText)', fontSize: 'var(--fontSizes-control)' })}>
                 {edit.error}
               </span>
             )}

@@ -65,13 +65,13 @@ export const ColorPicker = forwardRef<HTMLButtonElement, ColorPickerProps>(funct
               {
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: 'var(--space-1_5)',
                 minWidth: 0,
                 maxWidth: '100%',
-                height: '28px',
-                padding: '3px 6px',
+                height: 'var(--sizes-controlSm)',
+                padding: 'var(--space-0_5) var(--space-1_5)',
                 border: '1px solid var(--colors-border)',
-                borderRadius: '4px',
+                borderRadius: 'var(--radii-control)',
                 color: 'var(--colors-text)',
                 background: 'var(--colors-surfaceSubtle)',
                 cursor: 'pointer',
@@ -85,17 +85,22 @@ export const ColorPicker = forwardRef<HTMLButtonElement, ColorPickerProps>(funct
           <span
             aria-hidden="true"
             className={css({
-              width: '24px',
+              width: 'var(--sizes-controlSm)',
               alignSelf: 'stretch',
               flexShrink: 0,
-              borderRadius: '2px',
+              borderRadius: 'var(--radii-control)',
               background: 'repeating-conic-gradient(#bbb 0% 25%, #fff 0% 50%) 0 / 8px 8px',
               overflow: 'hidden',
             })}>
             <span style={{ display: 'block', height: '100%', backgroundColor: getColorCss(control.value) }} />
           </span>
           <span
-            className={css({ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '12px' })}>
+            className={css({
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontSize: 'var(--fontSizes-control)',
+            })}>
             {label}
           </span>
         </button>
@@ -117,9 +122,15 @@ export const ColorPicker = forwardRef<HTMLButtonElement, ColorPickerProps>(funct
             },
             contentProps?.css
           )}>
-          <PopoverTitle className={css({ margin: '0 0 4px', fontSize: '14px' })}>{label}</PopoverTitle>
+          <PopoverTitle className={css({ margin: '0 0 var(--space-1)', fontSize: 'var(--fontSizes-controlLarge)' })}>
+            {label}
+          </PopoverTitle>
           <PopoverDescription
-            className={css({ margin: '0 0 12px', fontSize: '11px', color: 'var(--colors-textMuted)' })}>
+            className={css({
+              margin: '0 0 var(--space-3)',
+              fontSize: 'var(--fontSizes-micro)',
+              color: 'var(--colors-textMuted)',
+            })}>
             Adjust color and opacity · {control.value.space} color{control.hdr ? ' · HDR' : ''}
           </PopoverDescription>
           <ColorWidget {...control} label={label} />

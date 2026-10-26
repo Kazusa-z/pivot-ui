@@ -22,6 +22,10 @@ import {
   type ResourceViewMode,
 } from '../../values/assets'
 import { AssetItem } from '../../widgets/collections/asset/AssetItem'
+import { Button } from '../../widgets/buttons/Button'
+import { Combobox } from '../../widgets/choices/Combobox'
+import { Select } from '../../widgets/choices/Select'
+import { Input } from '../../widgets/inputs/Input'
 import { Pagination } from '../../widgets/navigation/Pagination'
 
 export interface ResourceFilterOption {
@@ -72,20 +76,6 @@ function usePickerState<T>(value: T | undefined, initial: T, onChange: ((value: 
   return [current, request] as const
 }
 const emptyKinds: readonly string[] = []
-const controlClass = css({
-  minWidth: 0,
-  maxWidth: '100%',
-  minHeight: '30px',
-  padding: '4px 8px',
-  border: '1px solid var(--colors-borderStrong)',
-  borderRadius: '4px',
-  background: 'var(--colors-surfaceSubtle)',
-  color: 'var(--colors-text)',
-  font: 'inherit',
-  fontSize: '12px',
-  '&:disabled': { opacity: 0.5 },
-  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
-})
 type QueryResult = { key: string; provider: ResourceProvider; resetKey: unknown; page?: ResourcePage; error?: string }
 type SelectionFocus = { id: AssetId; button: HTMLButtonElement; abandoned: boolean; dispose: () => void }
 type Command = {
@@ -438,7 +428,13 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
   const queryError = currentResult?.error
   const shownError = error ?? queryError
   const ownsError = !error || !props['aria-errormessage']
-  const fieldClass = css({ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: 0, fontSize: '12px' })
+  const fieldClass = css({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-1)',
+    minWidth: 0,
+    fontSize: 'var(--fontSizes-control)',
+  })
   const outsidePage = paginationTotal !== undefined && queryPage > Math.max(1, Math.ceil(paginationTotal / pageSize))
   return (
     <div
@@ -457,7 +453,7 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
           {
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: 'var(--space-2)',
             minWidth: 0,
             maxWidth: '100%',
             color: 'var(--colors-text)',
@@ -466,13 +462,19 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
         ),
         className
       )}>
-      <div className={css({ display: 'flex', flexWrap: 'wrap', alignItems: 'end', gap: '8px' })}>
+      <div
+        className={css({
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'end',
+          gap: 'var(--space-2)',
+        })}>
         <label htmlFor={inputId} className={cx(fieldClass, css({ flex: '1 1 180px' }))}>
           Search resources
-          <input
+          <Input
             id={inputId}
             type="search"
-            className={controlClass}
+            size="sm"
             value={queryText}
             disabled={disabled || busy}
             onChange={(event) => setQueryText(event.target.value)}
@@ -481,76 +483,95 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
         {kindOptions.length > 0 && (
           <label htmlFor={kindId} className={fieldClass}>
             Kinds
-            <select
+            <Combobox
               id={kindId}
               multiple
-              className={controlClass}
+              size="sm"
               value={[...kinds]}
+              options={kindOptions.map((option) => ({
+                key: option.value,
+                value: option.value,
+                label: option.label,
+              }))}
+              placeholder="All kinds"
               disabled={disabled || busy}
-              onChange={(event) => setKinds(Array.from(event.target.selectedOptions, (option) => option.value))}>
-              {kindOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              showSelectAll
+              css={{ minWidth: '160px' }}
+              onValueChange={(next) => setKinds(next)}
+            />
           </label>
         )}
         {groupOptions.length > 0 && (
           <label htmlFor={groupInputId} className={fieldClass}>
             Group
-            <select
+            <Select
               id={groupInputId}
-              className={controlClass}
-              value={groupId}
+              size="sm"
+              value={groupId || null}
+              placeholder="All groups"
+              options={[
+                { key: 'all', value: '', label: 'All groups' },
+                ...groupOptions.map((option) => ({
+                  key: option.value,
+                  value: option.value,
+                  label: option.label,
+                })),
+              ]}
               disabled={disabled || busy}
-              onChange={(event) => setGroupId(event.target.value)}>
-              <option value="">All groups</option>
-              {groupOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              css={{ minWidth: '160px' }}
+              onValueChange={(next) => setGroupId(next ?? '')}
+            />
           </label>
         )}
-        <div role="group" aria-label="Resource view" className={css({ display: 'flex', gap: '4px' })}>
+        <div role="group" aria-label="Resource view" className={css({ display: 'flex', gap: 'var(--space-1)' })}>
           {(['grid', 'list'] as const).map((mode) => (
-            <button
+            <Button
               key={mode}
               type="button"
-              className={controlClass}
+              size="sm"
+              variant={viewMode === mode ? 'soft' : 'outline'}
               aria-pressed={viewMode === mode}
               disabled={disabled}
               onClick={() => setViewMode(mode)}>
               {mode === 'grid' ? 'Grid' : 'List'}
-            </button>
+            </Button>
           ))}
         </div>
-        <button
+        <Button
           type="button"
-          className={controlClass}
+          size="sm"
+          variant="outline"
           disabled={disabled || busy || loading}
           onClick={() => setReload((value) => value + 1)}>
           Refresh resources
-        </button>
+        </Button>
       </div>
       {shownError && ownsError && (
         <div
           role="alert"
           id={errorId}
-          className={css({ fontSize: '12px', color: 'var(--colors-dangerText)', overflowWrap: 'anywhere' })}>
+          className={css({
+            fontSize: 'var(--fontSizes-control)',
+            color: 'var(--colors-dangerText)',
+            overflowWrap: 'anywhere',
+          })}>
           {shownError}
         </div>
       )}
       {loading && (
-        <p role="status" className={css({ margin: 0, fontSize: '12px' })}>
+        <p role="status" className={css({ margin: 0, fontSize: 'var(--fontSizes-control)' })}>
           Loading resources…
         </p>
       )}
       {data && (
         <>
-          <p role="status" className={css({ margin: 0, fontSize: '12px', color: 'var(--colors-textMuted)' })}>
+          <p
+            role="status"
+            className={css({
+              margin: 0,
+              fontSize: 'var(--fontSizes-control)',
+              color: 'var(--colors-textMuted)',
+            })}>
             {data.total === 0 ? 'No resources found.' : `${data.total} resource${data.total === 1 ? '' : 's'}`}
             {command?.kind === 'select' ? ' — Selecting…' : ''}
           </p>
@@ -558,11 +579,18 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
             <section
               key={group.id === null ? 'ungrouped' : `group:${group.id}`}
               aria-label={group.label}
-              className={css({ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: 0 })}>
-              <h3 className={css({ margin: 0, fontSize: '12px', fontWeight: 600 })}>{group.label}</h3>
+              className={css({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--space-1_5)',
+                minWidth: 0,
+              })}>
+              <h3 className={css({ margin: 0, fontSize: 'var(--fontSizes-control)', fontWeight: 600 })}>
+                {group.label}
+              </h3>
               <ul
                 className={css(
-                  { listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '8px', minWidth: 0 },
+                  { listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 'var(--space-2)', minWidth: 0 },
                   viewMode === 'grid'
                     ? { gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 128px), 1fr))' }
                     : { gridTemplateColumns: 'minmax(0, 1fr)' }
@@ -594,13 +622,14 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
       )}
       {paginationTotal !== undefined &&
         (outsidePage ? (
-          <button
+          <Button
             type="button"
-            className={controlClass}
+            size="sm"
+            variant="outline"
             disabled={disabled || busy}
             onClick={() => setPage(Math.max(1, Math.ceil(paginationTotal / pageSize)))}>
             Go to last available page
-          </button>
+          </Button>
         ) : (
           <Pagination
             totalCount={paginationTotal}

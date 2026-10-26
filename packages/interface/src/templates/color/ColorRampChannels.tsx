@@ -10,6 +10,8 @@ import {
   type ColorRampChannelsValue,
 } from '../../values/color-ramp'
 import { InputNumber } from '../../widgets/inputs/InputNumber'
+import { Button } from '../../widgets/buttons/Button'
+import { Select } from '../../widgets/choices/Select'
 import { ColorRampControls, defaultRamp, nextStopId, RampTrack, rampStyles } from './RampControls'
 import { getColorRampChannelsCss } from './color-ramp-preview'
 import { useRampSelection, useRampState } from './useRampState'
@@ -143,7 +145,10 @@ export const ColorRampChannels = forwardRef<HTMLDivElement, ColorRampChannelsPro
           editor.cancel('escape')
         }
       }}>
-      <div aria-label="Combined ramp preview" className={rampStyles.checker} style={{ height: 24, borderRadius: 4 }}>
+      <div
+        aria-label="Combined ramp preview"
+        className={rampStyles.checker}
+        style={{ height: 'var(--sizes-controlSm)', borderRadius: 'var(--radii-control)' }}>
         <div style={{ height: '100%', backgroundImage: getColorRampChannelsCss(current) }} />
       </div>
       <ColorRampControls
@@ -160,7 +165,14 @@ export const ColorRampChannels = forwardRef<HTMLDivElement, ColorRampChannelsPro
         resetKey={resetKey}
         errorId={error}
       />
-      <hr className={css({ width: '100%', border: 0, borderTop: '1px solid var(--colors-border)', margin: '4px 0' })} />
+      <hr
+        className={css({
+          width: '100%',
+          border: 0,
+          borderTop: '1px solid var(--colors-border)',
+          margin: 'var(--space-1) 0',
+        })}
+      />
       <RampTrack
         label="Alpha stop"
         stops={current.alpha.map((stop) => ({ ...stop, swatch: `rgba(0,0,0,${stop.alpha})` }))}
@@ -190,22 +202,23 @@ export const ColorRampChannels = forwardRef<HTMLDivElement, ColorRampChannelsPro
         onRemove={remove}
       />
       <div className={rampStyles.row}>
-        <select
+        <Select
           aria-label="Selected alpha stop"
-          className={rampStyles.control}
-          value={active?.id ?? ''}
+          size="sm"
+          value={active?.id ?? null}
+          placeholder="No stop selected"
+          options={current.alpha.map((stop) => ({
+            key: stop.id,
+            value: stop.id,
+            label: `${stop.id} (${Math.round(stop.position * 100)}%)`,
+          }))}
           disabled={disabled || editor.phase === 'pending' || !current.alpha.length}
-          onChange={(event) => alphaSelection.select(event.target.value || null)}>
-          {!active && <option value="">No stop selected</option>}
-          {current.alpha.map((stop) => (
-            <option key={stop.id} value={stop.id}>
-              {stop.id} ({Math.round(stop.position * 100)}%)
-            </option>
-          ))}
-        </select>
-        <button
-          type="button"
-          className={rampStyles.control}
+          css={{ flex: '1 1 150px' }}
+          onValueChange={(id) => alphaSelection.select(id)}
+        />
+        <Button
+          size="sm"
+          variant="outline"
           disabled={locked}
           onClick={() => {
             const position = active?.position ?? 0.5
@@ -220,14 +233,10 @@ export const ColorRampChannels = forwardRef<HTMLDivElement, ColorRampChannelsPro
             ])
           }}>
           Add alpha stop
-        </button>
-        <button
-          type="button"
-          className={rampStyles.control}
-          disabled={locked || !active}
-          onClick={() => active && remove(active.id)}>
+        </Button>
+        <Button size="sm" variant="outline" disabled={locked || !active} onClick={() => active && remove(active.id)}>
           Delete alpha stop
-        </button>
+        </Button>
       </div>
       {active && (
         <div className={rampStyles.row}>

@@ -1,175 +1,286 @@
-import { StrictMode, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '../src/widgets/buttons'
+import { Checkbox } from '../src/widgets/choices/Checkbox'
 import { ColorRamp } from '../src/templates/color/ColorRamp'
 import { ColorRampPicker } from '../src/templates/color/ColorRampPicker'
 import type { ColorRampValue } from '../src/values/color-ramp'
-import { ContractFrame, ControlButton, StatePanel, contractStyles } from './support/ContractFrame'
+import { css } from '../styled-system/css'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryCode,
+  StoryProps,
+  StoryState,
+  StoryKeyboard,
+  StoryNote,
+} from './support/StoryPage'
 
 const initialRamp: ColorRampValue = {
   interpolation: 'linear',
   stops: [
     { id: 'red', position: 0, color: { space: 'srgb', r: 1, g: 0.1, b: 0.05, a: 1 } },
     { id: 'blue', position: 0.5, color: { space: 'srgb', r: 0.1, g: 0.2, b: 1, a: 1 } },
-    { id: 'green', position: 0.5, color: { space: 'srgb', r: 0.1, g: 1, b: 0.25, a: 0.6 } },
+    { id: 'green', position: 1, color: { space: 'srgb', r: 0.1, g: 1, b: 0.25, a: 0.6 } },
   ],
 }
-function RampExample({
+const constantRamp: ColorRampValue = { ...initialRamp, interpolation: 'constant' }
+const cancelReasons = ['escape', 'pointer-cancel', 'window-blur', 'disabled', 'read-only']
+const emptyRamp: ColorRampValue = { interpolation: 'linear', stops: [] }
+
+function RampDemo({
   empty = false,
-  refuse = false,
-  asynchronous = false,
+  readOnly = false,
+  disabled = false,
+  narrow = false,
 }: {
   empty?: boolean
-  refuse?: boolean
-  asynchronous?: boolean
+  readOnly?: boolean
+  disabled?: boolean
+  narrow?: boolean
 }) {
-  const initial = empty ? { interpolation: 'linear' as const, stops: [] } : initialRamp
-  const [value, setValue] = useState<ColorRampValue>(initial)
+  const [value, setValue] = useState<ColorRampValue>(empty ? emptyRamp : initialRamp)
   const [selected, setSelected] = useState<string | null>(empty ? null : 'blue')
+  const [revision, setRevision] = useState(0)
+  const [reject, setReject] = useState(false)
   const [events, setEvents] = useState<string[]>([])
-  const [revision, setRevision] = useState(0)
-  const [reject, setReject] = useState(asynchronous)
-  const [mounted, setMounted] = useState(true)
-  const currentRevision = useRef(revision)
-  currentRevision.current = revision
   const start = useRef(value)
-  const append = (text: string) => setEvents((current) => [...current.slice(-11), text])
+  const record = (event: string) => setEvents((current) => [...current.slice(-8), event])
+  const locked = readOnly || disabled
   return (
-    <ContractFrame
-      title="颜色渐变与停靠点"
-      description="先分别选择位于同一位置的 blue 和 green，再拖动其中一个点，观察渐变与下方数据。也可用方向键调整位置、Delete 删除或 Escape 撤销本次调整。接入时用 onValueChange 更新预览，在 onValueCommit 中保存整条渐变。"
-      onReset={() => {
-        setValue(initial)
-        setSelected(empty ? null : 'blue')
-        setRevision((current) => current + 1)
-        setEvents([])
-        setMounted(true)
-      }}>
-      <div className={contractStyles.row}>
-        <ControlButton
-          onClick={() => {
-            setValue({ ...value, stops: [...value.stops].reverse() })
-            setRevision((current) => current + 1)
-          }}>
-          Reverse source order
-        </ControlButton>
-        {asynchronous && (
-          <>
-            <ControlButton onClick={() => setReject((current) => !current)}>
-              Commit: {reject ? 'Reject' : 'Accept'}
-            </ControlButton>
-            <ControlButton
+    <StoryCard
+      title={
+        readOnly ? 'Read only' : disabled ? 'Disabled' : empty ? 'Empty' : narrow ? 'Narrow 280px' : 'Controlled ramp'
+      }
+      description={
+        empty
+          ? '没有停靠点时仍可看到轨道；先在空轨道上添加一个颜色点。'
+          : readOnly
+            ? '可以查看和选择停靠点，但不能修改位置、颜色或结构。'
+            : disabled
+              ? '整个编辑器禁用；保留当前值供读取。'
+              : '拖动、键盘、添加/删除停靠点和切换插值都通过同一份 value 回传。'
+      }>
+      <div className={css({ width: '100%', maxWidth: narrow ? '280px' : '360px', minWidth: 0 })}>
+        <ColorRamp
+          value={value}
+          activeStopId={selected}
+          onActiveStopIdChange={(id) => {
+            setSelected(id)
+            record(`select:${id ?? 'none'}`)
+          }}
+          readOnly={readOnly}
+          disabled={disabled}
+          resetKey={revision}
+          onEditStart={(source) => {
+            start.current = value
+            record(`begin:${source}`)
+          }}
+          onValueChange={(next) => {
+            setValue(next)
+            record('preview')
+          }}
+          onValueCommit={async (next, reason) => {
+            record(`commit:${reason}`)
+            await new Promise((resolve) => setTimeout(resolve, 220))
+            if (reject) {
+              setReject(false)
+              setValue(start.current)
+              throw new Error('渐变未保存：请重试，或关闭 Reject next commit。')
+            }
+            setValue(next)
+          }}
+          onEditCancel={(reason) => {
+            record(`cancel:${reason}`)
+            if (cancelReasons.includes(reason)) setValue(start.current)
+          }}
+        />
+      </div>
+      {!locked && (
+        <>
+          <StoryRow>
+            <Button
+              size="sm"
+              variant="outline"
               onClick={() => {
-                setMounted((current) => !current)
+                const next = { ...value, stops: [...value.stops].reverse() }
+                setValue(next)
                 setRevision((current) => current + 1)
+                record('reverse source order')
               }}>
-              {mounted ? 'Unmount' : 'Mount'}
-            </ControlButton>
-          </>
-        )}
-      </div>
-      {mounted && (
-        <StrictMode>
-          <ColorRamp
-            value={value}
-            activeStopId={selected}
-            onActiveStopIdChange={(id) => {
-              setSelected(id)
-              append(`select ${id}`)
-            }}
-            resetKey={revision}
-            onEditStart={(source) => {
-              start.current = value
-              append(`start ${source}`)
-            }}
-            onValueChange={(next) => {
-              append('value request')
-              if (!refuse) setValue(next)
-            }}
-            onValueCommit={async (next, reason) => {
-              const initialValue = start.current
-              append(`commit ${reason}`)
-              if (asynchronous) {
-                await new Promise((resolve) => setTimeout(resolve, 500))
-                if (currentRevision.current !== revision) return
-                if (reject) {
-                  setValue(initialValue)
-                  throw Error('渐变未保存，请将 Commit 切换为 Accept 后重试。')
-                }
-              }
-              if (!refuse) setValue(next)
-            }}
-            onEditCancel={(reason) => {
-              append(`cancel ${reason}`)
-              if (!['external-update', 'target-change', 'reset', 'unmount'].includes(reason)) setValue(start.current)
-            }}
-          />
-        </StrictMode>
+              Reverse source order
+            </Button>
+            <Checkbox checked={reject} onCheckedChange={setReject} label="Reject next commit" />
+            <Button
+              size="sm"
+              variant="subtle"
+              onClick={() => {
+                const next = empty ? emptyRamp : initialRamp
+                start.current = next
+                setValue(next)
+                setSelected(empty ? null : 'blue')
+                setRevision((current) => current + 1)
+                setReject(false)
+                setEvents([])
+              }}>
+              Reset
+            </Button>
+          </StoryRow>
+          <StoryState label="Ramp state" value={{ value, selected, revision, reject, events }} />
+        </>
       )}
-      <StatePanel label="渐变数据、当前选择与编辑事件" value={{ value, selected, revision, refuse, events }} />
-    </ContractFrame>
+    </StoryCard>
   )
 }
-function EmptyRamp() {
-  return <RampExample empty />
-}
-function RefusedRamp() {
-  return <RampExample refuse />
-}
-function PendingRamp() {
-  return <RampExample asynchronous />
-}
-function RampStates() {
-  const [revision, setRevision] = useState(0)
+
+function Variants() {
   return (
-    <ContractFrame
-      title="只读、禁用与窄空间布局"
-      description="比较只读、禁用和 240px 窄布局中的编辑器。可在只读示例里选择点查看颜色，再用 Tab 体验各控件的焦点；第三个示例可以直接编辑，方便观察窄表单中的换行效果。"
-      onReset={() => setRevision((value) => value + 1)}>
-      <ColorRamp value={initialRamp} readOnly aria-label="Read-only ramp" />
-      <ColorRamp value={initialRamp} disabled aria-label="Disabled ramp" />
-      <div style={{ maxWidth: 240 }}>
-        <ColorRamp key={revision} defaultValue={initialRamp} />
-      </div>
-    </ContractFrame>
+    <StoryGrid>
+      <StoryCard title="Linear" description="颜色在相邻停靠点之间连续插值。">
+        <ColorRamp defaultValue={initialRamp} aria-label="Linear color ramp" />
+      </StoryCard>
+      <StoryCard title="Constant" description="停靠点之间保持前一个颜色，适合色阶或分段材质。">
+        <ColorRamp defaultValue={constantRamp} aria-label="Constant color ramp" />
+      </StoryCard>
+    </StoryGrid>
   )
 }
-function RampPopup() {
+
+function RampPickerDemo() {
   const [value, setValue] = useState(initialRamp)
   const [revision, setRevision] = useState(0)
   return (
-    <ContractFrame
-      title="弹出式渐变编辑器"
-      description="点击渐变预览打开编辑器，再点击当前颜色打开单色选择器。改好颜色后关闭并重新打开，查看保存的渐变；应用只需用 value/onValueChange 连接状态，就能把这种紧凑入口放进表单。"
-      onReset={() => {
-        setValue(initialRamp)
-        setRevision((value) => value + 1)
-      }}>
-      <div style={{ width: 180 }}>
+    <StoryCard title="ColorRampPicker" description="紧凑色带按钮打开弹出编辑器；适合属性面板。">
+      <div className={css({ width: '180px', maxWidth: '100%' })}>
         <ColorRampPicker value={value} onValueChange={setValue} resetKey={revision} label="Edit material ramp" />
       </div>
-      <StatePanel label="Ramp" value={value} />
-    </ContractFrame>
+      <Button size="sm" variant="subtle" onClick={() => setRevision((current) => current + 1)}>
+        Reset picker
+      </Button>
+      <StoryState label="Picker value" value={value} />
+    </StoryCard>
   )
 }
+
 const meta = {
   tags: ['autodocs'],
-  title: 'Templates/ColorRamp',
-  component: ColorRamp,
   parameters: {
     docs: {
       description: {
         component:
-          'ColorRamp 用于编辑随位置变化的颜色渐变；ColorRampPicker 提供紧凑按钮和弹出编辑器。每个停靠点都有稳定 id、0 到 1 的 position 和一个颜色值。\n\n选择停靠点只切换编辑对象；拖动、键盘移动、增删或改色通过 onValueChange 更新整个渐变，并由 onValueCommit 表示一次完整编辑。应用保存 value，并在受控取消时恢复编辑前的值。\n\ninterpolation 控制线性或阶梯过渡，同一位置可以有多个独立停靠点。颜色按声明的色彩空间插值；HDR 值保留在数据中，预览会限制到屏幕可显示范围。',
+          'ColorRamp 编辑随位置变化的颜色渐变，ColorRampPicker 提供紧凑入口和弹出编辑器。每个停靠点有稳定 id、0–1 position 和颜色值；interpolation 控制线性或阶梯过渡。选择停靠点只切换编辑对象，结构、位置和颜色修改通过 onValueChange/onValueCommit 回传。',
       },
     },
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof ColorRamp>
+  title: 'Color/ColorRamp',
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-export const Overview: Story = { render: () => <RampExample /> }
-export const Empty: Story = { render: () => <EmptyRamp /> }
-export const ControlledRefusal: Story = { render: () => <RefusedRamp /> }
-export const PendingAndReset: Story = { render: () => <PendingRamp /> }
-export const StatesAndNarrow: Story = { render: () => <RampStates /> }
-export const Picker: Story = { render: () => <RampPopup /> }
+
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Color"
+      title="ColorRamp"
+      summary="停靠点、插值和颜色共同组成一条渐变。轨道支持指针拖动、键盘移动、添加/删除，以及同一位置上的多个独立停靠点。"
+      meta={
+        <>
+          <span>0–1 positions</span>
+          <span>·</span>
+          <span>linear / constant</span>
+          <span>·</span>
+          <span>stable stop ids</span>
+        </>
+      }>
+      <StorySection title="Variants" description="线性过渡与阶梯过渡共用轨道和停靠点，只改变插值方式。">
+        <Variants />
+      </StorySection>
+
+      <StorySection title="Behavior" description="选择、移动、添加、删除和切换插值都会回传完整 ramp。">
+        <RampDemo />
+      </StorySection>
+
+      <StorySection title="States" description="空 ramp、只读、禁用和窄布局仍然保留可读的轨道。">
+        <StoryGrid>
+          <RampDemo empty />
+          <RampDemo readOnly />
+          <RampDemo disabled />
+          <RampDemo narrow />
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Picker" description="弹层内使用同一个编辑器；关闭后保留应用接受的值。">
+        <RampPickerDemo />
+      </StorySection>
+
+      <StorySection title="Density and sizing">
+        <StoryNote>
+          ColorRamp 没有 density 变体：内部 Select、Button 和 InputNumber 使用 24px 紧凑档，面板圆角 6px。 轨道在 280px
+          宽度下仍可操作，但操作按钮会换行；更窄时优先把编辑器放进 Popover 或单独面板。
+        </StoryNote>
+      </StorySection>
+
+      <StorySection title="Keyboard and accessibility">
+        <StoryKeyboard
+          rows={[
+            { keys: 'Tab', action: '在停靠点、插值选择、位置输入和颜色按钮之间移动。' },
+            { keys: ['←', '→'], action: '移动当前停靠点 0.01；Shift 为 0.1，Ctrl/Cmd 为 0.001。' },
+            { keys: ['Home', 'End'], action: '把当前停靠点移到 0 或 1。' },
+            { keys: ['Delete', 'Backspace'], action: '删除当前停靠点。' },
+            { keys: 'Escape', action: '取消本次拖动或键盘移动，恢复编辑前的 ramp。' },
+          ]}
+        />
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<ColorRamp
+  value={ramp}
+  activeStopId={selected}
+  onActiveStopIdChange={setSelected}
+  onValueChange={setRamp}
+  onValueCommit={saveRamp}
+  onEditCancel={restoreRamp}
+/>`}
+          />
+          <StoryProps
+            rows={[
+              {
+                name: 'value / defaultValue',
+                type: 'ColorRampValue',
+                description: 'interpolation + stops；受控时由应用保存。',
+              },
+              { name: 'activeStopId', type: 'string | null', description: '当前编辑的停靠点；只影响选择，不修改值。' },
+              {
+                name: 'interpolation',
+                type: "'linear' | 'constant'",
+                defaultValue: "'linear'",
+                description: '颜色在停靠点之间的过渡方式。',
+              },
+              {
+                name: 'disabled / readOnly',
+                type: 'boolean',
+                defaultValue: 'false',
+                description: '禁用或只读；仍可选择查看。',
+              },
+              { name: 'hdr', type: 'boolean', defaultValue: 'false', description: '允许 HDR 颜色值。' },
+              { name: 'onValueChange', type: '(value) => void', description: '拖动/编辑过程中的完整预览值。' },
+              {
+                name: 'onValueCommit',
+                type: '(value, reason) => void | Promise<void>',
+                description: '一次完整编辑；可异步保存并抛错。',
+              },
+              { name: 'onEditCancel', type: '(reason) => void', description: '取消时恢复应用认为应显示的值。' },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
+  ),
+}

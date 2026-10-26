@@ -1,117 +1,94 @@
-import { StrictMode, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { ResourcePicker } from '../src/templates/resources/ResourcePicker'
 import type { ResourceProvider } from '../src/contracts/resources'
+import { ResourcePicker } from '../src/templates/resources/ResourcePicker'
 import type { ResourceViewMode } from '../src/values/assets'
-import { ContractFrame, ControlButton, StatePanel, contractStyles } from './support/ContractFrame'
+import { Button } from '../src/widgets/buttons'
+import { css } from '../styled-system/css'
 import {
-  createMockResourceProvider,
-  mockAssets,
-  resourceGroupOptions,
-  resourceKindOptions,
-} from './support/mock-resource-provider'
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryCode,
+  StoryProps,
+  StoryState,
+  StoryKeyboard,
+  StoryNote,
+} from './support/StoryPage'
+import { createMockResourceProvider, resourceGroupOptions, resourceKindOptions } from './support/mock-resource-provider'
 
-function PickerExample({
-  empty = false,
-  capabilities = true,
-  initialReadOnly = false,
-  initialDisabled = false,
-  refuse = false,
-  async = false,
-  narrow = false,
-}: {
-  empty?: boolean
-  capabilities?: boolean
-  initialReadOnly?: boolean
-  initialDisabled?: boolean
-  refuse?: boolean
-  async?: boolean
-  narrow?: boolean
-}) {
-  const [revision, setRevision] = useState(0),
-    [host, setHost] = useState(0)
-  const [selectedId, setSelectedId] = useState<string | null>('outside-current-page')
-  const [queryText, setQueryText] = useState(''),
-    [kinds, setKinds] = useState<readonly string[]>([]),
-    [groupId, setGroupId] = useState('')
-  const [viewMode, setViewMode] = useState<ResourceViewMode>('grid'),
-    [page, setPage] = useState(1)
-  const [readOnly, setReadOnly] = useState(initialReadOnly),
-    [disabled, setDisabled] = useState(initialDisabled)
-  const [events, setEvents] = useState<string[]>([]),
-    [reject, setReject] = useState(false)
-  const context = useRef({ revision, host })
-  context.current = { revision, host }
-  const mock = useMemo(
-    () =>
-      createMockResourceProvider({
-        assets: empty
-          ? []
-          : host
-            ? mockAssets.map((asset) => ({ ...asset, name: `Other host ${asset.name}` }))
-            : mockAssets,
-        delayMs: async ? 450 : 0,
-      }),
-    [revision, host, empty, async]
-  )
-  const provider = useMemo<ResourceProvider>(
-    () => (capabilities ? mock : { query: (query) => mock.query(query), get: (id) => mock.get(id) }),
-    [mock, capabilities]
-  )
-  const log = (event: string) => setEvents((previous) => [...previous.slice(-11), event])
-  function reset() {
-    setRevision((value) => value + 1)
-    setSelectedId('outside-current-page')
+const pickerWidth = css({ width: '100%', minWidth: 0 })
+
+function PickerExample() {
+  const [selectedId, setSelectedId] = useState<string | null>('asset-4')
+  const [queryText, setQueryText] = useState('')
+  const [kinds, setKinds] = useState<readonly string[]>([])
+  const [groupId, setGroupId] = useState('')
+  const [viewMode, setViewMode] = useState<ResourceViewMode>('grid')
+  const [page, setPage] = useState(1)
+  const [readOnly, setReadOnly] = useState(false)
+  const [disabled, setDisabled] = useState(false)
+  const [reject, setReject] = useState(false)
+  const [events, setEvents] = useState<string[]>([])
+  const provider = useMemo(() => createMockResourceProvider({ delayMs: 250 }), [])
+
+  const log = (event: string) => setEvents((previous) => [...previous.slice(-9), event])
+  const reset = () => {
+    setSelectedId('asset-4')
     setQueryText('')
     setKinds([])
     setGroupId('')
     setViewMode('grid')
     setPage(1)
-    setEvents([])
+    setReadOnly(false)
+    setDisabled(false)
     setReject(false)
-    setReadOnly(initialReadOnly)
-    setDisabled(initialDisabled)
+    setEvents([])
   }
+
   return (
-    <ContractFrame
-      title="搜索和选择资源"
-      description="输入关键词，切换类型、分组或页码来查找资源，然后点击一项查看选中高亮与下方记录。再点击 Reject selection asynchronously 体验保存失败后的重试。此例用 onSelect 处理选择请求，成功后由 onSelectedIdChange 更新 selectedId；provider 提供查询和改名。"
-      onReset={reset}>
-      <div className={contractStyles.row}>
-        <ControlButton onClick={() => setReadOnly((value) => !value)}>
+    <StoryCard
+      title="Search, filter and select"
+      description="受控查询状态。选择请求先经过 onSelect；拒绝时显示错误并保留原选择。">
+      <StoryRow>
+        <Button size="sm" variant="outline" onClick={reset}>
+          Reset
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setReadOnly((value) => !value)}>
           {readOnly ? 'Allow selection' : 'Read only'}
-        </ControlButton>
-        <ControlButton onClick={() => setDisabled((value) => !value)}>
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setDisabled((value) => !value)}>
           {disabled ? 'Enable picker' : 'Disable picker'}
-        </ControlButton>
-        <ControlButton onClick={() => setHost((value) => value + 1)}>Replace provider</ControlButton>
-        <ControlButton
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setReject((value) => !value)}>
+          {reject ? 'Accept selection' : 'Reject selection'}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
           onClick={() => {
-            mock.rejectNext('query')
-            log('Next query will fail')
+            provider.rejectNext('query')
+            log('next query will fail')
           }}>
           Fail next query
-        </ControlButton>
-        {capabilities && (
-          <ControlButton
-            onClick={() => {
-              mock.rejectNext('rename')
-              log('Next rename will fail')
-            }}>
-            Fail next rename
-          </ControlButton>
-        )}
-        <ControlButton onClick={() => setReject((value) => !value)}>
-          {reject ? 'Accept selection' : 'Reject selection asynchronously'}
-        </ControlButton>
-      </div>
-      <div style={{ width: narrow ? 280 : '100%', maxWidth: '100%' }}>
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            provider.rejectNext('rename')
+            log('next rename will fail')
+          }}>
+          Fail next rename
+        </Button>
+      </StoryRow>
+      <div className={pickerWidth}>
         <ResourcePicker
           provider={provider}
           selectedId={selectedId}
-          onSelectedIdChange={(id) => {
-            if (!refuse) setSelectedId(id)
-          }}
+          onSelectedIdChange={setSelectedId}
           queryText={queryText}
           onQueryTextChange={setQueryText}
           kinds={kinds}
@@ -127,58 +104,190 @@ function PickerExample({
           pageSize={6}
           readOnly={readOnly}
           disabled={disabled}
-          resetKey={revision}
           onSelect={async (id) => {
-            const token = context.current
             log(`select ${id}`)
-            if (async || reject) await new Promise((resolve) => setTimeout(resolve, 500))
-            if (
-              token !== context.current &&
-              (token.revision !== context.current.revision || token.host !== context.current.host)
-            )
-              return false
-            if (reject) throw Error('此资源未被接受，请取消拒绝选项后重试。')
-            return !refuse
+            await new Promise((resolve) => setTimeout(resolve, 300))
+            if (reject) throw new Error('The selection was rejected. Turn off Reject selection and retry.')
+            return true
           }}
-          onSelectSuccess={(id) => log(`selection completed ${id}`)}
+          onSelectSuccess={(id) => log(`accepted ${id}`)}
         />
       </div>
-      <StatePanel
-        label="当前选择与浏览状态"
+      <StoryState
+        label="Picker state"
         value={{ selectedId, queryText, kinds, groupId, viewMode, page, readOnly, disabled, events }}
       />
-    </ContractFrame>
+    </StoryCard>
+  )
+}
+
+function StatePicker({
+  title,
+  description,
+  provider,
+  selectedId = null,
+  disabled,
+  readOnly,
+}: {
+  title: string
+  description: string
+  provider: ResourceProvider
+  selectedId?: string | null
+  disabled?: boolean
+  readOnly?: boolean
+}) {
+  return (
+    <StoryCard title={title} description={description}>
+      <ResourcePicker
+        provider={provider}
+        selectedId={selectedId}
+        pageSize={4}
+        disabled={disabled}
+        readOnly={readOnly}
+        kindOptions={resourceKindOptions}
+        groupOptions={resourceGroupOptions}
+      />
+    </StoryCard>
+  )
+}
+
+function StateExamples() {
+  const empty = useMemo(() => createMockResourceProvider({ assets: [] }), [])
+  const loading = useMemo(() => createMockResourceProvider({ delayMs: 1200 }), [])
+  const error = useMemo<ResourceProvider>(
+    () => ({
+      query: async () => {
+        throw new Error('The resource library is unavailable.')
+      },
+      get: async () => {
+        throw new Error('The resource library is unavailable.')
+      },
+    }),
+    []
+  )
+  const normal = useMemo(() => createMockResourceProvider(), [])
+  return (
+    <StoryGrid>
+      <StatePicker title="Empty" description="Provider 返回 total=0。" provider={empty} />
+      <StatePicker title="Loading" description="延迟 1200ms，保留加载状态。" provider={loading} />
+      <StatePicker title="Error" description="查询抛错，错误由应用显示。" provider={error} />
+      <StatePicker
+        title="Read only"
+        description="可浏览、筛选和查看，但不能选择。"
+        provider={normal}
+        selectedId="asset-1"
+        readOnly
+      />
+      <StatePicker
+        title="Disabled"
+        description="整个浏览器不可交互。"
+        provider={normal}
+        selectedId="asset-1"
+        disabled
+      />
+    </StoryGrid>
   )
 }
 
 const meta = {
   tags: ['autodocs'],
-  title: 'Templates/Resources/ResourcePicker',
-  component: PickerExample,
   parameters: {
     docs: {
       description: {
         component:
-          'ResourcePicker 是可嵌入弹层或页面的资源浏览器，支持搜索、类型与分组筛选、分页，以及列表和网格显示。\n\n用 selectedId 表示选中资源，在 onSelectedIdChange 中更新这个 ID。onSelect(id, asset) 可先校验或异步保存选择：返回 true 或 void 后会调用 onSelectedIdChange 与 onSelectSuccess，返回 false 或抛出错误则显示提示并保留原选择。\n\nprovider 提供查询和可选改名方法。queryText、viewMode、kinds、groupId 和 page 可由 React 状态控制；需要记住浏览偏好时，应用保存这些状态即可。readOnly 适合只浏览资源的界面。',
+          'ResourcePicker 在页面或弹层中浏览资源，支持搜索、类型与分组筛选、分页和网格/列表视图。selectedId 表示当前选择，onSelect 可异步接受或拒绝；provider 负责查询与可选改名。',
       },
     },
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof PickerExample>
+  title: 'Resources/ResourcePicker',
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-export const Overview: Story = {}
-export const ControlledRefusal: Story = { args: { refuse: true } }
-export const AsyncAndReset: Story = {
-  args: { async: true },
-  render: (args) => (
-    <StrictMode>
-      <PickerExample {...args} />
-    </StrictMode>
+
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Resources"
+      title="ResourcePicker"
+      summary="搜索、筛选、翻页，再选择一项资源。把查询状态放在 React 中，把接受逻辑放在 onSelect；浏览器本身不假设资源数据的来源。"
+      meta={
+        <>
+          <span>Grid / list</span>
+          <span>·</span>
+          <span>Controlled filters</span>
+          <span>·</span>
+          <span>Async onSelect</span>
+        </>
+      }>
+      <StorySection
+        title="Browser"
+        description="这个例子把 selectedId、query、kinds、groupId、viewMode 和 page 全部受控，便于观察状态变化。">
+        <PickerExample />
+      </StorySection>
+
+      <StorySection title="States" description="空结果、加载、查询失败、只读和禁用分别由不同状态表达。">
+        <StateExamples />
+        <StoryNote>只读仍允许浏览和查看资源；禁用会把整个浏览器从交互中移除。</StoryNote>
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<ResourcePicker
+  provider={provider}
+  selectedId={selectedId}
+  onSelectedIdChange={setSelectedId}
+  queryText={query}
+  onQueryTextChange={setQuery}
+  page={page}
+  onPageChange={setPage}
+  pageSize={24}
+  onSelect={async (id) => saveSelection(id)}
+/>`}
+          />
+          <StoryProps
+            rows={[
+              { name: 'provider', type: 'ResourceProvider', description: '查询、读取和可选改名。' },
+              { name: 'selectedId', type: 'AssetId | null', defaultValue: 'null', description: '受控选中资源。' },
+              {
+                name: 'onSelect',
+                type: '(id, asset) => boolean | void | Promise<...>',
+                description: '接受或拒绝选择请求。',
+              },
+              {
+                name: 'queryText / kinds / groupId',
+                type: 'controlled filters',
+                description: '搜索与筛选；改变时自动回到第一页。',
+              },
+              {
+                name: 'page / pageSize',
+                type: 'number',
+                defaultValue: '1 / 24',
+                description: '分页；page 受控时由应用接受。',
+              },
+              {
+                name: 'readOnly / disabled',
+                type: 'boolean',
+                defaultValue: 'false',
+                description: '只读保留浏览，禁用移除交互。',
+              },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Keyboard and accessibility">
+        <StoryKeyboard
+          rows={[
+            { keys: 'Tab', action: '在搜索、筛选、视图切换、资源项和分页之间移动。' },
+            { keys: ['Enter', 'Space'], action: '选择当前资源；只读时只浏览。' },
+            { keys: 'Escape', action: '关闭由上层弹层承载的浏览器；页面内版本保持打开。' },
+            { keys: 'F2 / double click', action: '在 provider 支持改名时编辑资源名称。' },
+          ]}
+        />
+      </StorySection>
+    </StoryPage>
   ),
 }
-export const Empty: Story = { args: { empty: true } }
-export const ReadOnly: Story = { args: { initialReadOnly: true } }
-export const Disabled: Story = { args: { initialDisabled: true } }
-export const WithoutOptionalCapabilities: Story = { args: { capabilities: false } }
-export const Narrow: Story = { args: { narrow: true } }

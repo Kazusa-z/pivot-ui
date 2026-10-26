@@ -2,158 +2,313 @@ import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { NumericSlider } from '../src/templates/numeric/NumericSlider'
 import type { NumericCancelReason } from '../src/interaction/numeric/types'
+import { Button } from '../src/widgets/buttons/Button'
+import { Checkbox } from '../src/widgets/choices/Checkbox'
 import { css } from '../styled-system/css'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryCode,
+  StoryProps,
+  StoryState,
+  StoryKeyboard,
+} from './support/StoryPage'
 
-const frame = css({ display: 'grid', gap: '12px', width: 'min(460px, 100%)', minWidth: 0 })
-const rollback = (reason: NumericCancelReason) =>
-  ['escape', 'pointer-cancel', 'window-blur', 'read-only', 'disabled'].includes(reason)
+const sliderWidth = css({ width: 'min(320px, 100%)', minWidth: 0 })
+const rollbackReasons = new Set<NumericCancelReason>([
+  'escape',
+  'pointer-cancel',
+  'window-blur',
+  'read-only',
+  'disabled',
+])
+
+function ExposureDemo() {
+  const [value, setValue] = useState(25)
+  const [events, setEvents] = useState<string[]>([])
+  const start = useRef(value)
+  const record = (event: string) => setEvents((list) => [...list.slice(-9), event])
+  return (
+    <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
+      <div className={sliderWidth}>
+        <NumericSlider
+          id="numeric-slider-exposure"
+          label="Exposure"
+          value={value}
+          min={0}
+          max={100}
+          step={1}
+          dragStep={0.1}
+          precision={2}
+          unit="%"
+          onEditStart={(source) => {
+            start.current = value
+            record(`begin:${source}`)
+          }}
+          onValueChange={(next) => {
+            setValue(next)
+            record(`change:${next}`)
+          }}
+          onValueCommit={(next, reason) => record(`commit:${next}:${reason}`)}
+          onEditCancel={(reason) => {
+            if (rollbackReasons.has(reason)) setValue(start.current)
+            record(`cancel:${reason}`)
+          }}
+        />
+      </div>
+      <StoryRow>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setValue(25)
+            setEvents([])
+          }}>
+          Reset
+        </Button>
+      </StoryRow>
+      <StoryState label="Exposure" value={{ value, events }} />
+    </div>
+  )
+}
+
+function SoftRangeDemo() {
+  const [value, setValue] = useState(150)
+  const start = useRef(value)
+  return (
+    <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
+      <p className={css({ margin: 0, color: 'var(--colors-textMuted)', fontSize: 'var(--fontSizes-control)' })}>
+        文本可输入 −200…200；滑块只覆盖 −50…50，适合大范围精确输入和小范围快速拖动。
+      </p>
+      <div className={sliderWidth}>
+        <NumericSlider
+          label="Offset"
+          value={value}
+          min={-200}
+          max={200}
+          softMin={-50}
+          softMax={50}
+          step={0.5}
+          dragStep={0.1}
+          precision={2}
+          unit="px"
+          onEditStart={() => {
+            start.current = value
+          }}
+          onValueChange={setValue}
+          onEditCancel={(reason) => {
+            if (rollbackReasons.has(reason)) setValue(start.current)
+          }}
+        />
+      </div>
+      <StoryState label="Soft range value" value={{ value, hard: [-200, 200], soft: [-50, 50] }} />
+    </div>
+  )
+}
+
+function AsyncDemo() {
+  const [value, setValue] = useState(10)
+  const [authority, setAuthority] = useState(10)
+  const [reject, setReject] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [events, setEvents] = useState<string[]>([])
+  const start = useRef(value)
+  const record = (event: string) => setEvents((list) => [...list.slice(-9), event])
+  return (
+    <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
+      <Checkbox
+        checked={reject}
+        onCheckedChange={(checked) => setReject(checked === true)}
+        label="Reject next commit"
+      />
+      <div className={sliderWidth}>
+        <NumericSlider
+          label="Async amount"
+          value={value}
+          min={0}
+          max={100}
+          onEditStart={(source) => {
+            start.current = value
+            record(`begin:${source}`)
+          }}
+          onValueChange={(next) => {
+            setValue(next)
+            record(`change:${next}`)
+          }}
+          onValueCommit={async (next) => {
+            setPending(true)
+            record(`request:${next}`)
+            await new Promise((resolve) => setTimeout(resolve, 350))
+            setPending(false)
+            if (reject) {
+              setValue(authority)
+              record('rejected')
+              throw new Error('数值未保存，请继续修改或重试。')
+            }
+            setAuthority(next)
+            setValue(next)
+            record('accepted')
+          }}
+          onEditCancel={(reason) => {
+            if (rollbackReasons.has(reason)) setValue(start.current)
+            record(`cancel:${reason}`)
+          }}
+        />
+      </div>
+      <StoryState label="Async commit" value={{ value, authority, pending, reject, events }} />
+    </div>
+  )
+}
+
 const meta = {
+  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          'NumericSlider 把数值输入框和滑块连接到同一个值，适合既要快速拖动又要精确输入的参数。\n\nvalue/onValueChange 控制实时值，onValueCommit 表示完成一次编辑；输入框与滑块共用这组回调。min/max 是硬范围，softMin/softMax 可单独限定滑块的可见范围，文本仍可输入硬范围内的值。\n\n受控取消由应用恢复编辑前的值。异步提交可返回 Promise，拒绝后可继续编辑或重试；切换对象时更新 resetKey。id 对应数值输入框，滑块有单独的可访问名称。',
+          'NumericSlider 把数值输入框和滑块连接到同一个值，适合既要快速拖动又要精确输入的参数。输入框负责硬范围内的文本输入，滑块可使用 softMin/softMax 限定拖动范围；两者共享 onValueChange 与 onValueCommit。受控取消由应用恢复编辑前的值，异步提交被拒绝后可继续修改或重试。',
       },
     },
+    layout: 'fullscreen',
   },
-  title: 'Templates/NumericSlider',
-  component: NumericSlider,
-  tags: ['autodocs'],
-} satisfies Meta<typeof NumericSlider>
+  title: 'Numeric/NumericSlider',
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-function SliderExample({ reject = false }: { reject?: boolean }) {
-  const [value, setValue] = useState(25)
-  const [events, setEvents] = useState<string[]>([])
-  const [revision, setRevision] = useState(0)
-  const start = useRef(value)
-  const record = (event: string) => setEvents((list) => [...list.slice(-9), event])
-  return (
-    <div className={frame}>
-      <label htmlFor="numeric-slider-value">Exposure</label>
-      <NumericSlider
-        id="numeric-slider-value"
-        label="Exposure"
-        value={value}
-        min={0}
-        max={100}
-        step={1}
-        dragStep={0.1}
-        precision={2}
-        unit="%"
-        resetKey={revision}
-        onEditStart={(source) => {
-          start.current = value
-          record(`begin:${source}`)
-        }}
-        onValueChange={(next) => {
-          record(`change:${next}`)
-          if (!reject) setValue(next)
-        }}
-        onValueCommit={(next, reason) => record(`commit:${next}:${reason}`)}
-        onEditCancel={(reason) => {
-          if (rollback(reason) && !reject) setValue(start.current)
-          record(`cancel:${reason}`)
-        }}
-      />
-      <button
-        onClick={() => {
-          setValue(25)
-          setEvents([])
-          setRevision((value) => value + 1)
-        }}>
-        Reset
-      </button>
-      <pre>{JSON.stringify({ value, reject, events }, null, 2)}</pre>
-    </div>
-  )
-}
-function SoftRangeExample() {
-  const [value, setValue] = useState(150)
-  const start = useRef(value)
-  return (
-    <div className={frame}>
-      <p>
-        在输入框填入 150，观察数值和滑块端点的显示，再拖动滑块尝试 −50…50 内的快速调整。
-        需要同时支持大范围输入和小范围拖动时，可分别设置 min/max 与 softMin/softMax。
-      </p>
-      <NumericSlider
-        label="Offset"
-        value={value}
-        onValueChange={setValue}
-        min={-200}
-        max={200}
-        softMin={-50}
-        softMax={50}
-        step={0.5}
-        dragStep={0.1}
-        precision={2}
-        unit="px"
-        onEditStart={() => {
-          start.current = value
-        }}
-        onEditCancel={(reason) => {
-          if (rollback(reason)) setValue(start.current)
-        }}
-      />
-      <pre>{JSON.stringify({ value })}</pre>
-    </div>
-  )
-}
-function AsyncExample() {
-  const [value, setValue] = useState(10)
-  const [authority, setAuthority] = useState(10)
-  const [reject, setReject] = useState(true)
-  const [events, setEvents] = useState<string[]>([])
-  const start = useRef(value)
-  const record = (event: string) => setEvents((list) => [...list, event])
-  return (
-    <div className={frame}>
-      <label>
-        <input type="checkbox" checked={reject} onChange={(event) => setReject(event.target.checked)} /> Reject next
-        commit until unchecked
-      </label>
-      <NumericSlider
-        label="Async amount"
-        value={value}
-        onValueChange={setValue}
-        min={0}
-        max={100}
-        onEditStart={(source) => {
-          start.current = value
-          record(`begin:${source}`)
-        }}
-        onValueCommit={async (next) => {
-          record(`request:${next}`)
-          await new Promise((resolve) => setTimeout(resolve, 350))
-          if (reject) {
-            setValue(authority)
-            record('rejected')
-            throw new Error('数值未保存，请继续修改或重试。')
-          }
-          setAuthority(next)
-          setValue(next)
-          record('accepted')
-        }}
-        onEditCancel={(reason) => {
-          if (rollback(reason)) setValue(start.current)
-          record(`cancel:${reason}`)
-        }}
-      />
-      <pre>{JSON.stringify({ value, authority, events }, null, 2)}</pre>
-    </div>
-  )
-}
-export const Overview: Story = { render: () => <SliderExample /> }
-export const ControlledRefusal: Story = { render: () => <SliderExample reject /> }
-export const SoftHardAndUnits: Story = { render: () => <SoftRangeExample /> }
-export const AsyncCommit: Story = { render: () => <AsyncExample /> }
-export const Availability: Story = {
+
+export const Overview: Story = {
   render: () => (
-    <div className={frame}>
-      <NumericSlider label="Disabled amount" defaultValue={25} disabled />
-      <NumericSlider label="Readonly amount" defaultValue={50} readOnly />
-      <NumericSlider label="Mixed amount" defaultValue={0} mixed />
-    </div>
+    <StoryPage
+      eyebrow="Numeric"
+      title="NumericSlider"
+      summary="一个数值输入框加一条滑块。紧凑档用于属性面板，常规档用于表单；文本输入和拖动共用同一组提交/取消语义。"
+      meta={
+        <>
+          <span>InputNumber + Slider</span>
+          <span>·</span>
+          <span>20 / 24 / 32</span>
+        </>
+      }>
+      <StorySection
+        title="Number and slider"
+        description="输入框显示精确值，滑块提供快速预览。单位只影响显示，不改变保存的数值。">
+        <StoryGrid>
+          <StoryCard title="Percent with unit" description="step 1，拖动步进 0.1，保留两位小数。">
+            <ExposureDemo />
+          </StoryCard>
+          <StoryCard title="Soft range" description="min/max 是硬边界；softMin/softMax 只限制滑块轨道。">
+            <SoftRangeDemo />
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Density"
+        description="xs 20、sm 24 为紧凑档，md 32 为常规档。NumericSlider 没有 lg/36 尺寸，滑块与输入框始终同档。">
+        <StoryGrid>
+          {(
+            [
+              ['xs', '20px', '密集工具条'],
+              ['sm', '24px', '属性面板默认'],
+              ['md', '32px', '常规表单'],
+            ] as const
+          ).map(([size, height, usage]) => (
+            <StoryCard key={size} title={`${size} · ${height}`} description={usage}>
+              <div className={sliderWidth}>
+                <NumericSlider label={`${size} amount`} size={size} defaultValue={32} min={0} max={100} unit="%" />
+              </div>
+            </StoryCard>
+          ))}
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="States" description="禁用和只读不改变布局；mixed 只影响输入框的显示，滑块仍需一个数值。">
+        <StoryGrid>
+          <StoryCard title="Disabled">
+            <div className={sliderWidth}>
+              <NumericSlider label="Disabled amount" defaultValue={25} disabled />
+            </div>
+          </StoryCard>
+          <StoryCard title="Read only">
+            <div className={sliderWidth}>
+              <NumericSlider label="Readonly amount" defaultValue={25} readOnly />
+            </div>
+          </StoryCard>
+          <StoryCard title="Mixed">
+            <div className={sliderWidth}>
+              <NumericSlider label="Mixed amount" defaultValue={0} mixed />
+            </div>
+          </StoryCard>
+          <StoryCard title="Invalid">
+            <div className={sliderWidth}>
+              <NumericSlider label="Invalid amount" defaultValue={120} min={0} max={100} state="invalid" />
+            </div>
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Commit and reject"
+        description="输入框按 Enter 或失焦提交，Escape 取消；异步提交失败时保留编辑状态并显示应用侧错误。">
+        <StoryCard title="Async save" description="切换 Reject next commit 后再次提交，观察值回退和事件记录。">
+          <AsyncDemo />
+        </StoryCard>
+      </StorySection>
+
+      <StorySection title="Keyboard and accessibility">
+        <StoryKeyboard
+          rows={[
+            { keys: 'Tab', action: '在输入框与滑块之间移动焦点。' },
+            { keys: ['↑', '↓'], action: '按 step 微调；按住 Shift 使用更大的步进。' },
+            { keys: ['Home', 'End'], action: '把滑块移到软范围两端。' },
+            { keys: 'Enter', action: '提交输入框或完成一次滑块调整。' },
+            { keys: 'Escape', action: '取消当前编辑并恢复起始值。' },
+          ]}
+        />
+      </StorySection>
+
+      <StorySection title="Usage and props">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<NumericSlider
+  label="Exposure"
+  value={value}
+  min={0}
+  max={100}
+  step={1}
+  dragStep={0.1}
+  precision={2}
+  unit="%"
+  onValueChange={setValue}
+  onValueCommit={save}
+  onEditCancel={restore}
+/>`}
+          />
+          <StoryProps
+            rows={[
+              {
+                name: 'size',
+                type: "'xs' | 'sm' | 'md'",
+                defaultValue: "'sm'",
+                description: '20/24 紧凑，32 常规；没有 36。',
+              },
+              { name: 'value', type: 'number', description: '受控值；缺省时使用内部状态。' },
+              { name: 'min / max', type: 'number', description: '文本输入允许的硬边界。' },
+              { name: 'softMin / softMax', type: 'number', description: '只限制滑块轨道。' },
+              { name: 'precision', type: 'number', description: '提交值的小数位数。' },
+              {
+                name: 'onValueCommit',
+                type: '(value, reason) => void | Promise<void>',
+                description: '完成一次编辑；Promise 被拒绝时保留编辑。',
+              },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
   ),
 }

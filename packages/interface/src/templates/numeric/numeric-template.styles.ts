@@ -1,17 +1,23 @@
 import { css } from '../../../styled-system/css'
 
 export const numericTemplateClasses = {
-  group: css({ display: 'flex', alignItems: 'flex-end', gap: '6px', minWidth: 0, width: '100%' }),
+  group: css({
+    display: 'flex',
+    alignItems: 'flex-end',
+    gap: 'var(--space-1_5)',
+    minWidth: 0,
+    width: '100%',
+  }),
   axes: css({
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 72px), 1fr))',
-    gap: '6px',
+    gap: 'var(--space-1_5)',
     flex: 1,
     minWidth: 0,
   }),
-  axis: css({ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0 }),
+  axis: css({ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', minWidth: 0 }),
   label: css({
-    fontSize: '11px',
+    fontSize: 'var(--fontSizes-micro)',
     color: 'var(--colors-textMuted)',
     minWidth: 0,
     overflow: 'hidden',
@@ -21,7 +27,7 @@ export const numericTemplateClasses = {
   slider: css({
     display: 'grid',
     gridTemplateColumns: 'minmax(72px, 1fr) minmax(72px, 2fr)',
-    gap: '10px',
+    gap: 'var(--space-2_5)',
     alignItems: 'center',
     minWidth: 0,
     width: '100%',

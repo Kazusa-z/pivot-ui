@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '../src/widgets/buttons'
+import { Checkbox } from '../src/widgets/choices/Checkbox'
 import { ColorDistributionTemplate } from '../src/templates/color/ColorDistributionTemplate'
 import {
   copyColorDistributionValue,
@@ -9,201 +11,239 @@ import {
   type ColorDistributionValue,
 } from '../src/values/color-distribution'
 import { css } from '../styled-system/css'
-import { ContractFrame, ControlButton, StatePanel, contractStyles } from './support/ContractFrame'
-import { fromHostColorChannels, toHostColorChannels, type HostColorChannels } from './support/color-host-adapter'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryCode,
+  StoryProps,
+  StoryState,
+  StoryKeyboard,
+  StoryNote,
+} from './support/StoryPage'
 
 const initial: ColorDistributionValue = {
   mode: 'constant',
   color: { space: 'linear', r: 0.15, g: 0.45, b: 0.8, a: 0.7 },
 }
-const hdrInitial: ColorDistributionValue = { mode: 'constant', color: { space: 'linear', r: 3, g: 1.5, b: 0.5, a: 1 } }
-const userCancellation = new Set(['escape', 'pointer-cancel', 'window-blur', 'disabled', 'read-only'])
+const hdrInitial: ColorDistributionValue = {
+  mode: 'constant',
+  color: { space: 'linear', r: 4, g: 1.5, b: 0.5, a: 1 },
+}
+const cancelReasons = ['escape', 'pointer-cancel', 'window-blur', 'disabled', 'read-only']
+const modeLabel: Record<ColorDistributionMode, string> = {
+  constant: 'Constant',
+  gradient: 'Gradient',
+  'two-constant': 'Two colors',
+  'two-gradient': 'Two gradients',
+}
 
-function DistributionExample({
+function DistributionDemo({
   mode = 'constant',
   hdr = false,
-  controlledCache = false,
-  refuse = false,
-  delayed = false,
-  availability = false,
+  readOnly = false,
+  disabled = false,
+  narrow = false,
 }: {
   mode?: ColorDistributionMode
   hdr?: boolean
-  controlledCache?: boolean
-  refuse?: boolean
-  delayed?: boolean
-  availability?: boolean
+  readOnly?: boolean
+  disabled?: boolean
+  narrow?: boolean
 }) {
-  const makeInitial = () => switchColorDistributionMode(hdr ? hdrInitial : initial, mode)
-  const [value, setValue] = useState(makeInitial)
+  const makeInitial = (): ColorDistributionValue => (hdr ? hdrInitial : switchColorDistributionMode(initial, mode))
+  const [value, setValue] = useState<ColorDistributionValue>(makeInitial)
   const [cache, setCache] = useState<ColorDistributionCache>({})
   const [revision, setRevision] = useState(0)
-  const [state, setState] = useState<'editable' | 'readonly' | 'disabled'>('editable')
+  const [reject, setReject] = useState(false)
   const [events, setEvents] = useState<string[]>([])
-  const [rejectNext, setRejectNext] = useState(delayed)
-  const generation = useRef(0)
   const start = useRef(value)
-  const record = (event: string) => setEvents((old) => [...old.slice(-15), event])
-  function reset() {
-    generation.current++
-    const next = makeInitial()
-    start.current = next
-    setValue(next)
-    setCache({})
-    setRevision((old) => old + 1)
-    setEvents([])
-    setRejectNext(delayed)
-  }
+  const record = (event: string) => setEvents((current) => [...current.slice(-8), event])
+  const locked = readOnly || disabled
   return (
-    <ContractFrame
-      title="颜色分布与模式切换"
+    <StoryCard
+      title={hdr ? 'HDR constant' : modeLabel[mode]}
       description={
-        refuse
-          ? '尝试切换模式或编辑颜色，再看下方出现的修改请求与保留原状的控件。这是应用暂不接受修改时的显示；接入时在 onValueChange 中更新 value，在 onValueCommit 中保存即可。'
-          : delayed
-            ? '编辑颜色或切换模式，等待 450 ms 后体验第一次保存失败，再重试同一项操作。下方会记录拒绝和成功的结果；等待时也可点击 Load another target 体验对象切换，应用用 resetKey 标识正在编辑的对象。'
-            : '先编辑单色，再切换到渐变并调整颜色点，最后切回单色，查看之前的颜色如何恢复。下方分别展示当前 value 和各模式的 cache；需要由应用记住模式设置时，可连接 cache/onCacheChange。Reset 可重新开始。'
-      }
-      onReset={reset}>
-      <div className={contractStyles.row}>
-        <ControlButton
-          onClick={() => {
-            generation.current++
-            const next: ColorDistributionValue = {
-              mode: 'constant',
-              color: { space: 'srgb', r: 0.8, g: 0.2, b: 0.1, a: 0.35 },
-            }
-            start.current = next
-            setValue(next)
-            setCache({})
-            setRevision((old) => old + 1)
-            record('external target loaded')
-          }}>
-          Load another target
-        </ControlButton>
-        {delayed && <ControlButton onClick={() => setRejectNext(true)}>Reject next commit</ControlButton>}
-        {availability &&
-          (['editable', 'readonly', 'disabled'] as const).map((next) => (
-            <ControlButton key={next} aria-pressed={state === next} onClick={() => setState(next)}>
-              {next}
-            </ControlButton>
-          ))}
-      </div>
-      <div className={css({ width: 'min(480px, 100%)', minWidth: 0 })}>
+        readOnly
+          ? '只读模式保留模式和颜色，但拒绝所有修改。'
+          : disabled
+            ? '整体禁用；值仍可读取。'
+            : hdr
+              ? 'HDR 颜色允许通道大于 1；预览会裁剪到屏幕范围。'
+              : '模式、颜色和渐变都通过同一份 value 回传；cache 保留已切换模式的设置。'
+      }>
+      <div className={css({ width: '100%', maxWidth: narrow ? '300px' : '480px', minWidth: 0 })}>
         <ColorDistributionTemplate
           value={value}
-          {...(controlledCache ? { cache } : {})}
+          cache={cache}
           onCacheChange={setCache}
-          resetKey={revision}
           hdr={hdr}
-          disabled={state === 'disabled'}
-          readOnly={state === 'readonly'}
-          onEditStart={(source) => {
-            start.current = copyColorDistributionValue(value)
-            record(`begin:${source}`)
-          }}
-          onValueChange={(next) => {
-            record(`preview:${next.mode}`)
-            if (!refuse) setValue(next)
-          }}
-          onValueCommit={async (next, reason) => {
-            const version = generation.current
-            const previous = start.current
-            const reject = rejectNext
-            setRejectNext(false)
-            record(`request:${reason}:${next.mode}`)
-            if (delayed) await new Promise<void>((resolve) => setTimeout(resolve, 450))
-            if (version !== generation.current) return
-            if (reject) {
-              setValue(previous)
-              record('rejected')
-              throw new Error('颜色修改未保存，请重试输入或再次选择模式。')
-            }
-            record(refuse ? '应用保留原值' : 'accepted')
-          }}
-          onEditCancel={(reason) => {
-            if (userCancellation.has(reason) && !refuse) setValue(start.current)
-            record(`cancel:${reason}`)
-          }}
-        />
-      </div>
-      <StatePanel label="当前值与各模式保留的值" value={{ value, cache, revision, state, events }} />
-    </ContractFrame>
-  )
-}
-
-const hostInitial: HostColorChannels = {
-  interpolation: 'linear',
-  color: [
-    { id: 'engine-red', time: 0, value: { r: 0.8, g: 0.1, b: 0.05, a: 1 } },
-    { id: 'engine-blue', time: 1, value: { r: 0.05, g: 0.2, b: 0.9, a: 1 } },
-  ],
-  alpha: [
-    { id: 'engine-fade-in', time: 0, value: 0.1 },
-    { id: 'engine-fade-out', time: 1, value: 0.9 },
-  ],
-}
-function HostRoundTripExample() {
-  const [host, setHost] = useState(hostInitial)
-  const [value, setValue] = useState<ColorDistributionValue>(() => ({
-    mode: 'gradient',
-    ramp: fromHostColorChannels(hostInitial, 'linear'),
-  }))
-  const [revision, setRevision] = useState(0)
-  const start = useRef(value)
-  return (
-    <ContractFrame
-      title="与应用颜色格式互相转换"
-      description="拖动渐变点或修改颜色，比较下方应用数据中的 time 与组件数据中的 position。此例的适配函数在编辑前后转换颜色格式和位置字段，并保留停靠点 ID；可在自己的数据读写入口采用同样的转换方式。"
-      onReset={() => {
-        setHost(hostInitial)
-        setValue({ mode: 'gradient', ramp: fromHostColorChannels(hostInitial, 'linear') })
-        setRevision((old) => old + 1)
-      }}>
-      <div className={css({ width: 'min(480px, 100%)', minWidth: 0 })}>
-        <ColorDistributionTemplate
-          value={value}
+          readOnly={readOnly}
+          disabled={disabled}
           resetKey={revision}
           onEditStart={() => {
             start.current = copyColorDistributionValue(value)
+            record('begin')
           }}
-          onValueChange={setValue}
-          onValueCommit={(next) => {
-            if (next.mode === 'gradient') setHost(toHostColorChannels(next.ramp, 'linear'))
+          onValueChange={(next) => {
+            setValue(next)
+            record(`preview:${next.mode}`)
+          }}
+          onValueCommit={async (next, reason) => {
+            record(`commit:${reason}:${next.mode}`)
+            await new Promise((resolve) => setTimeout(resolve, 220))
+            if (reject) {
+              setReject(false)
+              setValue(start.current)
+              throw new Error('颜色分布未保存：请重试。')
+            }
+            setValue(next)
           }}
           onEditCancel={(reason) => {
-            if (userCancellation.has(reason)) setValue(start.current)
+            record(`cancel:${reason}`)
+            if (cancelReasons.includes(reason)) setValue(start.current)
           }}
         />
       </div>
-      <StatePanel label="应用数据：time 与稳定 ID" value={host} />
-      <StatePanel label="组件数据：position" value={value} />
-    </ContractFrame>
+      {!locked && (
+        <>
+          <StoryRow>
+            <Checkbox checked={reject} onCheckedChange={setReject} label="Reject next commit" />
+            <Button
+              size="sm"
+              variant="subtle"
+              onClick={() => {
+                const next = makeInitial()
+                start.current = next
+                setValue(next)
+                setCache({})
+                setRevision((current) => current + 1)
+                setReject(false)
+                setEvents([])
+              }}>
+              Reset
+            </Button>
+          </StoryRow>
+          <StoryState label="Distribution state" value={{ value, cache, revision, reject, events }} />
+        </>
+      )}
+    </StoryCard>
   )
 }
 
 const meta = {
   tags: ['autodocs'],
-  title: 'Templates/ColorDistribution',
   parameters: {
     docs: {
       description: {
         component:
-          'ColorDistributionTemplate 用于在单色、渐变、两种颜色和两组渐变之间切换，适合效果参数或随机颜色范围。value 的 mode 决定当前使用的数据形状。\n\nonValueChange 返回预览值，onValueCommit 表示保存一次编辑。cache 与当前 value 分开保存，让用户切换模式后可以找回该模式已接受的设置；需要外部管理时同时传入 cache 和 onCacheChange。\n\n切换编辑对象或重置时更新 resetKey。应用负责接受、拒绝和取消后的值恢复；业务系统使用的时间字段或颜色格式由应用适配代码转换。',
+          'ColorDistributionTemplate 在单色、渐变、两种颜色和两组渐变之间切换，适合效果参数或随机颜色范围。value.mode 决定当前数据形状；cache 保留已接受过的模式，切换时可以恢复。onValueChange 返回预览，onValueCommit 表示一次保存，应用负责接受、拒绝和取消后的恢复。',
       },
     },
     layout: 'fullscreen',
   },
+  title: 'Color/ColorDistribution',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-export const Overview: Story = { render: () => <DistributionExample /> }
-export const Gradient: Story = { render: () => <DistributionExample mode="gradient" /> }
-export const TwoColors: Story = { render: () => <DistributionExample mode="two-constant" /> }
-export const TwoGradients: Story = { render: () => <DistributionExample mode="two-gradient" /> }
-export const ControlledCache: Story = { render: () => <DistributionExample controlledCache /> }
-export const ControlledRefusal: Story = { render: () => <DistributionExample refuse /> }
-export const AsyncRejection: Story = { render: () => <DistributionExample delayed /> }
-export const HDR: Story = { render: () => <DistributionExample hdr /> }
-export const Availability: Story = { render: () => <DistributionExample availability /> }
-export const HostAdapterRoundTrip: Story = { render: () => <HostRoundTripExample /> }
+
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Color"
+      title="ColorDistribution"
+      summary="同一个字段在固定颜色、渐变、两种颜色和两组渐变之间切换。每种模式保留自己的缓存，切换时不会丢失已经接受的内容。"
+      meta={
+        <>
+          <span>4 modes</span>
+          <span>·</span>
+          <span>cache per mode</span>
+          <span>·</span>
+          <span>HDR optional</span>
+        </>
+      }>
+      <StorySection title="Variants" description="四种模式共用模式选择、提交和缓存；只有数据形状不同。">
+        <StoryGrid>
+          <DistributionDemo />
+          <DistributionDemo mode="gradient" />
+          <DistributionDemo mode="two-constant" />
+          <DistributionDemo mode="two-gradient" />
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="States" description="只读、禁用、窄布局和 HDR 仍然保持同一种编辑会话。">
+        <StoryGrid>
+          <DistributionDemo readOnly />
+          <DistributionDemo disabled />
+          <DistributionDemo narrow />
+          <DistributionDemo hdr />
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Density and sizing">
+        <StoryNote>
+          ColorDistributionTemplate 没有 density 变体：模式 SegmentControl、ColorInput、ColorRampChannels 都使用 24px
+          紧凑控件；两种颜色/渐变的外框为 6px 圆角。300px 以下字段会换行，但不会改变字号档位。
+        </StoryNote>
+      </StorySection>
+
+      <StorySection title="Keyboard and accessibility">
+        <StoryKeyboard
+          rows={[
+            { keys: 'Tab', action: '在模式、颜色/渐变、添加/删除和数值字段之间移动。' },
+            { keys: ['←', '→'], action: '在模式 SegmentControl 内切换焦点。' },
+            { keys: ['Space', 'Enter'], action: '选择聚焦的模式；切换是一次可提交的编辑。' },
+            { keys: 'Escape', action: '取消当前颜色、渐变或模式编辑，恢复编辑前的 value。' },
+          ]}
+        />
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<ColorDistributionTemplate
+  value={value}
+  cache={cache}
+  onCacheChange={setCache}
+  onValueChange={setValue}
+  onValueCommit={saveValue}
+  onEditCancel={restoreValue}
+  resetKey={objectId}
+/>`}
+          />
+          <StoryProps
+            rows={[
+              {
+                name: 'value',
+                type: 'ColorDistributionValue',
+                description: 'mode 决定 color / colors / ramp / ramps 形状。',
+              },
+              {
+                name: 'cache / defaultCache',
+                type: 'ColorDistributionCache',
+                description: '按模式保存已接受的值；受控缓存同时传 onCacheChange。',
+              },
+              { name: 'hdr', type: 'boolean', defaultValue: 'false', description: '允许颜色通道大于 1。' },
+              {
+                name: 'disabled / readOnly',
+                type: 'boolean',
+                defaultValue: 'false',
+                description: '禁用或只读；值仍可读取。',
+              },
+              { name: 'resetKey', type: 'unknown', description: '切换对象或外部版本时重置编辑和缓存。' },
+              { name: 'onValueChange', type: '(value) => void', description: '预览值；应用可在受控模式下拒绝更新。' },
+              {
+                name: 'onValueCommit',
+                type: '(value, reason) => void | Promise<void>',
+                description: '一次保存；可异步并抛错。',
+              },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
+  ),
+}

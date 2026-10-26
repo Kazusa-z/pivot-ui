@@ -18,7 +18,7 @@ import {
   type ColorDistributionMode,
   type ColorDistributionValue,
 } from '../../values/color-distribution'
-import { Select } from '../../widgets/choices/Select'
+import { SegmentControl } from '../../widgets/choices/SegmentControl'
 import { ColorInput } from './ColorInput'
 import { ColorRampChannels } from './ColorRampChannels'
 
@@ -162,21 +162,22 @@ export function ColorDistributionTemplate({
       role="group"
       aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : label)}
       aria-disabled={disabled || undefined}
-      className={cx(css({ display: 'grid', gap: '10px', minWidth: 0, width: '100%' }, cssProp), className)}>
+      className={cx(css({ display: 'grid', gap: 'var(--space-2)', minWidth: 0, width: '100%' }, cssProp), className)}>
       <div
         className={css({
           display: 'grid',
           gridTemplateColumns: 'auto minmax(0, 1fr)',
           alignItems: 'center',
-          gap: '8px',
+          gap: 'var(--space-2)',
           minWidth: 0,
         })}>
-        <label htmlFor={modeId} className={css({ fontSize: '12px' })}>
+        <label htmlFor={modeId} className={css({ fontSize: 'var(--fontSizes-control)' })}>
           Mode
         </label>
-        <Select
+        <SegmentControl
           id={modeId}
           options={options}
+          size="sm"
           value={value.mode}
           aria-invalid={(editor.owner === 'mode' && !!editor.error) || undefined}
           aria-errormessage={
@@ -185,7 +186,7 @@ export function ColorDistributionTemplate({
           disabled={disabled || editor.phase === 'pending'}
           readOnly={readOnly || (editor.owner !== null && editor.owner !== 'mode')}
           onValueChange={(mode) => {
-            if (!mode || mode === value.mode) return
+            if (mode === value.mode) return
             const saved = rememberColorDistribution(cache, value)
             const next = switchColorDistributionMode(value, mode, saved)
             assertColorDistributionValue(next, { hdr })
@@ -204,14 +205,14 @@ export function ColorDistributionTemplate({
             key={index}
             className={css({
               display: 'grid',
-              gap: '6px',
+              gap: 'var(--space-1_5)',
               minWidth: 0,
-              padding: '8px',
+              padding: 'var(--space-2)',
               margin: 0,
               border: '1px solid var(--colors-border)',
-              borderRadius: '6px',
+              borderRadius: 'var(--radii-controlMd)',
             })}>
-            <legend className={css({ fontSize: '12px', paddingInline: '4px' })}>
+            <legend className={css({ fontSize: 'var(--fontSizes-control)', paddingInline: 'var(--space-1)' })}>
               {index === 0 ? 'First' : 'Second'}
             </legend>
             {value.mode === 'two-constant'
@@ -223,7 +224,11 @@ export function ColorDistributionTemplate({
         <span
           id={errorId}
           role="alert"
-          className={css({ color: 'var(--colors-dangerText)', fontSize: '12px', overflowWrap: 'anywhere' })}>
+          className={css({
+            color: 'var(--colors-dangerText)',
+            fontSize: 'var(--fontSizes-control)',
+            overflowWrap: 'anywhere',
+          })}>
           {editor.error}
         </span>
       )}

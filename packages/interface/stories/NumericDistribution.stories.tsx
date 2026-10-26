@@ -1,19 +1,32 @@
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import type { CurvePreset, CurvePresetService } from '../src/contracts/curve'
+import type { CurvePreset } from '../src/contracts/curve'
 import { NumericDistributionTemplate } from '../src/templates/curve/NumericDistributionTemplate'
 import { copyCurveValue, type CurveValue, type CurveViewport } from '../src/values/curve'
 import {
-  areNumericDistributionsEqual,
   copyNumericDistributionValue,
   type NumericDistributionCache,
   type NumericDistributionMode,
   type NumericDistributionValue,
 } from '../src/values/numeric-distribution'
+import { Button } from '../src/widgets/buttons/Button'
+import { Checkbox } from '../src/widgets/choices/Checkbox'
+import { SegmentControl } from '../src/widgets/choices/SegmentControl'
 import { css } from '../styled-system/css'
-import { ContractFrame, ControlButton, StatePanel, contractStyles } from './support/ContractFrame'
-import { fromHostNumericCurve, toHostNumericCurve, type HostNumericCurve } from './support/numeric-curve-host-adapter'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryField,
+  StoryGrid,
+  StoryCode,
+  StoryProps,
+  StoryState,
+  StoryKeyboard,
+} from './support/StoryPage'
 
+const distributionWidth = css({ width: 'min(460px, 100%)', minWidth: 0 })
 const curve: CurveValue = {
   interpolation: 'bezier',
   points: [
@@ -43,127 +56,103 @@ const makeValue = (mode: NumericDistributionMode): NumericDistributionValue =>
         ? { mode, curve: copyCurveValue(curve) }
         : { mode, curves: [copyCurveValue(curve), copyCurveValue(linear)] }
 
-function DistributionExample({
-  mode = 'constant',
-  controlledCache = false,
-  refuse = false,
-  delayed = false,
-  constraints = false,
-  availability = false,
-  capabilities = false,
-}: {
-  mode?: NumericDistributionMode
-  controlledCache?: boolean
-  refuse?: boolean
-  delayed?: boolean
-  constraints?: boolean
-  availability?: boolean
-  capabilities?: boolean
-}) {
+function ModeDemo({ mode, title, description }: { mode: NumericDistributionMode; title: string; description: string }) {
   const [value, setValue] = useState(() => makeValue(mode))
-  const [authority, setAuthority] = useState(value)
-  const [cache, setCache] = useState<NumericDistributionCache>({})
-  const [revision, setRevision] = useState(0)
-  const [events, setEvents] = useState<string[]>([])
-  const [history, setHistory] = useState(0)
-  const [rejectNext, setRejectNext] = useState(delayed)
-  const [state, setState] = useState<'editable' | 'readonly' | 'disabled'>('editable')
   const [viewport, setViewport] = useState(initialView)
-  const generation = useRef(0),
-    start = useRef(value)
-  const record = (event: string) => setEvents((old) => [...old.slice(-19), event])
-  const service = useMemo<CurvePresetService>(() => {
-    const entries = new Map(presets.map((preset) => [preset.id, preset]))
-    let next = 0
-    return {
-      async list() {
-        record('capability:list')
-        return [...entries.values()].map(({ id, label }) => ({ id, label }))
-      },
-      async load(id) {
-        record(`capability:load:${id}`)
-        const entry = entries.get(id)
-        if (!entry) throw Error('Preset missing')
-        return copyCurveValue(entry.value)
-      },
-      async save(input) {
-        const preset = { id: `saved-${++next}`, label: input.label, value: copyCurveValue(input.value) }
-        entries.set(preset.id, preset)
-        record(`capability:save:${preset.id}`)
-        return { id: preset.id, label: preset.label }
-      },
-      async remove(id) {
-        entries.delete(id)
-        record(`capability:remove:${id}`)
-      },
-    }
-  }, [revision])
-  function reset() {
-    generation.current++
-    const next = makeValue(mode)
-    start.current = next
-    setValue(next)
-    setAuthority(next)
-    setCache({})
-    setHistory(0)
-    setViewport(initialView)
-    setRevision((old) => old + 1)
-    setEvents([])
-    setRejectNext(delayed)
-  }
+  const [events, setEvents] = useState<string[]>([])
+  const start = useRef(value)
+  const record = (event: string) => setEvents((list) => [...list.slice(-7), event])
   return (
-    <ContractFrame
-      title="数值与曲线分布"
-      description={
-        refuse
-          ? '尝试输入数值或切换模式，观察下方的修改请求与控件保留的原值。这展示应用暂不接受修改时的效果；接入时在 onValueChange 中更新 value，控件就会显示接受后的结果。'
-          : delayed
-            ? '修改数值并按 Enter，等待 450 ms 后会看到第一次保存失败的提示，再按 Enter 可重试。也可在等待时点击 Load another target，查看切换后的当前值和事件记录；应用通过 resetKey 标识当前对象。'
-            : capabilities
-              ? '切换到曲线模式，打开编辑器，选择一个预设后点击 Apply preset，观察曲线与事件记录。还可把当前曲线保存为预设，供下次选择。应用通过 curvePresetService 提供个人预设的读取、保存和删除方法。'
-              : '先输入一个固定数值，再切换到曲线模式画一条曲线，最后切回固定数值，查看先前的设置如何恢复。下方同时展示当前 value 和模式 cache；应用可分别保存它们，Reset 可重新开始。'
-      }
-      onReset={reset}>
-      <div className={contractStyles.row}>
-        <ControlButton
-          onClick={() => {
-            generation.current++
-            const next: NumericDistributionValue = { mode: 'constant', value: 8 }
-            start.current = next
-            setValue(next)
-            setAuthority(next)
-            setCache({})
-            setHistory(0)
-            setRevision((old) => old + 1)
-            record('external target loaded')
-          }}>
-          Load another target
-        </ControlButton>
-        {delayed && <ControlButton onClick={() => setRejectNext(true)}>Reject next commit</ControlButton>}
-        {availability &&
-          (['editable', 'readonly', 'disabled'] as const).map((next) => (
-            <ControlButton key={next} aria-pressed={state === next} onClick={() => setState(next)}>
-              {next}
-            </ControlButton>
-          ))}
-      </div>
-      <div className={css({ width: 'min(480px, 100%)', minWidth: 0 })}>
+    <StoryCard title={title} description={description}>
+      <div className={distributionWidth}>
         <NumericDistributionTemplate
           value={value}
-          {...(controlledCache ? { cache } : {})}
+          label={`${title} distribution`}
+          curveViewport={viewport}
+          onCurveViewportChange={setViewport}
+          curvePresets={presets}
+          onEditStart={(source) => {
+            start.current = copyNumericDistributionValue(value)
+            record(`begin:${source}`)
+          }}
+          onValueChange={(next) => {
+            setValue(next)
+            record(`preview:${next.mode}`)
+          }}
+          onValueCommit={(next, reason) => {
+            setValue(next)
+            record(`commit:${reason}:${next.mode}`)
+          }}
+          onEditCancel={(reason) => {
+            if (userCancellation.has(reason)) setValue(start.current)
+            record(`cancel:${reason}`)
+          }}
+        />
+      </div>
+      <StoryState label={`${title} state`} value={{ mode: value.mode, value, events }} />
+    </StoryCard>
+  )
+}
+
+type Availability = 'editable' | 'readonly' | 'disabled'
+const availabilityOptions = [
+  { key: 'editable', value: 'editable', label: 'Editable' },
+  { key: 'readonly', value: 'readonly', label: 'Read only' },
+  { key: 'disabled', value: 'disabled', label: 'Disabled' },
+] as const
+
+function ControlledDemo() {
+  const [value, setValue] = useState<NumericDistributionValue>(() => makeValue('constant'))
+  const [cache, setCache] = useState<NumericDistributionCache>({})
+  const [availability, setAvailability] = useState<Availability>('editable')
+  const [refuse, setRefuse] = useState(false)
+  const [rejectNext, setRejectNext] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [revision, setRevision] = useState(0)
+  const [viewport, setViewport] = useState(initialView)
+  const [events, setEvents] = useState<string[]>([])
+  const start = useRef(value)
+  const record = (event: string) => setEvents((list) => [...list.slice(-9), event])
+  const loadConstant = (next: number) => {
+    const value: NumericDistributionValue = { mode: 'constant', value: next }
+    start.current = value
+    setValue(value)
+    setRevision((current) => current + 1)
+    record(`external:${next}`)
+  }
+  return (
+    <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
+      <StoryRow align="start">
+        <StoryField label="Availability">
+          <SegmentControl
+            size="sm"
+            options={availabilityOptions}
+            value={availability}
+            onValueChange={(next) => setAvailability(next as Availability)}
+            aria-label="Distribution availability"
+          />
+        </StoryField>
+        <StoryField label="Controlled behavior">
+          <Checkbox checked={refuse} onCheckedChange={(checked) => setRefuse(checked === true)} label="Refuse values" />
+          <Checkbox
+            checked={rejectNext}
+            onCheckedChange={(checked) => setRejectNext(checked === true)}
+            label="Reject next commit"
+          />
+        </StoryField>
+      </StoryRow>
+      <div className={distributionWidth}>
+        <NumericDistributionTemplate
+          value={value}
+          cache={cache}
           onCacheChange={setCache}
           resetKey={revision}
-          disabled={state === 'disabled'}
-          readOnly={state === 'readonly'}
-          {...(constraints ? { min: -5, max: 5, step: 0.25, dragStep: 0.1, precision: 2, unit: 'm/s' } : {})}
-          curveBounds={constraints ? { xMin: 0, xMax: 1, yMin: -2, yMax: 12 } : undefined}
+          disabled={availability === 'disabled'}
+          readOnly={availability === 'readonly'}
+          label="Controlled distribution"
           curveViewport={viewport}
-          onCurveViewportChange={(next, index) => {
-            setViewport(next)
-            record(`view:${index}`)
-          }}
-          curvePresets={capabilities ? undefined : presets}
-          curvePresetService={capabilities ? service : undefined}
+          onCurveViewportChange={setViewport}
+          curvePresets={presets}
           onEditStart={(source) => {
             start.current = copyNumericDistributionValue(value)
             record(`begin:${source}`)
@@ -173,23 +162,22 @@ function DistributionExample({
             if (!refuse) setValue(next)
           }}
           onValueCommit={async (next, reason) => {
-            const version = generation.current,
-              previous = start.current,
-              reject = rejectNext
-            setRejectNext(false)
             record(`request:${reason}:${next.mode}`)
-            if (delayed) await new Promise<void>((resolve) => setTimeout(resolve, 450))
-            if (version !== generation.current) return
-            if (reject) {
-              setValue(previous)
+            if (rejectNext) {
+              setRejectNext(false)
+              setPending(true)
+              await new Promise((resolve) => setTimeout(resolve, 350))
+              setPending(false)
+              setValue(start.current)
               record('rejected')
-              throw Error('修改未保存，请重试输入或再次选择模式。')
+              throw new Error('修改未保存，请继续修改或重试。')
             }
             if (!refuse) {
-              setAuthority(next)
-              if (!areNumericDistributionsEqual(previous, next)) setHistory((old) => old + 1)
+              setValue(next)
+              record('accepted')
+            } else {
+              record('application kept original value')
             }
-            record(refuse ? '应用保留原值' : 'accepted')
           }}
           onEditCancel={(reason) => {
             if (userCancellation.has(reason) && !refuse) setValue(start.current)
@@ -197,88 +185,145 @@ function DistributionExample({
           }}
         />
       </div>
-      <StatePanel
-        label="当前值、模式设置与编辑记录"
-        value={{ value, authority, cache, history, viewport, revision, state, events }}
+      <StoryRow>
+        <Button size="sm" variant="outline" onClick={() => loadConstant(8)}>
+          Load constant 8
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setValue(makeValue('constant'))
+            setCache({})
+            setAvailability('editable')
+            setRefuse(false)
+            setRejectNext(false)
+            setRevision((current) => current + 1)
+            setEvents([])
+          }}>
+          Reset
+        </Button>
+      </StoryRow>
+      <StoryState
+        label="Controlled distribution"
+        value={{ value, cache, availability, refuse, rejectNext, pending, viewport, events }}
       />
-    </ContractFrame>
+    </div>
   )
 }
 
-const hostInitial: HostNumericCurve = {
-  interpolation: 'bezier',
-  multiplier: 10,
-  keys: [
-    { id: 'engine-start', time: 0, value: 0.2, outgoing: { time: 0.3, value: 0.2 } },
-    { id: 'engine-end', time: 1, value: 0.8, incoming: { time: 0.7, value: 0.8 } },
-  ],
-}
-function HostRoundTripExample() {
-  const [host, setHost] = useState(hostInitial)
-  const [value, setValue] = useState<NumericDistributionValue>(() => ({
-    mode: 'curve',
-    curve: fromHostNumericCurve(hostInitial),
-  }))
-  const [revision, setRevision] = useState(0)
-  const start = useRef(value)
+function CompactDemo() {
+  const [value, setValue] = useState<NumericDistributionValue>(() => makeValue('constant'))
   return (
-    <ContractFrame
-      title="与应用曲线格式互相转换"
-      description="修改曲线点后，比较下方组件的 x/y 坐标与应用的 time/value 数据；再点击 Toggle business multiplier，查看独立保存的倍率。示例适配函数负责坐标转换，应用在计算最终结果时使用倍率。"
-      onReset={() => {
-        setHost(hostInitial)
-        setValue({ mode: 'curve', curve: fromHostNumericCurve(hostInitial) })
-        setRevision((old) => old + 1)
-      }}>
-      <ControlButton
-        onClick={() => setHost((current) => ({ ...current, multiplier: current.multiplier === 10 ? 20 : 10 }))}>
-        Toggle business multiplier
-      </ControlButton>
-      <div className={css({ width: 'min(480px, 100%)', minWidth: 0 })}>
-        <NumericDistributionTemplate
-          value={value}
-          resetKey={revision}
-          onEditStart={() => {
-            start.current = copyNumericDistributionValue(value)
-          }}
-          onValueChange={setValue}
-          onValueCommit={(next) => {
-            if (next.mode === 'curve') setHost((current) => toHostNumericCurve(next.curve, current))
-          }}
-          onEditCancel={(reason) => {
-            if (userCancellation.has(reason)) setValue(start.current)
-          }}
-        />
-      </div>
-      <StatePanel label="应用的 time/value 数据与独立倍率" value={host} />
-      <StatePanel label="UI distribution" value={value} />
-    </ContractFrame>
+    <div className={distributionWidth}>
+      <NumericDistributionTemplate value={value} onValueChange={setValue} label="Compact distribution" />
+    </div>
   )
 }
 
 const meta = {
   tags: ['autodocs'],
-  title: 'Templates/NumericDistribution',
   parameters: {
     docs: {
       description: {
         component:
-          'NumericDistributionTemplate 用于在单个数值、曲线、两个数值和两条曲线之间切换，适合既允许固定参数又允许随时间变化的参数输入。\n\nvalue 是由 mode 区分的对象。onValueChange 用于预览，onValueCommit 用于保存一次编辑；独立的 cache 保存其他模式已接受的设置。曲线选择和视图变化不会生成属性修改。\n\n应用负责保存值、处理拒绝与取消，并在切换对象或重置时更新 resetKey。预设服务通过 curvePresetService 注入；业务倍率和 time/value 数据转换由应用单独处理。',
+          'NumericDistributionTemplate 在单个数值、曲线、两个数值和两条曲线之间切换，适合既允许固定参数又允许随时间变化的输入。value 的 mode 决定内容，cache 保存其他模式已接受的设置；曲线选择和视图变化不会产生属性提交。应用负责保存、拒绝和取消，并通过 resetKey 标识当前对象。',
       },
     },
     layout: 'fullscreen',
   },
+  title: 'Numeric/NumericDistribution',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-export const Overview: Story = { render: () => <DistributionExample /> }
-export const Curve: Story = { render: () => <DistributionExample mode="curve" /> }
-export const TwoConstants: Story = { render: () => <DistributionExample mode="two-constant" /> }
-export const TwoCurves: Story = { render: () => <DistributionExample mode="two-curve" /> }
-export const ControlledCache: Story = { render: () => <DistributionExample controlledCache /> }
-export const ControlledRefusal: Story = { render: () => <DistributionExample refuse /> }
-export const DelayedRejectionAndTarget: Story = { render: () => <DistributionExample delayed /> }
-export const ConstraintsAndViewport: Story = { render: () => <DistributionExample mode="curve" constraints /> }
-export const Availability: Story = { render: () => <DistributionExample availability /> }
-export const PresetCapabilities: Story = { render: () => <DistributionExample mode="curve" capabilities /> }
-export const HostAdapterRoundTrip: Story = { render: () => <HostRoundTripExample /> }
+
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Numeric"
+      title="NumericDistribution"
+      summary="固定值、曲线和双值/双曲线共用一个模式切换入口。切换模式时保留各模式的 cache，编辑提交仍由应用决定接受或拒绝。"
+      meta={
+        <>
+          <span>Constant</span>
+          <span>·</span>
+          <span>Curve</span>
+          <span>·</span>
+          <span>Two values</span>
+          <span>·</span>
+          <span>Two curves</span>
+        </>
+      }>
+      <StorySection
+        title="Modes"
+        description="四种值形态共享同一个 mode 字段。曲线模式带预设，双曲线模式分别维护两条曲线的视口和编辑。">
+        <StoryGrid>
+          <ModeDemo mode="constant" title="Constant" description="一个固定数值，适合不随时间变化的参数。" />
+          <ModeDemo mode="curve" title="Curve" description="一条曲线，支持控制点和预设。" />
+          <ModeDemo mode="two-constant" title="Two constants" description="两个固定值，适合随机范围或上下界。" />
+          <ModeDemo mode="two-curve" title="Two curves" description="两条独立曲线，适合范围随另一维度变化。" />
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Control tier"
+        description="当前 NumericDistributionTemplate 没有 size/density prop，内部使用 24px 紧凑档的 InputNumber 和 Select。需要 32px 常规表单时，应由外层表单或后续 API 提供，而不是在 story 里伪造。">
+        <StoryCard title="Compact controls" description="模式 Select 与数值输入保持同一紧凑档。">
+          <CompactDemo />
+        </StoryCard>
+      </StorySection>
+
+      <StorySection
+        title="Controlled states and rejection"
+        description="应用可以拒绝预览、拒绝提交或切换只读/禁用；拒绝提交时组件保留错误状态供用户重试。">
+        <StoryCard title="Controlled distribution">
+          <ControlledDemo />
+        </StoryCard>
+      </StorySection>
+
+      <StorySection title="Keyboard and accessibility">
+        <StoryKeyboard
+          rows={[
+            { keys: 'Tab', action: '在模式选择、数值/曲线编辑器和操作按钮之间移动焦点。' },
+            { keys: ['↑', '↓', '←', '→'], action: '在数值输入或曲线点上调整值。' },
+            { keys: 'Enter', action: '提交当前数值或曲线编辑。' },
+            { keys: 'Escape', action: '取消当前编辑并恢复起始值。' },
+            { keys: ['Space', 'Enter'], action: '打开模式 Select，或在复选框中切换状态。' },
+          ]}
+        />
+      </StorySection>
+
+      <StorySection title="Usage and props">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<NumericDistributionTemplate
+  value={value}
+  cache={cache}
+  onCacheChange={setCache}
+  resetKey={revision}
+  curvePresets={presets}
+  onValueChange={preview}
+  onValueCommit={save}
+  onEditCancel={restore}
+/>`}
+          />
+          <StoryProps
+            rows={[
+              { name: 'value', type: 'NumericDistributionValue', description: '由 mode 区分的受控值。' },
+              { name: 'cache', type: 'NumericDistributionCache', description: '其他模式已接受的设置；可受控。' },
+              { name: 'onValueChange', type: '(value) => void', description: '预览请求；应用可拒绝。' },
+              {
+                name: 'onValueCommit',
+                type: '(value, reason) => void | Promise<void>',
+                description: '提交一次编辑；Promise 拒绝后保留错误。',
+              },
+              { name: 'curvePresets', type: 'CurvePreset[]', description: '曲线模式的预设列表。' },
+              { name: 'disabled / readOnly', type: 'boolean', description: '禁用或只读；不改变模式布局。' },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
+  ),
+}

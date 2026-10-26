@@ -2,6 +2,9 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, type HTMLAttribute
 import { css, cx } from '../../../styled-system/css'
 import type { CurvePreset, CurvePresetService, CurvePresetSummary } from '../../contracts/curve'
 import { areCurvesEqual, assertCurveValue, copyCurveValue, type CurveValue } from '../../values/curve'
+import { Button } from '../../widgets/buttons/Button'
+import { Select } from '../../widgets/choices/Select'
+import { Input } from '../../widgets/inputs/Input'
 
 /** 可直接使用的曲线预设。通过 presets 属性传入自己的预设列表；需要保存个人预设时再提供 presetService。 */
 export const defaultCurvePresets: readonly CurvePreset[] = Object.freeze(
@@ -87,18 +90,11 @@ function summaries(values: readonly CurvePresetSummary[]): readonly CurvePresetS
     return result
   })
 }
-const controlClass = css({
+const presetRows = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 'var(--space-1_5)',
   minWidth: 0,
-  maxWidth: '100%',
-  minHeight: '28px',
-  padding: '4px 8px',
-  border: '1px solid var(--colors-borderStrong)',
-  borderRadius: '4px',
-  background: 'var(--colors-surfaceSubtle)',
-  color: 'var(--colors-text)',
-  font: 'inherit',
-  '&:disabled': { opacity: 0.5 },
-  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
 })
 export interface CurvePresetsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
   value: CurveValue
@@ -302,91 +298,94 @@ export function CurvePresets({
   return (
     <div
       {...props}
-      className={cx(css({ display: 'grid', gap: '8px', minWidth: 0, fontSize: '12px' }), className)}
+      className={cx(
+        css({
+          display: 'grid',
+          gap: 'var(--space-2)',
+          minWidth: 0,
+          fontSize: 'var(--fontSizes-control)',
+        }),
+        className
+      )}
       aria-busy={phase !== null || undefined}>
       <label htmlFor={listId}>Presets</label>
-      <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '6px', minWidth: 0 })}>
-        <select
+      <div className={presetRows}>
+        <Select
           id={listId}
           aria-label="Curve preset"
-          className={controlClass}
-          style={{ flex: '1 1 150px' }}
-          value={selected ? selection : ''}
+          size="sm"
+          value={selected ? selection : null}
+          placeholder="No preset selected"
+          options={[
+            ...presets.map((preset) => ({
+              key: `local:${preset.id}`,
+              value: `local:${preset.id}`,
+              label: preset.label,
+            })),
+            ...remote.map((preset) => ({
+              key: `remote:${preset.id}`,
+              value: `remote:${preset.id}`,
+              label: preset.label,
+            })),
+          ]}
           disabled={disabled || phase !== null || (!presets.length && !remote.length)}
-          onChange={(event) => {
-            setSelection(event.currentTarget.value)
+          css={{ flex: '1 1 150px' }}
+          onValueChange={(next) => {
+            if (!next) return
+            setSelection(next)
             setError(null)
             setStatus(null)
-          }}>
-          {!selected && <option value="">No preset selected</option>}
-          {!!presets.length && (
-            <optgroup label="Provided presets">
-              {presets.map((preset) => (
-                <option key={preset.id} value={`local:${preset.id}`}>
-                  {preset.label}
-                </option>
-              ))}
-            </optgroup>
-          )}
-          {!!remote.length && (
-            <optgroup label="Stored presets">
-              {remote.map((preset) => (
-                <option key={preset.id} value={`remote:${preset.id}`}>
-                  {preset.label}
-                </option>
-              ))}
-            </optgroup>
-          )}
-        </select>
-        <button
-          type="button"
-          className={controlClass}
+          }}
+        />
+        <Button
+          size="sm"
+          variant="outline"
           disabled={locked || !selected || !onApplyPreset}
           onClick={() => {
             void apply()
           }}>
           Apply preset
-        </button>
-        <button
-          type="button"
-          className={controlClass}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
           disabled={disabled || phase !== null || !presetService}
           onClick={() => {
             void refresh()
           }}>
           Refresh presets
-        </button>
-        <button
-          type="button"
-          className={controlClass}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
           disabled={locked || !selectedRemote || !presetService?.remove}
           onClick={() => {
             void remove()
           }}>
           Delete preset
-        </button>
+        </Button>
       </div>
       <label htmlFor={nameId}>Preset name</label>
-      <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '6px', minWidth: 0 })}>
-        <input
+      <div className={presetRows}>
+        <Input
           id={nameId}
           aria-label="Preset name"
-          className={controlClass}
-          style={{ flex: '1 1 150px' }}
+          size="sm"
           value={name}
           disabled={disabled || phase !== null || !presetService?.save}
           readOnly={readOnly}
+          css={{ flex: '1 1 150px' }}
           onChange={(event) => setName(event.currentTarget.value)}
         />
-        <button
-          type="button"
-          className={controlClass}
+        <Button
+          size="sm"
+          variant="outline"
           disabled={locked || !name.trim() || !presetService?.save}
           onClick={() => {
             void save()
           }}>
           Save current curve
-        </button>
+        </Button>
       </div>
       {!presetService && (
         <p className={css({ margin: 0, color: 'var(--colors-textMuted)' })}>

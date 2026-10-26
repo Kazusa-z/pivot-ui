@@ -82,17 +82,19 @@ function PickerShell({
               alignItems: 'center',
               minWidth: '72px',
               width: '100%',
-              height: '28px',
-              padding: '3px',
+              height: 'var(--sizes-controlSm)',
+              padding: 'var(--space-0_5)',
               border: '1px solid var(--colors-borderStrong)',
-              borderRadius: '4px',
+              borderRadius: 'var(--radii-control)',
               backgroundColor: 'var(--colors-surface)',
               '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
               '&:disabled': { opacity: 0.5 },
             }),
             triggerProps?.className
           )}>
-          <span className={rampStyles.checker} style={{ width: '100%', height: '100%', borderRadius: 2 }}>
+          <span
+            className={rampStyles.checker}
+            style={{ width: '100%', height: '100%', borderRadius: 'var(--radii-control)' }}>
             <span style={{ display: 'block', width: '100%', height: '100%', backgroundImage: preview }} />
           </span>
         </button>
@@ -112,9 +114,15 @@ function PickerShell({
             overscrollBehavior: 'contain',
             ...contentProps?.style,
           }}>
-          <PopoverTitle className={css({ fontSize: '14px', margin: '0 0 4px' })}>{label}</PopoverTitle>
+          <PopoverTitle className={css({ fontSize: 'var(--fontSizes-controlLarge)', margin: '0 0 var(--space-1)' })}>
+            {label}
+          </PopoverTitle>
           <PopoverDescription
-            className={css({ fontSize: '11px', color: 'var(--colors-textMuted)', margin: '0 0 12px' })}>
+            className={css({
+              fontSize: 'var(--fontSizes-micro)',
+              color: 'var(--colors-textMuted)',
+              margin: '0 0 var(--space-3)',
+            })}>
             Select a stop, then edit its position or color. Arrow keys move the focused stop.
           </PopoverDescription>
           {children}

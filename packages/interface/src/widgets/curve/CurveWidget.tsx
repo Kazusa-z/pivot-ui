@@ -39,6 +39,7 @@ import {
 } from '../../values/curve'
 import { roundNumeric } from '../../values/numeric'
 import { Button } from '../buttons/Button'
+import { Select } from '../choices/Select'
 import { InputNumber } from '../inputs/InputNumber'
 
 export interface CurveWidgetProps
@@ -84,8 +85,19 @@ type Gesture = {
 }
 const emptySelection: readonly string[] = []
 const defaultView: CurveViewport = { xMin: 0, xMax: 1, yMin: 0, yMax: 1 }
-const fieldClass = css({ minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '12px' })
-const toolRow = css({ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px' })
+const fieldClass = css({
+  minWidth: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'var(--space-1)',
+  fontSize: 'var(--fontSizes-control)',
+})
+const toolRow = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  gap: 'var(--space-1_5)',
+})
 
 /** Controlled curve value, independently controlled selection and viewport. */
 export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function CurveWidget(
@@ -564,7 +576,7 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
             color: 'var(--colors-text)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '8px',
+            gap: 'var(--space-2)',
           },
           cssProp
         ),
@@ -572,52 +584,44 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
       )}>
       <div className={toolRow}>
         {showInterpolationSelector && (
-          <select
+          <Select
             aria-label={`${label} interpolation`}
+            size="sm"
             value={value.interpolation}
-            disabled={disabled || readOnly || edit.phase !== 'idle'}
-            className={css({
-              font: 'inherit',
-              fontSize: '12px',
-              color: 'var(--colors-text)',
-              background: 'var(--colors-surfaceSubtle)',
-              border: '1px solid var(--colors-border)',
-              borderRadius: '4px',
-              padding: '4px',
-            })}
-            onChange={(event) =>
-              transact(
-                setCurveInterpolation(value, event.currentTarget.value as CurveValue['interpolation']),
-                'mode',
-                'mode',
-                'mode'
-              )
-            }>
-            <option value="linear">Linear</option>
-            <option value="bezier">Bezier</option>
-          </select>
+            options={[
+              { key: 'linear', value: 'linear', label: 'Linear' },
+              { key: 'bezier', value: 'bezier', label: 'Bezier' },
+            ]}
+            disabled={disabled || edit.phase !== 'idle'}
+            readOnly={readOnly}
+            css={{ flex: '0 1 120px' }}
+            onValueChange={(next) => {
+              if (!next) return
+              transact(setCurveInterpolation(value, next as CurveValue['interpolation']), 'mode', 'mode', 'mode')
+            }}
+          />
         )}
-        <Button size="xs" disabled={!canMutate || edit.owner !== null} onClick={() => add()}>
+        <Button size="sm" disabled={!canMutate || edit.owner !== null} onClick={() => add()}>
           Add point
         </Button>
-        <Button size="xs" disabled={!canMutate || edit.owner !== null || !selected.length} onClick={remove}>
+        <Button size="sm" disabled={!canMutate || edit.owner !== null || !selected.length} onClick={remove}>
           Delete selected
         </Button>
-        <Button size="xs" disabled={disabled || edit.phase !== 'idle'} onClick={() => setView(fitCurveViewport(value))}>
+        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => setView(fitCurveViewport(value))}>
           Fit view
         </Button>
-        <Button size="xs" disabled={disabled || edit.phase !== 'idle'} onClick={() => zoom(1 / 1.2)}>
+        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => zoom(1 / 1.2)}>
           Zoom in
         </Button>
-        <Button size="xs" disabled={disabled || edit.phase !== 'idle'} onClick={() => zoom(1.2)}>
+        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => zoom(1.2)}>
           Zoom out
         </Button>
-        <Button size="xs" disabled={disabled || edit.phase !== 'idle'} onClick={() => setView(defaultViewport)}>
+        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => setView(defaultViewport)}>
           Reset view
         </Button>
         {showAnimation && (
           <Button
-            size="xs"
+            size="sm"
             disabled={disabled || !value.points.length}
             onClick={() => {
               setAnimationX(viewport.xMin)
@@ -641,7 +645,7 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
           minWidth: 0,
           background: 'var(--colors-surfaceSubtle)',
           border: '1px solid var(--colors-border)',
-          borderRadius: '4px',
+          borderRadius: 'var(--radii-control)',
           touchAction: 'none',
           userSelect: 'none',
         })}
@@ -780,12 +784,22 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
       </svg>
       <p
         id={helpId}
-        className={css({ margin: 0, fontSize: '11px', lineHeight: 1.5, color: 'var(--colors-textMuted)' })}>
+        className={css({
+          margin: 0,
+          fontSize: 'var(--fontSizes-micro)',
+          lineHeight: 1.5,
+          color: 'var(--colors-textMuted)',
+        })}>
         Select a point; drag it or use arrow keys. Shift adds to selection. Double-click the graph to add. Drag empty
         space to pan; wheel zooms. Escape cancels an edit. Use pan and zoom to inspect different parts of the curve.
       </p>
       {selectedPoint && (
-        <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '8px' })}>
+        <div
+          className={css({
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gap: 'var(--space-2)',
+          })}>
           {(['x', 'y'] as const).map((axis) => {
             const owner = `coordinate:${selectedPoint.id}:${axis}`,
               min = axis === 'x' ? selectedBounds.xMin : bounds.yMin,
@@ -832,19 +846,25 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
         </div>
       )}
       {value.points.length === 0 && (
-        <p className={css({ margin: 0, fontSize: '12px' })}>No points. Add a point to define a constant curve.</p>
+        <p className={css({ margin: 0, fontSize: 'var(--fontSizes-control)' })}>
+          No points. Add a point to define a constant curve.
+        </p>
       )}
       {error && !props['aria-errormessage'] && (
         <div
           id={errorId}
           role="alert"
-          className={css({ fontSize: '12px', color: 'var(--colors-dangerText)', overflowWrap: 'anywhere' })}>
+          className={css({
+            fontSize: 'var(--fontSizes-control)',
+            color: 'var(--colors-dangerText)',
+            overflowWrap: 'anywhere',
+          })}>
           {error}
         </div>
       )}
       {edit.error && edit.owner && !edit.owner.startsWith('coordinate:') && (
         <Button
-          size="xs"
+          size="sm"
           disabled={!canMutate}
           onClick={() => {
             if (edit.owner) void commit(edit.getRequested(), lastCommitReason.current, edit.owner).catch(() => {})

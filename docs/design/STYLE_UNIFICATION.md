@@ -424,31 +424,31 @@
 
 **验收**：Tree 28 消失；行高只有 24/32；选中只有实心行 + 浅底卡片两种；`pnpm verify` 通过。
 
-### Phase 6 — Templates（6 天，最大块）
+### Phase 6 — Templates（已完成 2026-10-26）
 
 **6a Numeric**
 
-- [ ] `templates/numeric/numeric-template.styles.ts`：11/12 标签、4/6 gap；删除 3px/10px。
-- [ ] `NumericSlider.tsx`、`NumericTupleInput.tsx`、`GeometryInputs.tsx`：紧凑/常规两档；轴标签 11/12。
+- [x] `templates/numeric/numeric-template.styles.ts`：11/12 标签、4/6 gap；删除 3px/10px。
+- [x] `NumericSlider.tsx`、`NumericTupleInput.tsx`、`GeometryInputs.tsx`：紧凑/常规两档；轴标签 11/12。
 
 **6b Color**
 
-- [ ] `widgets/color/*`：ColorWidget 的 2 个原生 `<select>`→`Select`；gap 8/12；预览/平面 4px；通道标签 12；HEX 12。
-- [ ] `templates/color/*`：ColorPicker 触发器 24/32、色块 4；RampControls 原生 `<select>`→`Select`；28/30→24/32；3px→4/6；`#fff` 保留为棋盘格功能色；stop 18/20。
-- [ ] `ColorDistributionTemplate`：模式控制用 SegmentControl compact；面板 6px。
+- [x] `widgets/color/*`：ColorWidget 的 2 个原生 `<select>`→`Select`；gap 8/12；预览/平面 4px；通道标签 12；HEX 12。
+- [x] `templates/color/*`：ColorPicker 触发器 24/32、色块 4；RampControls 原生 `<select>`→`Select`；28/30→24/32；3px→4/6；`#fff` 保留为棋盘格功能色；stop 18/20。
+- [x] `ColorDistributionTemplate`：模式控制用 SegmentControl compact；面板 6px。
 
 **6c Curve**
 
-- [ ] `widgets/curve/CurveWidget.tsx`：原生 `<select>`→`Select`；工具按钮 24/32；标签 11/12；错误 12；面板 6px。
-- [ ] `templates/curve/*`：CurvePicker/CurvePresets/NumericDistribution 原生 `<select>`→`Select`；控件 24/32；preset 行 24/32。
+- [x] `widgets/curve/CurveWidget.tsx`：原生 `<select>`→`Select`；工具按钮 24/32；标签 11/12；错误 12；面板 6px。
+- [x] `templates/curve/*`：CurvePicker/CurvePresets/NumericDistribution 原生 `<select>`→`Select`；控件 24/32；preset 行 24/32。
 
 **6d Resources**
 
-- [ ] `templates/resources/ResourcePicker.tsx`：工具栏 24/32；搜索用 `Input`；kind 多选→`Combobox` multiple；group→`Select`；分页/网格间距统一。
-- [ ] `templates/resources/AssetReferenceInput.tsx`：字段 48 例外、6px；padding 8/12；name 12/14；meta 11/12；按钮 sm；Popover 12。
-- [ ] Stories：`NumericSlider`、`NumericTupleInput`、`ColorWidget`、`ColorRamp`、`ColorRampChannels`、`ColorDistribution`、`CurveWidget`、`CurvePicker`、`NumericDistribution`、`ResourcePicker`、`AssetReferenceInput`。
+- [x] `templates/resources/ResourcePicker.tsx`：工具栏 24/32；搜索用 `Input`；kind 多选→`Combobox` multiple；group→`Select`；分页/网格间距统一。
+- [x] `templates/resources/AssetReferenceInput.tsx`：字段 48 例外、6px；padding 8/12；name 12/14；meta 11/12；按钮 sm；Popover 12。
+- [x] Stories：`NumericSlider`、`NumericTupleInput`、`ColorWidget`、`ColorRamp`、`ColorRampChannels`、`ColorDistribution`、`CurveWidget`、`CurvePicker`、`NumericDistribution`、`ResourcePicker`、`AssetReferenceInput`。
 
-**验收**：组件源码中 0 个原生 `<select>`；颜色/曲线/资源控件只有 24/32；无 2/3px 圆角（文档化的功能色除外）；build 通过。
+**验收**：组件源码中 0 个原生 `<select>`；颜色/曲线/资源控件只有 24/32；无 2/3px 圆角（文档化的功能色除外）；`pnpm verify` 通过。
 
 ### Phase 7 — Property（2 天）
 

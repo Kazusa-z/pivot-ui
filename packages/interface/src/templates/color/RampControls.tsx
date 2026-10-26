@@ -5,6 +5,8 @@ import type { useColorEdit } from '../../interaction/color/useColorEdit'
 import type { ColorValue } from '../../values/color'
 import { sampleColorRamp, sortRampStops, type ColorRampValue } from '../../values/color-ramp'
 import { getColorCss } from '../../widgets/color/color-preview'
+import { Button } from '../../widgets/buttons/Button'
+import { Select } from '../../widgets/choices/Select'
 import { InputNumber } from '../../widgets/inputs/InputNumber'
 import { ColorPicker } from './ColorPicker'
 import type { ColorCapabilities } from '../../contracts/color'
@@ -16,23 +18,16 @@ export const rampStyles = {
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
-    gap: '10px',
+    gap: 'var(--space-2)',
     color: 'var(--colors-text)',
-    fontSize: '12px',
+    fontSize: 'var(--fontSizes-control)',
   }),
-  row: css({ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', minWidth: 0 }),
-  control: css({
+  row: css({
+    display: 'flex',
+    gap: 'var(--space-2)',
+    flexWrap: 'wrap',
+    alignItems: 'center',
     minWidth: 0,
-    maxWidth: '100%',
-    minHeight: '28px',
-    padding: '3px 8px',
-    border: '1px solid var(--colors-borderStrong)',
-    borderRadius: '4px',
-    backgroundColor: 'var(--colors-surface)',
-    color: 'var(--colors-text)',
-    font: 'inherit',
-    '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
-    '&:disabled': { opacity: 0.5 },
   }),
   checker: css({
     backgroundColor: '#fff',
@@ -145,10 +140,10 @@ export function RampTrack({
         tabIndex={-1}
         className={css({
           position: 'relative',
-          marginInline: '8px',
+          marginInline: 'var(--space-2)',
           height: '64px',
           minWidth: 0,
-          outlineOffset: '3px',
+          outlineOffset: '2px',
         })}>
         <div
           className={rampStyles.checker}
@@ -156,7 +151,7 @@ export function RampTrack({
             position: 'absolute',
             inset: '0 0 auto',
             height: 24,
-            borderRadius: 4,
+            borderRadius: 'var(--radii-control)',
             border: '1px solid var(--colors-borderStrong)',
           }}>
           <div style={{ height: '100%', borderRadius: 'inherit', backgroundImage: background }} />
@@ -183,15 +178,15 @@ export function RampTrack({
             className={css({
               position: 'absolute',
               width: '16px',
-              height: '20px',
-              padding: '2px',
+              height: 'var(--sizes-controlXs)',
+              padding: 'var(--space-0_5)',
               transform: 'translateX(-50%)',
               border: '1px solid var(--colors-borderStrong)',
-              borderRadius: '3px',
+              borderRadius: 'var(--radii-control)',
               backgroundColor: 'var(--colors-surface)',
               cursor: 'ew-resize',
               touchAction: 'none',
-              '&[data-active]': { outline: '2px solid var(--colors-primary)' },
+              '&[data-active]': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px', zIndex: 2 },
               '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px', zIndex: 2 },
               '&:disabled': { opacity: 0.5 },
             })}
@@ -347,22 +342,23 @@ export function ColorRampControls<T>({
         onRemove={remove}
       />
       <div className={rampStyles.row}>
-        <select
+        <Select
           aria-label="Selected color stop"
-          className={rampStyles.control}
-          value={active?.id ?? ''}
+          size="sm"
+          value={active?.id ?? null}
+          placeholder="No stop selected"
+          options={value.stops.map((stop) => ({
+            key: stop.id,
+            value: stop.id,
+            label: `${stop.id} (${Math.round(stop.position * 100)}%)`,
+          }))}
           disabled={disabled || editor.phase === 'pending' || !value.stops.length}
-          onChange={(event) => onSelect(event.target.value || null)}>
-          {!active && <option value="">No stop selected</option>}
-          {value.stops.map((stop) => (
-            <option key={stop.id} value={stop.id}>
-              {stop.id} ({Math.round(stop.position * 100)}%)
-            </option>
-          ))}
-        </select>
-        <button
-          type="button"
-          className={rampStyles.control}
+          css={{ flex: '1 1 150px' }}
+          onValueChange={(id) => onSelect(id)}
+        />
+        <Button
+          size="sm"
+          variant="outline"
           disabled={locked}
           onClick={() => {
             const position = active?.position ?? 0.5,
@@ -375,25 +371,24 @@ export function ColorRampControls<T>({
             if (!discrete({ ...value, stops: [...value.stops, { id, position, color }] })) added.current = null
           }}>
           Add color stop
-        </button>
-        <button
-          type="button"
-          className={rampStyles.control}
-          disabled={locked || !active}
-          onClick={() => active && remove(active.id)}>
+        </Button>
+        <Button size="sm" variant="outline" disabled={locked || !active} onClick={() => active && remove(active.id)}>
           Delete color stop
-        </button>
-        <select
+        </Button>
+        <Select
           aria-label="Interpolation"
-          className={rampStyles.control}
+          size="sm"
           value={value.interpolation}
+          options={[
+            { key: 'linear', value: 'linear', label: 'Linear' },
+            { key: 'constant', value: 'constant', label: 'Constant' },
+          ]}
           disabled={locked}
-          onChange={(event) =>
-            discrete({ ...value, interpolation: event.target.value as ColorRampValue['interpolation'] })
-          }>
-          <option value="linear">Linear</option>
-          <option value="constant">Constant</option>
-        </select>
+          css={{ flex: '1 1 120px' }}
+          onValueChange={(next) => {
+            if (next) discrete({ ...value, interpolation: next as ColorRampValue['interpolation'] })
+          }}
+        />
       </div>
       {active && (
         <>

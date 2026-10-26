@@ -202,20 +202,21 @@ export function NumericDistributionTemplate({
       role="group"
       aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : label)}
       aria-disabled={disabled || undefined}
-      className={cx(css({ display: 'grid', gap: '10px', minWidth: 0, width: '100%' }, cssProp), className)}>
+      className={cx(css({ display: 'grid', gap: 'var(--space-2)', minWidth: 0, width: '100%' }, cssProp), className)}>
       <div
         className={css({
           display: 'grid',
           gridTemplateColumns: 'auto minmax(0, 1fr)',
           alignItems: 'center',
-          gap: '8px',
+          gap: 'var(--space-2)',
           minWidth: 0,
         })}>
-        <label htmlFor={modeId} className={css({ fontSize: '12px' })}>
+        <label htmlFor={modeId} className={css({ fontSize: 'var(--fontSizes-control)' })}>
           Mode
         </label>
         <Select
           id={modeId}
+          size="sm"
           options={options}
           value={value.mode}
           aria-invalid={(editor.owner === 'mode' && !!editor.error) || undefined}
@@ -253,14 +254,14 @@ export function NumericDistributionTemplate({
             key={index}
             className={css({
               display: 'grid',
-              gap: '6px',
+              gap: 'var(--space-1_5)',
               minWidth: 0,
-              padding: '8px',
+              padding: 'var(--space-2)',
               margin: 0,
               border: '1px solid var(--colors-border)',
-              borderRadius: '6px',
+              borderRadius: 'var(--radii-controlMd)',
             })}>
-            <legend className={css({ fontSize: '12px', paddingInline: '4px' })}>
+            <legend className={css({ fontSize: 'var(--fontSizes-control)', paddingInline: 'var(--space-1)' })}>
               {index === 0 ? 'First' : 'Second'}
             </legend>
             {value.mode === 'two-constant'
@@ -269,11 +270,15 @@ export function NumericDistributionTemplate({
           </fieldset>
         ))}
       {editor.error && editor.owner === 'mode' && !props['aria-errormessage'] && (
-        <div className={css({ display: 'grid', gap: '6px', minWidth: 0 })}>
+        <div className={css({ display: 'grid', gap: 'var(--space-1_5)', minWidth: 0 })}>
           <span
             id={errorId}
             role="alert"
-            className={css({ color: 'var(--colors-dangerText)', fontSize: '12px', overflowWrap: 'anywhere' })}>
+            className={css({
+              color: 'var(--colors-dangerText)',
+              fontSize: 'var(--fontSizes-control)',
+              overflowWrap: 'anywhere',
+            })}>
             {editor.error}
           </span>
           <Button size="xs" onClick={() => editor.cancel('escape')}>

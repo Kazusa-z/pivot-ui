@@ -110,7 +110,11 @@ export function HexColorField({
         <div
           id={id}
           role="alert"
-          className={css({ color: 'var(--colors-dangerText)', fontSize: '12px', overflowWrap: 'anywhere' })}>
+          className={css({
+            color: 'var(--colors-dangerText)',
+            fontSize: 'var(--fontSizes-control)',
+            overflowWrap: 'anywhere',
+          })}>
           {editor.error}
         </div>
       )}

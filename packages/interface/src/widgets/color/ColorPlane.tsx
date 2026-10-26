@@ -69,7 +69,7 @@ export function ColorPlane(props: ColorPlaneProps) {
         position: 'relative',
         height: '130px',
         width: '100%',
-        borderRadius: '4px',
+        borderRadius: 'var(--radii-control)',
         border: '1px solid var(--colors-border)',
         touchAction: 'none',
         userSelect: 'none',

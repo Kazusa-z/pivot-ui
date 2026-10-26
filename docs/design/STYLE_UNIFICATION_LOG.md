@@ -14,50 +14,57 @@
 | 3 Layout 与面板                   | 已完成 | 2026-10-26 | 2026-10-26 | 7 个 story 迁移，验收全绿             |
 | 4 Overlays                        | 已完成 | 2026-10-26 | 2026-10-26 | 6 个 story 迁移，验收全绿             |
 | 5 Collections 与 Navigation       | 已完成 | 2026-10-26 | 2026-10-26 | 7 个 story 迁移，验收全绿             |
-| 6 Templates                       | 未开始 | —          | —          | —                                     |
+| 6 Templates                       | 已完成 | 2026-10-26 | 2026-10-26 | 11 个 story 迁移，验收全绿            |
 | 7 Property                        | 未开始 | —          | —          | —                                     |
 | 8 Storybook 收尾与审计            | 未开始 | —          | —          | —                                     |
 
 ## 跨阶段待解决项
 
-| ID  | 发现于   | 目标 Phase | 问题                                                                                                                                   | 处理方式                                                                     | 状态   |
-| --- | -------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------ |
-| D01 | Phase 1a | —          | `ActionButton` 仍使用 `var(--shadows-prepend)`（值为透明阴影），且去掉后无视觉影响                                                     | Phase 2 已删除该引用                                                         | 已解决 |
-| D02 | Phase 1a | —          | `Button variant="solid"` 仍使用 `primary`（blue9）配白字，对比度不足                                                                   | Phase 2 改用 `primarySolid`；critical/positive solid 使用加深的 status solid | 已解决 |
-| D03 | Phase 1a | —          | 保留 `overlayFadeIn`/`contentShow` keyframes，但 Dialog/Popover 还没有接线                                                             | Phase 4 在 Overlay/Dialog 样式中接入进入动画                                 | 已解决 |
-| D04 | Phase 1a | —          | `surfaceOverlay/surfaceRaised` 已抬到 gray3/white，但 Menu/Popover/Dialog 的 padding、圆角、shadow 仍是旧值                            | Phase 4 统一 overlay surface 的 padding/radius/shadow                        | 已解决 |
-| D05 | Phase 1a | —          | Section/Collapsible 仍是 27/30px 头部和 3px trigger 圆角                                                                               | Phase 3 统一到 24/32 与 4/6                                                  | 已解决 |
-| D06 | Phase 1a | —          | Menu 仍是 3px item 圆角、13px md 字号、10px xs 字号                                                                                    | Phase 4 统一到 4/6、12/14                                                    | 已解决 |
-| D07 | Phase 1a | Phase 5    | Tree 仍是 28px 行高、实心 primary 选中                                                                                                 | Phase 5 统一到 24/32，并用 `selectionBg/selectionText`                       | 待处理 |
-| D08 | Phase 1a | —          | Input md slot 仍是 13px，InputNumber stepper 仍是 18px/2px 圆角                                                                        | Phase 2 已改为 14px、16/20、4px                                              | 已解决 |
-| D09 | Phase 1a | Phase 6    | ColorWidget/RampControls/ColorRampChannels/CurveWidget/CurvePresets/ResourcePicker 仍使用 9 处原生 `<select>`                          | Phase 6 替换为 `Select`/`Combobox`                                           | 待处理 |
-| D10 | Phase 1a | Phase 8    | 旧 token（`tooltipBg`、`tooltipColor`、`toastBg`、`sidebar*`、`focusRingMuted`、`shadows.prepend`）先保留，避免 Phase 1 破坏未迁移组件 | Phase 8 无引用后删除                                                         | 待处理 |
-| D11 | Phase 1a | —          | `overlayFadeOut` 已删除，若后面需要退场动画，需在 Phase 4 重新引入并接 Radix forceMount                                                | Phase 4 评估：不引入退场动画，依赖 Radix unmount；保留现状                   | 已接受 |
-| D12 | Phase 1a | —          | Checkbox 仍是 14/18/22 三档元素尺寸；Kbd 已先改为 16/18/20                                                                             | Phase 2 已用 `sizes.iconSm/iconLg/5_5` token 化                              | 已解决 |
-| D13 | Phase 1c | —          | `!autodocs` 已在 SB10 验证：`foundation-theme--shared-providers` 与 `storage-and-cleanup` 的 index tags 不再包含 autodocs              | 已确认可用；后续 Phase 沿用该方式                                            | 已解决 |
-| D14 | Phase 1c | Phase 6–7  | 43 个 `ContractFrame` story 中，Phase 1–5 共迁移 30 个；当前实际剩 13 个按组件 Phase 迁移                                              | 各 Phase 跟随组件修改                                                        | 进行中 |
-| D15 | Phase 1b | —          | Badge 的 `solid` 改为 filled tint（`*Bg + *Text`），surface 加 `*Border`，active 用 `primarySolid + 白字`；状态文字改用 12 阶          | 已按语义 token 迁移；orange/gold/violet 保留 categorical A 色，Phase 8 复核  | 已解决 |
-| D16 | Phase 1a | —          | Radix 亮色 blue8 只有 2.33:1，无法承载白字                                                                                             | 暗色 `primarySolid = blue8`，亮色 `primarySolid = blue11`，对比 5.07 / 4.77  | 已解决 |
-| D17 | Phase 1a | —          | `generate-tokens.mjs` 使用 `/tmp`，Windows 下生成到仓库 `tmp/` 且 file URL 失败                                                        | 改为 `node_modules/.cache` + `pathToFileURL`；`.gitignore` 增加 `tmp/`       | 已解决 |
-| D18 | Phase 1a | —          | 状态文字用 11 阶时低于 4.5:1                                                                                                           | `info/success/warning/danger Text` 改用 12 阶；实测 10.47–12.98:1            | 已解决 |
-| D19 | Phase 1b | —          | Kbd 原为 14/18/22 + 10/12 字；与两档控件不一致                                                                                         | 改为 16/18/20、11/11/12 字；保留 3 档 inline 尺寸并在 Tokens 页说明          | 已接受 |
-| D20 | Phase 1c | —          | 旧 story 依赖 `ContractFrame` / 原生控件 / 34px 控件                                                                                   | 新增 `StoryPage` 套件；12 个 Foundation/Display/Feedback story 已迁移        | 已解决 |
-| D21 | Phase 1c | —          | `Foundation/Tokens` 的 density 示例使用当前 Button/Input/Select，视觉仍是 Phase 2 之前的尺寸                                           | Phase 2 后自动反映新尺寸，已在 Control matrix 复核                           | 已解决 |
-| D22 | Phase 1a | Phase 3–6  | `appBg` 已改为 gray1、`surfaceRaised` 已抬层级；未迁移组件仍使用旧的 padding/radius/字体，预览会有过渡态                               | 按 Phase 3–6 正常推进                                                        | 已知   |
-| D23 | Phase 2a | Phase 8    | `warningSolid`（amber9）配白字仅 1.8:1；当前 Button 的 critical/positive 只用 danger/success，warning solid 未使用                     | Phase 8 若引入 warning solid，改用深色文字或专用 dark amber solid            | 待处理 |
-| D24 | Phase 2a | —          | `ActionButtonGroup` 新增 additive `size` prop；默认 sm，现有调用不受影响                                                               | 已记录为新 API                                                               | 已解决 |
-| D25 | Phase 2e | —          | Buttons 与 Control matrix 已迁移；TextInputs/InputNumber/Checkbox/Select/Combobox/Segment/Toggle/Slider/Distribution 的 story 已重写   | 已全部通过 typecheck 与 build                                                | 已解决 |
-| D26 | Phase 2c | —          | SegmentControl/ToggleGroup 没有 xs/20 档，档位是 24/32/36；Slider 没有 lg/36；DistributionSlider 类型上无 compact                      | 已在 stories 中按真实 API 说明，不新增无依据的档位                           | 已记录 |
-| D27 | Phase 2b | Phase 8    | InputNumber 没有暴露内部 phase/draft/error，story 的 StoryState 只能记录宿主可见的 value/mixed/events                                  | 保持 API 不变；Phase 8 再决定是否增加只读状态接口                            | 待处理 |
-| D28 | Phase 3  | Phase 7    | `PropertyRow` 已支持 density，但 `PropertyField` 内置控件仍按默认 size 渲染，未随 density 变成 sm/md                                   | Phase 7 在 PropertyField 内透传 size                                         | 待处理 |
-| D29 | Phase 3  | —          | `ResizableSplit` 的 handle 保持 6px 命中区，而不是计划里的 4px                                                                         | 保留 6px 以兼顾可点击性；视觉/命中区一致                                     | 已接受 |
-| D30 | Phase 4  | —          | Overlay surface 基础字号 14；Tooltip 局部 12，Popover padding 12、HoverCard 8                                                          | 按信息密度保留局部差异，radius/shadow/surface 已统一                         | 已接受 |
-| D31 | Phase 4  | —          | Dialog 关闭按钮默认 24；新增 `closeSize` 可切到 32                                                                                     | 默认紧凑，常规/触控场景可显式切 32                                           | 已解决 |
-| D32 | Phase 5  | —          | `Table` 默认 regular 32；旧 `compact` 保留并映射到 compact 24                                                                          | 保持现有调用不突变，新代码用 `density`                                       | 已接受 |
-| D33 | Phase 5  | —          | `AssetItem` 新增 `density`，AssetName/meta 跟随 12/14 与 11/12                                                                         | 已实现                                                                       | 已解决 |
-| D34 | Phase 5  | —          | `space` 增加 `2_5=10px`，用于 Tooltip/Toast 的 6×10 padding                                                                            | 已生成 token                                                                 | 已解决 |
-| D35 | Phase 5  | —          | `AssetItem` 的 density 控制 12/14 文字和列表名称密度，不是固定的 24/32 行高                                                            | 已在 story 中按真实 API 标注为 12/14                                         | 已接受 |
-| D36 | Phase 5  | Phase 8    | `TreeDragPreview` 是独立预览组件，TreeRoot 的拖拽仍使用浏览器默认 drag image                                                           | 保持现有 API；Phase 8 评估是否接入                                           | 待处理 |
+| ID  | 发现于   | 目标 Phase | 问题                                                                                                                                   | 处理方式                                                                        | 状态   |
+| --- | -------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------ |
+| D01 | Phase 1a | —          | `ActionButton` 仍使用 `var(--shadows-prepend)`（值为透明阴影），且去掉后无视觉影响                                                     | Phase 2 已删除该引用                                                            | 已解决 |
+| D02 | Phase 1a | —          | `Button variant="solid"` 仍使用 `primary`（blue9）配白字，对比度不足                                                                   | Phase 2 改用 `primarySolid`；critical/positive solid 使用加深的 status solid    | 已解决 |
+| D03 | Phase 1a | —          | 保留 `overlayFadeIn`/`contentShow` keyframes，但 Dialog/Popover 还没有接线                                                             | Phase 4 在 Overlay/Dialog 样式中接入进入动画                                    | 已解决 |
+| D04 | Phase 1a | —          | `surfaceOverlay/surfaceRaised` 已抬到 gray3/white，但 Menu/Popover/Dialog 的 padding、圆角、shadow 仍是旧值                            | Phase 4 统一 overlay surface 的 padding/radius/shadow                           | 已解决 |
+| D05 | Phase 1a | —          | Section/Collapsible 仍是 27/30px 头部和 3px trigger 圆角                                                                               | Phase 3 统一到 24/32 与 4/6                                                     | 已解决 |
+| D06 | Phase 1a | —          | Menu 仍是 3px item 圆角、13px md 字号、10px xs 字号                                                                                    | Phase 4 统一到 4/6、12/14                                                       | 已解决 |
+| D07 | Phase 1a | Phase 5    | Tree 仍是 28px 行高、实心 primary 选中                                                                                                 | Phase 5 统一到 24/32，并用 `selectionBg/selectionText`                          | 待处理 |
+| D08 | Phase 1a | —          | Input md slot 仍是 13px，InputNumber stepper 仍是 18px/2px 圆角                                                                        | Phase 2 已改为 14px、16/20、4px                                                 | 已解决 |
+| D09 | Phase 1a | —          | ColorWidget/RampControls/ColorRampChannels/CurveWidget/CurvePresets/ResourcePicker 仍使用 9 处原生 `<select>`                          | Phase 6 已全部替换为 `Select`/`Combobox`/`SegmentControl`；源码 0 处原生 select | 已解决 |
+| D10 | Phase 1a | Phase 8    | 旧 token（`tooltipBg`、`tooltipColor`、`toastBg`、`sidebar*`、`focusRingMuted`、`shadows.prepend`）先保留，避免 Phase 1 破坏未迁移组件 | Phase 8 无引用后删除                                                            | 待处理 |
+| D11 | Phase 1a | —          | `overlayFadeOut` 已删除，若后面需要退场动画，需在 Phase 4 重新引入并接 Radix forceMount                                                | Phase 4 评估：不引入退场动画，依赖 Radix unmount；保留现状                      | 已接受 |
+| D12 | Phase 1a | —          | Checkbox 仍是 14/18/22 三档元素尺寸；Kbd 已先改为 16/18/20                                                                             | Phase 2 已用 `sizes.iconSm/iconLg/5_5` token 化                                 | 已解决 |
+| D13 | Phase 1c | —          | `!autodocs` 已在 SB10 验证：`foundation-theme--shared-providers` 与 `storage-and-cleanup` 的 index tags 不再包含 autodocs              | 已确认可用；后续 Phase 沿用该方式                                               | 已解决 |
+| D14 | Phase 1c | Phase 7    | 43 个 `ContractFrame` story 中，Phase 1–6 共迁移 39 个；当前实际剩 4 个按 Property Phase 迁移                                          | 各 Phase 跟随组件修改                                                           | 进行中 |
+| D15 | Phase 1b | —          | Badge 的 `solid` 改为 filled tint（`*Bg + *Text`），surface 加 `*Border`，active 用 `primarySolid + 白字`；状态文字改用 12 阶          | 已按语义 token 迁移；orange/gold/violet 保留 categorical A 色，Phase 8 复核     | 已解决 |
+| D16 | Phase 1a | —          | Radix 亮色 blue8 只有 2.33:1，无法承载白字                                                                                             | 暗色 `primarySolid = blue8`，亮色 `primarySolid = blue11`，对比 5.07 / 4.77     | 已解决 |
+| D17 | Phase 1a | —          | `generate-tokens.mjs` 使用 `/tmp`，Windows 下生成到仓库 `tmp/` 且 file URL 失败                                                        | 改为 `node_modules/.cache` + `pathToFileURL`；`.gitignore` 增加 `tmp/`          | 已解决 |
+| D18 | Phase 1a | —          | 状态文字用 11 阶时低于 4.5:1                                                                                                           | `info/success/warning/danger Text` 改用 12 阶；实测 10.47–12.98:1               | 已解决 |
+| D19 | Phase 1b | —          | Kbd 原为 14/18/22 + 10/12 字；与两档控件不一致                                                                                         | 改为 16/18/20、11/11/12 字；保留 3 档 inline 尺寸并在 Tokens 页说明             | 已接受 |
+| D20 | Phase 1c | —          | 旧 story 依赖 `ContractFrame` / 原生控件 / 34px 控件                                                                                   | 新增 `StoryPage` 套件；12 个 Foundation/Display/Feedback story 已迁移           | 已解决 |
+| D21 | Phase 1c | —          | `Foundation/Tokens` 的 density 示例使用当前 Button/Input/Select，视觉仍是 Phase 2 之前的尺寸                                           | Phase 2 后自动反映新尺寸，已在 Control matrix 复核                              | 已解决 |
+| D22 | Phase 1a | Phase 3–6  | `appBg` 已改为 gray1、`surfaceRaised` 已抬层级；未迁移组件仍使用旧的 padding/radius/字体，预览会有过渡态                               | 按 Phase 3–6 正常推进                                                           | 已知   |
+| D23 | Phase 2a | Phase 8    | `warningSolid`（amber9）配白字仅 1.8:1；当前 Button 的 critical/positive 只用 danger/success，warning solid 未使用                     | Phase 8 若引入 warning solid，改用深色文字或专用 dark amber solid               | 待处理 |
+| D24 | Phase 2a | —          | `ActionButtonGroup` 新增 additive `size` prop；默认 sm，现有调用不受影响                                                               | 已记录为新 API                                                                  | 已解决 |
+| D25 | Phase 2e | —          | Buttons 与 Control matrix 已迁移；TextInputs/InputNumber/Checkbox/Select/Combobox/Segment/Toggle/Slider/Distribution 的 story 已重写   | 已全部通过 typecheck 与 build                                                   | 已解决 |
+| D26 | Phase 2c | —          | SegmentControl/ToggleGroup 没有 xs/20 档，档位是 24/32/36；Slider 没有 lg/36；DistributionSlider 类型上无 compact                      | 已在 stories 中按真实 API 说明，不新增无依据的档位                              | 已记录 |
+| D27 | Phase 2b | Phase 8    | InputNumber 没有暴露内部 phase/draft/error，story 的 StoryState 只能记录宿主可见的 value/mixed/events                                  | 保持 API 不变；Phase 8 再决定是否增加只读状态接口                               | 待处理 |
+| D28 | Phase 3  | Phase 7    | `PropertyRow` 已支持 density，但 `PropertyField` 内置控件仍按默认 size 渲染，未随 density 变成 sm/md                                   | Phase 7 在 PropertyField 内透传 size                                            | 待处理 |
+| D29 | Phase 3  | —          | `ResizableSplit` 的 handle 保持 6px 命中区，而不是计划里的 4px                                                                         | 保留 6px 以兼顾可点击性；视觉/命中区一致                                        | 已接受 |
+| D30 | Phase 4  | —          | Overlay surface 基础字号 14；Tooltip 局部 12，Popover padding 12、HoverCard 8                                                          | 按信息密度保留局部差异，radius/shadow/surface 已统一                            | 已接受 |
+| D31 | Phase 4  | —          | Dialog 关闭按钮默认 24；新增 `closeSize` 可切到 32                                                                                     | 默认紧凑，常规/触控场景可显式切 32                                              | 已解决 |
+| D32 | Phase 5  | —          | `Table` 默认 regular 32；旧 `compact` 保留并映射到 compact 24                                                                          | 保持现有调用不突变，新代码用 `density`                                          | 已接受 |
+| D33 | Phase 5  | —          | `AssetItem` 新增 `density`，AssetName/meta 跟随 12/14 与 11/12                                                                         | 已实现                                                                          | 已解决 |
+| D34 | Phase 5  | —          | `space` 增加 `2_5=10px`，用于 Tooltip/Toast 的 6×10 padding                                                                            | 已生成 token                                                                    | 已解决 |
+| D35 | Phase 5  | —          | `AssetItem` 的 density 控制 12/14 文字和列表名称密度，不是固定的 24/32 行高                                                            | 已在 story 中按真实 API 标注为 12/14                                            | 已接受 |
+| D36 | Phase 5  | Phase 8    | `TreeDragPreview` 是独立预览组件，TreeRoot 的拖拽仍使用浏览器默认 drag image                                                           | 保持现有 API；Phase 8 评估是否接入                                              | 待处理 |
+| D37 | Phase 6  | —          | ColorPicker/RampPicker 触发器统一 24；CurvePicker 保留 32                                                                              | 两者都落在 24/32 两档内，按字段密度选择                                         | 已接受 |
+| D38 | Phase 6  | —          | `AssetReferenceInput` 的引用字段保留 48px 高度例外                                                                                     | 作为缩略图字段尺寸，padding/radius 已 token 化                                  | 已接受 |
+| D39 | Phase 6  | —          | CurvePresets 由原生 select/input/button 改为 Select/Input/Button                                                                       | 已替换，preset 控件 24                                                          | 已解决 |
+| D40 | Phase 6  | —          | ResourcePicker 的 kind 多选改 Combobox multiple，group 改 Select                                                                       | 已替换，搜索使用 Input                                                          | 已解决 |
+| D41 | Phase 6  | Phase 8    | ColorWidget/ColorRamp/ColorRampChannels 没有 density prop，控件固定 24                                                                 | story 已按真实 API 说明；Phase 8 评估是否加档位                                 | 待处理 |
+| D42 | Phase 6  | Phase 8    | NumericDistribution 没有 density prop，内部 InputNumber/Select 固定 24                                                                 | story 已说明；Phase 8 评估是否加档位                                            | 待处理 |
+| D43 | Phase 6  | Phase 8    | CurveWidget 没有 density prop，高度 180/280、工具行 24；CurvePicker 触发器固定 32                                                      | story 已按真实 API 说明；Phase 8 评估是否加档位                                 | 待处理 |
 
 ## Phase 1 执行明细
 
@@ -343,3 +350,57 @@ Phase 5 已完成。`pnpm verify` 全绿；7 个 collection/navigation story 已
 - 新增 `space.2_5=10px`，见 D34。
 - TreeDragPreview 仍是独立预览组件，未自动接入 TreeRoot，见 D36。
 - 剩余 13 个 ContractFrame story 按 Phase 6–7 迁移，见 D14。
+
+## Phase 6 执行明细
+
+### 6a Numeric
+
+- [x] numeric-template 标签 11、gap 4/6；删 3px/10px。
+- [x] NumericTuple 联动按钮随 sm/md；轴标签 micro。
+- [x] NumericSlider 继续复用 InputNumber/Slider 两档。
+
+### 6b Color
+
+- [x] ColorWidget 两个原生 select→Select；gap 8；预览/平面 4；通道标签/HEX 12。
+- [x] ColorPicker/RampPicker 触发器 24、色块 4；RampControls/ColorRampChannels select→Select，按钮→Button。
+- [x] Ramp item 24、stop 18/20、radius 4/6；`#fff` 棋盘格保留。
+- [x] ColorDistribution 模式改 SegmentControl compact，面板 6。
+
+### 6c Curve
+
+- [x] CurveWidget 原生 select→Select；工具按钮 sm、标签 micro、错误 12、面板 4。
+- [x] CurvePicker/CurvePresets/NumericDistribution 控件 24/32；preset rows 24。
+- [x] CurvePresets select/input/button→Select/Input/Button。
+
+### 6d Resources
+
+- [x] ResourcePicker 搜索 Input、kind Combobox multiple、group Select、工具按钮 Button。
+- [x] AssetReferenceInput 48 例外、6 圆角、padding 8/12、name 12/14、meta 11/12、按钮 sm。
+- [x] Popover 12；分页/网格间距统一。
+- [x] 11 个 story（NumericSlider/NumericTupleInput/NumericDistribution/ColorWidget/ColorRamp/ColorRampChannels/ColorDistribution/CurveWidget/CurvePicker/ResourcePicker/AssetReferenceInput，subagent 完成）。
+
+### 6e 验收
+
+- [x] stories 完成并 typecheck。
+- [x] 源码 0 原生 `<select>`。
+- [x] `pnpm verify`。
+- [x] 更新计划文档 Phase 6 复选框。
+
+## Phase 6 结果
+
+Phase 6 已完成。`pnpm verify` 全绿；11 个 numeric/color/curve/resource story 已迁移，并做了 headless Chrome DOM smoke test；源码原生 `<select>` 为 0。
+
+**已完成**
+
+- Numeric 模板标签 11/gap 4/6；NumericTuple 联动按钮随 sm/md。
+- ColorWidget 两个 select→Select；ColorPicker/RampPicker 24；RampControls/ColorRampChannels select→Select、按钮→Button；ColorDistribution 模式 SegmentControl。
+- CurveWidget/CurvePresets/NumericDistribution 的原生控件清零；CurvePicker 32；CurvePresets 用 Input/Select/Button。
+- ResourcePicker 搜索 Input、kind Combobox multiple、group Select、工具按钮 Button；AssetReferenceInput 48 例外与 popover token 化。
+- 9 处原生 `<select>` 全部替换，Phase 6 验收完成。
+
+**偏差 / 记录**
+
+- ColorWidget/ColorRamp/ColorRampChannels 没有 density，固定 24，见 D41。
+- NumericDistribution 无 density，内部固定 24，见 D42。
+- CurveWidget 高度 180/280、工具行 24；CurvePicker 固定 32，见 D43。
+- 剩余 4 个 ContractFrame story 归 Phase 7，见 D14。

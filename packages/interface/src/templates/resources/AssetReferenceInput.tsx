@@ -105,7 +105,7 @@ function DropSurface({
       data-over={binding.isOver && binding.canDrop ? '' : undefined}
       className={css({
         minWidth: 0,
-        borderRadius: '6px',
+        borderRadius: 'var(--radii-controlMd)',
         '&[data-over]': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
       })}>
       {children}
@@ -352,7 +352,14 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
   }
   const unavailable = disabled || readOnly || !onValueChange
   const buttons = (
-    <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', minWidth: 0 })}>
+    <div
+      className={css({
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 'var(--space-1_5)',
+        alignItems: 'center',
+        minWidth: 0,
+      })}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -371,13 +378,13 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
           className={css({
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: 'var(--space-2)',
             flex: '1 1 180px',
             minWidth: 0,
             minHeight: '48px',
-            padding: '6px 8px',
+            padding: 'var(--space-2) var(--space-3)',
             border: '1px solid var(--colors-borderStrong)',
-            borderRadius: '6px',
+            borderRadius: 'var(--radii-controlMd)',
             background: 'var(--colors-surfaceSubtle)',
             color: 'var(--colors-text)',
             font: 'inherit',
@@ -388,20 +395,27 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
           {displayed && (
             <AssetThumbnail asset={displayed} viewMode="list" decorative css={css.raw({ flex: '0 0 36px' })} />
           )}
-          <span className={css({ display: 'grid', minWidth: 0, gap: '2px' })}>
+          <span className={css({ display: 'grid', minWidth: 0, gap: 'var(--space-0_5)' })}>
             <span
               title={name}
-              className={css({ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', fontSize: '12px' })}>
+              className={css({
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                fontSize: 'var(--fontSizes-control)',
+              })}>
               {name}
             </span>
             {displayed && displayed.status !== 'ready' && (
-              <span className={css({ fontSize: '11px', color: 'var(--colors-textMuted)' })}>{displayed.status}</span>
+              <span className={css({ fontSize: 'var(--fontSizes-micro)', color: 'var(--colors-textMuted)' })}>
+                {displayed.status}
+              </span>
             )}
           </span>
         </button>
       </PopoverTrigger>
       <Button
-        size="xs"
+        size="sm"
         disabled={disabled || !!phase || value === null || !provider.locate}
         onClick={() => {
           void run('locate').catch(() => {})
@@ -409,7 +423,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
         Locate
       </Button>
       <Button
-        size="xs"
+        size="sm"
         disabled={unavailable || !!phase || value === null}
         onClick={() => {
           void run('clear').catch(() => {})
@@ -417,7 +431,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
         Clear
       </Button>
       <Button
-        size="xs"
+        size="sm"
         disabled={unavailable || !!phase || !provider.chooseFile}
         onClick={() => {
           void run('file').catch(() => {})
@@ -433,7 +447,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
       role={props.role ?? 'group'}
       aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : label)}
       aria-busy={!!phase || loading || displayed?.status === 'loading' || undefined}
-      className={cx(css({ display: 'grid', gap: '6px', minWidth: 0, width: '100%' }, cssProp), className)}>
+      className={cx(css({ display: 'grid', gap: 'var(--space-1_5)', minWidth: 0, width: '100%' }, cssProp), className)}>
       <PopoverRoot open={open && !disabled} onOpenChange={setOpen}>
         {dropEnabled ? (
           <DropSurface
@@ -461,9 +475,15 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
               },
               contentProps?.css
             )}>
-            <PopoverTitle className={css({ margin: '0 0 4px', fontSize: '14px' })}>{label}</PopoverTitle>
+            <PopoverTitle className={css({ margin: '0 0 var(--space-1)', fontSize: 'var(--fontSizes-controlLarge)' })}>
+              {label}
+            </PopoverTitle>
             <PopoverDescription
-              className={css({ margin: '0 0 12px', fontSize: '12px', color: 'var(--colors-textMuted)' })}>
+              className={css({
+                margin: '0 0 var(--space-3)',
+                fontSize: 'var(--fontSizes-control)',
+                color: 'var(--colors-textMuted)',
+              })}>
               Search or browse resources, then choose an available asset to use in this field.
             </PopoverDescription>
             <ResourcePicker
@@ -482,7 +502,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
         </PopoverPortal>
       </PopoverRoot>
       {phase && (
-        <span role="status" className={css({ fontSize: '12px' })}>
+        <span role="status" className={css({ fontSize: 'var(--fontSizes-control)' })}>
           {phase === 'locate' ? 'Locating asset…' : 'Updating reference…'}
         </span>
       )}
@@ -491,7 +511,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
           <span id={resolutionErrorId} role="alert">
             {resolutionError}
           </span>
-          <Button size="xs" disabled={disabled} onClick={() => setResolution((old) => old + 1)}>
+          <Button size="sm" disabled={disabled} onClick={() => setResolution((old) => old + 1)}>
             Retry reference
           </Button>
         </div>
@@ -502,7 +522,7 @@ export const AssetReferenceInput = forwardRef<HTMLDivElement, AssetReferenceInpu
             {error}
           </span>
           <Button
-            size="xs"
+            size="sm"
             disabled={disabled || !!phase || (unavailable && retry.current?.action !== 'locate')}
             onClick={() => retry.current?.run()}>
             Retry action

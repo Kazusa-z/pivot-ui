@@ -72,10 +72,26 @@ export const ColorInput = forwardRef<HTMLDivElement, ColorInputProps>(function C
       aria-label={props['aria-label'] ?? label}
       data-color-phase={edit.phase}
       className={cx(
-        css({ minWidth: 0, width: '100%', display: 'flex', flexDirection: 'column', gap: '4px' }, cssProp),
+        css(
+          {
+            minWidth: 0,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-1)',
+          },
+          cssProp
+        ),
         className
       )}>
-      <div className={css({ minWidth: 0, display: 'flex', flexWrap: 'wrap', alignItems: 'start', gap: '6px' })}>
+      <div
+        className={css({
+          minWidth: 0,
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'start',
+          gap: 'var(--space-1_5)',
+        })}>
         <ColorPicker
           {...common}
           label={label}
@@ -123,7 +139,11 @@ export const ColorInput = forwardRef<HTMLDivElement, ColorInputProps>(function C
         <div
           id={id}
           role="alert"
-          className={css({ color: 'var(--colors-dangerText)', fontSize: '12px', overflowWrap: 'anywhere' })}>
+          className={css({
+            color: 'var(--colors-dangerText)',
+            fontSize: 'var(--fontSizes-control)',
+            overflowWrap: 'anywhere',
+          })}>
           {edit.error}
         </div>
       )}

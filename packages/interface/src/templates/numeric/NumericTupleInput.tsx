@@ -261,6 +261,7 @@ export const NumericTupleInput = forwardRef<HTMLDivElement, NumericTupleInputPro
       {onLinkedChange && (
         <ActionButton
           type="button"
+          size={size === 'md' ? 'md' : 'sm'}
           aria-label={linkLabel}
           aria-pressed={linked}
           title={linkLabel}
