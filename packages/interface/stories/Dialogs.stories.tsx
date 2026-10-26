@@ -1,194 +1,274 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import {
-  Dialog,
-  DialogRoot,
-  DialogTrigger,
-  DialogPortal,
-  DialogOverlay,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-  AlertDialog,
-} from '../src/widgets/dialogs'
+import { AlertDialog, Dialog, DialogClose } from '../src/widgets/dialogs'
 import { Button } from '../src/widgets/buttons'
-import { ThemeProvider } from '../src/foundation/theme/react'
-import { createThemeStore } from '../src/foundation/theme/store'
-import { ContractFrame, ControlButton, ControlInput, StatePanel, contractStyles } from './support/ContractFrame'
+import { Input } from '../src/widgets/inputs'
+import { Text } from '../src/foundation/typography'
+import { css } from '../styled-system/css'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryCode,
+  StoryKeyboard,
+  StoryProps,
+  StoryState,
+  StoryNote,
+} from './support/StoryPage'
 
-function ControlledExample() {
+const fieldClass = css({ display: 'grid', gap: 'var(--space-1)', minWidth: 0 })
+const labelClass = css({ fontSize: 'var(--fontSizes-control)', fontWeight: 500, color: 'var(--colors-text)' })
+const formClass = css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })
+
+function FormDialog() {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState('Object')
-  const [changes, setChanges] = useState<boolean[]>([])
+  const [name, setName] = useState('Cube')
+  const [saved, setSaved] = useState<string | null>(null)
+  const [error, setError] = useState('')
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!name.trim()) {
+      setError('Name is required.')
+      return
+    }
+    setError('')
+    setSaved(name.trim())
+    setOpen(false)
+  }
   return (
-    <ContractFrame
-      title="由应用控制的弹窗"
-      description="点击按钮打开重命名表单，焦点进入输入框，Tab 在模态内容内移动。Escape 或关闭按钮触发 onOpenChange；应用回写 open 后关闭弹窗，焦点回到触发按钮。"
-      onReset={() => {
-        setOpen(false)
-        setValue('Object')
-        setChanges([])
-      }}>
+    <StoryCard
+      title="Form dialog"
+      description="Dialog 用于需要集中注意力的表单。打开后焦点进入内容，Tab 在模态内循环，Escape 关闭后回到触发按钮。">
       <Dialog
         title="Rename object"
-        description="编辑对象的显示名称。"
-        trigger={<Button>Open controlled dialog</Button>}
-        rootProps={{
-          open,
-          onOpenChange: (next) => {
-            setOpen(next)
-            setChanges((values) => [...values, next])
-          },
-        }}>
-        <label className={contractStyles.stack}>
-          Object name
-          <ControlInput value={value} onChange={(event) => setValue(event.currentTarget.value)} />
-        </label>
+        description="更新显示名称；保存后对话框关闭并保留结果。"
+        trigger={<Button>Rename…</Button>}
+        rootProps={{ open, onOpenChange: setOpen }}>
+        <form className={formClass} onSubmit={submit}>
+          <div className={fieldClass}>
+            <label className={labelClass} htmlFor="dialog-object-name">
+              Object name
+            </label>
+            <Input
+              id="dialog-object-name"
+              value={name}
+              state={error ? 'invalid' : undefined}
+              aria-invalid={error ? true : undefined}
+              onChange={(event) => {
+                setName(event.currentTarget.value)
+                if (error) setError('')
+              }}
+            />
+            {error && (
+              <Text size="xs" tone="danger">
+                {error}
+              </Text>
+            )}
+          </div>
+          <StoryRow align="end">
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit" variant="solid">
+              Save
+            </Button>
+          </StoryRow>
+        </form>
       </Dialog>
-      <ControlButton>Next focus target</ControlButton>
-      <StatePanel label="Dialog state" value={{ open, value, changes }} />
-    </ContractFrame>
+      <StoryState label="Form dialog state" value={{ open, name, saved, error }} />
+    </StoryCard>
   )
 }
 
-function UncontrolledExample() {
-  const [generation, setGeneration] = useState(0)
-  const [lastOpen, setLastOpen] = useState(false)
-  return (
-    <ContractFrame
-      title="仅有标题的简单弹窗"
-      description="简短弹窗可以只提供 title 作为名称。此例由组件保存开关状态，onOpenChange 记录变化；Reset 重新创建实例并恢复 defaultOpen。"
-      onReset={() => {
-        setGeneration((value) => value + 1)
-        setLastOpen(false)
-      }}>
-      <Dialog
-        key={generation}
-        title="Display preferences"
-        trigger={<Button>Open title-only dialog</Button>}
-        rootProps={{ defaultOpen: false, onOpenChange: setLastOpen }}>
-        <ControlInput aria-label="Grid size" defaultValue="16" />
-      </Dialog>
-      <StatePanel label="Last open notification" value={{ lastOpen }} />
-    </ContractFrame>
-  )
-}
-
-function CompositionExample() {
-  const [store] = useState(() => createThemeStore({ initialPreference: 'light' }))
-  const [container, setContainer] = useState<HTMLDivElement | null>(null)
+function CriticalAlert() {
   const [open, setOpen] = useState(false)
-  return (
-    <ContractFrame
-      title="自定义弹窗部件与显示位置"
-      description="需要调整标题、关闭按钮或渲染位置时，可直接组合 Dialog 的各个部件。此例把 Portal 放入指定容器，内容与遮罩都使用该区域的浅色主题。"
-      onReset={() => setOpen(false)}>
-      <ThemeProvider store={store}>
-        <DialogRoot open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>Open composed light dialog</Button>
-          </DialogTrigger>
-          <DialogPortal container={container}>
-            <DialogOverlay />
-            <DialogContent>
-              <DialogTitle>Composed dialog</DialogTitle>
-              <DialogDescription>此内容显示在为 Portal 指定的局部容器中。</DialogDescription>
-              <div className={contractStyles.stack}>
-                <ControlInput aria-label="Composed field" defaultValue="Local value" />
-                <DialogClose asChild>
-                  <Button>Done</Button>
-                </DialogClose>
-              </div>
-            </DialogContent>
-          </DialogPortal>
-        </DialogRoot>
-        <div ref={setContainer} data-local-portal="dialog" />
-      </ThemeProvider>
-      <StatePanel label="Composition state" value={{ open, portalReady: !!container, theme: 'light' }} />
-    </ContractFrame>
-  )
-}
-
-function NestedExample() {
-  const [outer, setOuter] = useState(false)
-  const [inner, setInner] = useState(false)
-  return (
-    <ContractFrame
-      title="在弹窗中打开下一层操作"
-      description="打开外层后还可进入内层弹窗。Escape 先关闭最上层并返回其触发按钮，再次按下会关闭外层；应用分别保存两个 open 值。"
-      onReset={() => {
-        setInner(false)
-        setOuter(false)
-      }}>
-      <Dialog
-        title="Outer dialog"
-        trigger={<Button>Open outer dialog</Button>}
-        rootProps={{ open: outer, onOpenChange: setOuter }}>
-        <div className={contractStyles.stack}>
-          <ControlInput aria-label="Outer field" defaultValue="Outer" />
-          <Dialog
-            title="Inner dialog"
-            trigger={<Button>Open inner dialog</Button>}
-            rootProps={{ open: inner, onOpenChange: setInner }}>
-            <ControlInput aria-label="Inner field" defaultValue="Inner" />
-          </Dialog>
-        </div>
-      </Dialog>
-      <StatePanel label="Nested state" value={{ outer, inner }} />
-    </ContractFrame>
-  )
-}
-
-function AlertExample({ narrow = false }: { narrow?: boolean }) {
   const [last, setLast] = useState('none')
-  const [open, setOpen] = useState(false)
   return (
-    <ContractFrame
-      title={narrow ? '窄视口中的长确认内容' : '等待确认后执行操作'}
-      description="AlertDialog 适合需要明确决定的操作，打开时优先聚焦 Cancel。Confirm 和 Cancel 将决定交给各自回调，Escape 通过 onOpenChange 请求关闭，遮罩点击会保留弹窗。可缩小预览宽度查看长内容滚动，标题和操作按钮持续可见。"
-      onReset={() => {
-        setOpen(false)
-        setLast('none')
-      }}>
+    <StoryCard
+      title="Critical alert"
+      description="AlertDialog 要求明确决定；critical 使用危险实心确认按钮，取消保持中性。">
       <AlertDialog
-        title={narrow ? 'Review a long change before applying it' : 'Apply changes?'}
-        description={
-          narrow
-            ? Array.from(
-                { length: 18 },
-                (_, index) => `Change ${index + 1}: this paragraph wraps within the viewport.`
-              ).join('\n\n')
-            : undefined
-        }
-        trigger={<Button>Open confirmation</Button>}
+        title="Delete object?"
+        description="This removes the object and its animation data. This action cannot be undone."
+        trigger={<Button critical>Delete…</Button>}
+        confirmLabel="Delete"
+        critical
         rootProps={{ open, onOpenChange: setOpen }}
         onConfirm={() => setLast('confirmed')}
         onCancel={() => setLast('cancelled')}
       />
-      <StatePanel label="Confirmation state" value={{ open, last }} />
-    </ContractFrame>
+      <StoryState label="Critical alert state" value={{ open, last }} />
+    </StoryCard>
+  )
+}
+
+function SizeExample() {
+  return (
+    <StoryCard
+      title="Regular surface, two close sizes"
+      description="Dialog 没有 compact/md 两档布局；正文使用常规 14/20、padding 20、标题 16。closeSize 只控制右上角关闭按钮的 24/32 触达尺寸。">
+      <StoryRow>
+        <Dialog title="Compact close" trigger={<Button size="sm">Open 24px close</Button>} closeSize="sm">
+          <Text size="sm" tone="muted">
+            关闭按钮使用 24px，与紧凑工具栏一致；正文仍是常规对话框尺寸。
+          </Text>
+        </Dialog>
+        <Dialog title="Regular close" trigger={<Button size="md">Open 32px close</Button>} closeSize="md">
+          <Text size="sm" tone="muted">
+            关闭按钮使用 32px，适合触控或常规表单；标题、正文和 padding 不变。
+          </Text>
+        </Dialog>
+        <Button disabled>Disabled trigger</Button>
+      </StoryRow>
+      <StoryNote>Dialog 没有 disabled 状态，由触发元素控制；禁用的触发按钮不能打开对话框。</StoryNote>
+      <StoryNote>对话框宽度上限 440px（视口不足时减去 32px），最大高度为视口高度减 32px。</StoryNote>
+    </StoryCard>
+  )
+}
+
+function LongAlert() {
+  const [open, setOpen] = useState(false)
+  const [last, setLast] = useState('none')
+  const description = Array.from(
+    { length: 14 },
+    (_, index) => `Change ${index + 1}: this paragraph wraps within the dialog body and scrolls independently.`
+  ).join('\n\n')
+  return (
+    <StoryCard
+      title="Long content and scrolling"
+      description="内容超出视口时只有正文区域滚动，标题和操作按钮保持可见；取消/确认不会随内容滚走。">
+      <AlertDialog
+        title="Review a long change"
+        description={description}
+        trigger={<Button>Review long change</Button>}
+        confirmLabel="Apply change"
+        rootProps={{ open, onOpenChange: setOpen }}
+        contentProps={{ css: { maxWidth: '480px' } }}
+        onConfirm={() => setLast('applied')}
+        onCancel={() => setLast('cancelled')}
+      />
+      <StoryState label="Long alert state" value={{ open, last }} />
+    </StoryCard>
   )
 }
 
 const meta = {
   tags: ['autodocs'],
-  title: 'Widgets/Dialogs',
   parameters: {
     docs: {
       description: {
         component:
-          'Dialog 用于需要集中注意力的表单或详细操作，AlertDialog 适合需要明确确认的操作。打开后焦点进入弹窗，关闭后回到触发按钮；通过 rootProps 传入 open 和 onOpenChange 可由应用控制开关。也可直接组合 Root、Trigger、Portal、Content 等部件，并为内容提供标题和必要的说明。',
+          'Dialog 用于表单或详细内容，AlertDialog 用于需要明确确认的操作。浮层使用 surfaceRaised、6px 圆角、overlay/modal shadow；对话框标题 16、正文 14、padding 20，按钮 32。打开后焦点进入内容，Escape 关闭并回到触发器。',
       },
     },
     layout: 'fullscreen',
   },
+  title: 'Overlays/Dialogs',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-export const Controlled: Story = { render: () => <ControlledExample /> }
-export const UncontrolledTitleOnly: Story = { render: () => <UncontrolledExample /> }
-export const CompositionAndTheme: Story = { render: () => <CompositionExample /> }
-export const Nested: Story = { render: () => <NestedExample /> }
-export const Alert: Story = { render: () => <AlertExample /> }
-export const NarrowAndLong: Story = { render: () => <AlertExample narrow /> }
+
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Overlays"
+      title="Dialogs"
+      summary="Dialog 承载表单和详细内容，AlertDialog 等待明确决定。两者共用常规对话框表面：padding 20、标题 16、正文 14、圆角 8、modal shadow；差异在语义和操作按钮。"
+      meta={
+        <>
+          <span>Dialog</span>
+          <span>·</span>
+          <span>AlertDialog</span>
+          <span>·</span>
+          <span>regular surface</span>
+        </>
+      }>
+      <StorySection
+        title="Variants"
+        description="先选语义，再决定表单或确认操作；不要把可撤销的普通操作做成 AlertDialog。">
+        <StoryGrid>
+          <FormDialog />
+          <CriticalAlert />
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Size" description="对话框本身只有常规档；关闭按钮提供 24/32 两种触达尺寸。">
+        <SizeExample />
+      </StorySection>
+
+      <StorySection title="Long content" description="正文独立滚动，footer 固定，避免用户看不到决定按钮。">
+        <LongAlert />
+      </StorySection>
+
+      <StorySection
+        title="Keyboard and accessibility"
+        description="模态内容需要标题；没有说明时显式省略 aria-describedby。">
+        <StoryCard>
+          <StoryKeyboard
+            rows={[
+              { keys: ['Enter', 'Space'], action: '打开聚焦的对话框触发器' },
+              { keys: 'Tab', action: '在对话框内循环焦点，不进入背景页面' },
+              { keys: 'Escape', action: '关闭对话框，焦点回到触发按钮' },
+              { keys: ['Enter'], action: '在表单中提交；AlertDialog 中激活当前聚焦按钮' },
+            ]}
+          />
+          <StoryNote>
+            AlertDialog 打开时优先聚焦 Cancel，避免误确认。关闭按钮必须有可访问名称；表单错误用文字和 invalid
+            边框表达，不只依赖颜色。
+          </StoryNote>
+        </StoryCard>
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<Dialog
+  title="Rename object"
+  description="Update the display name."
+  trigger={<Button>Rename…</Button>}
+  rootProps={{ open, onOpenChange: setOpen }}>
+  <form onSubmit={save}>
+    <Input value={name} onChange={change} />
+    <Button type="submit" variant="solid">Save</Button>
+  </form>
+</Dialog>
+
+<AlertDialog
+  title="Delete object?"
+  critical
+  confirmLabel="Delete"
+  trigger={<Button critical>Delete…</Button>}
+  onConfirm={remove}
+/>`}
+          />
+          <StoryProps
+            rows={[
+              { name: 'title', type: 'ReactNode', description: '必填，作为对话框的可访问名称。' },
+              { name: 'description', type: 'ReactNode', description: '可选说明；没有时组件会省略 aria-describedby。' },
+              { name: 'trigger', type: 'ReactElement', description: '传给 Trigger asChild 的触发元素。' },
+              { name: 'rootProps', type: 'DialogRootProps', description: '传入 open / onOpenChange 等受控状态。' },
+              {
+                name: 'closeSize',
+                type: "'sm' | 'md'",
+                defaultValue: "'sm'",
+                description: '关闭按钮 24 / 32；不影响对话框布局。',
+              },
+              {
+                name: 'critical',
+                type: 'boolean',
+                defaultValue: 'false',
+                description: 'AlertDialog 确认按钮使用危险实心样式。',
+              },
+              { name: 'onConfirm / onCancel', type: '() => void', description: 'AlertDialog 的决定回调。' },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
+  ),
+}

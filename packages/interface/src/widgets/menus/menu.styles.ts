@@ -1,6 +1,6 @@
 import { css, cva } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
-import { getOverlaySurfaceClass } from '../overlays/shared'
+import { getOverlaySurfaceClass, overlayEnterStyles } from '../overlays/shared'
 
 export type MenuSize = 'xs' | 'sm' | 'md'
 
@@ -9,33 +9,55 @@ const itemRecipe = cva({
     boxSizing: 'border-box',
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: 'var(--space-2)',
     position: 'relative',
     minWidth: 0,
-    padding: '2px 8px',
-    borderRadius: '3px',
+    padding: 'var(--space-0_5) var(--space-2)',
+    borderRadius: 'var(--radii-control)',
     outline: 'none',
     cursor: 'default',
     userSelect: 'none',
     color: 'inherit',
     textDecoration: 'none',
     overflowWrap: 'anywhere',
-    '&[data-highlighted]': { backgroundColor: 'var(--colors-primary)', color: 'white' },
-    '&[data-disabled]': { color: 'var(--colors-textMuted)', pointerEvents: 'none' },
+    '&[data-highlighted]': {
+      backgroundColor: 'var(--colors-selectionBg)',
+      color: 'var(--colors-selectionText)',
+    },
+    '&[data-disabled]': { opacity: 0.5, pointerEvents: 'none' },
+    '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '-2px' },
   },
   variants: {
     size: {
-      xs: { minHeight: '20px', fontSize: '10px', lineHeight: '16px' },
-      sm: { minHeight: '24px', fontSize: '12px', lineHeight: '18px' },
-      md: { minHeight: '32px', fontSize: '13px', lineHeight: '20px' },
+      xs: {
+        minHeight: 'var(--sizes-controlXs)',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: 'var(--lineHeights-1)',
+        paddingInline: 'var(--space-1_5)',
+      },
+      sm: {
+        minHeight: 'var(--sizes-controlSm)',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: 'var(--lineHeights-1_5)',
+      },
+      md: {
+        minHeight: 'var(--sizes-controlMd)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        lineHeight: 'var(--lineHeights-2)',
+        borderRadius: 'var(--radii-controlMd)',
+        padding: 'var(--space-1) var(--space-3)',
+      },
     },
     critical: {
       true: {
-        color: 'var(--colors-red11)',
-        '&[data-highlighted]': { backgroundColor: 'var(--colors-red9)', color: 'white' },
+        color: 'var(--colors-dangerText)',
+        '&[data-highlighted]': {
+          backgroundColor: 'var(--colors-dangerSolid)',
+          color: 'var(--colors-selectionText)',
+        },
       },
     },
-    selection: { true: { paddingInlineStart: '28px' } },
+    selection: { true: { paddingInlineStart: 'var(--space-7)' } },
   },
   defaultVariants: { size: 'sm' },
 })
@@ -48,15 +70,14 @@ export function getMenuContentClass(overrides?: SystemStyleObject) {
   return getOverlaySurfaceClass(
     css.raw(
       {
-        padding: '4px',
+        padding: 'var(--space-1)',
         minWidth: '200px',
         maxWidth: 'min(420px, calc(100vw - 16px))',
         maxHeight: 'var(--radix-popper-available-height, 70vh)',
         overflowY: 'auto',
         overscrollBehavior: 'contain',
         transformOrigin: 'var(--radix-popper-transform-origin)',
-        '&[data-state="open"]': { animation: 'scaleIn 100ms ease-out' },
-        '@media (prefers-reduced-motion: reduce)': { animation: 'none', '&[data-state="open"]': { animation: 'none' } },
+        ...overlayEnterStyles,
       },
       overrides
     )
@@ -66,9 +87,9 @@ export function getMenuContentClass(overrides?: SystemStyleObject) {
 export function getMenuLabelClass(overrides?: SystemStyleObject) {
   return css(
     {
-      padding: '4px 8px',
-      fontSize: '11px',
-      lineHeight: '16px',
+      padding: 'var(--space-1) var(--space-2)',
+      fontSize: 'var(--fontSizes-micro)',
+      lineHeight: 'var(--lineHeights-1)',
       color: 'var(--colors-textMuted)',
       overflowWrap: 'anywhere',
     },
@@ -76,11 +97,21 @@ export function getMenuLabelClass(overrides?: SystemStyleObject) {
   )
 }
 export function getMenuSeparatorClass(overrides?: SystemStyleObject) {
-  return css({ height: '1px', backgroundColor: 'var(--colors-border)', margin: '4px -4px' }, overrides)
+  return css(
+    { height: '1px', backgroundColor: 'var(--colors-border)', margin: 'var(--space-1) calc(var(--space-1) * -1)' },
+    overrides
+  )
 }
 export function getMenubarClass(overrides?: SystemStyleObject) {
   return css(
-    { display: 'flex', alignItems: 'center', flexWrap: 'wrap', minWidth: 0, gap: '2px', padding: '0 4px' },
+    {
+      display: 'flex',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      minWidth: 0,
+      gap: 'var(--space-0_5)',
+      padding: '0 var(--space-1)',
+    },
     overrides
   )
 }
@@ -89,7 +120,7 @@ export function getMenubarTriggerClass(size: MenuSize, overrides?: SystemStyleOb
     { all: 'unset', fontFamily: 'inherit' },
     itemRecipe.raw({ size }),
     {
-      '&[data-state="open"]': { backgroundColor: 'var(--colors-grayA4)' },
+      '&[data-state="open"]': { backgroundColor: 'var(--colors-softBgHover)', color: 'var(--colors-textStrong)' },
       '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '-2px' },
     },
     overrides
@@ -102,16 +133,21 @@ export const menuClasses = {
     display: 'inline-flex',
     alignItems: 'center',
     flexShrink: 0,
-    '& svg': { width: '14px', height: '14px' },
+    '& svg': { width: 'var(--sizes-iconSm)', height: 'var(--sizes-iconSm)' },
   }),
   indicator: css({
     position: 'absolute',
-    insetInlineStart: '8px',
-    width: '12px',
+    insetInlineStart: 'var(--space-2)',
+    width: 'var(--sizes-iconXs)',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
   }),
   dot: css({ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'currentColor' }),
-  chevron: css({ width: '12px', height: '12px', flexShrink: 0, '&:dir(rtl)': { transform: 'rotate(180deg)' } }),
+  chevron: css({
+    width: 'var(--sizes-iconXs)',
+    height: 'var(--sizes-iconXs)',
+    flexShrink: 0,
+    '&:dir(rtl)': { transform: 'rotate(180deg)' },
+  }),
 }

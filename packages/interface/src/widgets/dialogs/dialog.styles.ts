@@ -9,6 +9,14 @@ export function getDialogOverlayClass(overrides?: SystemStyleObject) {
       inset: 0,
       zIndex: 'var(--pivot-overlay-layer, 50)',
       backgroundColor: 'var(--colors-overlayScrim)',
+      '&[data-state="open"]': {
+        animationName: 'overlayFadeIn',
+        animationDuration: '150ms',
+        animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+      '@media (prefers-reduced-motion: reduce)': {
+        '&[data-state="open"]': { animation: 'none' },
+      },
     },
     overrides
   )
@@ -27,9 +35,18 @@ export function getDialogContentClass(overrides?: SystemStyleObject) {
         maxHeight: 'calc(100dvh - 32px)',
         boxSizing: 'border-box',
         overflow: 'auto',
-        padding: '16px',
-        borderRadius: '8px',
+        padding: 'var(--space-5)',
+        borderRadius: 'var(--radii-modal)',
+        boxShadow: 'var(--shadows-modal)',
         '&:focus': { outline: 'none' },
+        '&[data-state="open"]': {
+          animationName: 'contentShow',
+          animationDuration: '180ms',
+          animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        },
+        '@media (prefers-reduced-motion: reduce)': {
+          '&[data-state="open"]': { animation: 'none' },
+        },
       },
       overrides
     )
@@ -45,9 +62,9 @@ export function getDialogTitleClass(overrides?: SystemStyleObject) {
   return css(
     {
       margin: 0,
-      paddingInlineEnd: '28px',
-      fontSize: '18px',
-      lineHeight: '26px',
+      paddingInlineEnd: 'var(--space-7)',
+      fontSize: 'var(--fontSizes-heading)',
+      lineHeight: 'var(--lineHeights-3)',
       fontWeight: 600,
       color: 'var(--colors-textStrong)',
       overflowWrap: 'anywhere',
@@ -59,9 +76,9 @@ export function getDialogTitleClass(overrides?: SystemStyleObject) {
 export function getDialogDescriptionClass(overrides?: SystemStyleObject) {
   return css(
     {
-      margin: '8px 0 0',
-      fontSize: '14px',
-      lineHeight: '20px',
+      margin: 'var(--space-2) 0 0',
+      fontSize: 'var(--fontSizes-controlLarge)',
+      lineHeight: 'var(--lineHeights-2)',
       whiteSpace: 'pre-line',
       color: 'var(--colors-textMuted)',
       overflowWrap: 'anywhere',
@@ -82,7 +99,7 @@ export const dialogClasses = {
     whiteSpace: 'nowrap',
     border: 0,
   }),
-  body: css({ marginTop: '16px', minWidth: 0 }),
+  body: css({ marginTop: 'var(--space-4)', minWidth: 0 }),
   alertHeader: css({ flexShrink: 0 }),
   alertBody: css({ minWidth: 0, minHeight: 0, overflow: 'auto', overscrollBehavior: 'contain' }),
   footer: css({
@@ -90,10 +107,10 @@ export const dialogClasses = {
     flexShrink: 0,
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
-    gap: '8px',
-    marginTop: '20px',
+    gap: 'var(--space-2)',
+    marginTop: 'var(--space-5)',
   }),
-  close: css({ position: 'absolute', top: '8px', right: '8px' }),
+  close: css({ position: 'absolute', top: 'var(--space-2)', right: 'var(--space-2)' }),
 }
 
 export { cx }

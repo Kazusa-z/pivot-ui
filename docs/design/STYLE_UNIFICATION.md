@@ -400,16 +400,16 @@
 
 **验收**：27/28/30 头部消失；Section 头部与 24/32 控件对齐；PropertyRow 标签色不再用 `gray10`；`pnpm verify` 通过。
 
-### Phase 4 — Overlays（3 天）
+### Phase 4 — Overlays（已完成 2026-10-26）
 
-- [ ] `widgets/overlays/shared.ts`：`surfaceRaised`、6px 圆角、`shadows.overlay`、12/14 字号。
-- [ ] `Popover.tsx`、`Tooltip.tsx`、`HoverCard.tsx`：padding 8/12；Tooltip 6×10；进入动画 150ms。
-- [ ] `widgets/dialogs/*`：padding 20、圆角 8、标题 16、正文 14、footer gap 8/12、modal shadow、180ms 动画；close 24/32。
-- [ ] `widgets/menus/menu.styles.ts`：item 20/24/32、12/12/14、4/4/6、gap 4/8；label 11/12；content 6px + overlay shadow；critical 用 danger token。
-- [ ] `widgets/notifications/*`：Toast 320 宽、12/14 字号、6px 圆角、overlay shadow、status 图标 16。
-- [ ] Stories：`Menus`、`Dialogs`、`Overlays`、`Notifications`、`Confirmation`、`OverlayLayers`。
+- [x] `widgets/overlays/shared.ts`：`surfaceRaised`、6px 圆角、`shadows.overlay`、12/14 字号。
+- [x] `Popover.tsx`、`Tooltip.tsx`、`HoverCard.tsx`：padding 8/12；Tooltip 6×10；进入动画 150ms。
+- [x] `widgets/dialogs/*`：padding 20、圆角 8、标题 16、正文 14、footer gap 8/12、modal shadow、180ms 动画；close 24/32。
+- [x] `widgets/menus/menu.styles.ts`：item 20/24/32、12/12/14、4/4/6、gap 4/8；label 11/12；content 6px + overlay shadow；critical 用 danger token。
+- [x] `widgets/notifications/*`：Toast 320 宽、12/14 字号、6px 圆角、overlay shadow、status 图标 16。
+- [x] Stories：`Menus`、`Dialogs`、`Overlays`、`Notifications`、`Confirmation`、`OverlayLayers`。
 
-**验收**：浮层与页面背景分离；Dialog 标题 16；Menu 不再 3px/13px；所有 overlay 共用一个 surface/shadow；build 通过。
+**验收**：浮层与页面背景分离；Dialog 标题 16；Menu 不再 3px/13px；所有 overlay 共用一个 surface/shadow；`pnpm verify` 通过。
 
 ### Phase 5 — Collections 与 Navigation（3 天）
 

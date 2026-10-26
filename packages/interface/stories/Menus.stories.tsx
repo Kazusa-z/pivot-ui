@@ -1,191 +1,104 @@
-import { StrictMode, useState } from 'react'
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { IconCopy, IconTrash } from '@tabler/icons-react'
 import * as M from '../src/widgets/menus'
+import type { MenuSize } from '../src/widgets/menus'
 import { Button } from '../src/widgets/buttons'
-import { createThemeStore, ThemeProvider, useTheme } from '../src/foundation/theme'
+import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
-import { ContractFrame, ControlButton, ControlSelect, StatePanel, contractStyles } from './support/ContractFrame'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryField,
+  StoryGrid,
+  StoryCode,
+  StoryKeyboard,
+  StoryProps,
+  StoryState,
+  StoryNote,
+} from './support/StoryPage'
 
-function DropdownControlledExample() {
-  const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState('none')
-  const [changes, setChanges] = useState(0)
+const sizes: readonly MenuSize[] = ['xs', 'sm', 'md']
+
+const contextTargetClass = css({
+  display: 'grid',
+  placeItems: 'center',
+  width: '100%',
+  minHeight: '120px',
+  padding: 'var(--space-6)',
+  border: '1px dashed var(--colors-borderStrong)',
+  borderRadius: 'var(--radii-controlMd)',
+  backgroundColor: 'var(--colors-surfaceSubtle)',
+  color: 'var(--colors-textMuted)',
+  fontSize: 'var(--fontSizes-control)',
+  textAlign: 'center',
+  cursor: 'context-menu',
+  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
+})
+
+function SizePicker({ value, onChange }: { value: MenuSize; onChange: (size: MenuSize) => void }) {
   return (
-    <ContractFrame
-      title="由应用控制开关的操作菜单"
-      description="DropdownMenu 适合按钮展开的操作列表。聚焦按钮后按 Enter、Space 或方向键打开，用 Up/Down、Home/End 或字母定位项目；选择时 onSelect 执行对应操作，Escape 关闭后回到触发按钮。"
-      onReset={() => {
-        setOpen(false)
-        setSelected('none')
-        setChanges(0)
-      }}>
-      <div className={contractStyles.row}>
-        <M.DropdownMenuRoot
-          open={open}
-          onOpenChange={(next) => {
-            setOpen(next)
-            setChanges((count) => count + 1)
-          }}>
+    <StoryRow>
+      {sizes.map((size) => (
+        <Button key={size} size={size} variant={value === size ? 'solid' : 'outline'} onClick={() => onChange(size)}>
+          {size}
+        </Button>
+      ))}
+    </StoryRow>
+  )
+}
+
+function DropdownExample() {
+  const [open, setOpen] = useState(false)
+  const [size, setSize] = useState<MenuSize>('sm')
+  const [visible, setVisible] = useState<boolean | 'indeterminate'>('indeterminate')
+  const [mode, setMode] = useState('solid')
+  const [selected, setSelected] = useState('none')
+  const preventClose = (event: Event) => event.preventDefault()
+
+  return (
+    <StoryCard
+      title="Dropdown menu"
+      description="按钮展开的操作列表。勾选和单选通过 onCheckedChange / onValueChange 交给应用；需要连续调整时在 onSelect 中 preventDefault。">
+      <StoryField label="Menu size" hint="项目高度 xs 20 / sm 24 / md 32；字号 12 / 12 / 14。">
+        <SizePicker value={size} onChange={setSize} />
+      </StoryField>
+      <StoryRow>
+        <M.DropdownMenuRoot size={size} open={open} onOpenChange={setOpen}>
           <M.DropdownMenuTrigger asChild>
             <Button>Open actions</Button>
           </M.DropdownMenuTrigger>
           <M.DropdownMenuPortal>
-            <M.DropdownMenuContent align="start" aria-label="Actions">
+            <M.DropdownMenuContent aria-label="Document actions" css={{ minWidth: '260px' }}>
               <M.DropdownMenuLabel>Document</M.DropdownMenuLabel>
               <M.DropdownMenuItem icon={<IconCopy />} shortcuts="Ctrl+C" onSelect={() => setSelected('Copy')}>
                 Copy
               </M.DropdownMenuItem>
-              <M.DropdownMenuItem disabled onSelect={() => setSelected('Disabled must not run')}>
-                Unavailable action
-              </M.DropdownMenuItem>
+              <M.DropdownMenuItem disabled>Unavailable action</M.DropdownMenuItem>
               <M.DropdownMenuSeparator />
-              <M.DropdownMenuItem critical icon={<IconTrash />} onSelect={() => setSelected('Delete')}>
-                Delete
-              </M.DropdownMenuItem>
-            </M.DropdownMenuContent>
-          </M.DropdownMenuPortal>
-        </M.DropdownMenuRoot>
-        <ControlButton onClick={() => setOpen(true)}>External open</ControlButton>
-      </div>
-      <StatePanel label="Dropdown state" value={{ open, selected, changes }} />
-    </ContractFrame>
-  )
-}
-
-function UncontrolledExample() {
-  const [generation, setGeneration] = useState(0)
-  const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState('none')
-  const [refTag, setRefTag] = useState('none')
-  return (
-    <ContractFrame
-      title="简单菜单与链接菜单项"
-      description="省略 open 时由组件保存展开状态，onOpenChange 可用于观察变化。asChild 可让菜单项使用真实链接并保留 ref；此例将 Content 放在原位置，需要脱离容器裁切时可加入 Portal。"
-      onReset={() => {
-        setGeneration((n) => n + 1)
-        setOpen(false)
-        setSelected('none')
-      }}>
-      <M.DropdownMenuRoot key={generation} defaultOpen={false} modal={false} onOpenChange={setOpen}>
-        <M.DropdownMenuTrigger asChild>
-          <Button>Open inline menu</Button>
-        </M.DropdownMenuTrigger>
-        <M.DropdownMenuContent align="start" aria-label="Inline links">
-          <M.DropdownMenuItem asChild shortcuts="Ctrl+O" onSelect={() => setSelected('Link')}>
-            <a
-              href="#menu-link"
-              ref={(node) => {
-                if (node) setRefTag(node.tagName)
-              }}
-              onClick={(event) => event.preventDefault()}>
-              Open link
-            </a>
-          </M.DropdownMenuItem>
-          <M.DropdownMenuItem
-            onSelect={(event) => {
-              event.preventDefault()
-              setSelected('Kept open')
-            }}>
-            Keep menu open
-          </M.DropdownMenuItem>
-          <M.DropdownMenuItem onSelect={() => setSelected('Close')}>Close normally</M.DropdownMenuItem>
-        </M.DropdownMenuContent>
-      </M.DropdownMenuRoot>
-      <StatePanel label="Uncontrolled state" value={{ open, selected, refTag }} />
-    </ContractFrame>
-  )
-}
-
-function CheckedExample() {
-  const [visible, setVisible] = useState<boolean | 'indeterminate'>('indeterminate')
-  const [mode, setMode] = useState('solid')
-  const [changes, setChanges] = useState(0)
-  return (
-    <ContractFrame
-      title="在菜单中调整选项"
-      description="用 CheckboxItem 和 RadioGroup 在菜单中调整显示选项。应用在 onCheckedChange 或 onValueChange 中保存值；需要连续修改时，可在选择事件中调用 preventDefault 保持菜单打开。禁用项目会在键盘浏览时跳过。"
-      onReset={() => {
-        setVisible('indeterminate')
-        setMode('solid')
-        setChanges(0)
-      }}>
-      <M.DropdownMenuRoot>
-        <M.DropdownMenuTrigger asChild>
-          <Button>Display options</Button>
-        </M.DropdownMenuTrigger>
-        <M.DropdownMenuPortal>
-          <M.DropdownMenuContent aria-label="Display options">
-            <M.DropdownMenuCheckboxItem
-              checked={visible}
-              onCheckedChange={(value) => {
-                setVisible(value)
-                setChanges((n) => n + 1)
-              }}
-              onSelect={(event) => event.preventDefault()}>
-              Show guides
-            </M.DropdownMenuCheckboxItem>
-            <M.DropdownMenuCheckboxItem disabled checked onCheckedChange={() => setChanges(-999)}>
-              Locked option
-            </M.DropdownMenuCheckboxItem>
-            <M.DropdownMenuSeparator />
-            <M.DropdownMenuLabel id="menu-mode-label">Mode</M.DropdownMenuLabel>
-            <M.DropdownMenuRadioGroup
-              aria-labelledby="menu-mode-label"
-              value={mode}
-              onValueChange={(value) => {
-                setMode(value)
-                setChanges((n) => n + 1)
-              }}>
-              <M.DropdownMenuRadioItem value="solid" onSelect={(event) => event.preventDefault()}>
-                Solid
-              </M.DropdownMenuRadioItem>
-              <M.DropdownMenuRadioItem value="wire" onSelect={(event) => event.preventDefault()}>
-                Wireframe
-              </M.DropdownMenuRadioItem>
-              <M.DropdownMenuRadioItem value="locked" disabled>
-                Unavailable mode
-              </M.DropdownMenuRadioItem>
-            </M.DropdownMenuRadioGroup>
-          </M.DropdownMenuContent>
-        </M.DropdownMenuPortal>
-      </M.DropdownMenuRoot>
-      <StatePanel label="Selection state" value={{ visible, mode, changes }} />
-    </ContractFrame>
-  )
-}
-
-function NestedExample() {
-  const [size, setSize] = useState<M.MenuSize>('sm')
-  const [selected, setSelected] = useState('none')
-  return (
-    <ContractFrame
-      title="子菜单、长列表与窄布局"
-      description="子菜单适合把相关操作分组。Right 进入子菜单，Left 返回，End 可到末项；子菜单沿用所在菜单的尺寸和主题。此例也展示长列表滚动和窄宽度下的标签换行。"
-      onReset={() => {
-        setSize('sm')
-        setSelected('none')
-      }}>
-      <div className={contractStyles.row}>
-        <ControlSelect
-          aria-label="Menu size"
-          value={size}
-          onChange={(event) => setSize(event.target.value as M.MenuSize)}>
-          <option value="xs">xs</option>
-          <option value="sm">sm</option>
-          <option value="md">md</option>
-        </ControlSelect>
-        <M.DropdownMenuRoot size={size}>
-          <M.DropdownMenuTrigger asChild>
-            <Button>Nested menu</Button>
-          </M.DropdownMenuTrigger>
-          <M.DropdownMenuPortal>
-            <M.DropdownMenuContent css={{ width: '220px', minWidth: 0, maxHeight: '260px' }}>
+              <M.DropdownMenuCheckboxItem checked={visible} onCheckedChange={setVisible} onSelect={preventClose}>
+                Show guides
+              </M.DropdownMenuCheckboxItem>
+              <M.DropdownMenuLabel>Mode</M.DropdownMenuLabel>
+              <M.DropdownMenuRadioGroup value={mode} onValueChange={setMode}>
+                <M.DropdownMenuRadioItem value="solid" onSelect={preventClose}>
+                  Solid
+                </M.DropdownMenuRadioItem>
+                <M.DropdownMenuRadioItem value="wire" onSelect={preventClose}>
+                  Wireframe
+                </M.DropdownMenuRadioItem>
+                <M.DropdownMenuRadioItem value="locked" disabled>
+                  Unavailable mode
+                </M.DropdownMenuRadioItem>
+              </M.DropdownMenuRadioGroup>
+              <M.DropdownMenuSeparator />
               <M.DropdownMenuSub>
                 <M.DropdownMenuSubTrigger>More choices</M.DropdownMenuSubTrigger>
                 <M.DropdownMenuPortal>
-                  <M.DropdownMenuSubContent css={{ width: '180px', minWidth: 0, maxHeight: '220px' }}>
-                    {Array.from({ length: 30 }, (_, index) => (
+                  <M.DropdownMenuSubContent css={{ minWidth: '180px' }}>
+                    {Array.from({ length: 6 }, (_, index) => (
                       <M.DropdownMenuItem key={index} onSelect={() => setSelected(`Nested ${index + 1}`)}>
                         Nested {index + 1}
                       </M.DropdownMenuItem>
@@ -193,75 +106,70 @@ function NestedExample() {
                   </M.DropdownMenuSubContent>
                 </M.DropdownMenuPortal>
               </M.DropdownMenuSub>
-              <M.DropdownMenuSub>
-                <M.DropdownMenuSubTrigger disabled>Unavailable submenu</M.DropdownMenuSubTrigger>
-                <M.DropdownMenuPortal>
-                  <M.DropdownMenuSubContent>
-                    <M.DropdownMenuItem>Never reached</M.DropdownMenuItem>
-                  </M.DropdownMenuSubContent>
-                </M.DropdownMenuPortal>
-              </M.DropdownMenuSub>
-              <M.DropdownMenuItem onSelect={() => setSelected('Long label')}>
-                A very long menu label with enough detail to wrap instead of escaping the narrow surface
+              <M.DropdownMenuItem critical icon={<IconTrash />} onSelect={() => setSelected('Delete')}>
+                Delete
               </M.DropdownMenuItem>
-              {Array.from({ length: 20 }, (_, index) => (
-                <M.DropdownMenuItem key={index} onSelect={() => setSelected(`Item ${index + 1}`)}>
-                  Item {index + 1}
-                </M.DropdownMenuItem>
-              ))}
             </M.DropdownMenuContent>
           </M.DropdownMenuPortal>
         </M.DropdownMenuRoot>
-      </div>
-      <StatePanel label="Nested state" value={{ size, selected }} />
-    </ContractFrame>
+      </StoryRow>
+      <StoryState label="Dropdown state" value={{ size, open, visible, mode, selected }} />
+    </StoryCard>
+  )
+}
+
+function SizesExample() {
+  return (
+    <StoryCard title="Item sizes" description="三种尺寸使用同一套菜单结构，只改变项目高度、字号和内边距。">
+      <StoryRow align="start">
+        {sizes.map((size) => (
+          <M.DropdownMenuRoot key={size} size={size}>
+            <M.DropdownMenuTrigger asChild>
+              <Button size={size} variant="outline">
+                Open {size}
+              </Button>
+            </M.DropdownMenuTrigger>
+            <M.DropdownMenuPortal>
+              <M.DropdownMenuContent aria-label={`${size} actions`} css={{ minWidth: '200px' }}>
+                <M.DropdownMenuLabel>{size} menu</M.DropdownMenuLabel>
+                <M.DropdownMenuItem shortcuts="Ctrl+1">First action</M.DropdownMenuItem>
+                <M.DropdownMenuItem shortcuts="Ctrl+2">Second action</M.DropdownMenuItem>
+                <M.DropdownMenuSeparator />
+                <M.DropdownMenuItem disabled>Unavailable</M.DropdownMenuItem>
+              </M.DropdownMenuContent>
+            </M.DropdownMenuPortal>
+          </M.DropdownMenuRoot>
+        ))}
+      </StoryRow>
+      <StoryNote>项目高度分别是 20 / 24 / 32；圆角 4 / 4 / 6。</StoryNote>
+    </StoryCard>
   )
 }
 
 function ContextExample() {
   const [open, setOpen] = useState(false)
+  const [pinned, setPinned] = useState(false)
   const [selected, setSelected] = useState('none')
-  const [disabled, setDisabled] = useState(false)
-  const [checked, setChecked] = useState(false)
+  const preventClose = (event: Event) => event.preventDefault()
   return (
-    <ContractFrame
-      title="目标元素的上下文操作"
-      description="ContextMenu 为目标元素提供上下文操作。可右键打开，也可聚焦目标后按 Shift+F10 或 ContextMenu 键；选择项目通过回调交给应用。需要从应用控制显示时，使用 open 与 onOpenChange。"
-      onReset={() => {
-        setOpen(false)
-        setSelected('none')
-        setDisabled(false)
-        setChecked(false)
-      }}>
-      <ControlButton
-        onClick={() => {
-          setDisabled((value) => !value)
-          setOpen(false)
-        }}>
-        Toggle trigger disabled
-      </ControlButton>
+    <StoryCard
+      title="Context menu"
+      description="在目标元素上右键打开；键盘用户聚焦目标后按 Shift+F10 或 ContextMenu 键。">
       <M.ContextMenuRoot open={open} onOpenChange={setOpen}>
-        <M.ContextMenuTrigger asChild disabled={disabled}>
-          <div
-            tabIndex={disabled ? -1 : 0}
-            className={css({
-              padding: '32px',
-              border: '1px dashed var(--colors-borderStrong)',
-              borderRadius: '6px',
-              '&:focus-visible': { outline: '2px solid var(--colors-focusRing)' },
-            })}>
-            Context target
+        <M.ContextMenuTrigger asChild>
+          <div tabIndex={0} className={contextTargetClass}>
+            <Text size="sm" tone="muted">
+              Right-click or press Shift+F10
+            </Text>
           </div>
         </M.ContextMenuTrigger>
         <M.ContextMenuPortal>
           <M.ContextMenuContent aria-label="Target actions">
             <M.ContextMenuItem onSelect={() => setSelected('Inspect')}>Inspect</M.ContextMenuItem>
-            <M.ContextMenuCheckboxItem
-              checked={checked}
-              onCheckedChange={setChecked}
-              onSelect={(event) => event.preventDefault()}>
-              Pinned
+            <M.ContextMenuCheckboxItem checked={pinned} onCheckedChange={setPinned} onSelect={preventClose}>
+              Pin to viewport
             </M.ContextMenuCheckboxItem>
+            <M.ContextMenuSeparator />
             <M.ContextMenuSub>
               <M.ContextMenuSubTrigger>More</M.ContextMenuSubTrigger>
               <M.ContextMenuPortal>
@@ -270,50 +178,38 @@ function ContextExample() {
                 </M.ContextMenuSubContent>
               </M.ContextMenuPortal>
             </M.ContextMenuSub>
-            <M.ContextMenuItem disabled onSelect={() => setSelected('Disabled must not run')}>
-              Unavailable
-            </M.ContextMenuItem>
+            <M.ContextMenuItem disabled>Unavailable</M.ContextMenuItem>
           </M.ContextMenuContent>
         </M.ContextMenuPortal>
       </M.ContextMenuRoot>
-      <StatePanel label="Context state" value={{ open, selected, disabled, checked }} />
-    </ContractFrame>
+      <StoryState label="Context state" value={{ open, pinned, selected }} />
+    </StoryCard>
   )
 }
 
 function MenubarExample() {
   const [value, setValue] = useState('')
-  const [rtl, setRtl] = useState(false)
   const [selected, setSelected] = useState('none')
-  const [checked, setChecked] = useState(true)
+  const [statusBar, setStatusBar] = useState(true)
+  const preventClose = (event: Event) => event.preventDefault()
   return (
-    <ContractFrame
-      title="顶部菜单的键盘导航"
-      description="Menubar 适合应用顶部菜单。Left/Right 在顶层入口之间移动，Down 打开菜单，Escape 退回上一级；切换 RTL 后横向按键方向随界面阅读方向调整。"
-      onReset={() => {
-        setValue('')
-        setRtl(false)
-        setSelected('none')
-        setChecked(true)
-      }}>
-      <ControlButton
-        onClick={() => {
-          setValue('')
-          setRtl((v) => !v)
-        }}>
-        Toggle RTL
-      </ControlButton>
-      <M.MenubarRoot aria-label="Application menu" value={value} onValueChange={setValue} dir={rtl ? 'rtl' : 'ltr'}>
+    <StoryCard
+      title="Menubar"
+      description="顶部菜单在 Left / Right 之间移动，Down 打开当前菜单；只有一个菜单打开时，悬停会跟随切换。">
+      <M.MenubarRoot aria-label="Application menu" value={value} onValueChange={setValue}>
         <M.MenubarMenu value="file">
           <M.MenubarTrigger>File</M.MenubarTrigger>
           <M.MenubarPortal>
             <M.MenubarContent align="start">
-              <M.MenubarItem onSelect={() => setSelected('New')}>New</M.MenubarItem>
+              <M.MenubarItem shortcuts="Ctrl+N" onSelect={() => setSelected('New')}>
+                New
+              </M.MenubarItem>
               <M.MenubarSub>
                 <M.MenubarSubTrigger>Export</M.MenubarSubTrigger>
                 <M.MenubarPortal>
                   <M.MenubarSubContent>
                     <M.MenubarItem onSelect={() => setSelected('PNG')}>PNG</M.MenubarItem>
+                    <M.MenubarItem onSelect={() => setSelected('JPEG')}>JPEG</M.MenubarItem>
                   </M.MenubarSubContent>
                 </M.MenubarPortal>
               </M.MenubarSub>
@@ -335,147 +231,146 @@ function MenubarExample() {
           <M.MenubarTrigger>View</M.MenubarTrigger>
           <M.MenubarPortal>
             <M.MenubarContent align="start">
-              <M.MenubarCheckboxItem
-                checked={checked}
-                onCheckedChange={setChecked}
-                onSelect={(event) => event.preventDefault()}>
+              <M.MenubarCheckboxItem checked={statusBar} onCheckedChange={setStatusBar} onSelect={preventClose}>
                 Status bar
               </M.MenubarCheckboxItem>
             </M.MenubarContent>
           </M.MenubarPortal>
         </M.MenubarMenu>
         <M.MenubarMenu value="disabled">
-          <M.MenubarTrigger disabled>Disabled menu</M.MenubarTrigger>
+          <M.MenubarTrigger disabled>Disabled</M.MenubarTrigger>
         </M.MenubarMenu>
       </M.MenubarRoot>
-      <StatePanel label="Menubar state" value={{ value, rtl, selected, checked }} />
-    </ContractFrame>
+      <StoryState label="Menubar state" value={{ value, selected, statusBar }} />
+    </StoryCard>
   )
 }
 
-function ScopedMenu() {
-  const { resolvedTheme, setPreference } = useTheme()
-  const [container, setContainer] = useState<HTMLDivElement | null>(null)
-  const [custom, setCustom] = useState(false)
-  const [selected, setSelected] = useState('none')
-  return (
-    <ContractFrame
-      title="局部主题与菜单显示位置"
-      description="局部 ThemeProvider 可为一个区域选择独立主题。切换后，主菜单和子菜单即使通过 Portal 渲染，也沿用该区域的主题；自定义容器用于控制浮层放置位置。"
-      onReset={() => {
-        setPreference('light')
-        setCustom(false)
-        setSelected('none')
-      }}>
-      <div className={contractStyles.row}>
-        <ControlButton onClick={() => setPreference(resolvedTheme === 'light' ? 'dark' : 'light')}>
-          Toggle local theme
-        </ControlButton>
-        <ControlButton onClick={() => setCustom((v) => !v)}>Toggle custom portal</ControlButton>
-      </div>
-      <M.DropdownMenuRoot modal={false}>
-        <M.DropdownMenuTrigger asChild>
-          <Button>Scoped menu</Button>
-        </M.DropdownMenuTrigger>
-        <M.DropdownMenuPortal container={custom ? container : undefined}>
-          <M.DropdownMenuContent
-            aria-label="Scoped actions"
-            css={{ minWidth: '180px', borderColor: 'var(--colors-primary)' }}>
-            <M.DropdownMenuItem onSelect={() => setSelected('Local action')}>Local action</M.DropdownMenuItem>
-            <M.DropdownMenuSub>
-              <M.DropdownMenuSubTrigger>Scoped submenu</M.DropdownMenuSubTrigger>
-              <M.DropdownMenuPortal container={custom ? container : undefined}>
-                <M.DropdownMenuSubContent>
-                  <M.DropdownMenuItem onSelect={() => setSelected('Local nested action')}>
-                    Local nested action
-                  </M.DropdownMenuItem>
-                </M.DropdownMenuSubContent>
-              </M.DropdownMenuPortal>
-            </M.DropdownMenuSub>
-          </M.DropdownMenuContent>
-        </M.DropdownMenuPortal>
-      </M.DropdownMenuRoot>
-      <div ref={setContainer} data-menu-portal-container="custom" />
-      <StatePanel label="Portal state" value={{ resolvedTheme, portal: custom ? 'custom' : 'body', selected }} />
-    </ContractFrame>
-  )
-}
-function ScopedThemeExample() {
-  const [store] = useState(() => createThemeStore({ initialPreference: 'light' }))
-  return (
-    <ThemeProvider store={store}>
-      <ScopedMenu />
-    </ThemeProvider>
-  )
-}
-
-function LifecycleExample() {
-  const [mounted, setMounted] = useState(true)
-  const [generation, setGeneration] = useState(0)
-  const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState('none')
-  return (
-    <ContractFrame
-      title="移除并重新挂载菜单"
-      description="菜单随所属组件一起挂载和卸载。打开后可按 Escape 关闭，或移除整个菜单；对应浮层会一并移除，页面上的其他操作仍可使用。重新挂载后可再次打开。"
-      onReset={() => {
-        setMounted(true)
-        setGeneration((n) => n + 1)
-        setOpen(false)
-        setSelected('none')
-      }}>
-      <ControlButton
-        onClick={() => {
-          setMounted((v) => !v)
-          setOpen(false)
-        }}>
-        Toggle mounted
-      </ControlButton>
-      <StrictMode>
-        {mounted && (
-          <M.DropdownMenuRoot key={generation} modal={false} open={open} onOpenChange={setOpen}>
-            <M.DropdownMenuTrigger asChild>
-              <Button>Lifecycle menu</Button>
-            </M.DropdownMenuTrigger>
-            <M.DropdownMenuPortal>
-              <M.DropdownMenuContent aria-label="Lifecycle actions">
-                <M.DropdownMenuItem onSelect={() => setSelected('Action')}>Run action</M.DropdownMenuItem>
-                <M.DropdownMenuItem
-                  onSelect={() => {
-                    setMounted(false)
-                    setOpen(false)
-                    setSelected('Unmounted')
-                  }}>
-                  Unmount while open
-                </M.DropdownMenuItem>
-              </M.DropdownMenuContent>
-            </M.DropdownMenuPortal>
-          </M.DropdownMenuRoot>
-        )}
-      </StrictMode>
-      <StatePanel label="Lifecycle state" value={{ mounted, open, selected }} />
-    </ContractFrame>
-  )
-}
-
-export default {
+const meta = {
   tags: ['autodocs'],
-  title: 'Widgets/Menus',
   parameters: {
     docs: {
       description: {
         component:
-          'DropdownMenu 用于按钮展开的操作列表，ContextMenu 用于目标元素的上下文操作，Menubar 用于应用顶部菜单。用户可通过键盘浏览和选择，onSelect、onCheckedChange、onValueChange 等回调把操作交给应用。应用保存勾选与单选状态；菜单内容可组合子菜单、快捷键提示和独立的 Portal 配置。',
+          'DropdownMenu 用于按钮展开的操作列表，ContextMenu 用于目标元素的上下文操作，Menubar 用于顶部菜单。三种菜单共享 20/24/32 的项目高度、4/6 圆角和实心选中，应用负责保存勾选/单选值并执行操作。',
       },
     },
-    layout: 'padded',
+    layout: 'fullscreen',
   },
+  title: 'Overlays/Menus',
 } satisfies Meta
-export const DropdownControlled: StoryObj = { render: () => <DropdownControlledExample /> }
-export const UncontrolledAndAsChild: StoryObj = { render: () => <UncontrolledExample /> }
-export const CheckedAndRadio: StoryObj = { render: () => <CheckedExample /> }
-export const NestedAndScrollable: StoryObj = { render: () => <NestedExample /> }
-export const Context: StoryObj = { render: () => <ContextExample /> }
-export const MenubarKeyboard: StoryObj = { render: () => <MenubarExample /> }
-export const ScopedThemeAndPortal: StoryObj = { render: () => <ScopedThemeExample /> }
-export const Lifecycle: StoryObj = { render: () => <LifecycleExample /> }
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Overlays"
+      title="Menus"
+      summary="用菜单收纳一组操作：按钮用 DropdownMenu，目标元素用 ContextMenu，应用顶部用 Menubar。项目高度 20/24/32，选中态使用实心 selection 颜色，键盘与禁用语义一致。"
+      meta={
+        <>
+          <span>DropdownMenu</span>
+          <span>·</span>
+          <span>ContextMenu</span>
+          <span>·</span>
+          <span>Menubar</span>
+        </>
+      }>
+      <StorySection
+        title="Variants"
+        description="DropdownMenu 是按钮触发的默认变体；ContextMenu 和 Menubar 复用同一套项目外观。">
+        <DropdownExample />
+      </StorySection>
+
+      <StorySection title="Sizes" description="尺寸属于菜单根节点，子菜单和 Portal 内容会继承。">
+        <SizesExample />
+      </StorySection>
+
+      <StorySection
+        title="Context menu and menubar"
+        description="同一套项目样式用于右键菜单和顶部菜单；上下文目标需要可获得焦点。">
+        <StoryGrid>
+          <ContextExample />
+          <MenubarExample />
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Keyboard and accessibility" description="菜单项目始终保留可见焦点；禁用项目会被跳过。">
+        <StoryCard>
+          <StoryKeyboard
+            rows={[
+              { keys: ['Enter', 'Space'], action: '打开聚焦的菜单触发器' },
+              { keys: ['ArrowDown', 'ArrowUp'], action: '移动到下一项/上一项，跳过 disabled' },
+              { keys: ['Home', 'End'], action: '跳到第一项/最后一项' },
+              { keys: ['ArrowRight'], action: '进入子菜单' },
+              { keys: ['ArrowLeft', 'Escape'], action: '返回上一级或关闭菜单，焦点回到触发器' },
+              { keys: ['Shift+F10', 'ContextMenu'], action: '在 ContextMenu 目标上打开菜单' },
+            ]}
+          />
+          <StoryNote>
+            ContextMenu 的目标通过 tabIndex
+            获得焦点；不要把唯一入口只放在右键上。菜单内容必须有可访问名称，图标项目还要有文字或 aria-label。
+          </StoryNote>
+        </StoryCard>
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<DropdownMenuRoot size="sm">
+  <DropdownMenuTrigger asChild>
+    <Button>Open actions</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuPortal>
+    <DropdownMenuContent aria-label="Actions">
+      <DropdownMenuItem shortcuts="Ctrl+C" onSelect={copy}>Copy</DropdownMenuItem>
+      <DropdownMenuCheckboxItem checked={guides} onCheckedChange={setGuides}>
+        Show guides
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem critical onSelect={remove}>Delete</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenuPortal>
+</DropdownMenuRoot>`}
+          />
+          <StoryProps
+            rows={[
+              {
+                name: 'size',
+                type: "'xs' | 'sm' | 'md'",
+                defaultValue: "'sm'",
+                description: '项目高度 20 / 24 / 32。',
+              },
+              {
+                name: 'open / onOpenChange',
+                type: 'boolean / (open) => void',
+                description: '受控开关；省略时由组件保存。',
+              },
+              {
+                name: 'modal',
+                type: 'boolean',
+                defaultValue: 'true',
+                description: '打开时是否阻止页面滚动和外部交互。',
+              },
+              { name: 'onSelect', type: '(event) => void', description: '选择项目；preventDefault 可保持菜单打开。' },
+              {
+                name: 'checked / onCheckedChange',
+                type: "boolean | 'indeterminate'",
+                description: 'CheckboxItem 的状态。',
+              },
+              {
+                name: 'critical',
+                type: 'boolean',
+                defaultValue: 'false',
+                description: '危险操作使用 dangerText；高亮时使用 dangerSolid。',
+              },
+              { name: 'shortcuts', type: 'KbdGroupProps["shortcuts"]', description: '右侧快捷键提示，不触发操作。' },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
+  ),
+}

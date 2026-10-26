@@ -3,7 +3,13 @@ import * as Primitive from '@radix-ui/react-popover'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { css, cx } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
-import { getOverlaySurfaceClass, OverlayLayerContext, useOverlayLayer, useOverlayTheme } from './shared'
+import {
+  getOverlaySurfaceClass,
+  overlayEnterStyles,
+  OverlayLayerContext,
+  useOverlayLayer,
+  useOverlayTheme,
+} from './shared'
 
 const LifecycleContext = createContext({ open: false, keepMounted: false })
 
@@ -55,7 +61,7 @@ export interface PopoverContentProps extends Omit<Primitive.PopoverContentProps,
 }
 
 const contentStyles = css.raw({
-  padding: '8px',
+  padding: 'var(--space-3)',
   minWidth: '160px',
   maxWidth: 'var(--radix-popover-content-available-width)',
   transformOrigin: 'var(--radix-popover-content-transform-origin)',
@@ -87,7 +93,11 @@ export const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(fu
           sideOffset={sideOffset}
           data-compact={compact ? '' : undefined}
           data-constrain-size={constrainSize ? '' : undefined}
-          className={cx(theme.className, getOverlaySurfaceClass(css.raw(contentStyles, cssProp)), className)}
+          className={cx(
+            theme.className,
+            getOverlaySurfaceClass(css.raw(contentStyles, overlayEnterStyles, cssProp)),
+            className
+          )}
         />
       </OverlayLayerContext.Provider>
     </Activity>
@@ -100,7 +110,7 @@ export const PopoverArrow = forwardRef<SVGSVGElement, PopoverArrowProps>(functio
   ref
 ) {
   return (
-    <Primitive.Arrow {...props} ref={ref} className={cx(css({ fill: 'var(--colors-surfaceOverlay)' }), className)} />
+    <Primitive.Arrow {...props} ref={ref} className={cx(css({ fill: 'var(--colors-surfaceRaised)' }), className)} />
   )
 })
 

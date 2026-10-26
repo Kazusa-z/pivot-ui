@@ -2,7 +2,13 @@ import { forwardRef, type ReactNode } from 'react'
 import * as Primitive from '@radix-ui/react-tooltip'
 import { css, cx } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
-import { getOverlaySurfaceClass, OverlayLayerContext, useOverlayLayer, useOverlayTheme } from './shared'
+import {
+  getOverlaySurfaceClass,
+  overlayEnterStyles,
+  OverlayLayerContext,
+  useOverlayLayer,
+  useOverlayTheme,
+} from './shared'
 
 /** Share this at an application or composition boundary so skip-delay works across triggers. */
 export const TooltipProvider = Primitive.Provider
@@ -19,8 +25,10 @@ export interface TooltipContentProps extends Omit<Primitive.TooltipContentProps,
   css?: SystemStyleObject
 }
 const contentStyles = css.raw({
-  padding: '6px 10px',
+  padding: 'var(--space-1_5) var(--space-2_5)',
   maxWidth: 'min(320px, var(--radix-tooltip-content-available-width))',
+  fontSize: 'var(--fontSizes-control)',
+  lineHeight: 'var(--lineHeights-1)',
   transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
 })
 export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(function TooltipContent(
@@ -39,7 +47,11 @@ export const TooltipContent = forwardRef<HTMLDivElement, TooltipContentProps>(fu
         forceMount={undefined}
         side={side}
         sideOffset={sideOffset}
-        className={cx(theme.className, getOverlaySurfaceClass(css.raw(contentStyles, cssProp)), className)}
+        className={cx(
+          theme.className,
+          getOverlaySurfaceClass(css.raw(contentStyles, overlayEnterStyles, cssProp)),
+          className
+        )}
       />
     </OverlayLayerContext.Provider>
   )
@@ -50,7 +62,7 @@ export const TooltipArrow = forwardRef<SVGSVGElement, TooltipArrowProps>(functio
   ref
 ) {
   return (
-    <Primitive.Arrow {...props} ref={ref} className={cx(css({ fill: 'var(--colors-surfaceOverlay)' }), className)} />
+    <Primitive.Arrow {...props} ref={ref} className={cx(css({ fill: 'var(--colors-surfaceRaised)' }), className)} />
   )
 })
 export interface TooltipProps {

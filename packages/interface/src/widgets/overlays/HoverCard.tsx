@@ -2,7 +2,13 @@ import { forwardRef, type ReactNode } from 'react'
 import * as Primitive from '@radix-ui/react-hover-card'
 import { css, cx } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
-import { getOverlaySurfaceClass, OverlayLayerContext, useOverlayLayer, useOverlayTheme } from './shared'
+import {
+  getOverlaySurfaceClass,
+  overlayEnterStyles,
+  OverlayLayerContext,
+  useOverlayLayer,
+  useOverlayTheme,
+} from './shared'
 
 export const HoverCardRoot = Primitive.Root
 export type HoverCardRootProps = Primitive.HoverCardProps
@@ -16,7 +22,7 @@ export interface HoverCardContentProps extends Omit<Primitive.HoverCardContentPr
   css?: SystemStyleObject
 }
 const contentStyles = css.raw({
-  padding: '8px',
+  padding: 'var(--space-2)',
   maxWidth: 'min(360px, var(--radix-hover-card-content-available-width))',
   transformOrigin: 'var(--radix-hover-card-content-transform-origin)',
 })
@@ -35,7 +41,11 @@ export const HoverCardContent = forwardRef<HTMLDivElement, HoverCardContentProps
         ref={ref}
         forceMount={undefined}
         sideOffset={sideOffset}
-        className={cx(theme.className, getOverlaySurfaceClass(css.raw(contentStyles, cssProp)), className)}
+        className={cx(
+          theme.className,
+          getOverlaySurfaceClass(css.raw(contentStyles, overlayEnterStyles, cssProp)),
+          className
+        )}
       />
     </OverlayLayerContext.Provider>
   )
@@ -46,7 +56,7 @@ export const HoverCardArrow = forwardRef<SVGSVGElement, HoverCardArrowProps>(fun
   ref
 ) {
   return (
-    <Primitive.Arrow {...props} ref={ref} className={cx(css({ fill: 'var(--colors-surfaceOverlay)' }), className)} />
+    <Primitive.Arrow {...props} ref={ref} className={cx(css({ fill: 'var(--colors-surfaceRaised)' }), className)} />
   )
 })
 /** Nonessential hover/focus preview. Use Popover for a focusable form or required actions. */

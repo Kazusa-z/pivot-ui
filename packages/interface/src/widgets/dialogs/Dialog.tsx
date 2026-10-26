@@ -97,6 +97,8 @@ export interface DialogProps {
   trigger?: ReactElement
   closable?: boolean
   closeLabel?: string
+  /** Close button size; dialogs use 24 by default and 32 for touch/regular surfaces. */
+  closeSize?: 'sm' | 'md'
   rootProps?: Omit<DialogRootProps, 'children'>
   triggerProps?: Omit<DialogTriggerProps, 'children' | 'asChild'>
   portalProps?: Omit<DialogPortalProps, 'children'>
@@ -115,6 +117,7 @@ export function Dialog({
   trigger,
   closable = true,
   closeLabel = 'Close dialog',
+  closeSize = 'sm',
   rootProps,
   triggerProps,
   portalProps,
@@ -142,7 +145,7 @@ export function Dialog({
           {children != null && <div className={dialogClasses.body}>{children}</div>}
           {closable && (
             <DialogClose asChild>
-              <ActionButton className={dialogClasses.close} aria-label={closeLabel} variant="subtle">
+              <ActionButton size={closeSize} className={dialogClasses.close} aria-label={closeLabel} variant="subtle">
                 ×
               </ActionButton>
             </DialogClose>

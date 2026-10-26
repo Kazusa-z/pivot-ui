@@ -46,11 +46,13 @@ export const ToastView = forwardRef<HTMLDivElement, ToastViewProps>(function Toa
             {
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px 10px',
-              maxWidth: 'min(420px, calc(100vw - 32px))',
-              minHeight: '32px',
+              gap: 'var(--space-2)',
+              padding: 'var(--space-2) var(--space-2_5)',
+              width: '320px',
+              maxWidth: 'min(320px, calc(100vw - 32px))',
+              minHeight: 'var(--sizes-controlMd)',
               pointerEvents: 'auto',
+              transition: 'opacity 120ms ease-out',
               '&:not([data-visible])': { pointerEvents: 'none' },
             },
             cssProp
@@ -63,7 +65,16 @@ export const ToastView = forwardRef<HTMLDivElement, ToastViewProps>(function Toa
       aria-hidden={!visible || undefined}>
       <span
         aria-hidden
-        className={css({ display: 'inline-flex', flex: '0 0 auto', '& > svg': { width: '16px', height: '16px' } })}>
+        data-tone={tone}
+        className={css({
+          display: 'inline-flex',
+          flex: '0 0 auto',
+          '& > svg': { width: 'var(--sizes-iconMd)', height: 'var(--sizes-iconMd)' },
+          '&[data-tone="info"]': { color: 'var(--colors-infoText)' },
+          '&[data-tone="success"]': { color: 'var(--colors-successText)' },
+          '&[data-tone="error"]': { color: 'var(--colors-dangerText)' },
+          '&[data-tone="loading"]': { color: 'var(--colors-primarySolid)' },
+        })}>
         {icon ??
           (tone === 'loading' ? (
             <Spin size="sm" decorative />
@@ -93,14 +104,15 @@ export const ToastView = forwardRef<HTMLDivElement, ToastViewProps>(function Toa
             flex: '0 0 auto',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '24px',
-            height: '24px',
-            color: 'inherit',
+            width: 'var(--sizes-controlSm)',
+            height: 'var(--sizes-controlSm)',
+            color: 'var(--colors-textMuted)',
             background: 'transparent',
             border: 0,
-            borderRadius: '4px',
+            borderRadius: 'var(--radii-control)',
             cursor: 'pointer',
-            '&:focus-visible': { outline: '2px solid var(--colors-focusRing)' },
+            '&:hover': { color: 'var(--colors-textStrong)', backgroundColor: 'var(--colors-softBgHover)' },
+            '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
           })}>
           <IconX size={14} aria-hidden />
         </button>

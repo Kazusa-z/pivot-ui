@@ -34,6 +34,18 @@ export function useOverlayTheme() {
   return { className: themeClasses[resolvedTheme], 'data-theme': resolvedTheme }
 }
 
+/** Enter animation shared by non-modal portal surfaces. */
+export const overlayEnterStyles = {
+  '&[data-state="open"]': {
+    animationName: 'overlayFadeIn',
+    animationDuration: '150ms',
+    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    '&[data-state="open"]': { animation: 'none' },
+  },
+} satisfies SystemStyleObject
+
 /** Shared appearance only; each overlay owns its positioning and interaction semantics. */
 export function getOverlaySurfaceClass(overrides?: SystemStyleObject) {
   return css(
@@ -41,13 +53,14 @@ export function getOverlaySurfaceClass(overrides?: SystemStyleObject) {
       boxSizing: 'border-box',
       minWidth: 0,
       zIndex: 'var(--pivot-overlay-layer, 50)',
-      backgroundColor: 'var(--colors-surfaceOverlay)',
+      backgroundColor: 'var(--colors-surfaceRaised)',
       color: 'var(--colors-text)',
       border: '1px solid var(--colors-border)',
-      borderRadius: '6px',
-      boxShadow: 'var(--shadows-popContainer)',
+      borderRadius: 'var(--radii-controlMd)',
+      boxShadow: 'var(--shadows-overlay)',
       fontFamily: 'var(--fonts-default)',
-      fontSize: '12px',
+      fontSize: 'var(--fontSizes-controlLarge)',
+      lineHeight: 'var(--lineHeights-2)',
       overflowWrap: 'anywhere',
       outline: 'none',
     },
