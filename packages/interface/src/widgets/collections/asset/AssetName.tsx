@@ -21,7 +21,13 @@ export const AssetName = forwardRef<HTMLDivElement, AssetNameProps>(function Ass
   assertAssetDescriptor(asset)
   const identity = useMemo(() => ({ id: asset.id, resetKey }), [asset.id, resetKey])
   const nameStyle = css.raw(
-    { minWidth: 0, maxWidth: '100%', fontSize: '12px', overflowWrap: 'anywhere', color: 'var(--colors-text)' },
+    {
+      minWidth: 0,
+      maxWidth: '100%',
+      fontSize: 'var(--fontSizes-control)',
+      overflowWrap: 'anywhere',
+      color: 'var(--colors-text)',
+    },
     cssProp
   )
   if (!onRename)

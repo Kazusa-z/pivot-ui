@@ -411,18 +411,18 @@
 
 **验收**：浮层与页面背景分离；Dialog 标题 16；Menu 不再 3px/13px；所有 overlay 共用一个 surface/shadow；`pnpm verify` 通过。
 
-### Phase 5 — Collections 与 Navigation（3 天）
+### Phase 5 — Collections 与 Navigation（已完成 2026-10-26）
 
-- [ ] `widgets/collections/tree/Tree.tsx`：新增 `density`；行 24/32；字号 12/14；选中实心；focus -2；拖拽指示 2px；rename 输入跟随档位。
-- [ ] `widgets/collections/Table.tsx`、`DataTable.tsx`：`density`；表头/行 24/32；cell padding 2×6 / 6×8；选中实心。
-- [ ] `widgets/collections/asset/*`：列表 4px / 网格 6px；选中改 `selectionSubtleBg` + border；hover `softBgHover`；name 12/14，meta 11/12。
-- [ ] `widgets/navigation/Breadcrumbs.tsx`：hover 改背景+textStrong，去掉下划线；20/24；12/14。
-- [ ] `widgets/navigation/Pagination.tsx`：24/32；4/6；选中实心。
-- [ ] `templates/collections/CollectionTemplate.tsx`：`density`；行 24/32；gap 4/8；按钮 sm/md。
-- [ ] `interaction/drag-drop/*`：预览 6px + overlay shadow；指示线 2px。
-- [ ] Stories：`Tree`、`Table`、`AssetItem`、`Breadcrumbs`、`Pagination`、`CollectionTemplate`、`DragDrop`。
+- [x] `widgets/collections/tree/Tree.tsx`：新增 `density`；行 24/32；字号 12/14；选中实心；focus -2；拖拽指示 2px；rename 输入跟随档位。
+- [x] `widgets/collections/Table.tsx`、`DataTable.tsx`：`density`；表头/行 24/32；cell padding 2×6 / 6×8；选中实心。
+- [x] `widgets/collections/asset/*`：列表 4px / 网格 6px；选中改 `selectionSubtleBg` + border；hover `softBgHover`；name 12/14，meta 11/12。
+- [x] `widgets/navigation/Breadcrumbs.tsx`：hover 改背景+textStrong，去掉下划线；20/24；12/14。
+- [x] `widgets/navigation/Pagination.tsx`：24/32；4/6；选中实心。
+- [x] `templates/collections/CollectionTemplate.tsx`：`density`；行 24/32；gap 4/8；按钮 sm/md。
+- [x] `interaction/drag-drop/*`：预览 6px + overlay shadow；指示线 2px。
+- [x] Stories：`Tree`、`Table`、`AssetItem`、`Breadcrumbs`、`Pagination`、`CollectionTemplate`、`DragDrop`。
 
-**验收**：Tree 28 消失；行高只有 24/32；选中只有实心行 + 浅底卡片两种；build 通过。
+**验收**：Tree 28 消失；行高只有 24/32；选中只有实心行 + 浅底卡片两种；`pnpm verify` 通过。
 
 ### Phase 6 — Templates（6 天，最大块）
 

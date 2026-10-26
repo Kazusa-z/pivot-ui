@@ -38,15 +38,15 @@ const buttonRecipe = cva({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '0 4px',
+    padding: '0 var(--space-1)',
     border: '1px solid var(--colors-border)',
     backgroundColor: 'var(--colors-softBg)',
     color: 'var(--colors-text)',
-    borderRadius: '4px',
+    borderRadius: 'var(--radii-control)',
     font: 'inherit',
     cursor: 'pointer',
     '&:hover:not(:disabled)': {
-      backgroundColor: 'var(--colors-surfaceSubtle)',
+      backgroundColor: 'var(--colors-softBgHover)',
       borderColor: 'var(--colors-borderStrong)',
     },
     '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
@@ -59,8 +59,17 @@ const buttonRecipe = cva({
   },
   variants: {
     size: {
-      sm: { minWidth: '24px', height: '24px', fontSize: '12px' },
-      md: { minWidth: '32px', height: '32px', fontSize: '14px' },
+      sm: {
+        minWidth: 'var(--sizes-controlSm)',
+        height: 'var(--sizes-controlSm)',
+        fontSize: 'var(--fontSizes-control)',
+      },
+      md: {
+        minWidth: 'var(--sizes-controlMd)',
+        height: 'var(--sizes-controlMd)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        borderRadius: 'var(--radii-controlMd)',
+      },
     },
   },
 })
@@ -104,14 +113,16 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
       aria-label={props['aria-label'] ?? text.navigation}
       className={cx(css({ color: 'var(--colors-text)', minWidth: 0 }, cssProp), className)}>
       {state.pageCount === 0 ? (
-        <span className={css({ fontSize: '12px', color: 'var(--colors-textMuted)' })}>{text.empty}</span>
+        <span className={css({ fontSize: 'var(--fontSizes-control)', color: 'var(--colors-textMuted)' })}>
+          {text.empty}
+        </span>
       ) : (
         <ol
           className={css({
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
-            gap: '6px',
+            gap: 'var(--space-1_5)',
             listStyle: 'none',
             margin: 0,
             padding: 0,
@@ -143,7 +154,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
                 <span
                   role="img"
                   aria-label={text.ellipsis}
-                  className={css({ padding: '0 4px', color: 'var(--colors-textMuted)' })}>
+                  className={css({ padding: '0 var(--space-1)', color: 'var(--colors-textMuted)' })}>
                   …
                 </span>
               )}

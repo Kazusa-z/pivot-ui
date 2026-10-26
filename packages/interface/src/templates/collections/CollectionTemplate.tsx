@@ -66,6 +66,8 @@ export interface CollectionTemplateProps<T> extends Omit<HTMLAttributes<HTMLDivE
   emptyContent?: ReactNode
   disabled?: boolean
   readOnly?: boolean
+  /** 紧凑 24px 行或常规 32px 行。 */
+  density?: 'compact' | 'regular'
   resetKey?: unknown
   css?: SystemStyleObject
 }
@@ -79,10 +81,14 @@ const actionClass = css({
   alignItems: 'center',
   justifyContent: 'end',
   flexWrap: 'wrap',
-  gap: '2px',
+  gap: 'var(--space-0_5)',
   minWidth: 0,
 })
-const errorClass = css({ color: 'var(--colors-dangerText)', fontSize: '12px', overflowWrap: 'anywhere' })
+const errorClass = css({
+  color: 'var(--colors-dangerText)',
+  fontSize: 'var(--fontSizes-control)',
+  overflowWrap: 'anywhere',
+})
 
 function RenameAction({
   label,
@@ -91,6 +97,8 @@ function RenameAction({
   resetKey,
   onRename,
   externalError,
+  inputSize,
+  buttonSize,
 }: {
   label: string
   disabled: boolean
@@ -98,6 +106,8 @@ function RenameAction({
   resetKey: unknown
   onRename: (name: string) => Promise<void>
   externalError?: string
+  inputSize: 'sm' | 'md'
+  buttonSize: 'sm' | 'md'
 }) {
   const editor = useTextEdit({
     value: label,
@@ -126,7 +136,7 @@ function RenameAction({
       {editor.phase === 'idle' ? (
         <ActionButton
           ref={trigger}
-          size="xs"
+          size={buttonSize}
           variant="subtle"
           aria-label={`Rename ${label}`}
           disabled={disabled || readOnly}
@@ -147,6 +157,7 @@ function RenameAction({
           aria-invalid={editor.error ? true : undefined}
           aria-describedby={editor.error ? (externalError ?? errorId) : undefined}
           aria-errormessage={editor.error ? (externalError ?? errorId) : undefined}
+          size={inputSize}
           css={css.raw({ width: '140px', maxWidth: '100%' })}
           onKeyDown={(event) => {
             editor.inputProps.onKeyDown(event)
@@ -225,7 +236,7 @@ function DragRow({
 const rowClass = css({
   listStyle: 'none',
   minWidth: 0,
-  borderRadius: '4px',
+  borderRadius: 'var(--radii-control)',
   outlineOffset: '2px',
   '&:focus-visible': { outline: '2px solid var(--colors-focusRing)' },
   '&[data-dragging]': { opacity: 0.5 },
@@ -256,12 +267,17 @@ export function CollectionTemplate<T>({
   emptyContent = 'No items',
   disabled = false,
   readOnly = false,
+  density = 'compact',
   resetKey,
   css: cssProp,
   className,
   ...props
 }: CollectionTemplateProps<T>) {
   const collection = createCollection(items, getKey)
+  const regular = density === 'regular'
+  const sectionSize = regular ? 'md' : 'sm'
+  const actionSize = regular ? 'md' : 'sm'
+  const inputSize = regular ? 'md' : 'sm'
   const [localExpanded, setLocalExpanded] = useState(() => unique(defaultExpandedKeys))
   const [localSelected, setLocalSelected] = useState(() => unique(defaultSelectedKeys))
   const expanded = expandedKeys ?? localExpanded,
@@ -452,11 +468,36 @@ export function CollectionTemplate<T>({
       aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : label)}
       aria-disabled={disabled || undefined}
       data-readonly={readOnly || undefined}
+      data-density={density}
       className={cx(
-        css({ display: 'grid', gap: '6px', minWidth: 0, width: '100%', color: 'var(--colors-text)' }, cssProp),
+        css(
+          {
+            display: 'grid',
+            gap: 'var(--collection-gap, var(--space-1))',
+            minWidth: 0,
+            width: '100%',
+            color: 'var(--colors-text)',
+            fontSize: 'var(--collection-font-size, var(--fontSizes-control))',
+            '--collection-gap': 'var(--space-1)',
+            '--collection-font-size': 'var(--fontSizes-control)',
+            '&[data-density=regular]': {
+              '--collection-gap': 'var(--space-2)',
+              '--collection-font-size': 'var(--fontSizes-controlLarge)',
+            },
+          },
+          cssProp
+        ),
         className
       )}>
-      <ul className={css({ display: 'grid', gap: '4px', padding: 0, margin: 0, minWidth: 0 })} aria-label={label}>
+      <ul
+        className={css({
+          display: 'grid',
+          gap: 'var(--collection-gap, var(--space-1))',
+          padding: 0,
+          margin: 0,
+          minWidth: 0,
+        })}
+        aria-label={label}>
         {collection.items.map((item, index) => {
           const key = collection.keys[index],
             name = getLabel(item)
@@ -495,6 +536,7 @@ export function CollectionTemplate<T>({
                 }}
                 disabled={disabled}
                 variant="surface"
+                size={sectionSize}
                 css={css.raw({ '&[data-selected]': { borderColor: 'var(--colors-focusRing)' } })}
                 data-selected={context.selected ? '' : undefined}
                 actions={
@@ -505,7 +547,7 @@ export function CollectionTemplate<T>({
                           if (node) selectionButtons.current.set(key, node)
                           else selectionButtons.current.delete(key)
                         }}
-                        size="xs"
+                        size={actionSize}
                         variant="subtle"
                         aria-label={`Select ${name}`}
                         aria-pressed={context.selected}
@@ -529,6 +571,8 @@ export function CollectionTemplate<T>({
                         disabled={disabled}
                         readOnly={readOnly || (!!pending && !(pending.kind === 'rename' && pending.key === key))}
                         resetKey={epoch}
+                        inputSize={inputSize}
+                        buttonSize={actionSize}
                         onRename={(next) => run('rename', key, () => onRename(item, next, key))}
                       />
                     )}
@@ -536,14 +580,14 @@ export function CollectionTemplate<T>({
                       <>
                         <ActionButton
                           ref={dragRef}
-                          size="xs"
+                          size={actionSize}
                           variant="subtle"
                           aria-label={`Drag ${name}`}
                           disabled={mutationsLocked}>
                           <IconGripVertical size={14} aria-hidden />
                         </ActionButton>
                         <ActionButton
-                          size="xs"
+                          size={actionSize}
                           variant="subtle"
                           aria-label={`Move ${name} up`}
                           disabled={mutationsLocked || index === 0}
@@ -551,7 +595,7 @@ export function CollectionTemplate<T>({
                           <IconArrowUp size={14} aria-hidden />
                         </ActionButton>
                         <ActionButton
-                          size="xs"
+                          size={actionSize}
                           variant="subtle"
                           aria-label={`Move ${name} down`}
                           disabled={mutationsLocked || index === collection.size - 1}
@@ -562,7 +606,7 @@ export function CollectionTemplate<T>({
                     )}
                     {onDelete && (canDelete?.(item, key) ?? true) && (
                       <ActionButton
-                        size="xs"
+                        size={actionSize}
                         variant="subtle"
                         aria-label={`Delete ${name}`}
                         disabled={mutationsLocked}
@@ -605,7 +649,12 @@ export function CollectionTemplate<T>({
         })}
       </ul>
       {collection.size === 0 && (
-        <div className={css({ padding: '12px', color: 'var(--colors-textMuted)', fontSize: '12px' })}>
+        <div
+          className={css({
+            padding: 'var(--space-3)',
+            color: 'var(--colors-textMuted)',
+            fontSize: 'var(--collection-font-size, var(--fontSizes-control))',
+          })}>
           {emptyContent}
         </div>
       )}
@@ -613,7 +662,7 @@ export function CollectionTemplate<T>({
         <Button
           ref={addButton}
           type="button"
-          size="sm"
+          size={actionSize}
           fullWidth
           disabled={disabled || readOnly || !!pending}
           loading={pending?.kind === 'add'}

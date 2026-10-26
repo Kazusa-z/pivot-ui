@@ -31,27 +31,36 @@ const itemRecipe = cva({
     display: 'inline-flex',
     alignItems: 'center',
     minWidth: 0,
-    gap: '6px',
+    gap: 'var(--space-1_5)',
     color: 'var(--colors-textMuted)',
     '& [data-breadcrumb-control]': {
-      padding: '2px 4px',
+      padding: 'var(--space-0_5) var(--space-1)',
       font: 'inherit',
       color: 'inherit',
       background: 'none',
       border: 0,
-      borderRadius: '3px',
+      borderRadius: 'var(--radii-control)',
       textDecoration: 'none',
       overflowWrap: 'anywhere',
     },
     '& :is(a, button)[data-breadcrumb-control]': {
       cursor: 'pointer',
-      '&:hover': { color: 'var(--colors-textStrong)', textDecoration: 'underline' },
+      '&:hover': {
+        color: 'var(--colors-textStrong)',
+        backgroundColor: 'var(--colors-softBgHover)',
+        textDecoration: 'none',
+      },
       '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
     },
     '& [aria-current=page]': { color: 'var(--colors-textStrong)' },
     '& [aria-disabled=true]': { opacity: 0.5 },
   },
-  variants: { size: { sm: { fontSize: '12px', minHeight: '20px' }, md: { fontSize: '14px', minHeight: '24px' } } },
+  variants: {
+    size: {
+      sm: { fontSize: 'var(--fontSizes-control)', minHeight: 'var(--sizes-controlXs)' },
+      md: { fontSize: 'var(--fontSizes-controlLarge)', minHeight: 'var(--sizes-controlSm)' },
+    },
+  },
 })
 /** One li including its decorative separator; the current page is readable text. */
 export const BreadcrumbItem = forwardRef<HTMLLIElement, BreadcrumbItemProps>(function BreadcrumbItem(
@@ -97,7 +106,7 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(function Br
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
-          gap: '4px',
+          gap: 'var(--space-1)',
           margin: 0,
           padding: 0,
           listStyle: 'none',

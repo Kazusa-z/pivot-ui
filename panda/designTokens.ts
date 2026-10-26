@@ -689,6 +689,7 @@ export const space = {
   '96': '384px',
   '0_5': '2px',
   '1_5': '6px',
+  '2_5': '10px',
 } as const
 
 export const sizes = {

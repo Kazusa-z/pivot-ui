@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type HTMLAttributes,
+  type CSSProperties,
   type ReactElement,
   type ReactNode,
   type RefAttributes,
@@ -23,6 +24,7 @@ import { useTextEdit, type TextEditCommitReason } from '../../inputs/useTextEdit
 import { Input } from '../../inputs/Input'
 
 export type TreeSelectionMode = 'none' | 'single' | 'multiple'
+export type TreeDensity = 'compact' | 'regular'
 export interface TreeDragData {
   readonly treeId: string
   readonly keys: readonly CollectionKey[]
@@ -45,10 +47,12 @@ export interface TreeItemState {
   readonly focused: boolean
   readonly disabled: boolean
   readonly level: number
+  readonly density: TreeDensity
 }
 export interface TreeRootProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect' | 'children'> {
   collection: TreeCollection<T>
   selectionMode?: TreeSelectionMode
+  density?: TreeDensity
   selectedKeys?: readonly CollectionKey[]
   defaultSelectedKeys?: readonly CollectionKey[]
   onSelectedKeysChange?: (keys: readonly CollectionKey[]) => void
@@ -79,6 +83,7 @@ interface TreeContextValue {
   disabled: boolean
   readOnly: boolean
   mode: TreeSelectionMode
+  density: TreeDensity
   id: string
   dragDrop?: TreeDragDropOptions
   typeahead: { text: string; time: number }
@@ -113,6 +118,7 @@ function itemState(tree: TreeContextValue, node: TreeNode<unknown>): TreeItemSta
     focused: tree.focused === node.key,
     disabled: tree.disabled || node.disabled,
     level: node.level,
+    density: tree.density,
   }
 }
 
@@ -120,6 +126,7 @@ export const TreeRoot = forwardRef(function TreeRoot<T>(
   {
     collection,
     selectionMode = 'single',
+    density = 'compact',
     selectedKeys,
     defaultSelectedKeys = [],
     onSelectedKeysChange,
@@ -250,6 +257,7 @@ export const TreeRoot = forwardRef(function TreeRoot<T>(
     disabled,
     readOnly,
     mode: selectionMode,
+    density,
     id,
     dragDrop,
     typeahead: typeahead.current,
@@ -316,14 +324,21 @@ export const TreeRoot = forwardRef(function TreeRoot<T>(
         aria-label={props['aria-label'] ?? (props['aria-labelledby'] ? undefined : 'Tree')}
         aria-multiselectable={selectionMode === 'multiple' || undefined}
         aria-disabled={disabled || undefined}
+        data-density={density}
         tabIndex={focused === null && !disabled ? 0 : -1}
         className={cx(
           css(
             {
               minWidth: 0,
               color: 'var(--colors-text)',
-              fontSize: '12px',
+              fontSize: 'var(--tree-font-size, var(--fontSizes-control))',
               outline: 'none',
+              '--tree-row-height': 'var(--sizes-controlSm)',
+              '--tree-font-size': 'var(--fontSizes-control)',
+              '&[data-density=regular]': {
+                '--tree-row-height': 'var(--sizes-controlMd)',
+                '--tree-font-size': 'var(--fontSizes-controlLarge)',
+              },
               '&:focus-visible': { outline: '2px solid var(--colors-focusRing)' },
             },
             cssProp
@@ -341,7 +356,13 @@ export const TreeRoot = forwardRef(function TreeRoot<T>(
         {collection.size ? (
           (children ?? render(collection.rootKeys))
         ) : (
-          <div role="presentation" className={css({ padding: '12px', color: 'var(--colors-textMuted)' })}>
+          <div
+            role="presentation"
+            className={css({
+              padding: 'var(--space-3)',
+              color: 'var(--colors-textMuted)',
+              fontSize: 'var(--tree-font-size, var(--fontSizes-control))',
+            })}>
             {emptyContent}
           </div>
         )}
@@ -539,15 +560,19 @@ export const TreeItemContent = forwardRef<HTMLDivElement, TreeItemContentProps>(
           {
             display: 'flex',
             alignItems: 'center',
-            gap: '4px',
+            gap: 'var(--space-1)',
             minWidth: 0,
-            minHeight: '28px',
-            paddingBlock: '2px',
-            paddingRight: '4px',
-            borderRadius: '4px',
+            minHeight: 'var(--tree-row-height, var(--sizes-controlSm))',
+            paddingBlock: 'var(--space-0_5)',
+            paddingRight: 'var(--space-1)',
+            borderRadius: 'var(--radii-control)',
             color: 'var(--colors-text)',
+            fontSize: 'var(--tree-font-size, var(--fontSizes-control))',
             '&:hover': { backgroundColor: 'var(--colors-softBgHover)' },
-            '&[data-selected]': { backgroundColor: 'var(--colors-primary)', color: 'white' },
+            '&[data-selected]': {
+              backgroundColor: 'var(--colors-selectionBg)',
+              color: 'var(--colors-selectionText)',
+            },
             '&[data-disabled]': { opacity: 0.5 },
             '&[data-dragging]': { opacity: 0.5 },
             '&[data-drop-position=before]': { boxShadow: 'inset 0 2px var(--colors-focusRing)' },
@@ -558,7 +583,13 @@ export const TreeItemContent = forwardRef<HTMLDivElement, TreeItemContentProps>(
         ),
         className
       )}
-      style={{ paddingLeft: `${(node.level - 1) * 16 + 4}px`, ...props.style }}
+      style={
+        {
+          '--tree-level': node.level,
+          paddingLeft: 'calc((var(--tree-level) - 1) * var(--space-4) + var(--space-1))',
+          ...props.style,
+        } as CSSProperties
+      }
       data-disabled={state.disabled || undefined}
       onClick={(event) => {
         props.onClick?.(event)
@@ -582,8 +613,8 @@ export const TreeItemContent = forwardRef<HTMLDivElement, TreeItemContentProps>(
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
-            width: '18px',
-            height: '20px',
+            width: 'var(--sizes-4_5)',
+            height: 'var(--tree-row-height, var(--sizes-controlSm))',
             padding: 0,
             color: 'inherit',
             background: 'transparent',
@@ -599,7 +630,7 @@ export const TreeItemContent = forwardRef<HTMLDivElement, TreeItemContentProps>(
           {state.expanded ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
         </button>
       ) : (
-        <span aria-hidden="true" className={css({ width: '18px', flexShrink: 0 })} />
+        <span aria-hidden="true" className={css({ width: 'var(--sizes-4_5)', flexShrink: 0 })} />
       )}
       {startSlot}
       <span
@@ -621,7 +652,7 @@ export const TreeItemContent = forwardRef<HTMLDivElement, TreeItemContentProps>(
           <Input
             {...editor.inputProps}
             ref={input}
-            size="xs"
+            size={tree.density === 'regular' ? 'md' : 'sm'}
             value={editor.draft}
             aria-label={`Rename ${label}`}
             readOnly={editor.phase === 'pending'}
@@ -652,7 +683,12 @@ export const TreeItemContent = forwardRef<HTMLDivElement, TreeItemContentProps>(
       {actions && (
         <span
           data-tree-actions=""
-          className={css({ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: '2px' })}
+          className={css({
+            display: 'inline-flex',
+            flexShrink: 0,
+            alignItems: 'center',
+            gap: 'var(--space-0_5)',
+          })}
           onKeyDown={(event) => event.stopPropagation()}>
           {actions}
         </span>
@@ -778,13 +814,15 @@ export const TreeDragPreview = forwardRef<HTMLDivElement, TreeDragPreviewProps>(
           {
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: 'var(--space-2)',
             maxWidth: '300px',
-            padding: '4px 8px',
-            borderRadius: '4px',
-            color: 'white',
-            backgroundColor: 'var(--colors-primary)',
-            fontSize: '12px',
+            padding: 'var(--space-1) var(--space-2)',
+            borderRadius: 'var(--radii-controlMd)',
+            border: '1px solid var(--colors-border)',
+            color: 'var(--colors-text)',
+            backgroundColor: 'var(--colors-surfaceRaised)',
+            boxShadow: 'var(--shadows-overlay)',
+            fontSize: 'var(--fontSizes-control)',
           },
           cssProp
         ),

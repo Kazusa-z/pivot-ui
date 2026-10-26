@@ -9,7 +9,9 @@ import { css, cva, cx } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
 
 export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
+  /** Legacy compact flag; equivalent to density="compact". */
   compact?: boolean
+  density?: 'compact' | 'regular'
   css?: SystemStyleObject
 }
 export interface TableSectionProps extends HTMLAttributes<HTMLTableSectionElement> {
@@ -32,14 +34,16 @@ export interface TableCaptionProps extends HTMLAttributes<HTMLTableCaptionElemen
 }
 
 export const Table = forwardRef<HTMLTableElement, TableProps>(function Table(
-  { compact, css: cssProp, className, ...props },
+  { compact, density, css: cssProp, className, ...props },
   ref
 ) {
+  const activeDensity = compact ? 'compact' : (density ?? 'regular')
   return (
     <table
       {...props}
       ref={ref}
       data-compact={compact || undefined}
+      data-density={activeDensity}
       className={cx(
         css(
           {
@@ -47,8 +51,15 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(function Table(
             borderCollapse: 'collapse',
             borderSpacing: 0,
             color: 'var(--colors-text)',
-            fontSize: '12px',
-            '&[data-compact=true] :is(th, td)': { padding: '3px 6px' },
+            fontSize: 'var(--table-font-size, var(--fontSizes-controlLarge))',
+            '--table-font-size': 'var(--fontSizes-controlLarge)',
+            '--table-cell-padding': 'var(--space-1_5) var(--space-2)',
+            '--table-row-height': 'var(--sizes-controlMd)',
+            '&[data-density=compact]': {
+              '--table-font-size': 'var(--fontSizes-control)',
+              '--table-cell-padding': 'var(--space-0_5) var(--space-1_5)',
+              '--table-row-height': 'var(--sizes-controlSm)',
+            },
           },
           cssProp
         ),
@@ -80,7 +91,10 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableSectionProps>(
     <tbody
       {...props}
       ref={ref}
-      className={cx(css({ '& > tr:hover': { backgroundColor: 'var(--colors-surfaceSubtle)' } }, cssProp), className)}
+      className={cx(
+        css({ '& > tr:not([data-selected]):hover': { backgroundColor: 'var(--colors-softBgHover)' } }, cssProp),
+        className
+      )}
     />
   )
 })
@@ -122,7 +136,8 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function 
 })
 const cellRecipe = cva({
   base: {
-    padding: '8px',
+    height: 'var(--table-row-height, var(--sizes-controlMd))',
+    padding: 'var(--table-cell-padding, var(--space-1_5) var(--space-2))',
     borderBottom: '1px solid var(--colors-border)',
     verticalAlign: 'middle',
     overflowWrap: 'anywhere',
@@ -157,7 +172,16 @@ export const TableCaption = forwardRef<HTMLTableCaptionElement, TableCaptionProp
       {...props}
       ref={ref}
       className={cx(
-        css({ textAlign: 'start', padding: '8px 0', fontWeight: 500, color: 'var(--colors-textMuted)' }, cssProp),
+        css(
+          {
+            textAlign: 'start',
+            padding: 'var(--space-2) 0',
+            fontWeight: 500,
+            color: 'var(--colors-textMuted)',
+            fontSize: 'var(--table-font-size, var(--fontSizes-control))',
+          },
+          cssProp
+        ),
         className
       )}
     />

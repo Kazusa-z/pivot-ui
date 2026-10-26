@@ -1,12 +1,30 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { IconFile, IconFolder, IconTrash } from '@tabler/icons-react'
-import { TreeRoot, TreeItemContent, TreeItemIcon, type TreeDropRequest } from '../src/widgets/collections/tree'
+import { IconFile, IconFolder } from '@tabler/icons-react'
+import {
+  TreeRoot,
+  TreeItemContent,
+  TreeItemIcon,
+  TreeDragPreview,
+  TreeInsertionIndicator,
+  type TreeDropRequest,
+} from '../src/widgets/collections/tree'
 import { createTreeCollection } from '../src/values/tree'
 import type { CollectionKey } from '../src/values/collection'
 import { DragDropProvider, useDragDropState } from '../src/interaction/drag-drop'
-import { ActionButton } from '../src/widgets/buttons/ActionButton'
-import { ContractFrame, ControlButton, StatePanel, contractStyles } from './support/ContractFrame'
+import { Button } from '../src/widgets/buttons'
+import { css } from '../styled-system/css'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryState,
+  StoryCode,
+  StoryProps,
+  StoryKeyboard,
+} from './support/StoryPage'
 
 interface Entry {
   id: CollectionKey
@@ -14,6 +32,7 @@ interface Entry {
   children?: readonly Entry[]
   disabled?: boolean
 }
+
 const initial: readonly Entry[] = [
   {
     id: 'documents',
@@ -22,28 +41,32 @@ const initial: readonly Entry[] = [
       { id: 'notes', name: 'Notes' },
       { id: 'reference', name: 'Reference', children: [{ id: 'guide', name: 'Guide' }] },
       { id: 'locked', name: 'Unavailable item', disabled: true },
-      { id: 'long', name: 'A very long document name that must remain readable in a narrow tree using an ellipsis' },
+      { id: 'long', name: 'A very long document name that stays readable in a narrow tree' },
     ],
   },
   { id: 'archive', name: 'Archive', children: [] },
   { id: 'readme', name: 'Readme' },
 ]
+
 const options = {
   getKey: (item: Entry) => item.id,
   getChildren: (item: Entry) => item.children,
   getTextValue: (item: Entry) => item.name,
   isDisabled: (item: Entry) => !!item.disabled,
 }
+
 function rename(items: readonly Entry[], key: CollectionKey, name: string): readonly Entry[] {
   return items.map((item) =>
     item.id === key ? { ...item, name } : item.children ? { ...item, children: rename(item.children, key, name) } : item
   )
 }
+
 function remove(items: readonly Entry[], keys: readonly CollectionKey[]): readonly Entry[] {
   return items
     .filter((item) => !keys.includes(item.id))
     .map((item) => (item.children ? { ...item, children: remove(item.children, keys) } : item))
 }
+
 function move(items: readonly Entry[], request: TreeDropRequest): readonly Entry[] {
   const collection = createTreeCollection(items, options)
   const keys = request.keys.filter((key) => {
@@ -66,273 +89,354 @@ function move(items: readonly Entry[], request: TreeDropRequest): readonly Entry
   return insert(remove(items, keys))
 }
 
-function TreeExample({
-  multiple = false,
-  freeze = false,
-  dynamic = false,
-  asyncRename = false,
-  dnd = false,
+const itemIcon = (entry: Entry) => (
+  <TreeItemIcon>{entry.children ? <IconFolder size={14} /> : <IconFile size={14} />}</TreeItemIcon>
+)
+
+function StaticTree({
+  density = 'compact',
+  selectionMode = 'single',
   disabled = false,
   readOnly = false,
 }: {
-  multiple?: boolean
-  freeze?: boolean
-  dynamic?: boolean
-  asyncRename?: boolean
-  dnd?: boolean
+  density?: 'compact' | 'regular'
+  selectionMode?: 'none' | 'single' | 'multiple'
   disabled?: boolean
   readOnly?: boolean
+}) {
+  const collection = useMemo(() => createTreeCollection(initial, options), [])
+  return (
+    <TreeRoot
+      collection={collection}
+      density={density}
+      selectionMode={selectionMode}
+      disabled={disabled}
+      readOnly={readOnly}
+      defaultSelectedKeys={selectionMode === 'none' ? [] : ['notes']}
+      defaultExpandedKeys={['documents']}
+      defaultFocusedKey="notes"
+      renderItem={(node) => <TreeItemContent label={node.item.name} startSlot={itemIcon(node.item)} />}
+      aria-label={`${density} ${selectionMode} tree`}
+      css={{ width: '100%', maxWidth: '380px' }}
+    />
+  )
+}
+
+function DragState() {
+  const state = useDragDropState()
+  return <StoryState label="Shared drag state" value={state} />
+}
+
+function TreeDemo({
+  density = 'compact',
+  multiple = false,
+  readOnly = false,
+  disabled = false,
+  dnd = false,
+  renameEnabled = false,
+}: {
+  density?: 'compact' | 'regular'
+  multiple?: boolean
+  readOnly?: boolean
+  disabled?: boolean
+  dnd?: boolean
+  renameEnabled?: boolean
 }) {
   const [items, setItems] = useState(initial)
   const [selected, setSelected] = useState<readonly CollectionKey[]>(['notes'])
   const [expanded, setExpanded] = useState<readonly CollectionKey[]>(['documents'])
   const [focused, setFocused] = useState<CollectionKey | null>('notes')
   const [events, setEvents] = useState<string[]>([])
-  const [reject, setReject] = useState(asyncRename)
-  const [revision, setRevision] = useState(0)
-  const version = useRef(revision)
-  version.current = revision
+  const [allowRename, setAllowRename] = useState(true)
   const collection = useMemo(() => createTreeCollection(items, options), [items])
-  const record = (event: string) => setEvents((old) => [...old.slice(-11), event])
+  const record = (event: string) => setEvents((old) => [...old.slice(-7), event])
+
+  const tree = (
+    <TreeRoot
+      collection={collection}
+      density={density}
+      aria-label="Documents tree"
+      selectionMode={multiple ? 'multiple' : 'single'}
+      selectedKeys={selected}
+      expandedKeys={expanded}
+      focusedKey={focused}
+      disabled={disabled}
+      readOnly={readOnly}
+      onSelectedKeysChange={(keys) => {
+        setSelected(keys)
+        record(`selection ${JSON.stringify(keys)}`)
+      }}
+      onExpandedKeysChange={(keys) => {
+        setExpanded(keys)
+        record(`expanded ${JSON.stringify(keys)}`)
+      }}
+      onFocusedKeyChange={(key) => {
+        setFocused(key)
+        record(`focus ${String(key)}`)
+      }}
+      dragDrop={
+        dnd
+          ? {
+              type: 'story/tree-items',
+              canDrop: ({ targetKey, position }) => position !== 'inside' || !!collection.get(targetKey)?.children,
+              onDrop: (request) => {
+                setItems((old) => move(old, request))
+                record(`drop ${JSON.stringify(request)}`)
+              },
+              onDragEnd: (result) => record(`drag ${result.status}`),
+            }
+          : undefined
+      }
+      renderItem={(node) => (
+        <TreeItemContent
+          label={node.item.name}
+          startSlot={itemIcon(node.item)}
+          onRename={
+            renameEnabled
+              ? async (name) => {
+                  if (!allowRename) throw Error('Rename rejected. Allow rename and retry Enter.')
+                  setItems((old) => rename(old, node.key, name))
+                  record(`rename ${String(node.key)}:${name}`)
+                }
+              : undefined
+          }
+        />
+      )}
+      css={{ width: '100%', maxWidth: '380px' }}
+    />
+  )
+
   return (
-    <ContractFrame
-      title={
-        dnd
-          ? '移动树中的条目'
-          : asyncRename
-            ? '重命名与失败重试'
-            : dynamic
-              ? '增删条目后的焦点位置'
-              : freeze
-                ? '由应用决定是否接受选择'
-                : multiple
-                  ? '选择多个条目'
-                  : '浏览、展开与选择树节点'
-      }
-      description={
-        dnd
-          ? '拖动行标签可请求移动条目：目标上、下区域表示插到前面或后面，中间表示移入文件夹。onDrop 把目标和位置交给应用更新数据；Escape 取消，模型会阻止移入自身或后代。上方移动按钮提供同样可用键盘完成的操作。'
-          : asyncRename
-            ? '按 F2 或双击标签进入重命名，Enter 或失焦提交，Escape 取消。onRename 可返回 Promise；此例在 300ms 后拒绝首次请求，开启 Allow rename 后可保留草稿重试。Reset 更新版本，应用据此忽略此前请求的结果。'
-            : '方向键浏览项目，Right/Left 用于展开、收起或在父子项之间移动；Space 选择，多选模式下可切换选中。Home/End 和文字搜索可快速定位，行内操作使用独立 Tab 入口。应用分别通过选择、展开和焦点回调保存状态。'
-      }
-      onReset={() => {
-        setItems(initial)
-        setSelected(['notes'])
-        setExpanded(['documents'])
-        setFocused('notes')
-        setEvents([])
-        setReject(asyncRename)
-        setRevision((n) => n + 1)
-      }}>
-      <div className={contractStyles.row}>
-        <ControlButton onClick={() => setExpanded(['documents', 'reference'])}>Expand all</ControlButton>
-        <ControlButton onClick={() => setExpanded([])}>Collapse all</ControlButton>
-        {dynamic && (
-          <>
-            <ControlButton
-              onClick={() => setItems((old) => [...old, { id: `added-${revision}`, name: `Added ${revision}` }])}
-              disabled={collection.has(`added-${revision}`)}>
-              Add item
-            </ControlButton>
-            <ControlButton
-              onClick={() => {
-                setItems((old) => remove(old, selected))
-                record('remove selected')
-              }}>
-              Remove selected
-            </ControlButton>
-            <ControlButton onClick={() => setItems([])}>Clear</ControlButton>
-          </>
-        )}
-        {asyncRename && (
-          <ControlButton onClick={() => setReject((value) => !value)}>
-            {reject ? 'Allow rename' : 'Reject rename'}
-          </ControlButton>
+    <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
+      <StoryRow>
+        <Button size="sm" variant="outline" onClick={() => setExpanded(['documents', 'reference'])}>
+          Expand all
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setExpanded([])}>
+          Collapse all
+        </Button>
+        {renameEnabled && (
+          <Button size="sm" variant="outline" onClick={() => setAllowRename((value) => !value)}>
+            {allowRename ? 'Reject rename' : 'Allow rename'}
+          </Button>
         )}
         {dnd && (
           <>
-            <ControlButton
+            <Button
+              size="sm"
               disabled={!selected.length || selected.includes('archive')}
               onClick={() => {
                 setItems((old) => move(old, { keys: selected, targetKey: 'archive', position: 'inside' }))
                 setExpanded((old) => [...new Set([...old, 'archive'])])
                 record('move selected into Archive')
               }}>
-              Move selected to Archive
-            </ControlButton>
-            <ControlButton
+              Move to Archive
+            </Button>
+            <Button
+              size="sm"
               disabled={!selected.length || selected.includes('documents')}
               onClick={() => {
                 setItems((old) => move(old, { keys: selected, targetKey: 'documents', position: 'before' }))
                 record('move selected to top')
               }}>
-              Move selected to top
-            </ControlButton>
+              Move to top
+            </Button>
           </>
         )}
-      </div>
-      <TreeRoot
-        collection={collection}
-        aria-label="Documents tree"
-        selectionMode={multiple ? 'multiple' : 'single'}
-        selectedKeys={selected}
-        expandedKeys={expanded}
-        focusedKey={focused}
-        onSelectedKeysChange={(keys) => {
-          record(`selection ${JSON.stringify(keys)}`)
-          if (!freeze) setSelected(keys)
-        }}
-        onExpandedKeysChange={setExpanded}
-        onFocusedKeyChange={setFocused}
-        disabled={disabled}
-        readOnly={readOnly}
-        dragDrop={
-          dnd
-            ? {
-                type: 'story/tree-items',
-                resetKey: revision,
-                canDrop: ({ targetKey, position }) => position !== 'inside' || !!collection.get(targetKey)?.children,
-                onDrop: (request) => {
-                  setItems((old) => move(old, request))
-                  record(`drop ${JSON.stringify(request)}`)
-                },
-                onDragEnd: (result) =>
-                  record(`drag ${result.status}${result.status === 'cancelled' ? `:${result.reason}` : ''}`),
-              }
-            : undefined
-        }
-        renderItem={(node) => (
-          <TreeItemContent
-            label={node.item.name}
-            renameResetKey={revision}
-            onRename={async (name) => {
-              const requestedVersion = version.current
-              record(`rename request ${String(node.key)}:${name}`)
-              if (asyncRename) await new Promise((done) => setTimeout(done, 300))
-              if (version.current !== requestedVersion) return
-              if (reject) throw Error('Rename rejected. Allow rename and retry Enter.')
-              setItems((old) => rename(old, node.key, name))
-              record(`rename accepted ${String(node.key)}`)
-            }}
-            startSlot={
-              <TreeItemIcon>{node.item.children ? <IconFolder size={14} /> : <IconFile size={14} />}</TreeItemIcon>
-            }
-            actions={
-              dynamic && (
-                <ActionButton
-                  aria-label={`Delete ${node.item.name}`}
-                  size="xs"
-                  variant="subtle"
-                  disabled={disabled || readOnly || node.disabled}
-                  onClick={() => setItems((old) => remove(old, [node.key]))}>
-                  <IconTrash size={12} />
-                </ActionButton>
-              )
-            }
-          />
-        )}
-        css={{ width: '100%', maxWidth: '360px' }}
+      </StoryRow>
+      {dnd ? (
+        <DragDropProvider>
+          {tree}
+          <DragState />
+        </DragDropProvider>
+      ) : (
+        tree
+      )}
+      <StoryState
+        label="Tree state"
+        value={{ selected, expanded, focused, events, count: collection.size }}
+        open={false}
       />
-      {dnd && <DragState />}
-      <StatePanel label="Tree state" value={{ selected, expanded, focused, keys: collection.keys, events }} />
-    </ContractFrame>
+    </div>
   )
 }
-function DragState() {
-  const state = useDragDropState()
-  return <StatePanel label="Shared drag state" value={state} />
-}
-function DragExample() {
-  return (
-    <DragDropProvider>
-      <TreeExample dnd multiple />
-    </DragDropProvider>
-  )
-}
-function DefaultExample() {
-  const [revision, setRevision] = useState(0)
-  const [events, setEvents] = useState<string[]>([])
-  const collection = useMemo(() => createTreeCollection(initial, options), [])
-  return (
-    <ContractFrame
-      title="设置树的初始状态"
-      description="用 defaultSelectedKeys、defaultExpandedKeys 和 defaultFocusedKey 设置初始状态，之后由 TreeRoot 保存各自变化。方向键浏览只改变焦点，Space 才选择；下方分别记录三类回调。"
-      onReset={() => {
-        setRevision((n) => n + 1)
-        setEvents([])
-      }}>
-      <TreeRoot
-        key={revision}
-        collection={collection}
-        defaultSelectedKeys={['notes']}
-        defaultExpandedKeys={['documents']}
-        defaultFocusedKey="notes"
-        onSelectedKeysChange={(keys) => setEvents((old) => [...old, `selected ${JSON.stringify(keys)}`])}
-        onExpandedKeysChange={(keys) => setEvents((old) => [...old, `expanded ${JSON.stringify(keys)}`])}
-        onFocusedKeyChange={(key) => setEvents((old) => [...old, `focus ${String(key)}`])}
-      />
-      <StatePanel label="Events" value={events} />
-    </ContractFrame>
-  )
-}
-function IdentityExample() {
-  const [selected, setSelected] = useState<readonly CollectionKey[]>([])
-  const collection = useMemo(
-    () =>
-      createTreeCollection(
-        [
-          { id: 1, name: 'Number 1' },
-          { id: '1', name: 'String 1' },
-          { id: '001', name: 'String 001' },
-        ],
-        options
-      ),
-    []
-  )
-  return (
-    <ContractFrame
-      title="用稳定标识区分节点"
-      description="数字 1、字符串 1 和字符串 001 是三个独立的 key，选择回调保留其类型。为每个条目提供唯一的非空字符串或有限数字；createTreeCollection 会在重复或无效标识进入模型时报告错误。"
-      onReset={() => setSelected([])}>
-      <TreeRoot
-        collection={collection}
-        selectionMode="multiple"
-        selectedKeys={selected}
-        onSelectedKeysChange={setSelected}
-      />
-      <StatePanel label="Selected identities" value={selected.map((key) => ({ type: typeof key, key }))} />
-    </ContractFrame>
-  )
-}
+
 const meta = {
   tags: ['autodocs'],
-  title: 'Widgets/Tree',
   parameters: {
     docs: {
       description: {
         component:
-          'Tree 用于展示文件目录、场景层级等可展开的树形数据。createTreeCollection 根据稳定 key 和子项关系建立模型，TreeRoot 分别管理选择、展开与焦点；对应回调把请求交给应用。重命名和拖放由应用更新原始数据，键盘浏览与选择分开，行内操作保留自己的焦点入口。',
+          'Tree 展示可展开的层级数据，TreeRoot 管理选择、展开与焦点，应用通过回调保存状态。重命名和拖放由应用更新数据；拖放使用 6px overlay 预览和 2px 插入线，键盘提供与拖动等价的移动入口。',
       },
     },
     layout: 'fullscreen',
   },
+  title: 'Collections/Tree',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-export const Overview: Story = { render: () => <TreeExample /> }
-export const DefaultState: Story = { render: () => <DefaultExample /> }
-export const MultipleSelection: Story = { render: () => <TreeExample multiple /> }
-export const ControlledSelection: Story = { render: () => <TreeExample freeze /> }
-export const DynamicCollection: Story = { render: () => <TreeExample dynamic /> }
-export const AsyncRename: Story = { render: () => <TreeExample asyncRename /> }
-export const DragAndDrop: Story = { render: () => <DragExample /> }
-export const TypedIdentity: Story = { render: () => <IdentityExample /> }
-export const Availability: Story = {
+
+export const Overview: Story = {
   render: () => (
-    <>
-      <TreeExample disabled />
-      <TreeExample readOnly />
-    </>
+    <StoryPage
+      eyebrow="Collections"
+      title="Tree"
+      summary="文件目录、场景层级和其他可展开数据使用同一套树。紧凑 24 / 常规 32，选中为实心 selection surface；重命名与拖放只发出请求，数据由应用更新。"
+      meta={
+        <>
+          <span>Compact 24</span>
+          <span>·</span>
+          <span>Regular 32</span>
+          <span>·</span>
+          <span>Single / multiple</span>
+        </>
+      }>
+      <StorySection
+        title="Browse and select"
+        description="方向键移动焦点，Right/Left 展开收起，Space 选择；下方记录选择、展开和焦点回调。">
+        <StoryCard>
+          <TreeDemo />
+        </StoryCard>
+      </StorySection>
+
+      <StorySection
+        title="Selection modes"
+        description="single 只保留一个选中项；multiple 支持 Space 切换和 Shift 范围选择；none 只用于浏览。">
+        <StoryGrid>
+          <StoryCard title="Single" description="默认模式，选中一个条目。">
+            <StaticTree selectionMode="single" />
+          </StoryCard>
+          <StoryCard title="Multiple" description="多个条目可同时选中。">
+            <StaticTree selectionMode="multiple" />
+          </StoryCard>
+          <StoryCard title="None" description="不显示选择语义，只保留展开与焦点。">
+            <StaticTree selectionMode="none" />
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Density"
+        description="compact 行高 24、字号 12；regular 行高 32、字号 14。重命名输入框跟随同一档位。">
+        <StoryGrid>
+          <StoryCard title="Compact · 24" description="树、菜单、属性面板。">
+            <StaticTree density="compact" />
+          </StoryCard>
+          <StoryCard title="Regular · 32" description="对话框、常规表单。">
+            <StaticTree density="regular" />
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Rename"
+        description="F2 或双击进入编辑；Enter/失焦提交，Escape 取消。异步提交失败时保留草稿，可修正后重试。">
+        <StoryCard>
+          <TreeDemo renameEnabled />
+        </StoryCard>
+      </StorySection>
+
+      <StorySection
+        title="Drag and drop"
+        description="拖动行标签请求移动；目标上/下边缘插入前后，中间移入文件夹。Escape 取消，移动按钮提供键盘等价操作。">
+        <StoryCard>
+          <TreeDemo dnd multiple />
+        </StoryCard>
+        <StoryGrid>
+          <StoryCard title="Drag preview" description="surfaceRaised、6px 圆角、overlay shadow。">
+            <TreeDragPreview count={2}>
+              <TreeItemIcon>
+                <IconFolder size={14} />
+              </TreeItemIcon>
+              Documents
+            </TreeDragPreview>
+          </StoryCard>
+          <StoryCard title="Insertion indicator" description="2px focusRing 线，标记 before/after 位置。">
+            <div className={css({ display: 'grid', gap: 'var(--space-2)' })}>
+              <TreeInsertionIndicator active />
+              <TreeInsertionIndicator />
+            </div>
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Disabled and read-only"
+        description="disabled 整棵树不可聚焦；readOnly 仍可浏览和展开，但不可选择、重命名或移动。">
+        <StoryGrid>
+          <StoryCard title="Disabled">
+            <StaticTree disabled />
+          </StoryCard>
+          <StoryCard title="Read only">
+            <StaticTree readOnly />
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Keyboard" description="焦点与选择分离；树本身只保留一个 tab stop。">
+        <StoryKeyboard
+          rows={[
+            { keys: '↑ / ↓', action: '移动焦点' },
+            { keys: '→ / ←', action: '展开/收起，或在父子节点间移动' },
+            { keys: 'Space', action: '选择当前节点' },
+            { keys: 'Enter', action: '选择并激活当前节点' },
+            { keys: 'F2', action: '开始重命名' },
+            { keys: 'Home / End', action: '跳到第一个/最后一个可聚焦节点' },
+            { keys: 'Escape', action: '取消拖动或重命名' },
+          ]}
+        />
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`const collection = createTreeCollection(items, {
+  getKey: (item) => item.id,
+  getChildren: (item) => item.children,
+  getTextValue: (item) => item.name,
+})
+
+<TreeRoot
+  collection={collection}
+  density="compact"
+  selectionMode="multiple"
+  selectedKeys={selected}
+  expandedKeys={expanded}
+  focusedKey={focused}
+  onSelectedKeysChange={setSelected}
+  onExpandedKeysChange={setExpanded}
+  onFocusedKeyChange={setFocused}
+  renderItem={(node) => <TreeItemContent label={node.item.name} />}
+/>`}
+          />
+          <StoryProps
+            rows={[
+              { name: 'collection', type: 'TreeCollection<T>', description: '稳定的 key、子项与文本值。' },
+              {
+                name: 'density',
+                type: "'compact' | 'regular'",
+                defaultValue: "'compact'",
+                description: '24 或 32 行高。',
+              },
+              {
+                name: 'selectionMode',
+                type: "'none' | 'single' | 'multiple'",
+                defaultValue: "'single'",
+                description: '选择语义。',
+              },
+              {
+                name: 'selectedKeys / expandedKeys / focusedKey',
+                type: 'readonly CollectionKey[] / key',
+                description: '受控状态。',
+              },
+              { name: 'dragDrop', type: 'TreeDragDropOptions', description: '启用移动并提供 canDrop/onDrop。' },
+              { name: 'readOnly / disabled', type: 'boolean', description: '只读浏览或完全禁用。' },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
   ),
 }

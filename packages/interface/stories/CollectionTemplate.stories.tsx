@@ -8,6 +8,19 @@ import { InputNumber } from '../src/widgets/inputs/InputNumber'
 import { Checkbox } from '../src/widgets/choices/Checkbox'
 import { Button } from '../src/widgets/buttons/Button'
 import { css } from '../styled-system/css'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryField,
+  StoryCode,
+  StoryProps,
+  StoryState,
+  StoryKeyboard,
+  StoryNote,
+} from './support/StoryPage'
 
 interface Layer {
   id: CollectionKey
@@ -15,236 +28,333 @@ interface Layer {
   weight: number
   enabled: boolean
 }
-const initial: readonly Layer[] = [
+
+const initialLayers: readonly Layer[] = [
   { id: 1, name: 'Base layer', weight: 1, enabled: true },
-  { id: '1', name: 'Detail layer', weight: 0.5, enabled: true },
+  { id: 2, name: 'Detail layer', weight: 0.5, enabled: true },
   { id: 3, name: 'Highlights', weight: 0.2, enabled: false },
 ]
+
 const meta = {
+  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          'CollectionTemplate 用于编辑带稳定标识的条目列表，例如图层、材质槽或规则集合。它提供展开、选择、重命名、增删和排序入口，条目内容由 renderItem 组合。应用在 onAdd、onDelete、onRename、onReorder 中更新 items，并分别保存选择与展开状态；异步失败可通过 Promise rejection 显示错误并保留重试入口。',
+          'CollectionTemplate 用于编辑带稳定标识的条目列表，例如图层、材质槽或规则集合。它提供展开、选择、重命名、增删和排序入口，条目内容由 renderItem 组合。应用在 onAdd、onDelete、onRename、onReorder 中更新 items，并分别保存选择与展开状态。',
       },
     },
+    layout: 'fullscreen',
   },
   title: 'Templates/CollectionTemplate',
-  component: CollectionTemplate<Layer>,
-  tags: ['autodocs'],
-  args: { items: initial, getKey: (item: Layer) => item.id, getLabel: (item: Layer) => item.name },
-} satisfies Meta<typeof CollectionTemplate<Layer>>
+} satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
-const frameClass = css({ display: 'grid', gap: '12px', width: 'min(520px, 100%)', minWidth: 0 })
-const toolbarClass = css({ display: 'flex', flexWrap: 'wrap', gap: '6px' })
-const outputClass = css({
-  margin: 0,
-  fontSize: '11px',
-  maxHeight: '230px',
-  overflow: 'auto',
-  whiteSpace: 'pre-wrap',
-  overflowWrap: 'anywhere',
-})
 
-function CollectionExample({
-  empty = false,
-  async = false,
-  external = false,
-  availability = false,
-  refusal = false,
-}: {
-  empty?: boolean
-  async?: boolean
-  external?: boolean
-  availability?: boolean
-  refusal?: boolean
-}) {
-  const [items, setItems] = useState<readonly Layer[]>(() => (empty ? [] : structuredClone(initial)))
-  const [expanded, setExpanded] = useState<readonly CollectionKey[]>([1])
-  const [selected, setSelected] = useState<readonly CollectionKey[]>([1])
-  const [mode, setMode] = useState<'editable' | 'readonly' | 'disabled'>('editable')
-  const [events, setEvents] = useState<string[]>([])
-  const [rejectNext, setRejectNext] = useState(async)
-  const [revision, setRevision] = useState(0)
-  const generation = useRef(0),
-    counter = useRef(4),
-    weightStarts = useRef(new Map<CollectionKey, number>())
-  const prefix = useId()
-  const waitForHost = async () => {
-    const started = generation.current
-    if (async) await new Promise<void>((resolve) => setTimeout(resolve, 600))
-    return started === generation.current
-  }
-  function reset() {
-    generation.current++
-    setItems(empty ? [] : structuredClone(initial))
-    setExpanded([1])
-    setSelected([1])
-    setEvents([])
-    setRejectNext(async)
-    counter.current = 4
-    weightStarts.current.clear()
-    setRevision((value) => value + 1)
-  }
+const itemClass = css({ display: 'grid', gap: 'var(--space-1)' })
+
+function DensityExample() {
   return (
-    <div className={frameClass}>
-      <p className={css({ margin: 0, fontSize: '12px', color: 'var(--colors-textMuted)' })}>
-        {async
-          ? '重命名通过 onRename 交给应用保存。此例等待 600ms 并拒绝首次请求，错误出现后保留草稿，按 Enter 可重试；Reset 更新请求版本，应用据此忽略此前结果。'
-          : refusal
-            ? '应用记录排序、选择和展开请求，但保持原来的 items、selectedKeys 与 expandedKeys。组件继续显示传入状态，应用接受请求时再回写对应值。'
-            : '此列表把数字 key 1 与字符串 key `1` 作为两个条目。展开、选择、重命名、删除和移动各有独立的键盘入口；应用在对应回调中更新条目数据与界面状态。'}
-      </p>
-      <div className={toolbarClass}>
-        <Button size="sm" onClick={reset}>
-          Reset
-        </Button>
-        {async && (
-          <Button size="sm" onClick={() => setRejectNext(true)}>
-            Reject next rename
-          </Button>
-        )}
-        {external && (
-          <>
-            <Button size="sm" onClick={() => setItems((value) => [...value].reverse())}>
-              Reverse externally
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                setExpanded(items.map((item) => item.id))
-                setSelected(['1'])
-              }}>
-              Expand all / select detail
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                generation.current++
-                setRevision((value) => value + 1)
-                setItems((value) => value.map((item) => ({ ...item, name: `${item.name} updated` })))
-              }}>
-              External revision
-            </Button>
-          </>
-        )}
-        {availability &&
-          (['editable', 'readonly', 'disabled'] as const).map((next) => (
-            <Button key={next} size="sm" aria-pressed={mode === next} onClick={() => setMode(next)}>
-              {next}
-            </Button>
-          ))}
-      </div>
-      <DragDropProvider>
-        <CollectionTemplate
-          label="Layers"
-          items={items}
-          getKey={(item) => item.id}
-          getLabel={(item) => item.name}
-          expandedKeys={expanded}
-          selectedKeys={selected}
-          selectionMode="multiple"
-          onExpandedKeysChange={(keys) => {
-            setEvents((list) => [...list, `expanded:${JSON.stringify(keys)}`])
-            if (!refusal) setExpanded(keys)
-          }}
-          onSelectedKeysChange={(keys) => {
-            setEvents((list) => [...list, `selected:${JSON.stringify(keys)}`])
-            if (!refusal) setSelected(keys)
-          }}
-          disabled={mode === 'disabled'}
-          readOnly={mode === 'readonly'}
-          resetKey={revision}
-          addLabel="Add layer"
-          onAdd={async () => {
-            const id = counter.current++
-            if (!(await waitForHost())) return
-            setItems((value) => [...value, { id, name: `Layer ${id}`, weight: 1, enabled: true }])
-            setEvents((list) => [...list, `add:${id}`])
-            return id
-          }}
-          onDelete={async (item) => {
-            if (!(await waitForHost())) return
-            setItems((value) => value.filter((entry) => entry.id !== item.id))
-            setEvents((list) => [...list, `delete:${typeof item.id}:${item.id}`])
-          }}
-          onRename={async (item, name) => {
-            const reject = rejectNext
-            setRejectNext(false)
-            if (!(await waitForHost())) return
-            if (reject) {
-              setEvents((list) => [...list, `rejected:${name}`])
-              throw new Error('Name rejected once. Press Enter to retry.')
-            }
-            if (!name.trim()) throw new Error('A layer name is required.')
-            setItems((value) => value.map((entry) => (entry.id === item.id ? { ...entry, name } : entry)))
-            setEvents((list) => [...list, `rename:${name}`])
-          }}
-          onReorder={(next, change) => {
-            setEvents((list) => [
-              ...list,
-              `move:${typeof change.key}:${change.key}:${change.fromIndex}→${change.toIndex}`,
-            ])
-            if (!refusal) setItems(next)
-          }}
-          renderItem={(item, context) => (
-            <div className={css({ display: 'grid', gap: '6px' })}>
-              <PropertyRow>
-                <PropertyLabel htmlFor={`${prefix}-${typeof item.id}-${item.id}-weight`}>Weight</PropertyLabel>
-                <PropertyControl association="control">
-                  <InputNumber
-                    id={`${prefix}-${typeof item.id}-${item.id}-weight`}
-                    value={item.weight}
-                    min={0}
-                    max={1}
-                    step={0.1}
-                    disabled={context.disabled}
-                    readOnly={context.readOnly}
-                    resetKey={revision}
-                    onEditStart={() => {
-                      weightStarts.current.set(item.id, item.weight)
-                    }}
-                    onEditCancel={(reason) => {
-                      if (['escape', 'pointer-cancel', 'window-blur', 'disabled', 'read-only'].includes(reason)) {
-                        const weight = weightStarts.current.get(item.id)
-                        if (weight !== undefined)
-                          setItems((value) =>
-                            value.map((entry) => (entry.id === item.id ? { ...entry, weight } : entry))
-                          )
-                      }
-                    }}
-                    onValueChange={(weight) =>
-                      setItems((value) => value.map((entry) => (entry.id === item.id ? { ...entry, weight } : entry)))
-                    }
-                  />
-                </PropertyControl>
-              </PropertyRow>
-              <PropertyRow>
-                <PropertyLabel htmlFor={`${prefix}-${typeof item.id}-${item.id}-enabled`}>Enabled</PropertyLabel>
-                <PropertyControl association="control">
-                  <Checkbox
-                    id={`${prefix}-${typeof item.id}-${item.id}-enabled`}
-                    checked={item.enabled}
-                    disabled={context.disabled}
-                    readOnly={context.readOnly}
-                    onCheckedChange={(enabled) =>
-                      setItems((value) => value.map((entry) => (entry.id === item.id ? { ...entry, enabled } : entry)))
-                    }
-                  />
-                </PropertyControl>
-              </PropertyRow>
-            </div>
-          )}
-        />
-      </DragDropProvider>
-      <pre className={outputClass}>{JSON.stringify({ items, expanded, selected, mode, events }, null, 2)}</pre>
-    </div>
+    <StoryGrid>
+      <StoryField label="Compact · 24">
+        <StoryCard>
+          <CollectionTemplate
+            label="Compact layers"
+            items={initialLayers}
+            getKey={(item: Layer) => item.id}
+            getLabel={(item: Layer) => item.name}
+            density="compact"
+            selectionMode="none"
+          />
+        </StoryCard>
+      </StoryField>
+      <StoryField label="Regular · 32">
+        <StoryCard>
+          <CollectionTemplate
+            label="Regular layers"
+            items={initialLayers}
+            getKey={(item: Layer) => item.id}
+            getLabel={(item: Layer) => item.name}
+            density="regular"
+            selectionMode="none"
+          />
+        </StoryCard>
+      </StoryField>
+    </StoryGrid>
   )
 }
+
+function CollectionExample() {
+  const [items, setItems] = useState<readonly Layer[]>(initialLayers)
+  const [expanded, setExpanded] = useState<readonly CollectionKey[]>([1])
+  const [selected, setSelected] = useState<readonly CollectionKey[]>([1])
+  const [density, setDensity] = useState<'compact' | 'regular'>('compact')
+  const [mode, setMode] = useState<'editable' | 'readonly' | 'disabled'>('editable')
+  const [events, setEvents] = useState<string[]>([])
+  const nextId = useRef(4)
+  const prefix = useId()
+  const update = (id: CollectionKey, patch: Partial<Layer>) =>
+    setItems((value) => value.map((item) => (item.id === id ? { ...item, ...patch } : item)))
+  const reset = () => {
+    setItems(initialLayers)
+    setExpanded([1])
+    setSelected([1])
+    setDensity('compact')
+    setMode('editable')
+    setEvents([])
+    nextId.current = 4
+  }
+  return (
+    <StoryPage
+      eyebrow="Templates"
+      title="CollectionTemplate"
+      summary="用一个模板管理可选择、展开、重命名、增删和排序的条目列表。紧凑档 24 / 常规档 32；条目内容由 renderItem 组合。"
+      meta={
+        <>
+          <span>{items.length} layers</span>
+          <span>·</span>
+          <span>{density}</span>
+          <span>·</span>
+          <span>{mode}</span>
+        </>
+      }
+      actions={
+        <Button size="sm" variant="outline" onClick={reset}>
+          Reset
+        </Button>
+      }>
+      <StorySection
+        title="Density"
+        description="同一个列表的紧凑 24 与常规 32；展开入口、行高、输入和操作按钮一起缩放。">
+        <DensityExample />
+      </StorySection>
+
+      <StorySection
+        title="Interactive list"
+        description="点击行首图标展开，勾选/选择按钮维护 selectedKeys；重命名、删除和上下移动都通过回调交给应用。">
+        <StoryCard>
+          <StoryRow>
+            <Button
+              size="sm"
+              variant={density === 'compact' ? 'solid' : 'outline'}
+              aria-pressed={density === 'compact'}
+              onClick={() => setDensity('compact')}>
+              Compact
+            </Button>
+            <Button
+              size="sm"
+              variant={density === 'regular' ? 'solid' : 'outline'}
+              aria-pressed={density === 'regular'}
+              onClick={() => setDensity('regular')}>
+              Regular
+            </Button>
+            {(['editable', 'readonly', 'disabled'] as const).map((next) => (
+              <Button
+                key={next}
+                size="sm"
+                variant={mode === next ? 'soft' : 'subtle'}
+                aria-pressed={mode === next}
+                onClick={() => setMode(next)}>
+                {next}
+              </Button>
+            ))}
+            <Button size="sm" variant="subtle" onClick={() => setItems([])}>
+              Clear
+            </Button>
+          </StoryRow>
+          <DragDropProvider>
+            <CollectionTemplate<Layer>
+              label="Layers"
+              items={items}
+              getKey={(item) => item.id}
+              getLabel={(item) => item.name}
+              expandedKeys={expanded}
+              onExpandedKeysChange={(keys) => {
+                setExpanded(keys)
+                setEvents((current) => [...current, `expanded:${JSON.stringify(keys)}`])
+              }}
+              selectedKeys={selected}
+              onSelectedKeysChange={(keys) => {
+                setSelected(keys)
+                setEvents((current) => [...current, `selected:${JSON.stringify(keys)}`])
+              }}
+              selectionMode="multiple"
+              density={density}
+              disabled={mode === 'disabled'}
+              readOnly={mode === 'readonly'}
+              addLabel="Add layer"
+              onAdd={() => {
+                const id = nextId.current++
+                setItems((value) => [...value, { id, name: `Layer ${id}`, weight: 1, enabled: true }])
+                setEvents((current) => [...current, `add:${id}`])
+                return id
+              }}
+              onDelete={(item) => {
+                setItems((value) => value.filter((entry) => entry.id !== item.id))
+                setEvents((current) => [...current, `delete:${String(item.id)}`])
+              }}
+              onRename={(item, name) => {
+                if (!name.trim()) throw new Error('A layer name is required.')
+                update(item.id, { name: name.trim() })
+                setEvents((current) => [...current, `rename:${name.trim()}`])
+              }}
+              onReorder={(next, change) => {
+                setItems(next)
+                setEvents((current) => [...current, `move:${String(change.key)}:${change.fromIndex}→${change.toIndex}`])
+              }}
+              renderItem={(item, context) => (
+                <div className={itemClass}>
+                  <PropertyRow density={density}>
+                    <PropertyLabel htmlFor={`${prefix}-${String(item.id)}-weight`}>Weight</PropertyLabel>
+                    <PropertyControl association="control">
+                      <InputNumber
+                        id={`${prefix}-${String(item.id)}-weight`}
+                        value={item.weight}
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        size={density === 'regular' ? 'md' : 'sm'}
+                        disabled={context.disabled}
+                        readOnly={context.readOnly}
+                        onValueChange={(weight) => update(item.id, { weight })}
+                      />
+                    </PropertyControl>
+                  </PropertyRow>
+                  <PropertyRow density={density}>
+                    <PropertyLabel htmlFor={`${prefix}-${String(item.id)}-enabled`}>Enabled</PropertyLabel>
+                    <PropertyControl association="control">
+                      <Checkbox
+                        id={`${prefix}-${String(item.id)}-enabled`}
+                        checked={item.enabled}
+                        size={density === 'regular' ? 'md' : 'sm'}
+                        disabled={context.disabled}
+                        readOnly={context.readOnly}
+                        onCheckedChange={(enabled) => update(item.id, { enabled })}
+                      />
+                    </PropertyControl>
+                  </PropertyRow>
+                </div>
+              )}
+            />
+          </DragDropProvider>
+        </StoryCard>
+      </StorySection>
+
+      <StorySection
+        title="States"
+        description="readOnly 保留展开和选择，但阻止修改；disabled 阻止所有请求。空列表仍保留 Add layer。">
+        <StoryGrid>
+          <StoryCard title="Read only">
+            <CollectionTemplate
+              label="Read only layers"
+              items={initialLayers}
+              getKey={(item: Layer) => item.id}
+              getLabel={(item: Layer) => item.name}
+              density="compact"
+              readOnly
+              selectionMode="single"
+              defaultSelectedKeys={[1]}
+            />
+          </StoryCard>
+          <StoryCard title="Disabled">
+            <CollectionTemplate
+              label="Disabled layers"
+              items={initialLayers}
+              getKey={(item: Layer) => item.id}
+              getLabel={(item: Layer) => item.name}
+              density="compact"
+              disabled
+              selectionMode="single"
+            />
+          </StoryCard>
+          <StoryCard title="Empty">
+            <CollectionTemplate
+              label="Empty layers"
+              items={[]}
+              getKey={(item: Layer) => item.id}
+              getLabel={(item: Layer) => item.name}
+              density="compact"
+              selectionMode="none"
+              emptyContent="No layers yet"
+            />
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Keyboard and accessibility"
+        description="列表有分组名称，展开/选择/重命名/删除/移动都是原生按钮，可用 Tab 和 Enter/Space 操作。">
+        <StoryKeyboard
+          rows={[
+            { keys: 'Tab', action: '在展开、选择、重命名、移动、删除和 Add layer 之间移动。' },
+            { keys: ['Enter', 'Space'], action: '展开/收起、切换选择或触发操作。' },
+            { keys: 'Escape', action: '重命名时取消并恢复原值。' },
+            { keys: ['Arrow Up', 'Arrow Down'], action: '通过 Move 按钮调整顺序；拖动手柄需配合 DragDropProvider。' },
+          ]}
+        />
+        <StoryNote>
+          给每个条目稳定的 <code>getKey</code>
+          ；否则展开、选择和焦点会在增删/排序后错位。重命名失败时组件保留草稿和错误，修正后按 Enter 重试。
+        </StoryNote>
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<DragDropProvider>
+  <CollectionTemplate
+    items={layers}
+    getKey={(item) => item.id}
+    getLabel={(item) => item.name}
+    density="compact"
+    selectionMode="multiple"
+    onAdd={addLayer}
+    onDelete={deleteLayer}
+    onRename={renameLayer}
+    onReorder={(next) => setLayers(next)}
+    renderItem={(item, context) => <LayerFields item={item} {...context} />}
+  />
+</DragDropProvider>`}
+          />
+          <StoryProps
+            rows={[
+              {
+                name: 'items / getKey / getLabel',
+                type: 'readonly T[] / (item) => CollectionKey',
+                description: '稳定标识与可读名称。',
+              },
+              {
+                name: 'density',
+                type: "'compact' | 'regular'",
+                defaultValue: "'compact'",
+                description: '24 或 32 行高。',
+              },
+              {
+                name: 'onAdd / onDelete / onRename',
+                type: 'async callbacks',
+                description: '更新 items；rename 可抛错保留草稿。',
+              },
+              { name: 'onReorder', type: '(next, change) => void', description: '接收排好序的 items。' },
+              {
+                name: 'expandedKeys / selectedKeys',
+                type: 'readonly CollectionKey[]',
+                description: '受控展开与选择。',
+              },
+              {
+                name: 'disabled / readOnly',
+                type: 'boolean',
+                defaultValue: 'false',
+                description: '禁用全部请求，或仅阻止修改。',
+              },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+
+      <StoryState label="Collection state" value={{ density, mode, items, expanded, selected, events }} />
+    </StoryPage>
+  )
+}
+
 export const Overview: Story = { render: () => <CollectionExample /> }
-export const Empty: Story = { render: () => <CollectionExample empty /> }
-export const AsyncRename: Story = { render: () => <CollectionExample async /> }
-export const ExternalState: Story = { render: () => <CollectionExample external /> }
-export const Availability: Story = { render: () => <CollectionExample availability /> }
-export const ControlledRefusal: Story = { render: () => <CollectionExample refusal /> }

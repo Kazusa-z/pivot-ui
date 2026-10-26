@@ -51,12 +51,14 @@ export const AssetThumbnail = forwardRef<HTMLSpanElement, AssetThumbnailProps>(f
             overflow: 'hidden',
             flexShrink: 0,
             minWidth: 0,
-            borderRadius: '4px',
+            borderRadius: 'var(--radii-control)',
             color: 'var(--colors-textMuted)',
             backgroundColor: 'var(--colors-surfaceSubtle)',
             aspectRatio: '1 / 1',
           },
-          viewMode === 'list' ? { width: '36px', height: '36px' } : { width: '100%', minHeight: '64px' },
+          viewMode === 'list'
+            ? { width: 'var(--sizes-controlLg)', height: 'var(--sizes-controlLg)' }
+            : { width: '100%', minHeight: '64px' },
           cssProp
         ),
         className
