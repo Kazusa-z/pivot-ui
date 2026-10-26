@@ -122,12 +122,7 @@ export const shadows = {
   3: '0 10px 28px rgba(0, 0, 0, 0.24)',
   border: '0 0 0 1px $colors$border',
   focus: '0 0 0 2px $colors$focusRing',
-  subtleFocus: '0 0 0 2px $colors$focusRingMuted',
   // Shared elevations for overlays and modals.
   overlay: '0 10px 28px rgba(0, 0, 0, 0.24), 0 2px 8px rgba(0, 0, 0, 0.16)',
   modal: '0 24px 64px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.24)',
-  // Deprecated: use `overlay`.
-  popContainer: '0 10px 28px rgba(0, 0, 0, 0.24), 0 2px 8px rgba(0, 0, 0, 0.16)',
-  // Deprecated: remove once ActionButton stops referencing it.
-  prepend: '0 0 0 0 transparent',
 }

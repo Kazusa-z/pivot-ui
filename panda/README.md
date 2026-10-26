@@ -6,7 +6,7 @@ Pivot UI 使用 Panda CSS 生成样式。应用和组件共用这里的颜色、
 
 ## 两档密度
 
-组件只使用两档控件高度，不再新增 22/27/28/30px 这类一次性值。
+组件只使用两档控件高度，不再新增 22/27/28/30px 这类一次性值；Checkbox 的 22px 是元素尺寸，不参与控件高度档位。
 
 | 档位 | 高度        | 字号 | 圆角    | 图标      | 场景                             |
 | ---- | ----------- | ---- | ------- | --------- | -------------------------------- |
@@ -97,3 +97,17 @@ pnpm verify
 ```
 
 生成器使用仓库安装的 `esbuild`。在 Storybook 中分别切换明暗主题，检查文本、焦点状态、悬浮层和禁用控件的可读性。
+
+## 样式与 Story 审计
+
+`pnpm verify` 会在构建前运行两条审计：
+
+```bash
+pnpm audit:styles
+pnpm audit:stories
+```
+
+- `audit:styles` 扫描组件源码中的裸 `height`、`minHeight`、`borderRadius` 和 `fontSize`；只允许图标/指示线、内容尺寸和文档化例外。
+- `audit:stories` 要求 58 个 story 文件使用 `StoryPage`、只有一个 `Overview`（行为 story 必须 `!autodocs`），并拒绝 `ContractFrame`、`Control*` 和原生演示 `<select>/<input>`。
+
+新增控件尺寸必须使用 `var(--sizes-control*)`、`var(--radii-*)`、`var(--fontSizes-*)`；确需例外时在审计脚本中写明文件与用途。

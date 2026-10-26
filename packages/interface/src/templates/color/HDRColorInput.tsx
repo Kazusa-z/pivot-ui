@@ -115,7 +115,11 @@ export const HDRColorInput = forwardRef<HTMLDivElement, HDRColorInputProps>(func
         <div
           id={errorId}
           role="alert"
-          className={css({ color: 'var(--colors-dangerText)', fontSize: '12px', overflowWrap: 'anywhere' })}>
+          className={css({
+            color: 'var(--colors-dangerText)',
+            fontSize: 'var(--fontSizes-control)',
+            overflowWrap: 'anywhere',
+          })}>
           {edit.error}
         </div>
       )}

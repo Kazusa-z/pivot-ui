@@ -65,13 +65,13 @@ export const badgeRecipe = cva({
     size: {
       xs: {
         fontSize: 'var(--fontSizes-micro)',
-        height: '16px',
+        height: 'var(--sizes-iconMd)',
         '& [data-part="inner"]': {
           padding: '0 var(--space-1)',
         },
       },
       sm: {
-        height: '20px',
+        height: 'var(--sizes-controlXs)',
         fontSize: 'var(--fontSizes-control)',
         '& [data-part="inner"]': {
           padding: '0 var(--space-1_5)',

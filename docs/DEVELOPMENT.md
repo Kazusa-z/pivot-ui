@@ -15,7 +15,9 @@ Storybook 展示各组件的独立用法，`app` 展示在 Vite 应用中消费�
 | `pnpm build:demo`                  | 构建应用示例                                     |
 | `pnpm build:storybook`             | 构建可静态部署的 Storybook                       |
 | `pnpm verify:quick`                | 检查格式和类型                                   |
-| `pnpm verify`                      | 检查格式、类型并构建应用和 Storybook             |
+| `pnpm audit:styles`                | 扫描裸 px 的控件尺寸、圆角和字号                 |
+| `pnpm audit:stories`               | 检查 StoryPage、Overview 和旧 story 依赖         |
+| `pnpm verify`                      | 检查格式、类型、两条审计并构建应用和 Storybook   |
 | `pnpm clean`                       | 清理生成的样式模块、构建产物和缓存               |
 
 ## 先检查数据回传
@@ -41,6 +43,8 @@ pnpm --filter @pivot-ui/react panda
 ```
 
 自定义样式从 `@pivot-ui/react/styling/css`、`/styling/jsx` 或 `/styling/tokens` 导入。保持 `css()`、`styled()` 和 recipe 定义可以被源码扫描看到。动态数值用原生 `style` 或 CSS 变量；不要动态拼接无法提取的样式代码。
+
+新增控件尺寸、圆角或字号时先运行 `pnpm audit:styles`。审计允许图标/指示线、内容尺寸和文档化例外；其余裸 px 应改成 `sizes`/`radii`/`fontSizes` token。Storybook story 改动后运行 `pnpm audit:stories`，确保仍使用 `StoryPage`、只有一个 `Overview`，且没有 `ContractFrame` 或原生演示控件。
 
 如果只有生产构建缺样式，检查消费应用的扫描路径和 PostCSS 配置，而不是只看开发页面。更具体的排查步骤见[样式问题排查](./migration/LEDGER.md)。
 

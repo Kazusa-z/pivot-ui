@@ -105,7 +105,6 @@ const coreSemanticColors = {
   borderStrong: '$grayA7',
 
   focusRing: '$blueA7',
-  focusRingMuted: '$grayA7',
 }
 
 const statusSemanticColors = {
@@ -128,8 +127,9 @@ const statusSemanticColors = {
   warningBg: '$amber3',
   warningBgHover: '$amber4',
   warningBorder: '$amber7',
-  warningSolid: '$amber9',
-  warningSolidHover: '$amber10',
+  // Amber 9 is too light for white text; use a dark amber that clears 4.5:1.
+  warningSolid: '#8a5a00',
+  warningSolidHover: '#6f4800',
 
   dangerText: '$red12',
   dangerBg: '$redA3',
@@ -154,58 +154,13 @@ const statusSemanticColors = {
 
 const contextSemanticColors = {
   panelBg: '$gray3',
-  toastBg: '$gray3',
   overlayScrim: 'rgba(0, 0, 0, 0.72)',
-  tooltipBg: '$white',
-  tooltipColor: '$gray1',
-  sidebarBg: '$grayA3',
-  sidebarColor: '$gray12',
-}
-
-const deprecatedSemanticColors = {
-  // Deprecated: use `softBg`.
-  secondaryBg: '$grayA3',
-  // Deprecated: use `surfaceOverlay`.
-  overlayBg: '$gray2',
-  // Deprecated: use `text`.
-  subtleColor: '$gray11',
-  // Deprecated: use `textStrong`.
-  subtleHoverColor: '$gray12',
-  // Deprecated: move to component-local token if still needed.
-  panelTitleBg: '$gray5',
-  // Deprecated: use `surface`.
-  listBg: '$gray2',
-  // Deprecated: use `surface`.
-  dashboardBg: '$gray2',
-  // Deprecated: use `surface`.
-  defaultBg: '$gray2',
-  // Deprecated: use `surface`.
-  subbg: '$gray2',
-  // Deprecated: use `textMuted`.
-  label: '$grayA11',
-  // Deprecated: use `textStrong`.
-  hiContrast: '$gray12',
-  // Deprecated: use `textInverted`.
-  loContrast: '$gray1',
-  // Deprecated: use `textInverted`.
-  inversion: 'white',
-  // Deprecated: use `toastBg`.
-  toasterBg: '$gray3',
-  // Deprecated: use `borderStrong` or component-local border tokens.
-  borderFocus: '$gray3',
-  // Deprecated: use `selectionBorder` or a status-specific border token.
-  borderActive: '$blue10',
-  // Deprecated: use component-local token if still needed.
-  menuContentBackground: '$gray3',
-  // Deprecated: use `textInverted` for text or component-local raw white where necessary.
-  white: 'white',
 }
 
 export const semanticColors = {
   ...coreSemanticColors,
   ...statusSemanticColors,
   ...contextSemanticColors,
-  ...deprecatedSemanticColors,
 }
 
 export const colors = {
@@ -232,14 +187,9 @@ export const colors = {
     appBg: '$gray2',
     surfaceOverlay: '$white',
     surfaceRaised: '$white',
-    dashboardBg: '$gray2',
-    listBg: '$gray2',
-    toastBg: '$gray1',
-    toasterBg: '$gray1',
     surface: '$gray1',
     surfaceSubtle: '$gray2',
     surfaceStrong: '$gray3',
-    overlayBg: '$gray1',
     textMuted: '#6b7078',
     // Light Radix blue8 (#5eb1ef) does not carry white text; use blue11 and a darker hover.
     primarySolid: '$blue11',
@@ -254,9 +204,5 @@ export const colors = {
     successSolidHover: '$green12',
     infoSolid: '$blue11',
     infoSolidHover: '$blue12',
-    tooltipBg: '$gray12',
-    tooltipColor: '$gray1',
-    sidebarBg: '$blueA3',
-    sidebarColor: '$blue11',
   },
 } as const

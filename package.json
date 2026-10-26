@@ -12,8 +12,10 @@
     "clear": "rimraf node_modules packages/interface/node_modules app/node_modules",
     "typecheck": "pnpm -r --workspace-concurrency=1 --if-present typecheck",
     "build:storybook": "pnpm --filter @pivot-ui/react build-storybook",
+    "audit:styles": "node scripts/audit-styles.mjs",
+    "audit:stories": "node scripts/audit-stories.mjs",
     "verify:quick": "pnpm exec prettier --check . && pnpm typecheck",
-    "verify": "pnpm run verify:quick && pnpm build:demo && pnpm build:storybook",
+    "verify": "pnpm run verify:quick && pnpm run audit:styles && pnpm run audit:stories && pnpm build:demo && pnpm build:storybook",
     "build:demo": "pnpm --filter @pivot-ui/demo build",
     "analyze:demo": "pnpm --filter @pivot-ui/demo analyze"
   },

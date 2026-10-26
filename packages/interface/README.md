@@ -226,4 +226,4 @@ Popover、Tooltip、HoverCard、Dialog 和 AlertDialog 的便利组件使用 `ro
 
 运行 `pnpm dev:interface` 后，在 Storybook 中查看每个组件的操作说明和状态反馈。`Property` 展示实际控件的数据连接，`Contracts / Property editing` 展示保存延迟、拒绝、外部更新等数据场景。示例数据在浏览器内模拟，生产应用通过上述接口连接自己的服务。
 
-完整导航见[文档索引](../../docs/README.md)。修改组件后运行 `pnpm verify`，检查格式、类型和构建结果。
+完整导航见[文档索引](../../docs/README.md)。修改组件后运行 `pnpm verify`，会依次检查格式、类型、`audit:styles`、`audit:stories` 和构建；也可单独运行 `pnpm audit:styles` 或 `pnpm audit:stories`。

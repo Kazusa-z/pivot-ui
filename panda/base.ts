@@ -37,10 +37,6 @@ export const pandaBase = {
         from: { opacity: 0, transform: 'translate(-50%, -48%) scale(0.96)' },
         to: { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
       },
-      scaleIn: {
-        '0%': { opacity: 0, transform: 'scale(0) translateY(-4px)' },
-        '100%': { opacity: 1, transform: 'scale(1) translateY(0px)' },
-      },
       accordionSlideDown: {
         from: { height: 0, opacity: 0 },
         to: { height: 'var(--radix-accordion-content-height)', opacity: 1 },

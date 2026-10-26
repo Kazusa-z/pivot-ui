@@ -6,9 +6,9 @@ const spinRecipe = cva({
   base: { display: 'inline-block', flexShrink: 0, verticalAlign: 'middle' },
   variants: {
     size: {
-      xs: { width: '12px', height: '12px' },
-      sm: { width: '16px', height: '16px' },
-      md: { width: '20px', height: '20px' },
+      xs: { width: 'var(--sizes-iconXs)', height: 'var(--sizes-iconXs)' },
+      sm: { width: 'var(--sizes-iconMd)', height: 'var(--sizes-iconMd)' },
+      md: { width: 'var(--sizes-controlXs)', height: 'var(--sizes-controlXs)' },
     },
     color: {
       primary: { color: 'var(--colors-primary)' },

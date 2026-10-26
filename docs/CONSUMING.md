@@ -30,6 +30,8 @@ pnpm --filter @pivot-ui/react panda
 
 `panda.css` 只有 CSS 层级声明，组件规则由源码扫描生成。独立应用需要能够访问本仓库的共享 Panda 配置。更多说明见[主题与样式配置](./migration/README.md)。
 
+控件只使用两档密度：紧凑 `20/24px`、常规 `32/36px`，圆角 `4/6/8` 和字号 `11/12/14` 来自语义 token。不要在应用中新增 22/27/28/30px 这类一次性控件高度；需要检查时运行 `pnpm audit:styles` 和 `pnpm audit:stories`，或直接运行 `pnpm verify`。
+
 ## 先使用普通 React 状态
 
 `value` 是当前显示值，`onValueChange` 请求你更新它。这与普通 React 受控输入相同。

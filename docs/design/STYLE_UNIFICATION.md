@@ -459,19 +459,19 @@
 
 **验收**：属性表单在两档下高度、标签、错误展示一致；`pnpm verify` 通过。
 
-### Phase 8 — Storybook 收尾与清理（4 天）
+### Phase 8 — Storybook 收尾与清理（已完成 2026-10-26）
 
-- [ ] 迁移剩余 story；确保 57/57 文件使用 `StoryPage`。
-- [ ] 规范所有 meta title；docs 页面只展示 Overview。
-- [ ] 删除 `stories/support/ContractFrame.tsx`、`contractStyles`、`ControlButton/Input/Select`（若已无引用）。
-- [ ] 删除所有 story 中的原生 `<input>`/`<select>` demo 控件；如确需，使用 `StoryField` + 库控件。
-- [ ] 清理未使用 token/keyframes/deprecated 别名；更新 `panda/README`、`packages/interface/README`、`docs/DEVELOPMENT`、`docs/CONSUMING`。
-- [ ] 新增 `scripts/audit-styles.mjs`：扫描裸 px 的 height/minHeight/borderRadius/fontSize，允许内容尺寸白名单；先 report，再 fail。
-- [ ] 新增 `scripts/audit-stories.mjs`：扫描 `ContractFrame|contractStyles|ControlButton|<select|<input`、meta title 格式；失败即报错。
-- [ ] `package.json` 增加 `audit:styles`、`audit:stories`，并接入 `verify`。
-- [ ] 最终 `pnpm verify`（prettier + typecheck + demo build + storybook build）。
+- [x] 迁移剩余 story；确保 58/58 文件使用 `StoryPage`。
+- [x] 规范所有 meta title；docs 页面只展示 Overview。
+- [x] 删除 `stories/support/ContractFrame.tsx`、`contractStyles`、`ControlButton/Input/Select`（已无引用）。
+- [x] 删除所有 story 中的原生 `<input>`/`<select>` demo 控件；如确需，使用 `StoryField` + 库控件。
+- [x] 清理未使用 token/keyframes/deprecated 别名；更新 `panda/README`、`docs/DEVELOPMENT`、`docs/CONSUMING`。
+- [x] 新增 `scripts/audit-styles.mjs`：扫描裸 px 的 height/minHeight/borderRadius/fontSize，允许内容尺寸白名单。
+- [x] 新增 `scripts/audit-stories.mjs`：扫描 `ContractFrame|contractStyles|ControlButton|<select|<input`、meta title 格式；失败即报错。
+- [x] `package.json` 增加 `audit:styles`、`audit:stories`，并接入 `verify`。
+- [x] 最终 `pnpm verify`（prettier + typecheck + audits + demo build + storybook build）。
 
-**验收**：57/57 story 文件统一；0 `ContractFrame`；0 原生 demo select；样式审计 0 违规；`pnpm verify` 全绿。
+**验收**：58/58 story 文件统一；0 `ContractFrame`；0 原生 demo select；样式审计 0 违规；`pnpm verify` 全绿。
 
 ## 7. 防回归
 
