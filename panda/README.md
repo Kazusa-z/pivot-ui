@@ -2,7 +2,7 @@
 
 Pivot UI 使用 Panda CSS 生成样式。应用和组件共用这里的颜色、间距、字号及明暗主题定义，适合需要统一工具栏、属性面板和弹窗外观的界面。
 
-首次接入请先完成[样式构建配置](../docs/CONSUMING.md)。`@pivot-ui/react/panda.css` 是 CSS layer 入口；应用通过 Panda 扫描源码生成实际使用的组件样式。
+首次接入请先完成[样式构建配置](../docs/README.md)。`@pivot-ui/react/panda.css` 是 CSS layer 入口；应用通过 Panda 扫描源码生成实际使用的组件样式。
 
 ## 两档密度
 
@@ -65,7 +65,7 @@ export const Inspector = styled('aside', {
 2. 在应用的 Panda 配置中使用共享 `pandaBase`，扫描应用源码和 `packages/interface/src/**/*.{ts,tsx}`。
 3. 在应用入口加载一次 `@pivot-ui/react/panda.css`，通过 Panda PostCSS 构建应用 CSS。
 
-仓库中的 Vite 示例和 Storybook 已配置这些步骤。源码链接到其他应用时，请按[接入指南](../docs/CONSUMING.md)配置路径。
+仓库中的 Vite 示例和 Storybook 已配置这些步骤。源码链接到其他应用时，请按[使用与开发指南](../docs/README.md)配置路径。
 
 ## 编写自定义样式
 
@@ -74,7 +74,7 @@ export const Inspector = styled('aside', {
 - SVG 路径使用原生 `<path d={...}>`，并通过 `css()` 的类名添加样式；`styled` 会把 `d` 识别为 CSS display 的简写。
 - 空伪元素写作 `content: '""'`，以生成有效的 CSS content 声明。
 - 自定义组件和 Radix 组件的样式对象直接写在 `styled()` 调用中，便于静态提取。
-- 在 `css` 属性中使用 token 名称、`token(...)` 或 `var(--colors-...)`；具体写法见[接入指南](../docs/CONSUMING.md)。
+- 在 `css` 属性中使用 token 名称、`token(...)` 或 `var(--colors-...)`；具体写法见[使用与开发指南](../docs/README.md)。
 
 ## 调整共享主题
 

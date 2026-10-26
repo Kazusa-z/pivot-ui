@@ -17,7 +17,7 @@ pnpm verify             # 格式、类型、示例应用与 Storybook 构建检�
 
 ## 在 React 中使用
 
-本库通过 workspace 或源码链接接入。先按[接入指南](./docs/CONSUMING.md)配置依赖和 Panda CSS，再导入组件。例如，用三个数值输入编辑位置：
+本库通过 workspace 或源码链接接入。先按[使用与开发指南](./docs/README.md)配置依赖和 Panda CSS，再导入组件。例如，用三个数值输入编辑位置：
 
 ```tsx
 import { useState } from 'react'
@@ -35,15 +35,13 @@ export function PositionExample() {
 
 `value` 决定当前显示值，`onValueChange` 返回编辑后的值。普通界面可以直接使用 React 状态；需要保存确认、错误提示或撤销记录时，可以使用 `PropertyField<T>` 和 `PropertyAccess<T>` 连接应用的数据服务。后端尚未准备好时，也可以先实现内存数据服务，组件用法保持一致。
 
-页面内容由你通过 React 组合。保存文件、资源查询、持久化和撤销由应用提供实现，相关接口及示例见[属性与应用数据](./docs/refactor/blender-5.2/B11_INTEGRATION.md)。
+页面内容由你通过 React 组合。保存文件、资源查询、持久化和撤销由应用提供实现，相关接口及示例见[使用与开发指南](./docs/README.md)。
 
 ## 使用指南
 
-- [文档索引](./docs/README.md)：按使用目标选择指南。
+- [使用与开发指南](./docs/README.md)：安装、样式、组件、数据接入和本地开发。
 - [组件速查](./packages/interface/README.md)：选择控件，了解主要属性与回调。
-- [接入指南](./docs/CONSUMING.md)：配置源码依赖、样式提取和应用 Provider。
 - [主题与样式](./panda/README.md)：使用设计 token，定制应用外观。
-- [本地开发与检查](./docs/DEVELOPMENT.md)：运行示例、检查类型和构建产物。
 
 ## 仓库目录
 

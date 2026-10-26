@@ -1,6 +1,6 @@
 # @pivot-ui/react 组件速查
 
-用于构建设置页、属性面板和编辑器工具的 React 组件库。这里按使用目标介绍组件、主要回调和接入方式。首次使用请先完成[依赖与样式配置](../../docs/CONSUMING.md)，然后运行 `pnpm dev` 查看可交互的 Storybook 示例。
+用于构建设置页、属性面板和编辑器工具的 React 组件库。这里按使用目标介绍组件、主要回调和接入方式。首次使用请先完成[使用与开发指南](../../docs/README.md)，然后运行 `pnpm dev` 查看可交互的 Storybook 示例。
 
 ## 选择需要的组件
 
@@ -29,7 +29,7 @@
 | `@pivot-ui/react/styling/css`、`/styling/jsx`、`/styling/tokens` | 为应用界面编写样式、使用设计 token         |
 | `@pivot-ui/react/styling/types`                                  | 导入 Panda 样式类型                        |
 
-应用需要通过 Panda 扫描自己的源码和 `packages/interface/src/**/*.{ts,tsx}`，生成实际使用的 CSS。首次链接源码或清理生成文件后，运行 `pnpm --filter @pivot-ui/react panda`。仓库中的示例应用和 Storybook 已配置生成步骤；详细配置见[接入指南](../../docs/CONSUMING.md)。
+应用需要通过 Panda 扫描自己的源码和 `packages/interface/src/**/*.{ts,tsx}`，生成实际使用的 CSS。首次链接源码或清理生成文件后，运行 `pnpm --filter @pivot-ui/react panda`。仓库中的示例应用和 Storybook 已配置生成步骤；详细配置见[使用与开发指南](../../docs/README.md)。
 
 ## 受控值与编辑回调
 
@@ -91,7 +91,7 @@ Button 的 `loading` 和异步等待状态会禁用重复激活。保存、网�
 
 ## 文本与选项
 
-`Input` 和 `Textarea` 适合即时输入，提供原生事件、ref 和 `onValueChange(string)`。需要完成后再保存时，使用 `EditableText` 或 `useTextEdit`：Enter 或失焦提交，Escape 取消；多行输入的提交方式见[文本与选项指南](../../docs/refactor/blender-5.2/B05_TEXT_CHOICES.md)。外部数据更新时，可通过 `resetKey` 重置当前草稿。
+`Input` 和 `Textarea` 适合即时输入，提供原生事件、ref 和 `onValueChange(string)`。需要完成后再保存时，使用 `EditableText` 或 `useTextEdit`：Enter 或失焦提交，Escape 取消；多行输入的提交方式见[使用与开发指南](../../docs/README.md)。外部数据更新时，可通过 `resetKey` 重置当前草稿。
 
 `Select` 适合固定选项的单选下拉，`Combobox` 增加搜索和多选。`SegmentControl` 将单选项直接排列在页面上，`ToggleGroup` 用于可切换的单个或多个选项；单选 ToggleGroup 允许取消当前选择。`Checkbox` 用于布尔值，`indeterminate` 可展示一组选项的混合状态。
 
@@ -103,17 +103,17 @@ Button 的 `loading` 和异步等待状态会禁用重复激活。保存、网�
 
 `NumericTupleInput` 编辑多个命名数值。`Vector2Input`、`Vector3Input`、`Vector4Input` 和 `RectInput` 接收对应形状的对象，适合位置、尺寸和矩形区域。`DistributionSlider` 编辑总量固定的分段长度，回调返回各段的长度数组。
 
-这些组件提供编辑开始、实时变化、提交和取消回调。InputNumber 及其数值输入组合用 `min/max` 限制有效值，用 `softMin/softMax` 设置拖动和步进的常用范围；键入可覆盖常用范围并遵守有效值范围。`step`、`dragStep` 和 `precision` 分别设置步进、拖动增量和精度。Slider 使用 `min/max/step` 设置轨道范围和步长；DistributionSlider 使用 `total/minSegment` 设置总量和最小分段长度。比例联动及零值处理见[数值与几何指南](../../docs/refactor/blender-5.2/B06_NUMERIC.md)。
+这些组件提供编辑开始、实时变化、提交和取消回调。InputNumber 及其数值输入组合用 `min/max` 限制有效值，用 `softMin/softMax` 设置拖动和步进的常用范围；键入可覆盖常用范围并遵守有效值范围。`step`、`dragStep` 和 `precision` 分别设置步进、拖动增量和精度。Slider 使用 `min/max/step` 设置轨道范围和步长；DistributionSlider 使用 `total/minSegment` 设置总量和最小分段长度。比例联动及零值处理见[使用与开发指南](../../docs/README.md)。
 
 ## 颜色、渐变与曲线
 
 `ColorWidget` 是内联颜色编辑器，`ColorPicker` 通过浮层节省空间，`ColorInput` 提供紧凑的颜色字段。`HDRColorInput` 适合包含高亮强度的颜色。回调返回 `ColorValue`，其中 `space` 指定 `srgb` 或 `linear`，RGB 通常使用 0–1 通道值，HDR 值可超过 1。
 
-`ColorRamp` 编辑多个色标组成的渐变，`ColorRampChannels` 将颜色与透明度分开编辑，`ColorRampPicker` 提供浮层入口。`ColorDistributionTemplate` 在固定颜色、随机范围和渐变等模式间切换。它们通过编辑回调返回颜色数据；选择色标和切换显示方式用于辅助操作。需要取屏幕颜色或复制粘贴时，应用通过 `capabilities` 提供相应方法。显示偏好通过受控显示属性及应用存储保存。详见[颜色指南](../../docs/refactor/blender-5.2/B08_COLOR.md)。
+`ColorRamp` 编辑多个色标组成的渐变，`ColorRampChannels` 将颜色与透明度分开编辑，`ColorRampPicker` 提供浮层入口。`ColorDistributionTemplate` 在固定颜色、随机范围和渐变等模式间切换。它们通过编辑回调返回颜色数据；选择色标和切换显示方式用于辅助操作。需要取屏幕颜色或复制粘贴时，应用通过 `capabilities` 提供相应方法。显示偏好通过受控显示属性及应用存储保存。详见[使用与开发指南](../../docs/README.md)。
 
 `CurveWidget` 用曲线图编辑随输入变化的数值，支持移动点和控制柄。`CurvePicker` 在浮层中提供同样的编辑体验，`CurvePresets` 用于选择并应用预设。编辑回调返回 `CurveValue`；选点、缩放和平移用于查看曲线。曲线点需要稳定 ID 和递增的 x 坐标。保存与加载个人预设时，应用提供 `CurvePresetService`。
 
-`NumericDistributionTemplate` 将固定值、范围、曲线等模式组合成一个字段，适合随时间变化或带随机性的参数。应用接收带模式标记的值，并按需保存模式切换时的缓存。详见[曲线与数值分布指南](../../docs/refactor/blender-5.2/B09_CURVES.md)。
+`NumericDistributionTemplate` 将固定值、范围、曲线等模式组合成一个字段，适合随时间变化或带随机性的参数。应用接收带模式标记的值，并按需保存模式切换时的缓存。详见[使用与开发指南](../../docs/README.md)。
 
 ## 列表、树、表格与拖放
 
@@ -121,13 +121,13 @@ Button 的 `loading` 和异步等待状态会禁用重复激活。保存、网�
 
 `CollectionTemplate` 为列表提供选中、展开、添加、移除和排序入口。应用传入稳定的项目 key，并在回调中更新数据。异步添加完成后可返回新项目的 key，使组件将焦点移到新项目。
 
-需要应用内拖放时，在相关区域外放置 `DragDropProvider`，通过 `useDragSource` 和 `useDropTarget` 配置拖动项及接收回调。系统文件拖入通过 `onFilesDrop` 返回文件数组；应用可使用 File API 读取内容或将文件交给上传服务。详细用法见[集合与拖放指南](../../docs/refactor/blender-5.2/B07_COLLECTIONS.md)。
+需要应用内拖放时，在相关区域外放置 `DragDropProvider`，通过 `useDragSource` 和 `useDropTarget` 配置拖动项及接收回调。系统文件拖入通过 `onFilesDrop` 返回文件数组；应用可使用 File API 读取内容或将文件交给上传服务。详细用法见[使用与开发指南](../../docs/README.md)。
 
 ## 资源引用与选择
 
 `AssetItem` 展示资源缩略图、名称和状态，支持选择与改名；`AssetName` 和 `AssetThumbnail` 可用于自定义资源布局。`ResourcePicker` 提供搜索、筛选、分页以及列表/网格视图，适合选择项目资源。`AssetReferenceInput` 展示当前引用，并提供更换、清空和定位入口。
 
-应用通过 `ResourceProvider` 提供 `query` 与 `get`，返回用于展示的资源描述。选中资源时，回调返回资源 ID；AssetReferenceInput 通过 `onValueChange` 接收引用更新并回写 `value`，独立 ResourcePicker 通过 `onSelect` 处理选择请求，再用 `onSelectedIdChange` 回写 `selectedId`。`rename`、`locate` 和 `chooseFile` 等可选方法用于接入改名、定位与文件选择。详见[资源指南](../../docs/refactor/blender-5.2/B10_RESOURCES.md)。
+应用通过 `ResourceProvider` 提供 `query` 与 `get`，返回用于展示的资源描述。选中资源时，回调返回资源 ID；AssetReferenceInput 通过 `onValueChange` 接收引用更新并回写 `value`，独立 ResourcePicker 通过 `onSelect` 处理选择请求，再用 `onSelectedIdChange` 回写 `selectedId`。`rename`、`locate` 和 `chooseFile` 等可选方法用于接入改名、定位与文件选择。详见[使用与开发指南](../../docs/README.md)。
 
 ## 字段与面板布局
 
@@ -208,7 +208,7 @@ Popover、Tooltip、HoverCard、Dialog 和 AlertDialog 的便利组件使用 `ro
 
 `NotificationProvider` 和 `useNotifications()` 用于显示任务状态、成功信息和错误。可通过 `createNotificationService()` 共享服务，同一个 id 可更新同一条通知。关闭通知会结束该条通知的展示；需要取消上传或保存时，由应用回调调用对应任务的取消接口。
 
-浮层会继承所在 ThemeProvider 的主题。`PopoverRoot keepMounted` 可保留关闭时的局部状态，关闭期间 effects 会暂停；再次打开恢复内容。需要持续运行的任务请放在应用服务或浮层外。更多示例见[菜单与浮层指南](../../docs/refactor/blender-5.2/B04_OVERLAYS.md)。
+浮层会继承所在 ThemeProvider 的主题。`PopoverRoot keepMounted` 可保留关闭时的局部状态，关闭期间 effects 会暂停；再次打开恢复内容。需要持续运行的任务请放在应用服务或浮层外。更多示例见[使用与开发指南](../../docs/README.md)。
 
 ## 连接应用数据
 
@@ -216,7 +216,7 @@ Popover、Tooltip、HoverCard、Dialog 和 AlertDialog 的便利组件使用 `ro
 
 应用实现 `PropertyAccess<T>`：`getSnapshot()` 提供当前值及状态，`subscribe()` 通知变化，`begin()` 开始一次编辑。连续操作期间使用 `change()` 更新预览，完成后 `commit()`，取消时 `cancel()`。`onEditResult` 返回提交、取消或拒绝等结果，可用于业务反馈。
 
-快照中的 `value/revision` 表示已接受的值和版本，`edit.previewValue` 表示正在编辑的预览。保存确认、持久化和撤销记录由应用服务实现；在后端准备好之前，可以用内存数据实现同样的接口。详情与复杂字段示例见[属性与应用数据](../../docs/refactor/blender-5.2/B11_INTEGRATION.md)。
+快照中的 `value/revision` 表示已接受的值和版本，`edit.previewValue` 表示正在编辑的预览。保存确认、持久化和撤销记录由应用服务实现；在后端准备好之前，可以用内存数据实现同样的接口。详情与复杂字段示例见[使用与开发指南](../../docs/README.md)。
 
 `HostCapabilities` 为剪贴板、偏好保存和文件选择定义可选接口。应用将浏览器或桌面环境中的实现传入；缺少能力时，界面可显示不可用原因并提供应用自己的替代操作。
 
