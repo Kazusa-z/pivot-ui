@@ -46,19 +46,21 @@ ActionButton.toString = () => '.action-button'
 
 export interface ActionButtonGroupProps extends HTMLAttributes<HTMLDivElement> {
   direction?: 'horizontal' | 'vertical'
+  /** Match the size of the buttons in the group so the outer corners line up. */
+  size?: ActionButtonProps['size']
   css?: SystemStyleObject
 }
 
 /** 将相关动作按钮排列成组。可提供组名称，每个按钮保留自己的点击和键盘操作。 */
 export const ActionButtonGroup = forwardRef<HTMLDivElement, ActionButtonGroupProps>(function ActionButtonGroup(
-  { direction = 'horizontal', css: cssProp, className, ...props },
+  { direction = 'horizontal', size = 'sm', css: cssProp, className, ...props },
   ref
 ) {
   return (
     <div
       {...props}
       ref={ref}
-      className={cx(getActionButtonGroupClassName({ orientation: direction }, cssProp), className)}
+      className={cx(getActionButtonGroupClassName({ orientation: direction, size }, cssProp), className)}
     />
   )
 })

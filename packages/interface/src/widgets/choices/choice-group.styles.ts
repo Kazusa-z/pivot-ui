@@ -7,7 +7,7 @@ export interface ChoiceGroupStyleProps {
 }
 
 const rootRecipe = cva({
-  base: { display: 'flex', minWidth: 0, gap: '4px' },
+  base: { display: 'flex', minWidth: 0, gap: 'var(--space-1)' },
   variants: {
     vertical: { true: { flexDirection: 'column', gridAutoFlow: 'row' } },
     segmented: {
@@ -17,8 +17,8 @@ const rootRecipe = cva({
         gridAutoFlow: 'column',
         width: '100%',
         gap: 0,
-        padding: '2px',
-        borderRadius: '4px',
+        padding: 'var(--space-0_5)',
+        borderRadius: 'var(--radii-control)',
         backgroundColor: 'var(--colors-softBg)',
       },
     },
@@ -35,31 +35,52 @@ const itemRecipe = cva({
     boxSizing: 'border-box',
     flexShrink: 0,
     minWidth: 0,
-    gap: '4px',
-    padding: '0 6px',
-    borderRadius: '4px',
+    gap: 'var(--space-1)',
+    padding: '0 var(--space-1_5)',
+    borderRadius: 'var(--radii-control)',
     color: 'var(--colors-text)',
     backgroundColor: 'transparent',
     userSelect: 'none',
     whiteSpace: 'nowrap',
     cursor: 'pointer',
     '&:hover': { backgroundColor: 'var(--colors-softBgHover)' },
-    '&:focus-visible': { position: 'relative', outline: '2px solid var(--colors-focusRing)', outlineOffset: '1px' },
-    '&:disabled': { color: 'var(--colors-textMuted)', opacity: 0.5, cursor: 'not-allowed' },
+    '&:focus-visible': {
+      position: 'relative',
+      outline: '2px solid var(--colors-focusRing)',
+      outlineOffset: '2px',
+    },
+    '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
     '&[data-readonly]': { cursor: 'default' },
   },
   variants: {
     size: {
-      sm: { height: '24px', minWidth: '24px', fontSize: '12px', '& svg': { width: '14px', height: '14px' } },
-      md: { height: '32px', minWidth: '32px', fontSize: '14px', '& svg': { width: '16px', height: '16px' } },
-      lg: { height: '36px', minWidth: '36px', fontSize: '14px', '& svg': { width: '18px', height: '18px' } },
+      sm: {
+        height: 'var(--sizes-controlSm)',
+        minWidth: 'var(--sizes-controlSm)',
+        fontSize: 'var(--fontSizes-control)',
+        borderRadius: 'var(--radii-control)',
+        '& svg': { width: '14px', height: '14px' },
+      },
+      md: {
+        height: 'var(--sizes-controlMd)',
+        minWidth: 'var(--sizes-controlMd)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        borderRadius: 'var(--radii-controlMd)',
+        '& svg': { width: '16px', height: '16px' },
+      },
+      lg: {
+        height: 'var(--sizes-controlLg)',
+        minWidth: 'var(--sizes-controlLg)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        borderRadius: 'var(--radii-controlLg)',
+        '& svg': { width: '18px', height: '18px' },
+      },
     },
     variant: {
       subtle: {
         '&:is([data-state=on], [data-state=checked])': {
-          color: 'var(--colors-textStrong)',
-          backgroundColor: 'var(--colors-surfaceOverlay)',
-          boxShadow: 'inset 0 0 0 1px var(--colors-border)',
+          color: 'var(--colors-selectionText)',
+          backgroundColor: 'var(--colors-selectionBg)',
         },
       },
       solid: {

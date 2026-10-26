@@ -1,102 +1,233 @@
-import { useId, useState } from 'react'
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Checkbox, type CheckboxState } from '../src/widgets/choices/Checkbox'
-import { PropertyRow, PropertyLabel, PropertyControl } from '../src/layout/PropertyRow'
-import { ContractFrame, StatePanel, contractStyles } from './support/ContractFrame'
+import { Button } from '../src/widgets/buttons'
+import { Text } from '../src/foundation/typography'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryField,
+  StoryGrid,
+  StoryCode,
+  StoryProps,
+  StoryState,
+  StoryKeyboard,
+} from './support/StoryPage'
 
-function CheckboxOverview() {
-  const id = useId()
-  const [checked, setChecked] = useState(false)
-  return (
-    <ContractFrame
-      title="切换布尔选项"
-      description="点击 Visible 标签或聚焦后按 Space 切换布尔值。onCheckedChange 返回新值，本例回写 checked，并在下方显示当前值。"
-      onReset={() => setChecked(false)}>
-      <PropertyRow>
-        <PropertyLabel htmlFor={id}>Visible</PropertyLabel>
-        <PropertyControl association="control">
-          <Checkbox id={id} checked={checked} onCheckedChange={setChecked} />
-        </PropertyControl>
-      </PropertyRow>
-      <StatePanel label="Value" value={checked} />
-    </ContractFrame>
-  )
-}
+const sizes = [
+  { size: 'sm', label: 'SM · 14px' },
+  { size: 'md', label: 'MD · 18px' },
+  { size: 'lg', label: 'LG · 22px' },
+] as const
 
-function MixedCheckbox() {
-  const [checked, setChecked] = useState<CheckboxState>('indeterminate')
-  return (
-    <ContractFrame
-      title="显示多个对象的混合值"
-      description="当多个对象的值不一致时，checked=`indeterminate` 显示短横线。首次激活请求 true；应用接受并回写后，后续操作在 true 与 false 之间切换。"
-      onReset={() => setChecked('indeterminate')}>
-      <Checkbox label="Enabled on selected objects" checked={checked} onCheckedChange={setChecked} />
-      <StatePanel label="Value" value={checked} />
-    </ContractFrame>
-  )
-}
-
-function CheckboxModes() {
-  const [requests, setRequests] = useState<boolean[]>([])
-  return (
-    <ContractFrame
-      title="查看、禁用与应用拒绝修改"
-      description="readOnly 允许聚焦查看，disabled 将控件从键盘焦点顺序中移除。Rejected by parent 会记录 onCheckedChange，却保留传入的 checked，适合观察应用拒绝修改时的显示。"
-      onReset={() => setRequests([])}>
-      <div className={contractStyles.stack}>
-        <Checkbox
-          label="Read only"
-          defaultChecked
-          readOnly
-          onCheckedChange={(next) => setRequests((current) => [...current, next])}
-        />
-        <Checkbox label="Disabled" defaultChecked disabled />
-        <Checkbox
-          label="Rejected by parent"
-          checked={false}
-          onCheckedChange={(next) => setRequests((current) => [...current, next])}
-        />
-      </div>
-      <StatePanel label="Requested values" value={requests} />
-    </ContractFrame>
-  )
-}
-
-function CheckboxUncontrolled() {
-  const [reset, setReset] = useState(0)
-  const [latest, setLatest] = useState<boolean | null>(null)
-  return (
-    <ContractFrame
-      title="自行保存状态的不同尺寸"
-      description="三个尺寸的实例各自保存选中状态，onCheckedChange 记录最近一次请求。提供 label 时组件会建立标签关联；Reset 重新创建实例并恢复初始值。"
-      onReset={() => {
-        setReset((current) => current + 1)
-        setLatest(null)
-      }}>
-      <div key={reset} className={contractStyles.row}>
-        {(['sm', 'md', 'lg'] as const).map((size) => (
-          <Checkbox key={size} size={size} label={size} defaultChecked onCheckedChange={setLatest} />
-        ))}
-      </div>
-      <StatePanel label="Last boolean request" value={latest} />
-    </ContractFrame>
-  )
-}
-
-export default {
+const meta = {
+  title: 'Widgets/Choices/Checkbox',
   tags: ['autodocs'],
   parameters: {
+    layout: 'fullscreen',
     docs: {
       description: {
         component:
-          'Checkbox 用于开关一个布尔选项，也能表示多个对象的值不一致。checked 接受 true、false 或 indeterminate，onCheckedChange 返回用户请求的布尔值。受控使用时由应用回写 checked；readOnly 保留查看和聚焦能力，disabled 表示整个控件暂不可用。',
+          'Checkbox 用于切换单个布尔选项，也能展示多个对象值不一致的混合状态。checked 接受 true、false 或 indeterminate；用户激活始终请求布尔值，由应用决定是否回写。readOnly 保留查看与聚焦，disabled 表示整个控件暂不可用。',
       },
     },
   },
-  title: 'Widgets/Choices/Checkbox',
-} satisfies Meta
-type Story = StoryObj
-export const Overview: Story = { render: () => <CheckboxOverview /> }
-export const Mixed: Story = { render: () => <MixedCheckbox /> }
-export const ReadOnlyDisabledRejected: Story = { render: () => <CheckboxModes /> }
-export const UncontrolledSizes: Story = { render: () => <CheckboxUncontrolled /> }
+  component: Checkbox,
+} satisfies Meta<typeof Checkbox>
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Overview: Story = { render: () => <CheckboxPage /> }
+
+function CheckboxPage() {
+  const [visible, setVisible] = useState(true)
+  const [mixed, setMixed] = useState<CheckboxState>('indeterminate')
+  const [requests, setRequests] = useState<boolean[]>([])
+  const [uncontrolledKey, setUncontrolledKey] = useState(0)
+  const [lastRequest, setLastRequest] = useState<boolean | null>(null)
+
+  const reset = () => {
+    setVisible(true)
+    setMixed('indeterminate')
+    setRequests([])
+    setUncontrolledKey((value) => value + 1)
+    setLastRequest(null)
+  }
+
+  return (
+    <StoryPage
+      eyebrow="Widgets / Choices"
+      title="Checkbox"
+      summary="单个布尔选项的开关。受控用法把 checked 和 onCheckedChange 连到应用状态；混合状态只影响显示，用户第一次激活仍请求 true。"
+      meta={
+        <>
+          <span>boolean / indeterminate</span>
+          <span>·</span>
+          <span>readOnly / disabled</span>
+          <span>·</span>
+          <span>label association</span>
+        </>
+      }
+      actions={
+        <Button size="sm" variant="outline" onClick={reset}>
+          Reset
+        </Button>
+      }>
+      <StorySection
+        title="Variants"
+        description="选中显示勾，混合显示短横线；提供 label 时点击文字也能切换，并自动建立标签关联。">
+        <StoryGrid>
+          <StoryCard title="Unchecked">
+            <Checkbox aria-label="Unchecked checkbox" />
+          </StoryCard>
+          <StoryCard title="Checked">
+            <Checkbox aria-label="Checked checkbox" defaultChecked />
+          </StoryCard>
+          <StoryCard title="Indeterminate">
+            <Checkbox aria-label="Indeterminate checkbox" checked="indeterminate" />
+          </StoryCard>
+          <StoryCard title="With label">
+            <Checkbox label="Visible in viewport" defaultChecked size="md" />
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Sizes"
+        description="Checkbox 的尺寸是选择框本身 14/18/22px，不是 20/24/32px 的控件高度。放在紧凑行（24px）或常规行（32px）时，选择框建议分别使用 sm/md。">
+        <StoryCard>
+          <StoryRow align="start">
+            {sizes.map(({ size, label }) => (
+              <StoryField key={size} label={label}>
+                <Checkbox size={size} aria-label={`${label} checkbox`} defaultChecked />
+              </StoryField>
+            ))}
+          </StoryRow>
+        </StoryCard>
+      </StorySection>
+
+      <StorySection
+        title="States"
+        description="disabled 移出键盘焦点并降低不透明度；readOnly 仍可聚焦查看，但拒绝修改。Checkbox 没有 invalid 外观，校验错误由外层字段展示。">
+        <StoryGrid>
+          <StoryCard title="Default">
+            <Checkbox label="Default" defaultChecked />
+          </StoryCard>
+          <StoryCard title="Disabled">
+            <Checkbox label="Disabled" defaultChecked disabled />
+          </StoryCard>
+          <StoryCard title="Read only">
+            <Checkbox
+              label="Read only"
+              defaultChecked
+              readOnly
+              onCheckedChange={(next) => setRequests((current) => [...current, next])}
+            />
+          </StoryCard>
+          <StoryCard title="Mixed">
+            <Checkbox label="Enabled on selected objects" checked={mixed} onCheckedChange={(next) => setMixed(next)} />
+            <Text size="sm" tone="muted">
+              state: {String(mixed)}
+            </Text>
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Controlled and uncontrolled"
+        description="受控时由应用回写 checked；非受控时组件保存内部状态，可用 key 重建实例恢复初始值。">
+        <StoryGrid>
+          <StoryCard title="Controlled" description="checked 与 onCheckedChange 连接 React state。">
+            <Checkbox label="Visible in viewport" checked={visible} onCheckedChange={setVisible} size="md" />
+            <Text size="sm" tone="muted">
+              checked: {String(visible)}
+            </Text>
+          </StoryCard>
+          <StoryCard title="Uncontrolled" description="defaultChecked 只在首次渲染使用；key 变化会重建实例。">
+            <div key={uncontrolledKey}>
+              <Checkbox
+                label="Remember this setting"
+                defaultChecked
+                size="md"
+                onCheckedChange={(next) => setLastRequest(next)}
+              />
+            </div>
+            <StoryRow>
+              <Button size="sm" variant="outline" onClick={() => setUncontrolledKey((value) => value + 1)}>
+                Reset instance
+              </Button>
+              <Text size="sm" tone="muted">
+                last request: {String(lastRequest)}
+              </Text>
+            </StoryRow>
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="Rejected by parent"
+        description="应用可以记录请求但保留原值；本例保持 checked=false，观察请求列表而不接受修改。">
+        <StoryCard>
+          <Checkbox
+            label="Rejected by parent"
+            checked={false}
+            onCheckedChange={(next) => setRequests((current) => [...current, next])}
+            size="md"
+          />
+          <Text size="sm" tone="muted">
+            控件保持未选中，请求仍会被记录。
+          </Text>
+        </StoryCard>
+        <StoryState label="Checkbox state" value={{ visible, mixed, requests, lastRequest }} open />
+      </StorySection>
+
+      <StorySection
+        title="Keyboard and accessibility"
+        description="Space 切换；label 建立关联；indeterminate 只是显示状态。">
+        <StoryKeyboard
+          rows={[
+            { keys: 'Space', action: '切换当前布尔值（readOnly 除外）' },
+            { keys: 'Tab', action: '把焦点移到控件或相邻字段' },
+          ]}
+        />
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`const [visible, setVisible] = useState(true)
+
+<Checkbox
+  label="Visible in viewport"
+  checked={visible}
+  onCheckedChange={setVisible}
+/>
+
+<Checkbox
+  label="Enabled on selected objects"
+  checked="indeterminate"
+/>`}
+          />
+          <StoryProps
+            rows={[
+              { name: 'checked', type: 'boolean | "indeterminate"', description: '受控值；indeterminate 只影响显示。' },
+              { name: 'defaultChecked', type: 'boolean', defaultValue: 'false', description: '非受控初始值。' },
+              {
+                name: 'onCheckedChange',
+                type: '(checked: boolean) => void',
+                description: '用户激活请求；混合状态首次请求 true。',
+              },
+              { name: 'readOnly', type: 'boolean', defaultValue: 'false', description: '可聚焦查看，拒绝修改。' },
+              { name: 'disabled', type: 'boolean', defaultValue: 'false', description: '移出焦点顺序并降低不透明度。' },
+              { name: 'size', type: "'sm' | 'md' | 'lg'", defaultValue: "'sm'", description: '选择框 14/18/22px。' },
+              { name: 'label', type: 'ReactNode', description: '提供时建立 label 关联。' },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
+  )
+}

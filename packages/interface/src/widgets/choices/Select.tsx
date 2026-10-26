@@ -84,6 +84,7 @@ function SelectImpl<T extends ChoiceValue>(
   })
   const selectedKey = value === null ? '' : (collection.keyForValue(value) ?? '')
   const selected = selectedKey ? collection.optionForKey(selectedKey) : undefined
+  const optionSizeClass = size === 'md' ? choiceClasses.optionMd : size === 'xs' ? choiceClasses.optionXs : undefined
   const locked = disabled || readOnly
   return (
     <Primitive.Root
@@ -135,7 +136,7 @@ function SelectImpl<T extends ChoiceValue>(
                     title={option.disabledReason}
                     aria-description={option.disabledReason}
                     textValue={option.label}
-                    className={choiceClasses.option}>
+                    className={cx(choiceClasses.option, optionSizeClass)}>
                     <span className={choiceClasses.indicator}>
                       <Primitive.ItemIndicator>
                         <IconCheck size={14} />

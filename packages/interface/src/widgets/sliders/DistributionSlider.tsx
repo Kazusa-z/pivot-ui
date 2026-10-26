@@ -130,7 +130,7 @@ export const DistributionSlider = forwardRef<HTMLSpanElement, DistributionSlider
                 minWidth: 0,
                 minHeight: 0,
                 overflow: 'hidden',
-                fontSize: '10px',
+                fontSize: 'var(--fontSizes-micro)',
                 color: 'var(--colors-text)',
               })}
               style={{

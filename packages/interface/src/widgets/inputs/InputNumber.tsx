@@ -60,6 +60,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
     readOnly,
   })
   const rules = normalizeNumericConstraints(constraints)
+  const stepperSize = props.size === 'md' || props.size === 'lg' ? 20 : 16
   const input = useRef<HTMLInputElement>(null)
   useImperativeHandle(ref, () => input.current!, [])
   const composing = useRef(false)
@@ -109,7 +110,13 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
   return (
     <div
       data-numeric-phase={editor.phase}
-      className={css({ minWidth: 0, width: '100%', display: 'flex', flexDirection: 'column', gap: '4px' })}>
+      className={css({
+        minWidth: 0,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-1)',
+      })}>
       <Input
         {...props}
         ref={input}
@@ -138,14 +145,15 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
           stepper ? (
             <>
               {endSlot}
-              <span className={css({ display: 'flex', alignItems: 'center', gap: '2px' })}>
+              <span className={css({ display: 'flex', alignItems: 'center', gap: 'var(--space-0_5)' })}>
                 <button
                   type="button"
                   aria-label="Decrease value"
                   disabled={!!locked}
                   onPointerDown={(event) => event.preventDefault()}
                   onClick={(event) => editor.step(-1, numericModifierScale(event))}
-                  className={stepperClass}>
+                  className={stepperClass}
+                  style={{ height: stepperSize, minWidth: stepperSize }}>
                   −
                 </button>
                 <button
@@ -154,7 +162,8 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
                   disabled={!!locked}
                   onPointerDown={(event) => event.preventDefault()}
                   onClick={(event) => editor.step(1, numericModifierScale(event))}
-                  className={stepperClass}>
+                  className={stepperClass}
+                  style={{ height: stepperSize, minWidth: stepperSize }}>
                   +
                 </button>
               </span>
@@ -209,7 +218,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
         }}
       />
       {editor.phase === 'pending' && (
-        <span role="status" className={css({ fontSize: '11px', color: 'var(--colors-textMuted)' })}>
+        <span role="status" className={css({ fontSize: 'var(--fontSizes-control)', color: 'var(--colors-textMuted)' })}>
           Saving…
         </span>
       )}
@@ -217,7 +226,11 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
         <span
           id={errorId}
           role="alert"
-          className={css({ fontSize: '12px', color: 'var(--colors-dangerText)', overflowWrap: 'anywhere' })}>
+          className={css({
+            fontSize: 'var(--fontSizes-control)',
+            color: 'var(--colors-dangerText)',
+            overflowWrap: 'anywhere',
+          })}>
           {editor.error}
         </span>
       )}
@@ -229,16 +242,17 @@ const stepperClass = css({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  height: '18px',
-  minWidth: '18px',
+  height: 'var(--sizes-iconMd)',
+  minWidth: 'var(--sizes-iconMd)',
   padding: 0,
   border: 0,
-  borderRadius: '3px',
+  borderRadius: 'var(--radii-control)',
   font: 'inherit',
+  fontSize: 'var(--fontSizes-control)',
   color: 'var(--colors-text)',
   backgroundColor: 'transparent',
   cursor: 'pointer',
   '&:hover:not(:disabled)': { backgroundColor: 'var(--colors-softBgHover)' },
-  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)' },
+  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
   '&:disabled': { color: 'var(--colors-textMuted)', cursor: 'default' },
 })

@@ -13,55 +13,52 @@ export const buttonRecipe = cva({
     boxSizing: 'border-box',
     cursor: 'pointer',
     transition:
-      'box-shadow .2s ease, border-color .2s ease, background-color .2s ease, color .2s ease, opacity .2s ease-out',
+      'border-color 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out, opacity 120ms ease-out',
     userSelect: 'none',
     whiteSpace: 'nowrap',
     outline: 'none',
     '&:focus-visible': {
-      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+      outline: '2px solid var(--colors-focusRing)',
+      outlineOffset: '2px',
     },
     '&:is(:disabled, [aria-disabled="true"])': {
-      backgroundColor: 'var(--colors-surfaceSubtle)',
-      color: 'var(--colors-textMuted)',
+      opacity: 0.5,
       cursor: 'not-allowed',
-      boxShadow: 'none',
-      '&:hover': {
-        color: 'var(--colors-textMuted)',
-      },
+      pointerEvents: 'none',
     },
   },
   variants: {
     size: {
       xs: {
-        height: '20px',
-        fontSize: '12px',
-        lineHeight: '16px',
+        height: 'var(--sizes-controlXs)',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: 'var(--lineHeights-1)',
         fontWeight: 500,
-        borderRadius: '4px',
-        padding: '0 6px',
+        borderRadius: 'var(--radii-control)',
+        padding: '0 var(--space-1_5)',
         '& .button-spin': {
           height: '8px',
           width: '8px',
         },
       },
       sm: {
-        height: '24px',
-        fontSize: '12px',
-        lineHeight: '16px',
+        height: 'var(--sizes-controlSm)',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: 'var(--lineHeights-1)',
         fontWeight: 500,
-        borderRadius: '4px',
-        padding: '0 8px',
+        borderRadius: 'var(--radii-control)',
+        padding: '0 var(--space-2)',
         '& .button-spin': {
           height: '14px',
           width: '14px',
         },
       },
       md: {
-        height: '32px',
-        borderRadius: '6px',
-        padding: '0 12px',
-        fontSize: '14px',
-        lineHeight: '20px',
+        height: 'var(--sizes-controlMd)',
+        borderRadius: 'var(--radii-controlMd)',
+        padding: '0 var(--space-3)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        lineHeight: 'var(--lineHeights-2)',
         fontWeight: 500,
         '& .button-spin': {
           height: '16px',
@@ -69,12 +66,12 @@ export const buttonRecipe = cva({
         },
       },
       lg: {
-        height: '36px',
-        fontSize: '14px',
-        lineHeight: '20px',
+        height: 'var(--sizes-controlLg)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        lineHeight: 'var(--lineHeights-2)',
         fontWeight: 500,
-        borderRadius: '8px',
-        padding: '0 16px',
+        borderRadius: 'var(--radii-controlLg)',
+        padding: '0 var(--space-4)',
         '& .button-spin': {
           height: '18px',
           width: '18px',
@@ -93,11 +90,6 @@ export const buttonRecipe = cva({
         '&:active': {
           backgroundColor: 'var(--colors-surfaceStrong)',
         },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          borderColor: 'var(--colors-border)',
-          backgroundColor: 'transparent',
-        },
       },
       soft: {
         color: 'var(--colors-text)',
@@ -113,28 +105,18 @@ export const buttonRecipe = cva({
           backgroundColor: 'var(--colors-softBgActive)',
           borderColor: 'transparent',
         },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          backgroundColor: 'var(--colors-surfaceSubtle)',
-          borderColor: 'transparent',
-        },
       },
       solid: {
-        backgroundColor: 'var(--colors-primary)',
-        borderColor: 'var(--colors-primary)',
-        color: 'var(--colors-white)',
+        backgroundColor: 'var(--colors-primarySolid)',
+        borderColor: 'var(--colors-primarySolid)',
+        color: 'var(--colors-selectionText)',
         '&:hover': {
-          backgroundColor: 'var(--colors-primaryActive)',
-          borderColor: 'var(--colors-primaryActive)',
+          backgroundColor: 'var(--colors-primarySolidHover)',
+          borderColor: 'var(--colors-primarySolidHover)',
         },
         '&:active': {
-          backgroundColor: 'var(--colors-primaryActive)',
-          borderColor: 'var(--colors-primaryActive)',
-        },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          backgroundColor: 'var(--colors-surfaceSubtle)',
-          borderColor: 'var(--colors-border)',
+          backgroundColor: 'var(--colors-primarySolidHover)',
+          borderColor: 'var(--colors-primarySolidHover)',
         },
       },
       subtle: {
@@ -147,26 +129,16 @@ export const buttonRecipe = cva({
         '&:active': {
           backgroundColor: 'var(--colors-surfaceStrong)',
         },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-        },
       },
       inverted: {
         color: 'var(--colors-textInverted)',
         backgroundColor: 'var(--colors-textStrong)',
         borderColor: 'var(--colors-textStrong)',
         '&:hover': {
-          backgroundColor: 'var(--colors-textStrong)',
+          opacity: 0.9,
         },
         '&:active': {
-          backgroundColor: 'var(--colors-textStrong)',
-        },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          backgroundColor: 'var(--colors-surfaceStrong)',
-          borderColor: 'var(--colors-border)',
+          opacity: 0.8,
         },
       },
     },
@@ -212,7 +184,7 @@ export const buttonRecipe = cva({
     },
     round: {
       true: {
-        borderRadius: '9999px',
+        borderRadius: 'var(--radii-pill)',
       },
     },
   },
@@ -234,9 +206,6 @@ export const buttonRecipe = cva({
         '&:active': {
           borderColor: 'var(--colors-dangerBorder)',
           backgroundColor: 'var(--colors-dangerBgHover)',
-        },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          borderColor: 'var(--colors-border)',
         },
       },
     },
@@ -296,7 +265,7 @@ export const buttonRecipe = cva({
       variant: 'solid',
       critical: true,
       css: {
-        color: 'var(--colors-white)',
+        color: 'var(--colors-selectionText)',
         backgroundColor: 'var(--colors-dangerSolid)',
         borderColor: 'var(--colors-dangerSolid)',
         '&:hover': {
@@ -313,7 +282,7 @@ export const buttonRecipe = cva({
       variant: 'solid',
       positive: true,
       css: {
-        color: 'var(--colors-white)',
+        color: 'var(--colors-selectionText)',
         backgroundColor: 'var(--colors-successSolid)',
         borderColor: 'var(--colors-successSolid)',
         '&:hover': {
@@ -331,9 +300,6 @@ export const buttonRecipe = cva({
       critical: true,
       css: {
         color: 'var(--colors-dangerText)',
-        '&:focus-visible': {
-          boxShadow: '0 0 0 2px var(--colors-dangerBorder)',
-        },
         '&:hover': {
           color: 'var(--colors-dangerText)',
           backgroundColor: 'var(--colors-dangerBg)',
@@ -348,9 +314,6 @@ export const buttonRecipe = cva({
       positive: true,
       css: {
         color: 'var(--colors-successText)',
-        '&:focus-visible': {
-          boxShadow: '0 0 0 2px var(--colors-successBorder)',
-        },
         '&:hover': {
           color: 'var(--colors-successText)',
           backgroundColor: 'var(--colors-successBg)',
@@ -364,16 +327,16 @@ export const buttonRecipe = cva({
       variant: 'inverted',
       critical: true,
       css: {
-        color: 'var(--colors-textInverted)',
+        color: 'var(--colors-selectionText)',
         backgroundColor: 'var(--colors-dangerSolidHover)',
         borderColor: 'var(--colors-dangerSolidHover)',
         '&:hover': {
-          backgroundColor: 'var(--colors-dangerText)',
-          borderColor: 'var(--colors-dangerText)',
+          backgroundColor: 'var(--colors-dangerSolid)',
+          borderColor: 'var(--colors-dangerSolid)',
         },
         '&:active': {
-          backgroundColor: 'var(--colors-dangerText)',
-          borderColor: 'var(--colors-dangerText)',
+          backgroundColor: 'var(--colors-dangerSolid)',
+          borderColor: 'var(--colors-dangerSolid)',
         },
       },
     },
@@ -381,16 +344,16 @@ export const buttonRecipe = cva({
       variant: 'inverted',
       positive: true,
       css: {
-        color: 'var(--colors-textInverted)',
+        color: 'var(--colors-selectionText)',
         backgroundColor: 'var(--colors-successSolidHover)',
         borderColor: 'var(--colors-successSolidHover)',
         '&:hover': {
-          backgroundColor: 'var(--colors-successText)',
-          borderColor: 'var(--colors-successText)',
+          backgroundColor: 'var(--colors-successSolid)',
+          borderColor: 'var(--colors-successSolid)',
         },
         '&:active': {
-          backgroundColor: 'var(--colors-successText)',
-          borderColor: 'var(--colors-successText)',
+          backgroundColor: 'var(--colors-successSolid)',
+          borderColor: 'var(--colors-successSolid)',
         },
       },
     },
@@ -407,55 +370,55 @@ export const slotRecipe = cva({
   variants: {
     position: {
       start: {
-        marginRight: '4px',
+        marginRight: 'var(--space-1)',
       },
       end: {
-        marginLeft: '4px',
+        marginLeft: 'var(--space-1)',
       },
     },
     size: {
       xs: {},
       sm: {
-        fontSize: '12px',
+        fontSize: 'var(--fontSizes-control)',
       },
       md: {
-        fontSize: '14px',
+        fontSize: 'var(--fontSizes-controlLarge)',
       },
       lg: {
-        fontSize: '14px',
+        fontSize: 'var(--fontSizes-controlLarge)',
       },
     },
     gap: {
       xs: {
         '&[data-position="start"]': {
-          marginRight: '4px',
+          marginRight: 'var(--space-1)',
         },
         '&[data-position="end"]': {
-          marginLeft: '4px',
+          marginLeft: 'var(--space-1)',
         },
       },
       sm: {
         '&[data-position="start"]': {
-          marginRight: '6px',
+          marginRight: 'var(--space-1_5)',
         },
         '&[data-position="end"]': {
-          marginLeft: '6px',
+          marginLeft: 'var(--space-1_5)',
         },
       },
       md: {
         '&[data-position="start"]': {
-          marginRight: '8px',
+          marginRight: 'var(--space-2)',
         },
         '&[data-position="end"]': {
-          marginLeft: '8px',
+          marginLeft: 'var(--space-2)',
         },
       },
       lg: {
         '&[data-position="start"]': {
-          marginRight: '8px',
+          marginRight: 'var(--space-2)',
         },
         '&[data-position="end"]': {
-          marginLeft: '8px',
+          marginLeft: 'var(--space-2)',
         },
       },
     },
@@ -473,25 +436,21 @@ export const actionButtonRecipe = cva({
     border: '1px solid transparent',
     boxSizing: 'border-box',
     cursor: 'pointer',
-    boxShadow: 'var(--shadows-prepend)',
     transition:
-      'box-shadow .2s ease, border-color .2s ease, background-color .2s ease, color .2s ease, transform .2s ease',
-    borderRadius: '4px',
+      'border-color 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out, transform 120ms ease-out',
+    borderRadius: 'var(--radii-control)',
     color: 'var(--colors-text)',
     flexShrink: 0,
     flexGrow: 0,
     padding: 0,
     '&:focus-visible': {
-      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+      outline: '2px solid var(--colors-focusRing)',
+      outlineOffset: '2px',
     },
     '&:is(:disabled, [aria-disabled="true"])': {
-      backgroundColor: 'var(--colors-surfaceSubtle)',
-      color: 'var(--colors-textMuted)',
+      opacity: 0.5,
       cursor: 'not-allowed',
-      boxShadow: 'none',
-      '&:hover': {
-        color: 'var(--colors-textMuted)',
-      },
+      pointerEvents: 'none',
     },
   },
   variants: {
@@ -502,9 +461,10 @@ export const actionButtonRecipe = cva({
     },
     size: {
       xs: {
-        height: '20px',
-        width: '20px',
-        borderRadius: '4px',
+        height: 'var(--sizes-controlXs)',
+        width: 'var(--sizes-controlXs)',
+        borderRadius: 'var(--radii-control)',
+        fontSize: 'var(--fontSizes-control)',
         '& > svg': {
           height: '12px',
           width: '12px',
@@ -516,10 +476,10 @@ export const actionButtonRecipe = cva({
         },
       },
       sm: {
-        height: '24px',
-        width: '24px',
-        borderRadius: '4px',
-        fontSize: '12px',
+        height: 'var(--sizes-controlSm)',
+        width: 'var(--sizes-controlSm)',
+        borderRadius: 'var(--radii-control)',
+        fontSize: 'var(--fontSizes-control)',
         '& svg': {
           height: '14px',
           width: '14px',
@@ -531,9 +491,10 @@ export const actionButtonRecipe = cva({
         },
       },
       md: {
-        height: '32px',
-        width: '32px',
-        borderRadius: '6px',
+        height: 'var(--sizes-controlMd)',
+        width: 'var(--sizes-controlMd)',
+        borderRadius: 'var(--radii-controlMd)',
+        fontSize: 'var(--fontSizes-controlLarge)',
         '& svg': {
           height: '16px',
           width: '16px',
@@ -544,9 +505,10 @@ export const actionButtonRecipe = cva({
         },
       },
       lg: {
-        height: '36px',
-        width: '36px',
-        borderRadius: '6px',
+        height: 'var(--sizes-controlLg)',
+        width: 'var(--sizes-controlLg)',
+        borderRadius: 'var(--radii-controlLg)',
+        fontSize: 'var(--fontSizes-controlLarge)',
         '& svg': {
           height: '18px',
           width: '18px',
@@ -563,18 +525,11 @@ export const actionButtonRecipe = cva({
         borderWidth: '1px',
         borderStyle: 'solid',
         color: 'var(--colors-text)',
-        fontSize: '12px',
         backgroundColor: 'transparent',
         '&:hover': {
           color: 'var(--colors-textStrong)',
           borderColor: 'var(--colors-borderStrong)',
           backgroundColor: 'var(--colors-surfaceSubtle)',
-        },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          borderColor: 'var(--colors-border)',
-          backgroundColor: 'var(--colors-surfaceSubtle)',
-          cursor: 'not-allowed',
         },
       },
       soft: {
@@ -586,29 +541,14 @@ export const actionButtonRecipe = cva({
           backgroundColor: 'var(--colors-softBgHover)',
           borderColor: 'transparent',
         },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          borderColor: 'transparent',
-          backgroundColor: 'var(--colors-surfaceSubtle)',
-          cursor: 'not-allowed',
-        },
       },
       subtle: {
-        color: 'CurrentColor',
+        color: 'currentColor',
         backgroundColor: 'transparent',
         borderColor: 'transparent',
         '&:hover': {
           color: 'var(--colors-textStrong)',
           backgroundColor: 'var(--colors-surfaceSubtle)',
-        },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          borderColor: 'transparent',
-          backgroundColor: 'transparent',
-          '&:hover': {
-            color: 'var(--colors-textMuted)',
-            backgroundColor: 'transparent',
-          },
         },
       },
       ghost: {
@@ -617,11 +557,6 @@ export const actionButtonRecipe = cva({
         borderColor: 'transparent',
         '&:hover': {
           color: 'var(--colors-textStrong)',
-        },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          borderColor: 'transparent',
-          backgroundColor: 'transparent',
         },
       },
     },
@@ -661,11 +596,6 @@ export const actionButtonRecipe = cva({
           backgroundColor: 'var(--colors-selectionBgHover)',
           borderColor: 'var(--colors-selectionBorder)',
         },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          backgroundColor: 'var(--colors-surfaceSubtle)',
-          borderColor: 'var(--colors-border)',
-        },
       },
     },
     {
@@ -678,11 +608,6 @@ export const actionButtonRecipe = cva({
         '&:hover': {
           color: 'var(--colors-selectionText)',
           backgroundColor: 'var(--colors-selectionBgHover)',
-          borderColor: 'transparent',
-        },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          backgroundColor: 'transparent',
           borderColor: 'transparent',
         },
       },
@@ -699,11 +624,6 @@ export const actionButtonRecipe = cva({
           backgroundColor: 'var(--colors-selectionBgHover)',
           borderColor: 'transparent',
         },
-        '&:is(:disabled, [aria-disabled="true"])': {
-          color: 'var(--colors-textMuted)',
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-        },
       },
     },
   ],
@@ -712,6 +632,7 @@ export const actionButtonRecipe = cva({
 export const actionButtonGroupRecipe = cva({
   base: {
     display: 'flex',
+    '--group-radius': 'var(--radii-control)',
   },
   variants: {
     orientation: {
@@ -728,10 +649,12 @@ export const actionButtonGroupRecipe = cva({
             zIndex: 1,
           },
         '& [data-action-button]:nth-child(1)': {
-          borderRadius: '4px 0 0 4px',
+          borderTopLeftRadius: 'var(--group-radius)',
+          borderBottomLeftRadius: 'var(--group-radius)',
         },
         '& [data-action-button]:nth-last-child(1)': {
-          borderRadius: '0 4px 4px 0',
+          borderTopRightRadius: 'var(--group-radius)',
+          borderBottomRightRadius: 'var(--group-radius)',
         },
       },
       vertical: {
@@ -748,26 +671,35 @@ export const actionButtonGroupRecipe = cva({
             zIndex: 1,
           },
         '& [data-action-button]:nth-child(1)': {
-          borderRadius: '4px 4px 0 0',
+          borderTopLeftRadius: 'var(--group-radius)',
+          borderTopRightRadius: 'var(--group-radius)',
         },
         '& [data-action-button]:nth-last-child(1)': {
-          borderRadius: '0 0 4px 4px',
+          borderBottomLeftRadius: 'var(--group-radius)',
+          borderBottomRightRadius: 'var(--group-radius)',
         },
       },
+    },
+    size: {
+      xs: { '--group-radius': 'var(--radii-control)' },
+      sm: { '--group-radius': 'var(--radii-control)' },
+      md: { '--group-radius': 'var(--radii-controlMd)' },
+      lg: { '--group-radius': 'var(--radii-controlLg)' },
     },
   },
   defaultVariants: {
     orientation: 'horizontal',
+    size: 'sm',
   },
 })
 
 export const cornerIconClass = css({
   position: 'absolute',
-  width: '4px !important',
-  height: '4px !important',
+  width: 'var(--space-1) !important',
+  height: 'var(--space-1) !important',
   color: 'currentColor',
-  bottom: 3,
-  right: 3,
+  bottom: 'var(--space-1)',
+  right: 'var(--space-1)',
 })
 
 // Compose beside the recipes so Panda can extract dynamic variants from raw().

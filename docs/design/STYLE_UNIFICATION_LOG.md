@@ -6,44 +6,49 @@
 
 ## 阶段状态
 
-| Phase                             | 状态   | 开始       | 完成       | 备注                         |
-| --------------------------------- | ------ | ---------- | ---------- | ---------------------------- |
-| 0 计划与决策                      | 已完成 | 2026-10-26 | 2026-10-26 | 用户确认两档与 4 个默认项    |
-| 1 Tokens / Foundation / Story Kit | 已完成 | 2026-10-26 | 2026-10-26 | 12 个 story 已迁移，验收全绿 |
-| 2 核心表单控件                    | 未开始 | —          | —          | —                            |
-| 3 Layout 与面板                   | 未开始 | —          | —          | —                            |
-| 4 Overlays                        | 未开始 | —          | —          | —                            |
-| 5 Collections 与 Navigation       | 未开始 | —          | —          | —                            |
-| 6 Templates                       | 未开始 | —          | —          | —                            |
-| 7 Property                        | 未开始 | —          | —          | —                            |
-| 8 Storybook 收尾与审计            | 未开始 | —          | —          | —                            |
+| Phase                             | 状态   | 开始       | 完成       | 备注                                  |
+| --------------------------------- | ------ | ---------- | ---------- | ------------------------------------- |
+| 0 计划与决策                      | 已完成 | 2026-10-26 | 2026-10-26 | 用户确认两档与 4 个默认项             |
+| 1 Tokens / Foundation / Story Kit | 已完成 | 2026-10-26 | 2026-10-26 | 12 个 story 已迁移，验收全绿          |
+| 2 核心表单控件                    | 已完成 | 2026-10-26 | 2026-10-26 | 10 个 story 迁移，Control matrix 新增 |
+| 3 Layout 与面板                   | 未开始 | —          | —          | —                                     |
+| 4 Overlays                        | 未开始 | —          | —          | —                                     |
+| 5 Collections 与 Navigation       | 未开始 | —          | —          | —                                     |
+| 6 Templates                       | 未开始 | —          | —          | —                                     |
+| 7 Property                        | 未开始 | —          | —          | —                                     |
+| 8 Storybook 收尾与审计            | 未开始 | —          | —          | —                                     |
 
 ## 跨阶段待解决项
 
-| ID  | 发现于   | 目标 Phase | 问题                                                                                                                                         | 处理方式                                                                    | 状态   |
-| --- | -------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------ |
-| D01 | Phase 1a | Phase 2    | `ActionButton` 仍使用 `var(--shadows-prepend)`（值为透明阴影），且去掉后无视觉影响                                                           | Phase 2 与按钮状态一起删除该 token 引用                                     | 待处理 |
-| D02 | Phase 1a | Phase 2    | `Button variant="solid"` 仍使用 `primary`（blue9）配白字，对比度不足；Phase 1 只新增 `primarySolid`（暗 blue8 / 亮 blue11），不提前改 Button | Phase 2 将 solid 背景切到 `primarySolid`，并复核 critical/positive          | 待处理 |
-| D03 | Phase 1a | Phase 4    | 保留 `overlayFadeIn`/`contentShow` keyframes，但 Dialog/Popover 还没有接线                                                                   | Phase 4 在 Overlay/Dialog 样式中接入进入动画                                | 待处理 |
-| D04 | Phase 1a | Phase 4    | `surfaceOverlay/surfaceRaised` 已抬到 gray3/white，但 Menu/Popover/Dialog 的 padding、圆角、shadow 仍是旧值                                  | Phase 4 统一 overlay surface 的 padding/radius/shadow                       | 待处理 |
-| D05 | Phase 1a | Phase 3    | Section/Collapsible 仍是 27/30px 头部和 3px trigger 圆角                                                                                     | Phase 3 统一到 24/32 与 4/6                                                 | 待处理 |
-| D06 | Phase 1a | Phase 4    | Menu 仍是 3px item 圆角、13px md 字号、10px xs 字号                                                                                          | Phase 4 统一到 4/6、12/14                                                   | 待处理 |
-| D07 | Phase 1a | Phase 5    | Tree 仍是 28px 行高、实心 primary 选中                                                                                                       | Phase 5 统一到 24/32，并用 `selectionBg/selectionText`                      | 待处理 |
-| D08 | Phase 1a | Phase 2    | Input md slot 仍是 13px，InputNumber stepper 仍是 18px/2px 圆角                                                                              | Phase 2 统一到 14px、16/20、4px                                             | 待处理 |
-| D09 | Phase 1a | Phase 6    | ColorWidget/RampControls/ColorRampChannels/CurveWidget/CurvePresets/ResourcePicker 仍使用 9 处原生 `<select>`                                | Phase 6 替换为 `Select`/`Combobox`                                          | 待处理 |
-| D10 | Phase 1a | Phase 8    | 旧 token（`tooltipBg`、`tooltipColor`、`toastBg`、`sidebar*`、`focusRingMuted`、`shadows.prepend`）先保留，避免 Phase 1 破坏未迁移组件       | Phase 8 无引用后删除                                                        | 待处理 |
-| D11 | Phase 1a | Phase 4    | `overlayFadeOut` 已删除，若后面需要退场动画，需在 Phase 4 重新引入并接 Radix forceMount                                                      | Phase 4 评估是否需要退场                                                    | 待处理 |
-| D12 | Phase 1a | Phase 2    | Checkbox 仍是 14/18/22 三档元素尺寸；Kbd 已先改为 16/18/20                                                                                   | Phase 2 统一 Checkbox 的元素尺寸 token                                      | 待优化 |
-| D13 | Phase 1c | —          | `!autodocs` 已在 SB10 验证：`foundation-theme--shared-providers` 与 `storage-and-cleanup` 的 index tags 不再包含 autodocs                    | 已确认可用；后续 Phase 沿用该方式                                           | 已解决 |
-| D14 | Phase 1c | Phase 2–7  | 43 个 `ContractFrame` story 中，Phase 1 已迁移 12 个 Foundation/Display/Feedback，剩余 31 个按组件 Phase 迁移                                | 各 Phase 跟随组件修改                                                       | 进行中 |
-| D15 | Phase 1b | —          | Badge 的 `solid` 改为 filled tint（`*Bg + *Text`），surface 加 `*Border`，active 用 `primarySolid + 白字`；状态文字改用 12 阶                | 已按语义 token 迁移；orange/gold/violet 保留 categorical A 色，Phase 8 复核 | 已解决 |
-| D16 | Phase 1a | —          | Radix 亮色 blue8 只有 2.33:1，无法承载白字                                                                                                   | 暗色 `primarySolid = blue8`，亮色 `primarySolid = blue11`，对比 5.07 / 4.77 | 已解决 |
-| D17 | Phase 1a | —          | `generate-tokens.mjs` 使用 `/tmp`，Windows 下生成到仓库 `tmp/` 且 file URL 失败                                                              | 改为 `node_modules/.cache` + `pathToFileURL`；`.gitignore` 增加 `tmp/`      | 已解决 |
-| D18 | Phase 1a | —          | 状态文字用 11 阶时低于 4.5:1                                                                                                                 | `info/success/warning/danger Text` 改用 12 阶；实测 10.47–12.98:1           | 已解决 |
-| D19 | Phase 1b | —          | Kbd 原为 14/18/22 + 10/12 字；与两档控件不一致                                                                                               | 改为 16/18/20、11/11/12 字；保留 3 档 inline 尺寸并在 Tokens 页说明         | 已接受 |
-| D20 | Phase 1c | —          | 旧 story 依赖 `ContractFrame` / 原生控件 / 34px 控件                                                                                         | 新增 `StoryPage` 套件；12 个 Foundation/Display/Feedback story 已迁移       | 已解决 |
-| D21 | Phase 1c | Phase 2    | `Foundation/Tokens` 的 density 示例使用当前 Button/Input/Select，视觉仍是 Phase 2 之前的尺寸                                                 | Phase 2 完成后自动反映；无需提前改 Token 页                                 | 待观察 |
-| D22 | Phase 1a | Phase 3–6  | `appBg` 已改为 gray1、`surfaceRaised` 已抬层级；未迁移组件仍使用旧的 padding/radius/字体，预览会有过渡态                                     | 按 Phase 3–6 正常推进                                                       | 已知   |
+| ID  | 发现于   | 目标 Phase | 问题                                                                                                                                   | 处理方式                                                                     | 状态   |
+| --- | -------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------ |
+| D01 | Phase 1a | —          | `ActionButton` 仍使用 `var(--shadows-prepend)`（值为透明阴影），且去掉后无视觉影响                                                     | Phase 2 已删除该引用                                                         | 已解决 |
+| D02 | Phase 1a | —          | `Button variant="solid"` 仍使用 `primary`（blue9）配白字，对比度不足                                                                   | Phase 2 改用 `primarySolid`；critical/positive solid 使用加深的 status solid | 已解决 |
+| D03 | Phase 1a | Phase 4    | 保留 `overlayFadeIn`/`contentShow` keyframes，但 Dialog/Popover 还没有接线                                                             | Phase 4 在 Overlay/Dialog 样式中接入进入动画                                 | 待处理 |
+| D04 | Phase 1a | Phase 4    | `surfaceOverlay/surfaceRaised` 已抬到 gray3/white，但 Menu/Popover/Dialog 的 padding、圆角、shadow 仍是旧值                            | Phase 4 统一 overlay surface 的 padding/radius/shadow                        | 待处理 |
+| D05 | Phase 1a | Phase 3    | Section/Collapsible 仍是 27/30px 头部和 3px trigger 圆角                                                                               | Phase 3 统一到 24/32 与 4/6                                                  | 待处理 |
+| D06 | Phase 1a | Phase 4    | Menu 仍是 3px item 圆角、13px md 字号、10px xs 字号                                                                                    | Phase 4 统一到 4/6、12/14                                                    | 待处理 |
+| D07 | Phase 1a | Phase 5    | Tree 仍是 28px 行高、实心 primary 选中                                                                                                 | Phase 5 统一到 24/32，并用 `selectionBg/selectionText`                       | 待处理 |
+| D08 | Phase 1a | —          | Input md slot 仍是 13px，InputNumber stepper 仍是 18px/2px 圆角                                                                        | Phase 2 已改为 14px、16/20、4px                                              | 已解决 |
+| D09 | Phase 1a | Phase 6    | ColorWidget/RampControls/ColorRampChannels/CurveWidget/CurvePresets/ResourcePicker 仍使用 9 处原生 `<select>`                          | Phase 6 替换为 `Select`/`Combobox`                                           | 待处理 |
+| D10 | Phase 1a | Phase 8    | 旧 token（`tooltipBg`、`tooltipColor`、`toastBg`、`sidebar*`、`focusRingMuted`、`shadows.prepend`）先保留，避免 Phase 1 破坏未迁移组件 | Phase 8 无引用后删除                                                         | 待处理 |
+| D11 | Phase 1a | Phase 4    | `overlayFadeOut` 已删除，若后面需要退场动画，需在 Phase 4 重新引入并接 Radix forceMount                                                | Phase 4 评估是否需要退场                                                     | 待处理 |
+| D12 | Phase 1a | —          | Checkbox 仍是 14/18/22 三档元素尺寸；Kbd 已先改为 16/18/20                                                                             | Phase 2 已用 `sizes.iconSm/iconLg/5_5` token 化                              | 已解决 |
+| D13 | Phase 1c | —          | `!autodocs` 已在 SB10 验证：`foundation-theme--shared-providers` 与 `storage-and-cleanup` 的 index tags 不再包含 autodocs              | 已确认可用；后续 Phase 沿用该方式                                            | 已解决 |
+| D14 | Phase 1c | Phase 2–7  | 43 个 `ContractFrame` story 中，Phase 1 迁移 12 个、Phase 2 迁移 10 个；当前剩 30 个按组件 Phase 迁移                                  | 各 Phase 跟随组件修改                                                        | 进行中 |
+| D15 | Phase 1b | —          | Badge 的 `solid` 改为 filled tint（`*Bg + *Text`），surface 加 `*Border`，active 用 `primarySolid + 白字`；状态文字改用 12 阶          | 已按语义 token 迁移；orange/gold/violet 保留 categorical A 色，Phase 8 复核  | 已解决 |
+| D16 | Phase 1a | —          | Radix 亮色 blue8 只有 2.33:1，无法承载白字                                                                                             | 暗色 `primarySolid = blue8`，亮色 `primarySolid = blue11`，对比 5.07 / 4.77  | 已解决 |
+| D17 | Phase 1a | —          | `generate-tokens.mjs` 使用 `/tmp`，Windows 下生成到仓库 `tmp/` 且 file URL 失败                                                        | 改为 `node_modules/.cache` + `pathToFileURL`；`.gitignore` 增加 `tmp/`       | 已解决 |
+| D18 | Phase 1a | —          | 状态文字用 11 阶时低于 4.5:1                                                                                                           | `info/success/warning/danger Text` 改用 12 阶；实测 10.47–12.98:1            | 已解决 |
+| D19 | Phase 1b | —          | Kbd 原为 14/18/22 + 10/12 字；与两档控件不一致                                                                                         | 改为 16/18/20、11/11/12 字；保留 3 档 inline 尺寸并在 Tokens 页说明          | 已接受 |
+| D20 | Phase 1c | —          | 旧 story 依赖 `ContractFrame` / 原生控件 / 34px 控件                                                                                   | 新增 `StoryPage` 套件；12 个 Foundation/Display/Feedback story 已迁移        | 已解决 |
+| D21 | Phase 1c | Phase 2    | `Foundation/Tokens` 的 density 示例使用当前 Button/Input/Select，视觉仍是 Phase 2 之前的尺寸                                           | Phase 2 完成后自动反映；无需提前改 Token 页                                  | 待观察 |
+| D22 | Phase 1a | Phase 3–6  | `appBg` 已改为 gray1、`surfaceRaised` 已抬层级；未迁移组件仍使用旧的 padding/radius/字体，预览会有过渡态                               | 按 Phase 3–6 正常推进                                                        | 已知   |
+| D23 | Phase 2a | Phase 8    | `warningSolid`（amber9）配白字仅 1.8:1；当前 Button 的 critical/positive 只用 danger/success，warning solid 未使用                     | Phase 8 若引入 warning solid，改用深色文字或专用 dark amber solid            | 待处理 |
+| D24 | Phase 2a | —          | `ActionButtonGroup` 新增 additive `size` prop；默认 sm，现有调用不受影响                                                               | 已记录为新 API                                                               | 已解决 |
+| D25 | Phase 2e | —          | Buttons 与 Control matrix 已迁移；TextInputs/InputNumber/Checkbox/Select/Combobox/Segment/Toggle/Slider/Distribution 的 story 已重写   | 已全部通过 typecheck 与 build                                                | 已解决 |
+| D26 | Phase 2c | —          | SegmentControl/ToggleGroup 没有 xs/20 档，档位是 24/32/36；Slider 没有 lg/36；DistributionSlider 类型上无 compact                      | 已在 stories 中按真实 API 说明，不新增无依据的档位                           | 已记录 |
+| D27 | Phase 2b | Phase 8    | InputNumber 没有暴露内部 phase/draft/error，story 的 StoryState 只能记录宿主可见的 value/mixed/events                                  | 保持 API 不变；Phase 8 再决定是否增加只读状态接口                            | 待处理 |
 
 ## Phase 1 执行明细
 
@@ -109,3 +114,62 @@ Phase 2 开始前先处理/确认：
 - D08 Input slot md 13→14、InputNumber stepper 16/20 + 4px。
 - D12 Checkbox 14/18/22 的元素尺寸 token 化。
 - 31 个尚未迁移的 story 中，Phase 2 负责 10 个核心控件 story。
+
+## Phase 2 执行明细
+
+### 2a Buttons
+
+- [x] `button.styles.ts`：两档高度/字号/圆角、outline focus、disabled opacity、solid 用 `primarySolid`。
+- [x] `ActionButton`：删除 `shadows.prepend`、lg 圆角 8、outline 不再固定 12px。
+- [x] `ActionButtonGroup`：新增 `size`，外角跟随 4/6/8。
+- [x] `Buttons.stories.tsx` 迁移到 StoryPage。
+- [x] status solid token 加深：danger red8/red11、success green8/green11；白字对比 5.37/5.21 与 5.07/4.72。
+
+### 2b Inputs
+
+- [x] `text.styles.ts`：两档高度/字号/圆角；focus 改 outline；valid/invalid 不再填底色；disabled opacity。
+- [x] Input slot md 13→14。
+- [x] `EditableText`：tokens、focus offset、disabled opacity、Saving/error 12px。
+- [x] `InputNumber`：stepper 16/20、4px、错误/等待 12px。
+- [x] `TextInputs.stories.tsx`、`InputNumber.stories.tsx`（subagent 完成）。
+
+### 2c Choices
+
+- [x] `choice.styles.ts`：height 20/24/32、12/14、4/6/8；option 3→4/6、13→14、10→12；search 24。
+- [x] `choice-group.styles.ts`：select 实心 `selectionBg`，去掉 inset 描边；24/32/36。
+- [x] `Checkbox`：14/18/22 → sizes token；disabled 只 opacity；label 12。
+- [x] `Select`/`Combobox`：option 尺寸随触发器档位。
+- [x] `Checkbox`/`Select`/`Combobox`/`SegmentControl`/`ToggleGroup` stories（subagent 完成）。
+
+### 2d Sliders
+
+- [x] `Slider`：root 20/24/32、track/range 实心 selectionBg、focus offset 2、slot 11、error 12。
+- [x] `DistributionSlider`：segment 文字 11。
+- [x] `Slider`/`DistributionSlider` stories（subagent 完成）。
+
+### 2e 验收
+
+- [x] `Foundation/Control matrix` story。
+- [x] 9 个 subagent story 完成并 typecheck。
+- [x] `pnpm verify`（prettier + typecheck + demo build + storybook build）。
+- [x] 更新计划文档 Phase 2 复选框。
+
+## Phase 2 结果
+
+Phase 2 已完成。`pnpm verify` 全绿；Buttons + 9 个核心控件 story 已迁移，Control matrix 新增。
+
+**已完成**
+
+- Button/ActionButton/ActionButtonGroup 两档尺寸、outline focus、disabled opacity、solid `primarySolid`；Group 新增 `size`，外角跟随本体。
+- status solid token 加深，critical/positive solid 白字对比达到 5.21/4.72（light）与 5.37/5.07（dark）。
+- Input/Textarea/EditableText/InputNumber 两档、focus outline、disabled opacity、valid/invalid 不再填底色；slot md 14、stepper 16/4。
+- Choice/Select/Combobox/Checkbox/Segment/Toggle 统一 20/24/32 与 4/6/8；选项实心选中；option 尺寸跟随触发器。
+- Slider/DistributionSlider 实心 range、20/24/32、focus offset 2、slot 11、error 12。
+- 10 个 story 全部使用 StoryPage；新增 `Foundation/Control matrix`。
+
+**偏差 / 记录**
+
+- SegmentControl/ToggleGroup 实际档位是 24/32/36，没有 xs/20；Slider 没有 lg/36；已在 story 中按真实 API 展示，见 D26。
+- Checkbox 的元素尺寸仍是 14/18/22，但已 token 化；它不等于控件高度档位。
+- InputNumber 不暴露内部 phase/draft/error，StoryState 只记录宿主可见值，见 D27。
+- `warningSolid` 白字仍只有 1.8:1，但当前 Button 未使用；见 D23，Phase 8 处理。

@@ -12,24 +12,43 @@ const inputRootRecipe = cva({
     minWidth: 0,
     boxSizing: 'border-box',
     border: '1px solid transparent',
-    color: 'var(--colors-textStrong)',
-    transition: 'box-shadow .2s ease, border-color .2s ease, background-color .2s ease',
+    color: 'var(--colors-text)',
+    transition: 'border-color 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out',
     '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
     '& [data-part="slot"] + [data-part="input"]': { paddingLeft: 0 },
     '&:not([data-disabled]):focus-within': {
       borderColor: 'var(--colors-borderStrong)',
-      boxShadow: '0 0 0 2px var(--colors-focusRing)',
+      outline: '2px solid var(--colors-focusRing)',
+      outlineOffset: '2px',
       '& [data-part="slot"]': { color: 'var(--colors-text)' },
     },
-    '&[data-state="valid"]:not([data-disabled]):focus-within': { borderColor: 'var(--colors-successBorder)' },
-    '&[data-state="invalid"]:not([data-disabled]):focus-within': { borderColor: 'var(--colors-dangerBorder)' },
   },
   variants: {
     size: {
-      xs: { height: '20px', lineHeight: '16px', fontSize: '12px', borderRadius: '4px' },
-      sm: { height: '24px', lineHeight: '16px', fontSize: '12px', borderRadius: '4px' },
-      md: { height: '32px', lineHeight: '20px', fontSize: '14px', borderRadius: '6px' },
-      lg: { height: '36px', lineHeight: '20px', fontSize: '14px', borderRadius: '8px' },
+      xs: {
+        height: 'var(--sizes-controlXs)',
+        lineHeight: 'var(--lineHeights-1)',
+        fontSize: 'var(--fontSizes-control)',
+        borderRadius: 'var(--radii-control)',
+      },
+      sm: {
+        height: 'var(--sizes-controlSm)',
+        lineHeight: 'var(--lineHeights-1)',
+        fontSize: 'var(--fontSizes-control)',
+        borderRadius: 'var(--radii-control)',
+      },
+      md: {
+        height: 'var(--sizes-controlMd)',
+        lineHeight: 'var(--lineHeights-2)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        borderRadius: 'var(--radii-controlMd)',
+      },
+      lg: {
+        height: 'var(--sizes-controlLg)',
+        lineHeight: 'var(--lineHeights-2)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        borderRadius: 'var(--radii-controlLg)',
+      },
     },
     variant: {
       outline: {
@@ -45,25 +64,24 @@ const inputRootRecipe = cva({
     },
     state: {
       valid: {
-        backgroundColor: 'var(--colors-successBg)',
         borderColor: 'var(--colors-successBorder)',
+        color: 'var(--colors-successText)',
         '& [data-part="slot"], & [data-part="input"]': { color: 'var(--colors-successText)' },
       },
       invalid: {
-        backgroundColor: 'var(--colors-dangerBg)',
         borderColor: 'var(--colors-dangerBorder)',
+        color: 'var(--colors-dangerText)',
         '& [data-part="slot"], & [data-part="input"]': { color: 'var(--colors-dangerText)' },
       },
     },
     disabled: {
       true: {
-        boxShadow: 'none',
-        backgroundColor: 'var(--colors-surfaceSubtle)',
-        '& [data-part="slot"], & [data-part="input"]': { color: 'var(--colors-textMuted)' },
+        opacity: 0.5,
+        cursor: 'not-allowed',
+        '& [data-part="input"]': { cursor: 'not-allowed' },
       },
     },
   },
-  compoundVariants: [{ variant: 'subtle', disabled: true, css: { backgroundColor: 'transparent' } }],
 })
 
 const inputRecipe = cva({
@@ -76,7 +94,7 @@ const inputRecipe = cva({
     flex: 1,
     minWidth: 0,
     width: '100%',
-    color: 'var(--colors-text)',
+    color: 'inherit',
     borderRadius: 'inherit',
     fontFamily: 'var(--fonts-default)',
     fontWeight: 400,
@@ -89,14 +107,15 @@ const inputRecipe = cva({
   },
   variants: {
     size: {
-      xs: { fontSize: '12px', padding: '0 6px' },
-      sm: { fontSize: '12px', padding: '0 8px' },
-      md: { fontSize: '14px', padding: '0 12px' },
-      lg: { fontSize: '14px', padding: '0 16px' },
+      xs: { fontSize: 'var(--fontSizes-control)', padding: '0 var(--space-1_5)' },
+      sm: { fontSize: 'var(--fontSizes-control)', padding: '0 var(--space-2)' },
+      md: { fontSize: 'var(--fontSizes-controlLarge)', padding: '0 var(--space-3)' },
+      lg: { fontSize: 'var(--fontSizes-controlLarge)', padding: '0 var(--space-4)' },
     },
     ellipsis: { true: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } },
   },
 })
+
 const slotRecipe = cva({
   base: {
     display: 'flex',
@@ -108,10 +127,10 @@ const slotRecipe = cva({
   },
   variants: {
     size: {
-      xs: { padding: '0 4px', fontSize: '12px' },
-      sm: { padding: '0 6px', fontSize: '12px' },
-      md: { padding: '0 8px', fontSize: '13px' },
-      lg: { padding: '0 12px', fontSize: '14px' },
+      xs: { padding: '0 var(--space-1)', fontSize: 'var(--fontSizes-control)' },
+      sm: { padding: '0 var(--space-1_5)', fontSize: 'var(--fontSizes-control)' },
+      md: { padding: '0 var(--space-2)', fontSize: 'var(--fontSizes-controlLarge)' },
+      lg: { padding: '0 var(--space-3)', fontSize: 'var(--fontSizes-controlLarge)' },
     },
   },
 })
@@ -126,16 +145,32 @@ const textareaRecipe = cva({
     fontFamily: 'var(--fonts-default)',
     color: 'var(--colors-text)',
     resize: 'none',
-    transition: 'border-color .2s ease, background-color .2s ease, box-shadow .2s ease, color .2s ease',
+    transition: 'border-color 120ms ease-out, background-color 120ms ease-out, color 120ms ease-out',
     '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
     '&::placeholder': { color: 'var(--colors-textMuted)' },
-    '&:focus-visible': { borderColor: 'var(--colors-borderStrong)', boxShadow: '0 0 0 2px var(--colors-focusRing)' },
-    '&:disabled': { color: 'var(--colors-textMuted)', cursor: 'not-allowed' },
+    '&:focus-visible': {
+      borderColor: 'var(--colors-borderStrong)',
+      outline: '2px solid var(--colors-focusRing)',
+      outlineOffset: '2px',
+    },
+    '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
   },
   variants: {
     size: {
-      sm: { minHeight: '56px', padding: '8px', fontSize: '12px', lineHeight: '16px', borderRadius: '4px' },
-      md: { minHeight: '64px', padding: '8px 12px', fontSize: '14px', lineHeight: '20px', borderRadius: '6px' },
+      sm: {
+        minHeight: '56px',
+        padding: 'var(--space-2)',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: 'var(--lineHeights-1)',
+        borderRadius: 'var(--radii-control)',
+      },
+      md: {
+        minHeight: '64px',
+        padding: 'var(--space-2) var(--space-3)',
+        fontSize: 'var(--fontSizes-controlLarge)',
+        lineHeight: 'var(--lineHeights-2)',
+        borderRadius: 'var(--radii-controlMd)',
+      },
     },
     variant: {
       outline: {
@@ -153,24 +188,18 @@ const textareaRecipe = cva({
       },
     },
     state: {
-      valid: { color: 'var(--colors-successText)', '&:focus-visible': { borderColor: 'var(--colors-successBorder)' } },
-      invalid: { color: 'var(--colors-dangerText)', '&:focus-visible': { borderColor: 'var(--colors-dangerBorder)' } },
+      valid: {
+        borderColor: 'var(--colors-successBorder)',
+        color: 'var(--colors-successText)',
+        '&:focus-visible': { borderColor: 'var(--colors-successBorder)' },
+      },
+      invalid: {
+        borderColor: 'var(--colors-dangerBorder)',
+        color: 'var(--colors-dangerText)',
+        '&:focus-visible': { borderColor: 'var(--colors-dangerBorder)' },
+      },
     },
-    disabled: { true: { backgroundColor: 'var(--colors-surfaceSubtle)' } },
   },
-  compoundVariants: [
-    {
-      variant: 'outline',
-      state: 'valid',
-      css: { backgroundColor: 'var(--colors-successBg)', borderColor: 'var(--colors-successBorder)' },
-    },
-    {
-      variant: 'outline',
-      state: 'invalid',
-      css: { backgroundColor: 'var(--colors-dangerBg)', borderColor: 'var(--colors-dangerBorder)' },
-    },
-    { variant: 'subtle', disabled: true, css: { backgroundColor: 'transparent' } },
-  ],
 })
 
 export function getInputRootClass(
@@ -189,5 +218,5 @@ export function getTextareaClass(
   variants: { size: 'sm' | 'md'; variant: TextInputVariant; state?: TextInputState; disabled?: boolean },
   style?: SystemStyleObject
 ) {
-  return css(textareaRecipe.raw(variants), style)
+  return css(textareaRecipe.raw({ size: variants.size, variant: variants.variant, state: variants.state }), style)
 }

@@ -355,38 +355,38 @@
 
 **验收**：`pnpm verify` 全绿；Foundation stories 不再使用 `ContractFrame`；Tokens 页面与代码一致。
 
-### Phase 2 — 核心表单控件（4 天）
+### Phase 2 — 核心表单控件（已完成 2026-10-26）
 
 **2a Buttons**
 
-- [ ] `widgets/buttons/button.styles.ts`：20/24/32/36、4/4/6/8、12/12/14/14；focus 改 outline；disabled 统一 opacity .5；ActionButton lg 圆角 8；Group 外角跟随；outline 字号跟随 size；inverted 补 hover/active；solid 背景改用 `primarySolid`。
-- [ ] `Button.tsx`/`ActionButton.tsx`/`ActionButtonGroup`：不改变行为，仅样式与 slot 尺寸。
+- [x] `widgets/buttons/button.styles.ts`：20/24/32/36、4/4/6/8、12/12/14/14；focus 改 outline；disabled 统一 opacity .5；ActionButton lg 圆角 8；Group 外角跟随；outline 字号跟随 size；inverted 补 hover/active；solid 背景改用 `primarySolid`。
+- [x] `Button.tsx`/`ActionButton.tsx`/`ActionButtonGroup`：不改变行为，仅样式与 slot 尺寸。
 
 **2b Text inputs**
 
-- [ ] `widgets/inputs/text.styles.ts`：两档高度/字号/内边距；md slot 13→14；focus 改 root outline；disabled opacity；valid/invalid 改边框+文字，不填底色。
-- [ ] `Input.tsx`、`Textarea.tsx`、`EditableText.tsx`：应用新样式。
-- [ ] `InputNumber.tsx`：stepper 16/20、圆角 4；错误/等待 12；高度跟随 Input。
+- [x] `widgets/inputs/text.styles.ts`：两档高度/字号/内边距；md slot 13→14；focus 改 root outline；disabled opacity；valid/invalid 改边框+文字，不填底色。
+- [x] `Input.tsx`、`Textarea.tsx`、`EditableText.tsx`：应用新样式。
+- [x] `InputNumber.tsx`：stepper 16/20、圆角 4；错误/等待 12；高度跟随 Input。
 
 **2c Choices**
 
-- [ ] `widgets/choices/choice.styles.ts`：20/24/32（minHeight→height）、12/12/14、4/4/6；option 3→4/6、13→14、10→12；search 24/32；highlight 用 `selectionBg/selectionText`。
-- [ ] `Checkbox.tsx`：14/18/22 保留但 token 化；disabled 只 opacity；focus outline 2/2。
-- [ ] `Select.tsx`、`Combobox.tsx`：触发器/选项/内容圆角/字号统一；tag 尺寸。
-- [ ] `SegmentControl.tsx`、`ToggleGroup.tsx`：24/32/36；选中改实心 `selectionBg`；容器 2px padding 保留。
+- [x] `widgets/choices/choice.styles.ts`：20/24/32（minHeight→height）、12/12/14、4/4/6；option 3→4/6、13→14、10→12；search 24/32；highlight 用 `selectionBg/selectionText`。
+- [x] `Checkbox.tsx`：14/18/22 保留但 token 化；disabled 只 opacity；focus outline 2/2。
+- [x] `Select.tsx`、`Combobox.tsx`：触发器/选项/内容圆角/字号统一；tag 尺寸。
+- [x] `SegmentControl.tsx`、`ToggleGroup.tsx`：24/32/36；选中改实心 `selectionBg`；容器 2px padding 保留。
 
 **2d Sliders**
 
-- [ ] `Slider.tsx`、`DistributionSlider.tsx`、`useSliderEdit.ts`：root 20/24/32；range 用 `selectionBg` 不透明；thumb 尺寸随档；focus outline；disabled opacity。
-- [ ] `slotClass` 10→11；tooltip 11；错误 12。
+- [x] `Slider.tsx`、`DistributionSlider.tsx`、`useSliderEdit.ts`：root 20/24/32；range 用 `selectionBg` 不透明；thumb 尺寸随档；focus outline；disabled opacity。
+- [x] `slotClass` 10→11；tooltip 11；错误 12。
 
 **2e Stories**
 
-- [ ] `Buttons`、`TextInputs`、`InputNumber`、`Checkbox`、`Select`、`Combobox`、`SegmentControl`、`ToggleGroup`、`Slider`、`DistributionSlider`。
-- [ ] 新增 `Foundation/Control matrix`：两档 × 控件 × 状态的代码矩阵。
-- [ ] 删除 Buttons 里 `CSS override: 18px` 的示例，改为 `Customization` 说明。
+- [x] `Buttons`、`TextInputs`、`InputNumber`、`Checkbox`、`Select`、`Combobox`、`SegmentControl`、`ToggleGroup`、`Slider`、`DistributionSlider`。
+- [x] 新增 `Foundation/Control matrix`：两档 × 控件 × 状态的代码矩阵。
+- [x] 删除 Buttons 里 `CSS override: 18px` 的示例，改为 `Customization` 说明。
 
-**验收**：核心控件只出现 20/24/32/36；ActionButton/Group 圆角一致；Input slot 字号一致；无原生 demo 控件；build 通过。
+**验收**：核心控件只出现 20/24/32/36；ActionButton/Group 圆角一致；Input slot 字号一致；无原生 demo 控件；`pnpm verify` 通过。
 
 ### Phase 3 — Layout 与面板（2 天）
 

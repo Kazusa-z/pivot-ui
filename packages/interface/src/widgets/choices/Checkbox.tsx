@@ -27,7 +27,7 @@ const checkboxRecipe = cva({
     flexShrink: 0,
     boxSizing: 'border-box',
     padding: 0,
-    borderRadius: '4px',
+    borderRadius: 'var(--radii-control)',
     backgroundColor: 'var(--colors-softBg)',
     color: 'var(--colors-text)',
     border: '1px solid var(--colors-border)',
@@ -38,19 +38,17 @@ const checkboxRecipe = cva({
       color: 'var(--colors-selectionText)',
     },
     '&:disabled': {
-      backgroundColor: 'var(--colors-surfaceSubtle)',
-      color: 'var(--colors-textMuted)',
-      cursor: 'not-allowed',
       opacity: 0.5,
+      cursor: 'not-allowed',
     },
     '&[data-readonly]': { cursor: 'default' },
     '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
   },
   variants: {
     size: {
-      sm: { width: '14px', height: '14px' },
-      md: { width: '18px', height: '18px' },
-      lg: { width: '22px', height: '22px' },
+      sm: { width: 'var(--sizes-iconSm)', height: 'var(--sizes-iconSm)' },
+      md: { width: 'var(--sizes-iconLg)', height: 'var(--sizes-iconLg)' },
+      lg: { width: 'var(--sizes-5_5)', height: 'var(--sizes-5_5)' },
     },
   },
   defaultVariants: { size: 'sm' },
@@ -59,8 +57,8 @@ const checkboxRecipe = cva({
 const labelClass = css({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '8px',
-  fontSize: '12px',
+  gap: 'var(--space-2)',
+  fontSize: 'var(--fontSizes-control)',
   color: 'var(--colors-text)',
   userSelect: 'none',
 })

@@ -52,18 +52,23 @@ const rootRecipe = cva({
     userSelect: 'none',
     touchAction: 'none',
     backgroundColor: 'var(--colors-softBg)',
-    borderRadius: '4px',
+    borderRadius: 'var(--radii-control)',
     color: 'var(--colors-text)',
-    '&[data-orientation=horizontal]': { width: '100%', height: '24px', cursor: 'ew-resize' },
-    '&[data-orientation=vertical]': { flexDirection: 'column', width: '24px', height: '160px', cursor: 'ns-resize' },
+    '&[data-orientation=horizontal]': { width: '100%', height: 'var(--sizes-controlSm)', cursor: 'ew-resize' },
+    '&[data-orientation=vertical]': {
+      flexDirection: 'column',
+      width: 'var(--sizes-controlSm)',
+      height: '160px',
+      cursor: 'ns-resize',
+    },
     '&[data-disabled], &[data-readonly], &[data-edit-phase=pending]': { cursor: 'default' },
     '&[data-disabled]': { opacity: 0.5 },
   },
   variants: {
     size: {
-      xs: { '&[data-orientation=horizontal]': { height: '20px' } },
+      xs: { '&[data-orientation=horizontal]': { height: 'var(--sizes-controlXs)' } },
       sm: {},
-      md: { '&[data-orientation=horizontal]': { height: '32px' } },
+      md: { '&[data-orientation=horizontal]': { height: 'var(--sizes-controlMd)' } },
     },
     compact: {
       true: {
@@ -77,7 +82,7 @@ const rootRecipe = cva({
 const trackClass = css({
   position: 'relative',
   flexGrow: 1,
-  borderRadius: '4px',
+  borderRadius: 'var(--radii-control)',
   overflow: 'hidden',
   backgroundColor: 'var(--colors-softBg)',
   '&[data-orientation=horizontal]': { width: '100%', height: '100%' },
@@ -86,7 +91,6 @@ const trackClass = css({
 const rangeClass = css({
   position: 'absolute',
   backgroundColor: 'var(--colors-selectionBg)',
-  opacity: 0.6,
   '&[data-orientation=horizontal]': { height: '100%' },
   '&[data-orientation=vertical]': { width: '100%' },
 })
@@ -96,17 +100,21 @@ const thumbRecipe = cva({
     position: 'relative',
     boxSizing: 'border-box',
     width: '4px',
-    height: '24px',
+    height: 'var(--sizes-controlSm)',
     backgroundColor: 'var(--colors-textStrong)',
-    borderRadius: '2px',
+    borderRadius: 'var(--radii-control)',
     outline: 'none',
-    '&[data-orientation=vertical]': { width: '24px', height: '4px' },
-    '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '3px' },
+    '&[data-orientation=vertical]': { width: 'var(--sizes-controlSm)', height: '4px' },
+    '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
     '&[data-disabled]': { backgroundColor: 'var(--colors-textMuted)' },
     '&::after': { content: '""', position: 'absolute', inset: '-5px' },
   },
   variants: {
-    size: { xs: { height: '20px' }, sm: {}, md: { height: '32px' } },
+    size: {
+      xs: { height: 'var(--sizes-controlXs)' },
+      sm: {},
+      md: { height: 'var(--sizes-controlMd)' },
+    },
     compact: {
       true: {
         width: '12px',
@@ -122,7 +130,7 @@ const slotClass = css({
   top: '50%',
   transform: 'translateY(-50%)',
   pointerEvents: 'none',
-  fontSize: '10px',
+  fontSize: 'var(--fontSizes-micro)',
   color: 'var(--colors-textMuted)',
   zIndex: 1,
 })
@@ -497,10 +505,10 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(function Slider(
                 bottom: 'calc(100% + 5px)',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                fontSize: '11px',
+                fontSize: 'var(--fontSizes-micro)',
                 lineHeight: 1.4,
-                padding: '2px 4px',
-                borderRadius: '3px',
+                padding: 'var(--space-0_5) var(--space-1)',
+                borderRadius: 'var(--radii-control)',
                 backgroundColor: 'var(--colors-surfaceOverlay)',
                 color: 'var(--colors-text)',
                 whiteSpace: 'nowrap',
@@ -515,7 +523,12 @@ export const Slider = forwardRef<HTMLSpanElement, SliderProps>(function Slider(
         <span
           id={errorId}
           role="alert"
-          className={css({ position: 'absolute', top: '100%', fontSize: '11px', color: 'var(--colors-dangerText)' })}>
+          className={css({
+            position: 'absolute',
+            top: '100%',
+            fontSize: 'var(--fontSizes-control)',
+            color: 'var(--colors-dangerText)',
+          })}>
           {localError}
         </span>
       )}

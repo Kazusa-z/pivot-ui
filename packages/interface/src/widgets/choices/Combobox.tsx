@@ -144,6 +144,7 @@ function ComboboxImpl<T extends ChoiceValue>(props: ComboboxProps<T>, ref: Forwa
     enabled.find((option) => selectedValues.includes(option.value)) ??
     enabled[0]
   const optionId = (key: string) => `${baseId}-option-${encodeURIComponent(key)}`
+  const optionSizeClass = size === 'md' ? choiceClasses.optionMd : size === 'xs' ? choiceClasses.optionXs : undefined
   useEffect(() => {
     if (actualOpen && active) optionRefs.current.get(active.key)?.scrollIntoView({ block: 'nearest' })
   }, [actualOpen, active?.key])
@@ -357,7 +358,7 @@ function ComboboxImpl<T extends ChoiceValue>(props: ComboboxProps<T>, ref: Forwa
                   aria-description={option.disabledReason}
                   title={option.disabledReason}
                   data-active={option.key === active?.key ? '' : undefined}
-                  className={choiceClasses.option}
+                  className={cx(choiceClasses.option, optionSizeClass)}
                   onMouseDown={(event) => event.preventDefault()}
                   onMouseMove={() => {
                     if (!option.disabled) setActiveKey(option.key)

@@ -60,7 +60,16 @@ export const EditableText = forwardRef<HTMLDivElement, EditableTextProps>(functi
       data-phase={editor.phase}
       aria-busy={editor.phase === 'pending' || undefined}
       className={cx(
-        css({ display: 'inline-flex', flexDirection: 'column', minWidth: 0, maxWidth: '100%', gap: '4px' }, cssProp),
+        css(
+          {
+            display: 'inline-flex',
+            flexDirection: 'column',
+            minWidth: 0,
+            maxWidth: '100%',
+            gap: 'var(--space-1)',
+          },
+          cssProp
+        ),
         className
       )}>
       {editor.phase === 'idle' ? (
@@ -77,22 +86,23 @@ export const EditableText = forwardRef<HTMLDivElement, EditableTextProps>(functi
           className={css({
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '4px',
+            gap: 'var(--space-1)',
             minWidth: 0,
             maxWidth: '100%',
-            minHeight: '24px',
+            minHeight: 'var(--sizes-controlSm)',
             border: 0,
-            borderRadius: '4px',
-            padding: '2px 4px',
+            borderRadius: 'var(--radii-control)',
+            padding: 'var(--space-0_5) var(--space-1)',
             color: 'var(--colors-text)',
             backgroundColor: 'transparent',
             font: 'inherit',
-            fontSize: '12px',
+            fontSize: 'var(--fontSizes-control)',
             textAlign: 'start',
             cursor: 'text',
             '&:hover:not(:disabled):not([aria-disabled="true"])': { backgroundColor: 'var(--colors-softBgHover)' },
-            '&:focus-visible': { outline: '2px solid var(--colors-focusRing)' },
-            '&:disabled, &[aria-disabled="true"]': { color: 'var(--colors-textMuted)', cursor: 'default' },
+            '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
+            '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+            '&[aria-disabled="true"]': { cursor: 'default' },
           })}>
           <span className={css({ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' })}>
             {value || emptyText}
@@ -140,7 +150,7 @@ export const EditableText = forwardRef<HTMLDivElement, EditableTextProps>(functi
         />
       )}
       {editor.phase === 'pending' && (
-        <span role="status" className={css({ fontSize: '11px', color: 'var(--colors-textMuted)' })}>
+        <span role="status" className={css({ fontSize: 'var(--fontSizes-control)', color: 'var(--colors-textMuted)' })}>
           Saving…
         </span>
       )}
@@ -148,7 +158,11 @@ export const EditableText = forwardRef<HTMLDivElement, EditableTextProps>(functi
         <span
           id={errorId}
           role="alert"
-          className={css({ fontSize: '12px', color: 'var(--colors-dangerText)', overflowWrap: 'anywhere' })}>
+          className={css({
+            fontSize: 'var(--fontSizes-control)',
+            color: 'var(--colors-dangerText)',
+            overflowWrap: 'anywhere',
+          })}>
           {editor.error}
         </span>
       )}
