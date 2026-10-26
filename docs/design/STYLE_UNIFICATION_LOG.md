@@ -15,7 +15,7 @@
 | 4 Overlays                        | 已完成 | 2026-10-26 | 2026-10-26 | 6 个 story 迁移，验收全绿             |
 | 5 Collections 与 Navigation       | 已完成 | 2026-10-26 | 2026-10-26 | 7 个 story 迁移，验收全绿             |
 | 6 Templates                       | 已完成 | 2026-10-26 | 2026-10-26 | 11 个 story 迁移，验收全绿            |
-| 7 Property                        | 未开始 | —          | —          | —                                     |
+| 7 Property                        | 已完成 | 2026-10-26 | 2026-10-26 | 4 个 story 迁移，验收全绿             |
 | 8 Storybook 收尾与审计            | 未开始 | —          | —          | —                                     |
 
 ## 跨阶段待解决项
@@ -35,7 +35,7 @@
 | D11 | Phase 1a | —          | `overlayFadeOut` 已删除，若后面需要退场动画，需在 Phase 4 重新引入并接 Radix forceMount                                                | Phase 4 评估：不引入退场动画，依赖 Radix unmount；保留现状                      | 已接受 |
 | D12 | Phase 1a | —          | Checkbox 仍是 14/18/22 三档元素尺寸；Kbd 已先改为 16/18/20                                                                             | Phase 2 已用 `sizes.iconSm/iconLg/5_5` token 化                                 | 已解决 |
 | D13 | Phase 1c | —          | `!autodocs` 已在 SB10 验证：`foundation-theme--shared-providers` 与 `storage-and-cleanup` 的 index tags 不再包含 autodocs              | 已确认可用；后续 Phase 沿用该方式                                               | 已解决 |
-| D14 | Phase 1c | Phase 7    | 43 个 `ContractFrame` story 中，Phase 1–6 共迁移 39 个；当前实际剩 4 个按 Property Phase 迁移                                          | 各 Phase 跟随组件修改                                                           | 进行中 |
+| D14 | Phase 1c | —          | 43 个 `ContractFrame` story 中，Phase 1–7 已全部迁移；当前实际剩 0 个                                                                  | 已清零；Phase 8 只做审计                                                        | 已解决 |
 | D15 | Phase 1b | —          | Badge 的 `solid` 改为 filled tint（`*Bg + *Text`），surface 加 `*Border`，active 用 `primarySolid + 白字`；状态文字改用 12 阶          | 已按语义 token 迁移；orange/gold/violet 保留 categorical A 色，Phase 8 复核     | 已解决 |
 | D16 | Phase 1a | —          | Radix 亮色 blue8 只有 2.33:1，无法承载白字                                                                                             | 暗色 `primarySolid = blue8`，亮色 `primarySolid = blue11`，对比 5.07 / 4.77     | 已解决 |
 | D17 | Phase 1a | —          | `generate-tokens.mjs` 使用 `/tmp`，Windows 下生成到仓库 `tmp/` 且 file URL 失败                                                        | 改为 `node_modules/.cache` + `pathToFileURL`；`.gitignore` 增加 `tmp/`          | 已解决 |
@@ -49,7 +49,7 @@
 | D25 | Phase 2e | —          | Buttons 与 Control matrix 已迁移；TextInputs/InputNumber/Checkbox/Select/Combobox/Segment/Toggle/Slider/Distribution 的 story 已重写   | 已全部通过 typecheck 与 build                                                   | 已解决 |
 | D26 | Phase 2c | —          | SegmentControl/ToggleGroup 没有 xs/20 档，档位是 24/32/36；Slider 没有 lg/36；DistributionSlider 类型上无 compact                      | 已在 stories 中按真实 API 说明，不新增无依据的档位                              | 已记录 |
 | D27 | Phase 2b | Phase 8    | InputNumber 没有暴露内部 phase/draft/error，story 的 StoryState 只能记录宿主可见的 value/mixed/events                                  | 保持 API 不变；Phase 8 再决定是否增加只读状态接口                               | 待处理 |
-| D28 | Phase 3  | Phase 7    | `PropertyRow` 已支持 density，但 `PropertyField` 内置控件仍按默认 size 渲染，未随 density 变成 sm/md                                   | Phase 7 在 PropertyField 内透传 size                                            | 待处理 |
+| D28 | Phase 3  | —          | `PropertyRow` 已支持 density，但 `PropertyField` 内置控件仍按默认 size 渲染，未随 density 变成 sm/md                                   | Phase 7 已透传 size，Checkbox 按 14/18 元素尺寸                                 | 已解决 |
 | D29 | Phase 3  | —          | `ResizableSplit` 的 handle 保持 6px 命中区，而不是计划里的 4px                                                                         | 保留 6px 以兼顾可点击性；视觉/命中区一致                                        | 已接受 |
 | D30 | Phase 4  | —          | Overlay surface 基础字号 14；Tooltip 局部 12，Popover padding 12、HoverCard 8                                                          | 按信息密度保留局部差异，radius/shadow/surface 已统一                            | 已接受 |
 | D31 | Phase 4  | —          | Dialog 关闭按钮默认 24；新增 `closeSize` 可切到 32                                                                                     | 默认紧凑，常规/触控场景可显式切 32                                              | 已解决 |
@@ -65,6 +65,8 @@
 | D41 | Phase 6  | Phase 8    | ColorWidget/ColorRamp/ColorRampChannels 没有 density prop，控件固定 24                                                                 | story 已按真实 API 说明；Phase 8 评估是否加档位                                 | 待处理 |
 | D42 | Phase 6  | Phase 8    | NumericDistribution 没有 density prop，内部 InputNumber/Select 固定 24                                                                 | story 已说明；Phase 8 评估是否加档位                                            | 待处理 |
 | D43 | Phase 6  | Phase 8    | CurveWidget 没有 density prop，高度 180/280、工具行 24；CurvePicker 触发器固定 32                                                      | story 已按真实 API 说明；Phase 8 评估是否加档位                                 | 待处理 |
+| D44 | Phase 7  | —          | `PropertyField` 默认 compact；regular 下 Checkbox 用 md=18，不强行拉到 32                                                              | 元素尺寸例外，story 已说明                                                      | 已接受 |
+| D45 | Phase 7  | Phase 8    | PropertyFieldComplex 中 ColorWidget/CurvePicker 仍无 density，只有 Vector3Input 跟随 24/32                                             | story 已按真实 API 说明；Phase 8 与 D41/D43 一起评估                            | 待处理 |
 
 ## Phase 1 执行明细
 
@@ -404,3 +406,42 @@ Phase 6 已完成。`pnpm verify` 全绿；11 个 numeric/color/curve/resource s
 - NumericDistribution 无 density，内部固定 24，见 D42。
 - CurveWidget 高度 180/280、工具行 24；CurvePicker 固定 32，见 D43。
 - 剩余 4 个 ContractFrame story 归 Phase 7，见 D14。
+
+## Phase 7 执行明细
+
+### 7a PropertyField
+
+- [x] 新增 `density`（compact 24 / regular 32），并传给 `PropertyRow`。
+- [x] Input/Textarea/Select/Combobox/InputNumber/NumericSlider 按 sm/md 透传。
+- [x] Checkbox 按 14/18 元素尺寸；pending 时禁用。
+- [x] 自定义 render 暴露 `density`。
+- [x] 错误改用 `PropertyDescription tone="danger"`，label/description 12/14 沿用 PropertyRow。
+- [x] disabled/readOnly/mixed/pending 统一。
+
+### 7b Stories
+
+- [x] PropertyField、PropertyFieldComplex、PropertyContracts、ResourceHost（subagent 完成）。
+
+### 7c 验收
+
+- [x] stories 完成并 typecheck。
+- [x] `pnpm verify`。
+- [x] 更新计划文档 Phase 7 复选框。
+
+## Phase 7 结果
+
+Phase 7 已完成。`pnpm verify` 全绿；4 个 property story 已迁移，并做了 headless Chrome DOM smoke test；全仓 `ContractFrame` story 为 0。
+
+**已完成**
+
+- `PropertyField` 新增 `density`（compact 24 / regular 32），并透传到 PropertyRow 与内置控件。
+- Input/Textarea/Select/Combobox/InputNumber/NumericSlider 使用 sm/md；Checkbox 用 14/18 元素尺寸。
+- 自定义 render 暴露 density；错误用 `PropertyDescription tone="danger"`；disabled/readOnly/mixed/pending 统一。
+- PropertyField/PropertyFieldComplex/PropertyContracts/ResourceHost 全部使用 StoryPage；PropertyContracts 首屏不再是 JSON。
+- `ContractFrame` 从 13 降到 0，D14 关闭。
+
+**偏差 / 记录**
+
+- PropertyField 默认 compact；regular 下 Checkbox 用 md=18 元素尺寸，见 D44。
+- Complex 中 ColorWidget/CurvePicker 仍无 density，story 按真实 API 说明，见 D45。
+- 剩余工作进入 Phase 8：旧 token、审计脚本、story/样式收尾。

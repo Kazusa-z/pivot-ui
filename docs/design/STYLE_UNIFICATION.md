@@ -450,14 +450,14 @@
 
 **验收**：组件源码中 0 个原生 `<select>`；颜色/曲线/资源控件只有 24/32；无 2/3px 圆角（文档化的功能色除外）；`pnpm verify` 通过。
 
-### Phase 7 — Property（2 天）
+### Phase 7 — Property（已完成 2026-10-26）
 
-- [ ] `property/PropertyField.tsx`：新增 `density`；内置控件按 compact=sm、regular=md 传入；label/description/error 12/14；只读/禁用/混合/pending 统一。
-- [ ] `layout/PropertyRow.tsx` 的 `density` 透传/对齐。
-- [ ] Stories：`PropertyField`、`PropertyFieldComplex`、`PropertyContracts`、`ResourceHost`。
-- [ ] `PropertyContracts` 的标题/说明保持 `Contracts/Property editing`；状态面板改为 `StoryState`，不再首屏 JSON。
+- [x] `property/PropertyField.tsx`：新增 `density`；内置控件按 compact=sm、regular=md 传入；label/description/error 12/14；只读/禁用/混合/pending 统一。
+- [x] `layout/PropertyRow.tsx` 的 `density` 透传/对齐。
+- [x] Stories：`PropertyField`、`PropertyFieldComplex`、`PropertyContracts`、`ResourceHost`。
+- [x] `PropertyContracts` 的标题/说明保持 `Contracts/Property editing`；状态面板改为 `StoryState`，不再首屏 JSON。
 
-**验收**：属性表单在两档下高度、标签、错误展示一致；build 通过。
+**验收**：属性表单在两档下高度、标签、错误展示一致；`pnpm verify` 通过。
 
 ### Phase 8 — Storybook 收尾与清理（4 天）
 

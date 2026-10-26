@@ -162,11 +162,13 @@ export const PropertyControl = forwardRef<HTMLDivElement, PropertyControlProps>(
 })
 
 export interface PropertyDescriptionProps extends HTMLAttributes<HTMLDivElement> {
+  /** Muted help text by default; danger for validation or save errors. */
+  tone?: 'muted' | 'danger'
   css?: SystemStyleObject
 }
 
 export const PropertyDescription = forwardRef<HTMLDivElement, PropertyDescriptionProps>(function PropertyDescription(
-  { css: cssProp, className, ...props },
+  { tone = 'muted', css: cssProp, className, ...props },
   ref
 ) {
   return (
@@ -174,6 +176,7 @@ export const PropertyDescription = forwardRef<HTMLDivElement, PropertyDescriptio
       {...props}
       ref={ref}
       data-property-part="description"
+      data-tone={tone}
       className={cx(
         css(
           {
@@ -181,6 +184,7 @@ export const PropertyDescription = forwardRef<HTMLDivElement, PropertyDescriptio
             fontSize: 'var(--property-description-size, var(--fontSizes-control))',
             color: 'var(--colors-textMuted)',
             overflowWrap: 'anywhere',
+            '&[data-tone=danger]': { color: 'var(--colors-dangerText)' },
           },
           cssProp
         ),

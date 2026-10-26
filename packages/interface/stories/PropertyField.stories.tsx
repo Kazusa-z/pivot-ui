@@ -1,40 +1,61 @@
 import { useState, useSyncExternalStore } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { PropertyField } from '../src/property/PropertyField'
+import type { ChoiceValue, EditResult } from '../src'
 import { Button } from '../src/widgets/buttons'
-import { Flex } from '../src/layout/Flex'
-import { Section } from '../src/layout/Section'
-import type { ChoiceValue, EditResult, PropertyAccess } from '../src'
+import { Text } from '../src/foundation/typography'
 import { createMockPropertyAccess } from './support/mock-property-access'
-import { ContractFrame, StatePanel } from './support/ContractFrame'
+import {
+  StoryPage,
+  StorySection,
+  StoryCard,
+  StoryRow,
+  StoryGrid,
+  StoryState,
+  StoryCode,
+  StoryProps,
+  StoryNote,
+} from './support/StoryPage'
 
-function FieldPlayground({
-  delay = 0,
-  multiline = false,
-  initialMixed = false,
-  searchable = false,
-}: {
-  delay?: number
-  multiline?: boolean
-  initialMixed?: boolean
-  searchable?: boolean
-}) {
-  const [properties] = useState(() => ({
-    a: createMockPropertyAccess<string>({
+type MixedState = {
+  name: boolean
+  description: boolean
+  visible: boolean
+  mode: boolean
+  distance: boolean
+  slider: boolean
+}
+type ResultSummary = { status: EditResult<unknown>['status']; target: string } | null
+
+const choiceOptions = [
+  { key: 'code', label: 'Code 001 (string)', value: '001' },
+  { key: 'number', label: 'One (number)', value: 1 },
+  { key: 'empty', label: 'Empty string', value: '' },
+  { key: 'locked', label: 'Unavailable', value: 2, disabled: true, disabledReason: '应用未提供此操作' },
+] as const
+
+function makeHosts(delay: number) {
+  return {
+    name: createMockPropertyAccess<string>({
       target: { objectId: 'cube', propertyId: 'name' },
       descriptor: {
         kind: 'string',
         id: 'name',
         label: 'Name',
-        description: 'Enter 或失焦提交；Escape 取消。多行使用 Ctrl/⌘+Enter。',
+        description: 'Enter 或失焦提交；Escape 取消。',
       },
       value: 'Cube',
       delayMs: delay,
     }),
-    b: createMockPropertyAccess<string>({
-      target: { objectId: 'sphere', propertyId: 'name' },
-      descriptor: { kind: 'string', id: 'name', label: 'Name' },
-      value: 'Sphere',
+    description: createMockPropertyAccess<string>({
+      target: { objectId: 'cube', propertyId: 'description' },
+      descriptor: {
+        kind: 'string',
+        id: 'description',
+        label: 'Description',
+        description: '多行文本使用 Ctrl/⌘+Enter 提交。',
+      },
+      value: 'A rounded cube in the scene.',
       delayMs: delay,
     }),
     visible: createMockPropertyAccess<boolean>({
@@ -45,117 +66,312 @@ function FieldPlayground({
     }),
     mode: createMockPropertyAccess<ChoiceValue>({
       target: { objectId: 'cube', propertyId: 'mode' },
-      descriptor: {
-        kind: 'enum',
-        id: 'mode',
-        label: 'Mode',
-        options: [
-          { key: 'code', label: 'Code 001 (string)', value: '001' },
-          { key: 'number', label: 'One (number)', value: 1 },
-          { key: 'empty', label: 'Empty string', value: '' },
-          { key: 'locked', label: 'Unavailable', value: 2, disabled: true, disabledReason: '应用未提供此操作' },
-        ],
-      },
+      descriptor: { kind: 'enum', id: 'mode', label: 'Mode', options: choiceOptions },
       value: '001',
       delayMs: delay,
     }),
-  }))
-  const [target, setTarget] = useState<'a' | 'b'>('a')
-  const [mixed, setMixed] = useState({ name: initialMixed, visible: initialMixed, mode: initialMixed })
-  const [result, setResult] = useState<EditResult<string> | null>(null)
-  const a = useSyncExternalStore(properties.a.subscribe, properties.a.getSnapshot, properties.a.getSnapshot)
-  const b = useSyncExternalStore(properties.b.subscribe, properties.b.getSnapshot, properties.b.getSnapshot)
-  const visible = useSyncExternalStore(
-    properties.visible.subscribe,
-    properties.visible.getSnapshot,
-    properties.visible.getSnapshot
+    distance: createMockPropertyAccess<number>({
+      target: { objectId: 'cube', propertyId: 'distance' },
+      descriptor: {
+        id: 'distance',
+        label: 'Distance',
+        kind: 'number',
+        unit: 'm',
+        description: '允许 -100…100；常用范围 -10…10。',
+        constraints: { min: -100, max: 100, softMin: -10, softMax: 10, step: 1, dragStep: 0.1, precision: 3 },
+      },
+      value: 2,
+      delayMs: delay,
+    }),
+    slider: createMockPropertyAccess<number>({
+      target: { objectId: 'cube', propertyId: 'weight' },
+      descriptor: {
+        id: 'weight',
+        label: 'Weight',
+        kind: 'number',
+        description: '拖动滑块或精确输入，提交后写入属性。',
+        constraints: { min: 0, max: 100, softMin: 0, softMax: 100, step: 1, dragStep: 0.1, precision: 2 },
+      },
+      value: 40,
+      delayMs: delay,
+    }),
+  }
+}
+
+function FieldExample() {
+  const [hosts] = useState(() => makeHosts(0))
+  const [density, setDensity] = useState<'compact' | 'regular'>('compact')
+  const [mixed, setMixed] = useState<MixedState>({
+    name: false,
+    description: false,
+    visible: false,
+    mode: false,
+    distance: false,
+    slider: false,
+  })
+  const [readOnly, setReadOnly] = useState(false)
+  const [disabled, setDisabled] = useState(false)
+  const [delay, setDelay] = useState(0)
+  const [result, setResult] = useState<ResultSummary>(null)
+  const [rejectedNext, setRejectedNext] = useState(false)
+
+  const name = useSyncExternalStore(hosts.name.subscribe, hosts.name.getSnapshot, hosts.name.getSnapshot)
+  const description = useSyncExternalStore(
+    hosts.description.subscribe,
+    hosts.description.getSnapshot,
+    hosts.description.getSnapshot
   )
-  const mode = useSyncExternalStore(properties.mode.subscribe, properties.mode.getSnapshot, properties.mode.getSnapshot)
-  const access = properties[target]
-  const active = target === 'a' ? a : b
+  const visible = useSyncExternalStore(hosts.visible.subscribe, hosts.visible.getSnapshot, hosts.visible.getSnapshot)
+  const mode = useSyncExternalStore(hosts.mode.subscribe, hosts.mode.getSnapshot, hosts.mode.getSnapshot)
+  const distance = useSyncExternalStore(
+    hosts.distance.subscribe,
+    hosts.distance.getSnapshot,
+    hosts.distance.getSnapshot
+  )
+  const slider = useSyncExternalStore(hosts.slider.subscribe, hosts.slider.getSnapshot, hosts.slider.getSnapshot)
+
+  const all = Object.values(hosts)
+  const applyAvailability = (next: { readOnly?: boolean; disabled?: boolean }) => {
+    for (const access of all) access.setAvailability(next)
+  }
+  const applyDelay = (ms: number) => {
+    setDelay(ms)
+    for (const access of Object.values(hosts)) access.setDelay(ms)
+  }
   const reset = () => {
-    Object.values(properties).forEach((property) => property.reset())
-    setTarget('a')
-    setMixed({ name: initialMixed, visible: initialMixed, mode: initialMixed })
+    for (const access of Object.values(hosts)) access.reset()
+    setDensity('compact')
+    setMixed({ name: false, description: false, visible: false, mode: false, distance: false, slider: false })
+    setReadOnly(false)
+    setDisabled(false)
+    setDelay(0)
     setResult(null)
+    setRejectedNext(false)
+  }
+  const resultHandler = (next: EditResult<unknown>) => {
+    setResult({ status: next.status, target: next.target.objectId })
   }
 
   return (
-    <ContractFrame
-      title="连接应用数据的属性字段"
-      description="修改 Name 并按 Enter，勾选 Visible，或在 Mode 中选择一项，再看下方数值与历史次数怎样变化。点击 Reject next name 可体验保存失败后的修正重试，Switch target 可切换对象。应用通过 PropertyAccess 提供数据，PropertyField 负责把这些操作连接到字段。"
-      onReset={reset}>
-      <Flex gap="sm" wrap="wrap">
-        <Button onClick={() => access.rejectNext('名称未保存，请修改后重试。')}>Reject next name</Button>
-        <Button onClick={() => access.externalUpdate('External name')}>External name</Button>
-        <Button onPointerDown={(event) => event.preventDefault()} onClick={() => setTarget(target === 'a' ? 'b' : 'a')}>
-          Switch target
-        </Button>
-        <Button
-          onPointerDown={(event) => event.preventDefault()}
-          onClick={() =>
-            Object.values(properties).forEach((property) => property.setAvailability({ readOnly: !active.readOnly }))
-          }>
-          Toggle read only
-        </Button>
-        <Button
-          onPointerDown={(event) => event.preventDefault()}
-          onClick={() =>
-            Object.values(properties).forEach((property) => property.setAvailability({ disabled: !active.disabled }))
-          }>
-          Toggle disabled
-        </Button>
-        <Button
-          onClick={() =>
-            setMixed((current) => {
-              const next = !Object.values(current).some(Boolean)
-              return { name: next, visible: next, mode: next }
-            })
-          }>
-          Toggle mixed
-        </Button>
-      </Flex>
-      <Section title={`Object: ${active.target.objectId}`}>
-        <PropertyField
-          access={access}
-          widget={multiline ? 'textarea' : 'input'}
-          mixed={mixed.name}
-          onEditResult={(next) => {
-            setResult(next)
-            if (next.status === 'committed' || next.status === 'unchanged')
-              setMixed((current) => ({ ...current, name: false }))
-          }}
-        />
-        <PropertyField
-          access={properties.visible}
-          mixed={mixed.visible}
-          onEditResult={(next) => {
-            if (next.status === 'committed' || next.status === 'unchanged')
-              setMixed((current) => ({ ...current, visible: false }))
-          }}
-        />
-        <PropertyField
-          access={properties.mode}
-          widget={searchable ? 'combobox' : 'select'}
-          mixed={mixed.mode}
-          onEditResult={(next) => {
-            if (next.status === 'committed' || next.status === 'unchanged')
-              setMixed((current) => ({ ...current, mode: false }))
-          }}
-        />
-      </Section>
-      <StatePanel
-        label="已保存值与当前预览"
+    <StoryPage
+      eyebrow="Property"
+      title="PropertyField"
+      summary="PropertyField 把 PropertyAccess 接到带标签、说明和错误的字段。density 让内置 Input、Textarea、Select、Combobox、InputNumber、NumericSlider 与 Checkbox 跟随 24/32 两档；应用负责数据、校验和异步保存。"
+      meta={
+        <>
+          <span>compact 24 / regular 32</span>
+          <span>·</span>
+          <span>7 widgets</span>
+          <span>·</span>
+          <span>contract lifecycle</span>
+        </>
+      }
+      actions={
+        <StoryRow>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setDensity((value) => (value === 'compact' ? 'regular' : 'compact'))}>
+            {density === 'compact' ? 'Regular density' : 'Compact density'}
+          </Button>
+          <Button size="sm" variant="soft" onClick={reset}>
+            Reset
+          </Button>
+        </StoryRow>
+      }>
+      <StorySection title="Density" description="同一字段在两档下切换：标签/说明为 12/14，控件高度 24/32。">
+        <StoryGrid>
+          {(['compact', 'regular'] as const).map((tier) => (
+            <StoryCard
+              key={tier}
+              title={tier === 'compact' ? 'Compact · 24' : 'Regular · 32'}
+              description={tier === 'compact' ? '工具栏、属性面板、树、表格。' : '对话框、常规表单、文档页。'}>
+              <PropertyField
+                access={hosts.name}
+                density={tier}
+                onEditResult={resultHandler}
+                description="名字会立即预览，Enter 或失焦提交。"
+              />
+              <PropertyField
+                access={hosts.distance}
+                density={tier}
+                widget="input-number"
+                onEditResult={resultHandler}
+              />
+            </StoryCard>
+          ))}
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Widgets" description="默认按属性类型选择控件；widget 可显式覆盖文本、选择或数值的呈现。">
+        <StoryGrid>
+          <StoryCard title="Input / Textarea">
+            <PropertyField access={hosts.name} density={density} onEditResult={resultHandler} />
+            <PropertyField
+              access={hosts.description}
+              density={density}
+              widget="textarea"
+              onEditResult={resultHandler}
+            />
+          </StoryCard>
+          <StoryCard title="Boolean / Enum">
+            <PropertyField access={hosts.visible} density={density} onEditResult={resultHandler} />
+            <PropertyField access={hosts.mode} density={density} widget="select" onEditResult={resultHandler} />
+            <PropertyField access={hosts.mode} density={density} widget="combobox" onEditResult={resultHandler} />
+          </StoryCard>
+          <StoryCard title="Number / Slider">
+            <PropertyField
+              access={hosts.distance}
+              density={density}
+              widget="input-number"
+              onEditResult={resultHandler}
+            />
+            <PropertyField
+              access={hosts.slider}
+              density={density}
+              widget="numeric-slider"
+              onEditResult={resultHandler}
+            />
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection
+        title="States"
+        description="mixed 表示多个对象的值不一致；只读、禁用和保存失败由 PropertyAccess 状态驱动。">
+        <StoryCard title="Availability and mixed values">
+          <StoryRow>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const next = !readOnly
+                setReadOnly(next)
+                applyAvailability({ readOnly: next })
+              }}>
+              {readOnly ? 'Allow editing' : 'Toggle read only'}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const next = !disabled
+                setDisabled(next)
+                applyAvailability({ disabled: next })
+              }}>
+              {disabled ? 'Enable fields' : 'Toggle disabled'}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const next = !Object.values(mixed).some(Boolean)
+                setMixed({ name: next, description: next, visible: next, mode: next, distance: next, slider: next })
+              }}>
+              Toggle mixed
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => applyDelay(delay ? 0 : 1200)}>
+              {delay ? 'Clear delay' : 'Delay 1200 ms'}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                hosts.name.rejectNext('名称未保存，请修改后重试。')
+                setRejectedNext(true)
+                setResult(null)
+              }}>
+              Reject next name
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => hosts.name.externalUpdate('External name')}>
+              External name
+            </Button>
+          </StoryRow>
+          <StoryNote tone="muted">
+            点击 Reject next name，再编辑 Name 并提交，即可看到 danger 错误和重试路径；Delay 用来观察 pending。 当前
+            density：{density}。{rejectedNext ? ' 下一次 Name 提交会被拒绝。' : ''}
+          </StoryNote>
+          <PropertyField access={hosts.name} density={density} mixed={mixed.name} onEditResult={resultHandler} />
+          <PropertyField
+            access={hosts.distance}
+            density={density}
+            widget="input-number"
+            mixed={mixed.distance}
+            onEditResult={resultHandler}
+          />
+          <PropertyField
+            access={hosts.mode}
+            density={density}
+            widget="combobox"
+            mixed={mixed.mode}
+            onEditResult={resultHandler}
+          />
+        </StoryCard>
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="tsx"
+            code={`<PropertyField access={access} density="compact" />
+<PropertyField access={access} widget="textarea" />
+<PropertyField access={access} widget="numeric-slider" />
+<PropertyField access={access} render={(field) => <MyEditor {...field.editProps} />} />`}
+          />
+          <StoryProps
+            rows={[
+              { name: 'access', type: 'PropertyAccess<T>', description: '应用数据、预览、提交和可用状态。' },
+              {
+                name: 'widget',
+                type: "'input' | 'textarea' | 'checkbox' | 'select' | 'combobox' | 'input-number' | 'numeric-slider'",
+                defaultValue: '按 kind 推断',
+                description: '选择内置呈现。',
+              },
+              {
+                name: 'density',
+                type: "'compact' | 'regular'",
+                defaultValue: "'compact'",
+                description: '行高 24/32，内置控件 sm/md。',
+              },
+              {
+                name: 'mixed',
+                type: 'boolean',
+                defaultValue: 'false',
+                description: '多对象值不一致时显示空值/indeterminate。',
+              },
+              { name: 'render', type: '(field) => ReactNode', description: '接入颜色、向量、曲线或资源编辑器。' },
+            ]}
+          />
+        </StoryGrid>
+      </StorySection>
+
+      <StoryState
+        label="Field state"
         value={{
-          activeTarget: active.target.objectId,
-          a: { value: a.value, preview: a.edit?.previewValue, phase: a.edit?.phase, history: a.historyCount },
-          b: { value: b.value, preview: b.edit?.previewValue, phase: b.edit?.phase, history: b.historyCount },
-          visible: { value: visible.value, history: visible.historyCount },
-          choice: { value: mode.value, type: typeof mode.value, history: mode.historyCount },
-          result: result?.status,
+          density,
+          readOnly,
+          disabled,
+          delay,
+          mixed,
+          rejectedNext,
+          result,
+          fields: {
+            name: {
+              value: name.value,
+              phase: name.edit?.phase,
+              revision: name.revision,
+              history: name.historyCount,
+              error: name.error?.message,
+            },
+            description: { value: description.value, phase: description.edit?.phase },
+            visible: { value: visible.value, phase: visible.edit?.phase },
+            mode: { value: mode.value, type: typeof mode.value, phase: mode.edit?.phase },
+            distance: { value: distance.value, preview: distance.edit?.previewValue, phase: distance.edit?.phase },
+            slider: { value: slider.value, preview: slider.edit?.previewValue, phase: slider.edit?.phase },
+          },
         }}
       />
-    </ContractFrame>
+    </StoryPage>
   )
 }
 
@@ -165,197 +381,15 @@ const meta = {
     docs: {
       description: {
         component:
-          'PropertyField 把一个 PropertyAccess 连接到带名称、说明和错误提示的字段，适合需要预览、异步保存、取消或撤销记录的属性表单。\n\n字符串、数值、布尔值和单选项可使用默认控件，widget 可选择多行文本、搜索选择或数值滑块。PropertyAccess 提供已保存值、临时预览和版本号；onEditResult 用于观察提交结果。\n\n应用实现数据读写与校验，示例使用内存数据模拟。外部更新或切换对象会使原编辑失效，已经提交的请求仍属于原对象。复杂值通过显式 render 接入。',
+          'PropertyField 把一个 PropertyAccess 连接到带名称、说明和错误提示的字段。默认控件覆盖字符串、数值、布尔值和单选项；density 统一 24/32 两档，widget 可切换多行文本、搜索选择或数值滑块。应用负责数据、校验和异步保存，onEditResult 用于观察结果。',
       },
     },
+    layout: 'fullscreen',
   },
   title: 'Property/PropertyField',
-  component: FieldPlayground,
-} satisfies Meta<typeof FieldPlayground>
+} satisfies Meta
+
 export default meta
 type Story = StoryObj<typeof meta>
-export const Lifecycle: Story = {}
-export const DelayedAndRejected: Story = { args: { delay: 1200 } }
-export const TargetAndExternalUpdates: Story = { args: { delay: 1800 } }
-export const Multiline: Story = { args: { multiline: true } }
-export const MixedAndAvailability: Story = { args: { initialMixed: true } }
-export const SearchableChoice: Story = { args: { searchable: true } }
 
-function ValidationExample() {
-  const [{ base, access }] = useState(() => {
-    const base = createMockPropertyAccess<string>({
-      target: { objectId: 'object', propertyId: 'name' },
-      descriptor: { kind: 'string', id: 'name', label: 'Validated name' },
-      value: 'Cube',
-    })
-    // 名称限制由应用校验提供；PropertyField 负责显示校验结果。
-    const access: PropertyAccess<string> = {
-      getSnapshot: base.getSnapshot,
-      subscribe: base.subscribe,
-      begin() {
-        const started = base.begin()
-        if (started.status !== 'started') return started
-        return {
-          ...started,
-          session: {
-            ...started.session,
-            change(value) {
-              return value.includes('/')
-                ? {
-                    status: 'invalid',
-                    error: { code: 'invalid-value', message: '此例的名称不能包含 /。' },
-                  }
-                : started.session.change(value)
-            },
-          },
-        }
-      },
-    }
-    return { base, access }
-  })
-  const snapshot = useSyncExternalStore(base.subscribe, base.getSnapshot, base.getSnapshot)
-  return (
-    <ContractFrame
-      title="编辑过程中的应用校验"
-      description="在名称中输入 / 并提交，查看字段旁的校验提示；删掉 / 后重新提交，或按 Escape 恢复原值。下方历史次数可以区分失败与成功的保存。接入时把同样的名称规则放在自己的 PropertyAccess 校验中。"
-      onReset={() => base.reset()}>
-      <PropertyField access={access} />
-      <StatePanel
-        label="Host snapshot"
-        value={{
-          value: snapshot.value,
-          preview: snapshot.edit?.previewValue,
-          phase: snapshot.edit?.phase,
-          history: snapshot.historyCount,
-        }}
-      />
-    </ContractFrame>
-  )
-}
-
-export const ChangeValidation: Story = { render: () => <ValidationExample /> }
-
-function NumericFieldExample({
-  slider = false,
-  delay = 0,
-  initialMixed = false,
-  validateChange = false,
-}: {
-  slider?: boolean
-  delay?: number
-  initialMixed?: boolean
-  validateChange?: boolean
-}) {
-  const [hosts] = useState(() => {
-    const make = (objectId: string, value: number) =>
-      createMockPropertyAccess<number>({
-        target: { objectId, propertyId: 'distance' },
-        descriptor: {
-          id: 'distance',
-          label: 'Distance',
-          kind: 'number',
-          unit: 'm',
-          description:
-            '允许输入 -100…100；拖动与步进的常用范围为 -10…10。按钮步长为 1，拖动步长为 0.1，最多保留 3 位小数。',
-          constraints: { min: -100, max: 100, softMin: -10, softMax: 10, step: 1, dragStep: 0.1, precision: 3 },
-        },
-        value,
-        delayMs: delay,
-      })
-    const a = make('cube', 2)
-    const b = make('sphere', 8)
-    const withValidation = (base: typeof a): PropertyAccess<number> => ({
-      subscribe: base.subscribe,
-      getSnapshot: base.getSnapshot,
-      begin() {
-        const started = base.begin()
-        if (started.status !== 'started') return started
-        return {
-          ...started,
-          session: {
-            ...started.session,
-            change(value) {
-              return value === 13
-                ? { status: 'invalid', error: { code: 'invalid-value', message: '此例不接受 13，请输入其他数值。' } }
-                : started.session.change(value)
-            },
-          },
-        }
-      },
-    })
-    return { a, b, accessA: validateChange ? withValidation(a) : a, accessB: validateChange ? withValidation(b) : b }
-  })
-  const [target, setTarget] = useState<'a' | 'b'>('a')
-  const [mixed, setMixed] = useState(initialMixed)
-  const [mounted, setMounted] = useState(true)
-  const [results, setResults] = useState<EditResult<number>[]>([])
-  const a = useSyncExternalStore(hosts.a.subscribe, hosts.a.getSnapshot, hosts.a.getSnapshot)
-  const b = useSyncExternalStore(hosts.b.subscribe, hosts.b.getSnapshot, hosts.b.getSnapshot)
-  const current = hosts[target]
-  const snapshot = target === 'a' ? a : b
-  return (
-    <ContractFrame
-      title="数值字段的预览与一次提交"
-      description="拖动数值后松开，观察预览数值、保存结果和历史次数；也可在调整时按 Escape 恢复原值。用上方按钮试试延迟保存、拒绝或切换对象，了解应用通过 PropertyAccess 连接数值输入和滑块的方式。"
-      onReset={() => {
-        hosts.a.reset()
-        hosts.b.reset()
-        setTarget('a')
-        setMixed(initialMixed)
-        setMounted(true)
-        setResults([])
-      }}>
-      <Flex gap="sm" wrap="wrap">
-        <Button onClick={() => current.rejectNext('数值未保存，请修正后重试。')}>Reject next</Button>
-        <Button onClick={() => current.externalUpdate(7)}>External value</Button>
-        <Button onClick={() => current.externalUpdate(snapshot.value)}>Same value revision</Button>
-        <Button onClick={() => setTarget((value) => (value === 'a' ? 'b' : 'a'))}>Switch target</Button>
-        <Button onClick={() => current.setAvailability({ readOnly: !snapshot.readOnly })}>Toggle read only</Button>
-        <Button onClick={() => current.setAvailability({ disabled: !snapshot.disabled })}>Toggle disabled</Button>
-        <Button onClick={() => setMixed((value) => !value)}>Toggle mixed</Button>
-        <Button onClick={() => setMounted((value) => !value)}>Toggle field</Button>
-      </Flex>
-      <Section title={`Object: ${snapshot.target.objectId}`}>
-        {mounted && (
-          <PropertyField
-            access={target === 'a' ? hosts.accessA : hosts.accessB}
-            widget={slider ? 'numeric-slider' : 'input-number'}
-            mixed={mixed}
-            onEditResult={(result) => {
-              setResults((currentResults) => [...currentResults, result])
-              if (result.status === 'committed' || result.status === 'unchanged') setMixed(false)
-            }}
-          />
-        )}
-      </Section>
-      <StatePanel
-        label="已保存数值与当前预览"
-        value={{
-          activeTarget: snapshot.target.objectId,
-          a: {
-            value: a.value,
-            preview: a.edit?.previewValue,
-            phase: a.edit?.phase,
-            history: a.historyCount,
-            revision: a.revision,
-          },
-          b: {
-            value: b.value,
-            preview: b.edit?.previewValue,
-            phase: b.edit?.phase,
-            history: b.historyCount,
-            revision: b.revision,
-          },
-          results: results.map((result) => ({ status: result.status, target: result.target.objectId })),
-        }}
-      />
-    </ContractFrame>
-  )
-}
-
-export const NumericLifecycle: Story = { render: () => <NumericFieldExample /> }
-export const NumericSliderLifecycle: Story = { render: () => <NumericFieldExample slider /> }
-export const NumericDelayedAndRejected: Story = { render: () => <NumericFieldExample delay={1200} /> }
-export const NumericTargetsAndVersions: Story = { render: () => <NumericFieldExample slider delay={1600} /> }
-export const NumericMixedAndAvailability: Story = { render: () => <NumericFieldExample initialMixed /> }
-export const NumericChangeValidation: Story = { render: () => <NumericFieldExample validateChange /> }
+export const Overview: Story = { render: () => <FieldExample /> }

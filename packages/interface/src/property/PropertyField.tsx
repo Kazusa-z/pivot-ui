@@ -31,6 +31,8 @@ export interface PropertyFieldControlProps {
 }
 
 export interface PropertyFieldRenderProps<T> extends PropertyBinding<T> {
+  /** Matches the row density so custom editors can choose 24/32 controls. */
+  density: 'compact' | 'regular'
   /** 传给实际输入或控件组，使字段标签、帮助文字、错误和忙碌状态与控件关联。 */
   controlProps: PropertyFieldControlProps
   /** 可直接传给数值、颜色或曲线组件，连接显示值、可用状态以及预览、提交和取消回调。 */
@@ -75,10 +77,12 @@ export function PropertyField<T>({
   onEditResult,
   render,
   association = render ? 'group' : 'control',
+  density = 'compact',
   ...rowProps
 }: PropertyFieldProps<T>) {
   const binding = usePropertyBinding({ access, mixed, onEditResult })
   const { snapshot, resetKey, begin, change, commit, cancel } = binding
+  const controlSize = density === 'regular' ? 'md' : 'sm'
   const generatedId = useId()
   const id = controlId ?? generatedId
   const textChanged = useRef(false)
@@ -189,6 +193,7 @@ export function PropertyField<T>({
   }
   const customField: PropertyFieldRenderProps<T> = {
     ...binding,
+    density,
     controlProps,
     editProps: {
       ...controlProps,
@@ -210,6 +215,7 @@ export function PropertyField<T>({
   return (
     <PropertyRow
       {...rowProps}
+      density={density}
       data-property-kind={descriptor.kind}
       data-edit-phase={pending ? 'pending' : (snapshot.edit?.phase ?? editor.phase)}>
       <PropertyLabel id={`${id}-label`} htmlFor={association === 'control' ? id : undefined}>
@@ -220,9 +226,9 @@ export function PropertyField<T>({
         {!render &&
           descriptor.kind === 'number' &&
           (selectedWidget === 'numeric-slider' ? (
-            <NumericSlider {...numberProps} label={descriptor.label} unit={descriptor.unit} />
+            <NumericSlider {...numberProps} size={controlSize} label={descriptor.label} unit={descriptor.unit} />
           ) : (
-            <InputNumber {...numberProps} endSlot={descriptor.unit} />
+            <InputNumber {...numberProps} size={controlSize} endSlot={descriptor.unit} />
           ))}
         {!render &&
           descriptor.kind === 'string' &&
@@ -230,6 +236,7 @@ export function PropertyField<T>({
             <Textarea
               {...common}
               {...editor.inputProps}
+              size={controlSize}
               value={editor.draft}
               placeholder={mixed ? 'Multiple values' : placeholder}
             />
@@ -237,6 +244,7 @@ export function PropertyField<T>({
             <Input
               {...common}
               {...editor.inputProps}
+              size={controlSize}
               value={editor.draft}
               placeholder={mixed ? 'Multiple values' : placeholder}
             />
@@ -244,6 +252,8 @@ export function PropertyField<T>({
         {!render && descriptor.kind === 'boolean' && (
           <Checkbox
             {...common}
+            size={density === 'regular' ? 'md' : 'sm'}
+            disabled={snapshot.disabled || pending}
             checked={mixed ? 'indeterminate' : (snapshot.value as boolean)}
             onCheckedChange={(value) => choose(value as T)}
           />
@@ -253,6 +263,7 @@ export function PropertyField<T>({
           (selectedWidget === 'combobox' ? (
             <Combobox<ChoiceValue>
               {...common}
+              size={controlSize}
               options={descriptor.options}
               value={mixed ? null : (snapshot.value as ChoiceValue)}
               placeholder={mixed ? 'Multiple values' : placeholder}
@@ -261,6 +272,7 @@ export function PropertyField<T>({
           ) : (
             <Select<ChoiceValue>
               {...common}
+              size={controlSize}
               options={descriptor.options}
               value={mixed ? null : (snapshot.value as ChoiceValue)}
               placeholder={mixed ? 'Multiple values' : placeholder}
@@ -273,7 +285,7 @@ export function PropertyField<T>({
         <PropertyDescription id={`${id}-unavailable`}>{snapshot.unavailableReason}</PropertyDescription>
       )}
       {error && (
-        <PropertyDescription id={`${id}-error`} role="alert">
+        <PropertyDescription id={`${id}-error`} role="alert" tone="danger">
           {error}
         </PropertyDescription>
       )}
