@@ -81,6 +81,10 @@ const coreSemanticColors = {
 
   primary: '$blue9',
   primaryActive: '$blue10',
+  // Solid fills that carry white text use a darker blue than the blue9 accent.
+  // Radix light blue8 is too light for white text; light theme overrides use blue11.
+  primarySolid: '$blue8',
+  primarySolidHover: '$blue7',
 
   textMuted: '$gray10',
   text: '$gray11',
@@ -90,7 +94,8 @@ const coreSemanticColors = {
   surface: '$gray2',
   surfaceSubtle: '$grayA3',
   surfaceStrong: '$gray4',
-  surfaceOverlay: '$gray2',
+  surfaceOverlay: '$gray3',
+  surfaceRaised: '$gray3',
 
   softBg: '$grayA3',
   softBgHover: '$grayA4',
@@ -104,28 +109,29 @@ const coreSemanticColors = {
 }
 
 const statusSemanticColors = {
-  infoText: '$blue11',
+  // Status text uses the 12 step so 12px/14px copy clears 4.5:1 on the status tint.
+  infoText: '$blue12',
   infoBg: '$blue3',
   infoBgHover: '$blue4',
   infoBorder: '$blue7',
   infoSolid: '$blue9',
   infoSolidHover: '$blue10',
 
-  successText: '$green11',
+  successText: '$green12',
   successBg: '$green3',
   successBgHover: '$greenA4',
   successBorder: '$green7',
   successSolid: '$green9',
   successSolidHover: '$green10',
 
-  warningText: '$amber11',
+  warningText: '$amber12',
   warningBg: '$amber3',
   warningBgHover: '$amber4',
   warningBorder: '$amber7',
   warningSolid: '$amber9',
   warningSolidHover: '$amber10',
 
-  dangerText: '$red11',
+  dangerText: '$red12',
   dangerBg: '$redA3',
   dangerBgHover: '$redA4',
   dangerBorder: '$red7',
@@ -133,9 +139,13 @@ const statusSemanticColors = {
   dangerSolidHover: '$red10',
 
   selectionText: '$white',
-  selectionBg: '$blue9',
-  selectionBgHover: '$blue10',
-  selectionBorder: '$blue10',
+  selectionBg: '$blue8',
+  selectionBgHover: '$blue7',
+  selectionBorder: '$blue8',
+
+  // Secondary selection for cards/tiles: tinted, not a full solid row.
+  selectionSubtleBg: '$blueA3',
+  selectionSubtleBorder: '$blue8',
 
   scrollbarTrack: '$grayA3',
   scrollbarTrackHover: '$grayA5',
@@ -199,12 +209,22 @@ export const semanticColors = {
 }
 
 export const colors = {
-  dark: { ...darkColors, ...semanticColors },
+  dark: {
+    ...darkColors,
+    ...semanticColors,
+    // Restore elevation: page is darker than cards, overlays are lighter than the page.
+    appBg: '$gray1',
+    surface: '$gray2',
+    surfaceOverlay: '$gray3',
+    surfaceRaised: '$gray3',
+    textMuted: '#8b909a',
+  },
   light: {
     ...lightColors,
     ...semanticColors,
     appBg: '$gray2',
-    surfaceOverlay: '$gray1',
+    surfaceOverlay: '$white',
+    surfaceRaised: '$white',
     dashboardBg: '$gray2',
     listBg: '$gray2',
     toastBg: '$gray1',
@@ -213,6 +233,14 @@ export const colors = {
     surfaceSubtle: '$gray2',
     surfaceStrong: '$gray3',
     overlayBg: '$gray1',
+    textMuted: '#6b7078',
+    // Light Radix blue8 (#5eb1ef) does not carry white text; use blue11 and a darker hover.
+    primarySolid: '$blue11',
+    primarySolidHover: '#0a5fa8',
+    selectionBg: '$blue11',
+    selectionBgHover: '#0a5fa8',
+    selectionBorder: '$blue11',
+    selectionSubtleBorder: '$blue11',
     tooltipBg: '$gray12',
     tooltipColor: '$gray1',
     sidebarBg: '$blueA3',

@@ -32,6 +32,7 @@ const commonVars = {
 const lightVars = cssVars('colors', lightColors)
 
 const colorFallbacks: Record<string, string> = {
+  appBg: '#111113',
   gray1: '#111113',
   gray3: '#212225',
   gray8: '#5a6169',
@@ -39,9 +40,12 @@ const colorFallbacks: Record<string, string> = {
   grayA5: '#d9edfe25',
   grayA7: '#d9edff40',
   blue10: '#3b9eff',
-  white: '#ffffff',
-  surface: '#111113',
+  primarySolid: '#2870bd',
+  surface: '#18191b',
+  surfaceRaised: '#212225',
+  textMuted: '#8b909a',
   textStrong: '#edeef0',
+  white: '#ffffff',
 }
 
 const toCssValue = (value: string) =>
@@ -114,14 +118,14 @@ export const globalCss = {
     fontFamily:
       'geist, InterVariable, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol',
     fontSize: '16px',
-    backgroundColor: 'var(--colors-surface, #111113)',
+    backgroundColor: 'var(--colors-appBg, #111113)',
     color: 'var(--colors-textStrong, #edeef0)',
   },
   body: {
     ...(convert(resetCSS.body) as Record<string, unknown>),
     fontSize: '16px',
     lineHeight: 'normal',
-    backgroundColor: 'var(--colors-surface, #111113)',
+    backgroundColor: 'var(--colors-appBg, #111113)',
     color: 'var(--colors-textStrong, #edeef0)',
   },
 }

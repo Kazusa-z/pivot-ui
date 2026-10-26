@@ -19,7 +19,10 @@ export const ImagePreview = forwardRef<HTMLImageElement, ImagePreviewProps>(func
       ref={ref}
       src={src || undefined}
       alt={alt}
-      className={cx(css({ display: 'block', maxWidth: '100%', minWidth: 0 }, cssProp), className)}
+      className={cx(
+        css({ display: 'block', maxWidth: '100%', minWidth: 0, borderRadius: 'var(--radii-control)' }, cssProp),
+        className
+      )}
       style={{ objectFit, ...style }}
     />
   )

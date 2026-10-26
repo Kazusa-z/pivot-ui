@@ -1,279 +1,269 @@
-import { useState } from 'react'
-import { ThemeProvider, createThemeStore, Button, Checkbox, Input } from '@pivot-ui/react'
-import type { Meta, StoryFn } from '@storybook/react'
-import { fontSizes, radii, shadows, sizes, space } from '../../../panda/designTokens'
-import { styled } from '@pivot-ui/react/styling/jsx'
+import type { Meta, StoryObj } from '@storybook/react'
+import { fontSizes, radii, sizes, space } from '../../../panda/designTokens'
+import { Button } from '../src/widgets/buttons'
+import { Input } from '../src/widgets/inputs/Input'
+import { Select } from '../src/widgets/choices/Select'
+import { Checkbox } from '../src/widgets/choices/Checkbox'
+import { Text } from '../src/foundation/typography'
+import { css } from '../styled-system/css'
+import {
+  StoryPage,
+  StorySection,
+  StoryGrid,
+  StoryCard,
+  StoryRow,
+  StoryDensity,
+  StoryDensityGroup,
+  StoryCode,
+} from './support/StoryPage'
 
-const Page = styled('main', {
-  base: {
-    minHeight: '100vh',
-    padding: '24px',
-    backgroundColor: 'var(--colors-appBg)',
-    color: 'var(--colors-textStrong)',
-    fontSize: '14px',
-    lineHeight: 1.5,
-  },
-})
-
-const Section = styled('section', {
-  base: {
-    marginBlock: '24px',
-    '& h2': { fontSize: '20px', fontWeight: 600, marginBottom: '8px' },
-    '& > p': { color: 'var(--colors-text)', marginBottom: '16px', maxWidth: '760px' },
-  },
-})
-
-const Grid = styled('div', {
-  base: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-    gap: '16px',
-    '@media (max-width: 900px)': { gridTemplateColumns: 'minmax(0, 1fr)' },
-  },
-})
-
-const Card = styled('div', {
-  base: {
-    minWidth: 0,
-    padding: '16px',
-    backgroundColor: 'var(--colors-panelBg)',
-    color: 'var(--colors-textStrong)',
-    border: '1px solid var(--colors-border)',
-    borderRadius: '8px',
-    '& h3': { fontSize: '16px', fontWeight: 600, marginBottom: '12px' },
-  },
-})
-
-const Surface = styled('div', {
-  base: { padding: '12px', border: '1px solid var(--colors-border)', borderRadius: '6px', marginBottom: '8px' },
-})
-
-const Controls = styled('div', {
-  base: { display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', marginTop: '16px' },
-})
-
-const TokenGrid = styled('div', {
-  base: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '12px' },
-})
-
-const TokenName = styled('div', { base: { fontWeight: 600, marginTop: '8px' } })
-const TokenValue = styled('div', {
-  base: {
-    color: 'var(--colors-textMuted)',
-    fontFamily: 'var(--fonts-mono)',
-    fontSize: '12px',
-    overflowWrap: 'anywhere',
-  },
-})
-const ScaleRow = styled('div', {
-  base: {
-    display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) 52px',
-    gap: '12px',
-    alignItems: 'center',
-    minHeight: '32px',
-  },
-})
-const Bar = styled('div', {
-  base: { maxWidth: '100%', height: '8px', borderRadius: '4px', backgroundColor: 'var(--colors-primary)' },
-})
+const densityOptions = [
+  { key: 'a', label: 'Local', value: 'local' },
+  { key: 'b', label: 'World', value: 'world' },
+]
 
 const semanticSwatches = [
   'appBg',
-  'primary',
-  'primaryActive',
+  'surface',
+  'surfaceRaised',
+  'panelBg',
+  'softBg',
+  'border',
+  'borderStrong',
   'textMuted',
   'text',
   'textStrong',
-  'textInverted',
-  'softBg',
-  'softBgHover',
-  'softBgActive',
-  'surface',
-  'surfaceSubtle',
-  'surfaceStrong',
-  'surfaceOverlay',
-  'successBg',
-  'successBorder',
-  'successText',
-  'dangerBg',
-  'dangerBorder',
-  'dangerText',
-  'warningBg',
-  'warningText',
+  'primary',
+  'primarySolid',
+  'selectionBg',
+  'selectionText',
   'infoBg',
   'infoText',
-  'selectionBg',
-  'selectionBorder',
-  'panelBg',
-  'toastBg',
-  'border',
-  'borderStrong',
-  'focusRing',
+  'successBg',
+  'successText',
+  'warningBg',
+  'warningText',
+  'dangerBg',
+  'dangerText',
 ] as const
 
-function ThemeShowcase({ mode }: { mode: 'dark' | 'light' }) {
-  const [store] = useState(() => createThemeStore({ initialPreference: mode }))
-  return (
-    <ThemeProvider store={store}>
-      <Card className={`${mode}-theme`}>
-        <h3>{mode === 'dark' ? 'Dark Theme' : 'Light Theme'}</h3>
-        {(['surface', 'surfaceSubtle', 'surfaceStrong', 'softBg', 'panelBg'] as const).map((token) => (
-          <Surface key={token} style={{ backgroundColor: `var(--colors-${token})` }}>
-            <strong>{token}</strong>
-            <TokenValue>面板、控件与文字通过语义颜色角色保持一致。</TokenValue>
-          </Surface>
-        ))}
-        <Input aria-label={`${mode} theme input`} placeholder="Edit a value…" />
-        <Controls>
-          <Button variant="solid">Primary</Button>
-          <Button variant="outline">Outline</Button>
-          <Checkbox aria-label={`${mode} theme checkbox`} defaultChecked />
-        </Controls>
-      </Card>
-    </ThemeProvider>
-  )
-}
+const fontScale = [
+  { token: 'micro', size: 'xs', label: 'micro / Kbd / meta' },
+  { token: 'control', size: 'sm', label: 'control / dense UI' },
+  { token: 'controlLarge', size: 'md', label: 'controlLarge / regular' },
+  { token: 'heading', size: 'lg', label: 'heading / section' },
+  { token: 'display', size: 5, label: 'display / page title' },
+] as const
 
-function SizeScale({ tokens }: { tokens: (keyof typeof sizes)[] }) {
-  return tokens.map((token) => (
-    <ScaleRow key={token}>
-      <span style={{ overflowWrap: 'anywhere' }}>{token}</span>
-      <Bar style={{ width: sizes[token] }} />
-      <TokenValue>{sizes[token]}</TokenValue>
-    </ScaleRow>
-  ))
-}
+const radiusScale = ['control', 'controlMd', 'controlLg', 'pill'] as const
+const spaceScale = ['0_5', '1', '1_5', '2', '3', '4', '5', '6', '8'] as const
 
-export default {
-  title: 'Foundation/Tokens',
+const swatch = css({
+  height: '40px',
+  borderRadius: 'var(--radii-control)',
+  border: '1px solid var(--colors-border)',
+})
+const bar = css({
+  height: '8px',
+  borderRadius: 'var(--radii-pill)',
+  backgroundColor: 'var(--colors-primary)',
+})
+const tokenLabel = css({
+  fontFamily: 'var(--fonts-mono)',
+  fontSize: 'var(--fontSizes-micro)',
+  color: 'var(--colors-textMuted)',
+  overflowWrap: 'anywhere',
+})
+
+const meta = {
   tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          '主题 token 为颜色、尺寸、间距、字体、圆角和阴影提供统一命名。组件优先使用 text、border、surface 等语义角色，切换主题时相同角色会得到对应颜色。此页可对照明暗主题和各尺寸目录；自定义样式通过 css 或 CSS 变量引用 token，并由应用选择合适的密度与层级。',
+          '视觉规范页：两档密度、语义颜色、字阶、圆角、间距和 elevation。组件的尺寸、状态和层级来自这些 token；应用自定义样式也优先使用相同角色。',
       },
     },
     layout: 'fullscreen',
     controls: { disable: true },
   },
+  title: 'Foundation/Tokens',
 } satisfies Meta
+export default meta
+type Story = StoryObj<typeof meta>
 
-export const Overview: StoryFn = () => (
-  <Page>
-    <header>
-      <TokenValue>基础样式</TokenValue>
-      <h1 style={{ fontSize: '32px', fontWeight: 600 }}>主题与样式目录</h1>
-      <p>在这里查看颜色、表面、控件尺寸、间距、文字与阴影的命名和效果。</p>
-    </header>
-
-    <Section>
-      <h2>主题表面</h2>
-      <p>下方并排展示明暗主题。使用 Theme 工具栏可切换整个预览，弹出面板和菜单也会随之更新。</p>
-      <Grid>
-        <ThemeShowcase mode="dark" />
-        <ThemeShowcase mode="light" />
-      </Grid>
-    </Section>
-
-    <Section>
-      <h2>语义颜色</h2>
-      <p>通过语义角色引用颜色，使自定义组件随所选主题一起变化。</p>
-      <TokenGrid>
-        {semanticSwatches.map((token) => (
-          <Card key={token}>
-            <div style={{ height: '40px', borderRadius: '4px', backgroundColor: `var(--colors-${token})` }} />
-            <TokenName>{token}</TokenName>
-            <TokenValue>var(--colors-{token})</TokenValue>
-          </Card>
-        ))}
-      </TokenGrid>
-    </Section>
-
-    <Section>
-      <h2>控件尺寸</h2>
-      <Grid>
-        <Card>
-          <h3>控件高度</h3>
-          <SizeScale tokens={['xs', 'sm', 'md', 'lg', 'xl']} />
-        </Card>
-        <Card>
-          <h3>紧凑控件尺寸</h3>
-          <SizeScale tokens={['controlXs', 'controlSm', 'controlMd', 'controlLg']} />
-          <h3>图标尺寸</h3>
-          <SizeScale tokens={['iconXs', 'iconSm', 'iconMd', 'iconLg']} />
-        </Card>
-      </Grid>
-    </Section>
-
-    <Section>
-      <h2>间距</h2>
-      <Card>
-        {(['0_5', '1', '1_5', '2', '3', '4', '5', '6', '7', '8', '10'] as const).map((token) => (
-          <ScaleRow key={token}>
-            <span style={{ overflowWrap: 'anywhere' }}>{token}</span>
-            <Bar style={{ width: space[token] }} />
-            <TokenValue>{space[token]}</TokenValue>
-          </ScaleRow>
-        ))}
-      </Card>
-    </Section>
-
-    <Section>
-      <h2>文字与形状</h2>
-      <Grid>
-        <Card>
-          <h3>字号</h3>
-          {(['0_5', '1', '1_5', '2', '3', '4', '5', '6'] as const).map((token) => (
-            <ScaleRow key={token}>
-              <span style={{ overflowWrap: 'anywhere' }}>{token}</span>
-              <span style={{ fontSize: fontSizes[token] }}>Aa</span>
-              <TokenValue>{fontSizes[token]}</TokenValue>
-            </ScaleRow>
-          ))}
-        </Card>
-        <Card>
-          <h3>圆角</h3>
-          <TokenGrid>
-            {(['xs', 'sm', 'md', 'lg', 'xl', 'round'] as const).map((token) => (
-              <div key={token}>
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Foundation"
+      title="Tokens"
+      summary="一套两档密度的编辑器视觉基线：紧凑 20/24，常规 32/36；圆角 4/6/8，浮层与模态共用一套 surface 和 elevation。"
+      meta={
+        <>
+          <span>2 density tiers</span>
+          <span>·</span>
+          <span>semantic colors</span>
+          <span>·</span>
+          <span>1 focus ring</span>
+        </>
+      }>
+      <StorySection
+        title="Density"
+        description="核心控件只使用两档高度；面板、菜单、树和表格按 24/32 行高对齐。"
+        actions={
+          <Text size="xs" tone="muted">
+            20 / 24 / 32 / 36
+          </Text>
+        }>
+        <StoryDensityGroup>
+          <StoryDensity tier="compact" description="工具栏、属性面板、菜单、树、表格。">
+            <Button size="sm">Button</Button>
+            <Button size="sm" variant="outline">
+              Outline
+            </Button>
+            <Input aria-label="Compact input" placeholder="Value" size="sm" />
+            <Select aria-label="Compact select" size="sm" value="local" options={densityOptions} />
+            <Checkbox size="sm" defaultChecked label="Bool" />
+          </StoryDensity>
+          <StoryDensity tier="regular" description="对话框、常规表单、文档页。">
+            <Button size="md">Button</Button>
+            <Button size="md" variant="outline">
+              Outline
+            </Button>
+            <Input aria-label="Regular input" placeholder="Value" size="md" />
+            <Select aria-label="Regular select" size="md" value="local" options={densityOptions} />
+            <Checkbox size="md" defaultChecked label="Bool" />
+          </StoryDensity>
+        </StoryDensityGroup>
+        <StoryCard title="Control heights" description="token 值与实际控件高度一一对应。">
+          <StoryRow>
+            {(['controlXs', 'controlSm', 'controlMd', 'controlLg'] as const).map((token) => (
+              <div key={token} className={css({ display: 'grid', gap: 'var(--space-1)' })}>
                 <div
-                  style={{
-                    width: '40px',
-                    height: '32px',
-                    backgroundColor: 'var(--colors-surfaceStrong)',
-                    border: '1px solid var(--colors-borderStrong)',
-                    borderRadius: radii[token],
-                  }}
+                  className={css({
+                    width: '64px',
+                    border: '1px solid var(--colors-border)',
+                    borderRadius: 'var(--radii-control)',
+                    backgroundColor: 'var(--colors-surfaceSubtle)',
+                  })}
+                  style={{ height: `var(--sizes-${token})` }}
                 />
-                <TokenName>{token}</TokenName>
-                <TokenValue>{radii[token]}</TokenValue>
+                <span className={tokenLabel}>
+                  {token} · {sizes[token]}
+                </span>
               </div>
             ))}
-          </TokenGrid>
-        </Card>
-      </Grid>
-    </Section>
+          </StoryRow>
+        </StoryCard>
+      </StorySection>
 
-    <Section>
-      <h2>阴影与焦点</h2>
-      <TokenGrid>
-        {(['1', '2', '3', 'focus', 'subtleFocus'] as const).map((token) => (
-          <Card key={token}>
-            <div
-              style={{
-                height: '32px',
-                borderRadius: '6px',
-                backgroundColor: 'var(--colors-surface)',
-                boxShadow: shadows[token],
-              }}
-            />
-            <TokenName>{token}</TokenName>
-            <TokenValue>{shadows[token]}</TokenValue>
-          </Card>
-        ))}
-      </TokenGrid>
-    </Section>
-  </Page>
-)
+      <StorySection
+        title="Semantic colors"
+        description="优先使用角色，不直接引用原始调色板；明暗主题由 ThemeProvider 切换。">
+        <StoryGrid>
+          {semanticSwatches.map((token) => (
+            <StoryCard key={token}>
+              <div className={swatch} style={{ backgroundColor: `var(--colors-${token})` }} />
+              <div className={tokenLabel}>colors.{token}</div>
+            </StoryCard>
+          ))}
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Type scale" description="11 / 12 / 14 / 16 / 24；10 与 13 不再用于新样式。">
+        <StoryCard>
+          {fontScale.map((item) => (
+            <StoryRow key={item.token} align="center">
+              <div className={css({ display: 'grid', gap: 'var(--space-1)', width: '100%' })}>
+                <Text size={item.size}>The quick brown fox</Text>
+                <span className={tokenLabel}>
+                  {item.token} · {fontSizes[item.token]} · {item.label}
+                </span>
+              </div>
+            </StoryRow>
+          ))}
+        </StoryCard>
+      </StorySection>
+
+      <StorySection title="Radii" description="20/24 控件 4px，32 控件 6px，36+ 与浮层 8px；pill 只用于标签和进度。">
+        <StoryGrid>
+          {radiusScale.map((token) => (
+            <StoryCard key={token}>
+              <div
+                className={css({
+                  width: '72px',
+                  height: '48px',
+                  backgroundColor: 'var(--colors-surfaceStrong)',
+                  border: '1px solid var(--colors-borderStrong)',
+                })}
+                style={{ borderRadius: `var(--radii-${token})` }}
+              />
+              <div className={tokenLabel}>
+                radii.{token} · {radii[token]}
+              </div>
+            </StoryCard>
+          ))}
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Spacing" description="布局只使用 2 / 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32。">
+        <StoryCard>
+          {spaceScale.map((token) => (
+            <StoryRow key={token}>
+              <div className={bar} style={{ width: `var(--space-${token})` }} />
+              <span className={tokenLabel}>
+                space.{token} · {space[token]}
+              </span>
+            </StoryRow>
+          ))}
+        </StoryCard>
+      </StorySection>
+
+      <StorySection
+        title="Elevation"
+        description="浮层使用 overlay，Dialog 使用更强的 modal；两者都基于 surfaceRaised。">
+        <StoryGrid>
+          {(['overlay', 'modal'] as const).map((token) => (
+            <StoryCard key={token}>
+              <div
+                className={css({
+                  height: '96px',
+                  borderRadius: 'var(--radii-card)',
+                  backgroundColor: 'var(--colors-surfaceRaised)',
+                  border: '1px solid var(--colors-border)',
+                })}
+                style={{ boxShadow: `var(--shadows-${token})` }}
+              />
+              <div className={tokenLabel}>
+                shadows.{token} · {token}
+              </div>
+            </StoryCard>
+          ))}
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryGrid>
+          <StoryCode
+            label="css"
+            code={`backgroundColor: 'var(--colors-surface)',
+borderColor: 'var(--colors-border)',
+borderRadius: 'var(--radii-controlMd)',
+height: 'var(--sizes-controlSm)',
+fontSize: 'var(--fontSizes-control)',
+outlineColor: 'var(--colors-focusRing)'`}
+          />
+          <StoryCard title="Rules">
+            <Text size="sm" tone="muted">
+              控件高度、圆角、字号和状态色必须来自 token。不要在组件里新增一次性 px；内容尺寸（颜色平面、缩略图、Slider
+              竖向高度）保留例外并写注释。
+            </Text>
+            <Text size="sm" tone="muted">
+              overlay 与 modal 是两级阴影：浮层使用 overlay，Dialog 使用更强的 modal。
+            </Text>
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+    </StoryPage>
+  ),
+}

@@ -21,15 +21,33 @@ const keyRecipe = cva({
     color: 'inherit',
     backgroundColor: 'var(--colors-surfaceSubtle)',
     border: '1px solid var(--colors-border)',
-    borderRadius: '4px',
+    borderRadius: 'var(--radii-control)',
     userSelect: 'none',
     flexShrink: 0,
   },
   variants: {
     size: {
-      xs: { minWidth: '12px', height: '14px', fontSize: '10px', lineHeight: '12px', padding: '0 2px' },
-      sm: { minWidth: '16px', height: '18px', fontSize: '10px', lineHeight: '14px', padding: '0 4px' },
-      md: { minWidth: '20px', height: '22px', fontSize: '12px', lineHeight: '18px', padding: '0 6px' },
+      xs: {
+        minWidth: '14px',
+        height: '16px',
+        fontSize: 'var(--fontSizes-micro)',
+        lineHeight: '12px',
+        padding: '0 var(--space-0_5)',
+      },
+      sm: {
+        minWidth: '16px',
+        height: '18px',
+        fontSize: 'var(--fontSizes-micro)',
+        lineHeight: '14px',
+        padding: '0 var(--space-1)',
+      },
+      md: {
+        minWidth: '20px',
+        height: '20px',
+        fontSize: 'var(--fontSizes-control)',
+        lineHeight: '16px',
+        padding: '0 var(--space-1_5)',
+      },
     },
     letterCase: { upper: { textTransform: 'uppercase' }, lower: { textTransform: 'lowercase' }, preserve: {} },
   },
@@ -87,7 +105,7 @@ export const KbdGroup = forwardRef<HTMLSpanElement, KbdGroupProps>(function KbdG
 ) {
   const tokens = formatShortcut(shortcuts, letterCase)
   if (!tokens.length) return null
-  const pixels = size === 'xs' ? 14 : size === 'md' ? 22 : 18
+  const pixels = size === 'xs' ? 12 : size === 'md' ? 16 : 14
   return (
     <KbdGroupRoot role="group" aria-label={tokens.map((token) => token.label).join(' + ')} {...props} ref={ref}>
       {tokens.map((token, index) => {

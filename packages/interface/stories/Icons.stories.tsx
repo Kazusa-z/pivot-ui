@@ -23,23 +23,10 @@ import {
   IconPendingFile,
   ConstrainIcon,
 } from '../src/foundation/icons'
+import { Button } from '../src/widgets/buttons'
+import { Text } from '../src/foundation/typography'
+import { StoryPage, StorySection, StoryCard, StoryGrid, StoryRow, StoryState, StoryCode } from './support/StoryPage'
 
-const grid = css({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-  gap: '20px',
-  width: 'min(680px, 90vw)',
-})
-const item = css({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '8px',
-  fontSize: '12px',
-  textAlign: 'center',
-  minWidth: 0,
-  overflowWrap: 'anywhere',
-})
 const commonIcons = {
   EyeDropperIcon,
   MouseDoubleDownIcon,
@@ -47,6 +34,7 @@ const commonIcons = {
   MouseRightDownIcon,
   IconRightBottomCorner,
 }
+
 const fileIcons = {
   IconCodeFile,
   IconAnimationControllerFile,
@@ -63,75 +51,155 @@ const fileIcons = {
   IconVrReferenceImageFile,
   IconPendingFile,
 }
+
+const iconCell = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 'var(--space-2)',
+  minWidth: 0,
+  textAlign: 'center',
+})
+
 const meta = {
   tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          '图标组件用于标识文件类型、鼠标操作和工具状态，接收 SVG 的尺寸、颜色及其他原生属性。图标默认作为装饰；独立传达含义时可提供 title 或 aria-label。放入按钮时由按钮提供操作名称，图标本身保留展示职责。',
+          '图标组件标识文件类型、鼠标操作和工具状态，接收 SVG 尺寸、颜色和原生属性。图标默认装饰；独立表达含义时提供 title 或 aria-label。放入按钮时由按钮提供操作名称。',
       },
     },
+    layout: 'fullscreen',
   },
   title: 'Foundation/Icons',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Common: Story = {
-  render: () => (
-    <div className={grid}>
-      {Object.entries(commonIcons).map(([name, Icon]) => (
-        <div key={name} className={item}>
-          <Icon width={28} height={28} />
-          <span>{name}</span>
-        </div>
-      ))}
-      <div className={item}>
-        <ConstrainIcon width={28} height={28} />
-        <span>Unconstrained</span>
-      </div>
-      <div className={item}>
-        <ConstrainIcon active width={28} height={28} />
-        <span>Constrained</span>
-      </div>
-    </div>
-  ),
-}
-
-export const FileTypes: Story = {
-  render: () => (
-    <div className={grid}>
-      {Object.entries(fileIcons).map(([name, Icon]) => (
-        <div key={name} className={item}>
-          <Icon width={48} height={56} />
-          <span>{name}</span>
-        </div>
-      ))}
-    </div>
-  ),
-}
-
 function IconAttributesExample() {
   const ref = useRef<SVGSVGElement>(null)
   const [width, setWidth] = useState(32)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState('Ref is attached to the SVG')
   return (
-    <div className={grid}>
-      <IconCodeFile title="Source code file" width={width} height={48} ref={ref} data-testid="named-icon" />
-      <IconCodeFile title="Second source code file" width={width} height={48} />
-      <EyeDropperIcon aria-label="Pick a color" width={width} height={48} style={{ color: 'var(--colors-blue11)' }} />
-      <button
-        type="button"
-        onClick={() => {
-          setWidth(width === 32 ? 48 : 32)
-          setMessage(ref.current?.tagName ?? '')
-        }}>
-        Resize icons
-      </button>
-      <output>{message ? `Ref points to ${message}; width ${width}` : 'Ref is attached to the SVG'}</output>
-    </div>
+    <StoryCard
+      title="Accessible names and attributes"
+      description="title/aria-label 决定可访问名称；ref 指向实际 SVG。">
+      <StoryRow align="start">
+        <div className={iconCell}>
+          <IconCodeFile title="Source code file" width={width} height={48} ref={ref} data-testid="named-icon" />
+          <Text size="xs" tone="muted">
+            Source code file
+          </Text>
+        </div>
+        <div className={iconCell}>
+          <IconCodeFile title="Second source code file" width={width} height={48} />
+          <Text size="xs" tone="muted">
+            Second source file
+          </Text>
+        </div>
+        <div className={iconCell}>
+          <EyeDropperIcon
+            aria-label="Pick a color"
+            width={width}
+            height={48}
+            style={{ color: 'var(--colors-primary)' }}
+          />
+          <Text size="xs" tone="muted">
+            Pick a color
+          </Text>
+        </div>
+      </StoryRow>
+      <StoryRow>
+        <Button
+          onClick={() => {
+            setWidth(width === 32 ? 48 : 32)
+            setMessage(ref.current ? `Ref points to ${ref.current.tagName}` : 'Ref is not attached')
+          }}>
+          Resize icons
+        </Button>
+        <Text size="sm" tone="muted">
+          {message}; width {width}
+        </Text>
+      </StoryRow>
+      <StoryState label="Icon state" value={{ width, message }} open />
+    </StoryCard>
   )
 }
 
-export const AccessibleNamesAndAttributes: Story = { render: () => <IconAttributesExample /> }
+export const Overview: Story = {
+  render: () => (
+    <StoryPage
+      eyebrow="Foundation"
+      title="Icons"
+      summary="文件类型、鼠标手势和工具状态图标。固定尺寸的 viewBox 加原生 SVG 属性，业务颜色和尺寸由调用方控制。"
+      meta={
+        <>
+          <span>SVG</span>
+          <span>·</span>
+          <span>title / aria-label</span>
+          <span>·</span>
+          <span>currentColor</span>
+        </>
+      }>
+      <StorySection title="Common icons" description="鼠标操作和工具状态图标；默认 1em，示例使用 28px。">
+        <StoryGrid>
+          {Object.entries(commonIcons).map(([name, Icon]) => (
+            <StoryCard key={name}>
+              <div className={iconCell}>
+                <Icon width={28} height={28} />
+                <Text size="xs" tone="muted">
+                  {name}
+                </Text>
+              </div>
+            </StoryCard>
+          ))}
+          <StoryCard>
+            <div className={iconCell}>
+              <ConstrainIcon width={28} height={28} />
+              <Text size="xs" tone="muted">
+                Unconstrained
+              </Text>
+            </div>
+          </StoryCard>
+          <StoryCard>
+            <div className={iconCell}>
+              <ConstrainIcon active width={28} height={28} />
+              <Text size="xs" tone="muted">
+                Constrained
+              </Text>
+            </div>
+          </StoryCard>
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="File types" description="文件图标使用固定配色；在树或资源网格中按文件类型选择。">
+        <StoryGrid>
+          {Object.entries(fileIcons).map(([name, Icon]) => (
+            <StoryCard key={name}>
+              <div className={iconCell}>
+                <Icon width={48} height={56} />
+                <Text size="xs" tone="muted">
+                  {name}
+                </Text>
+              </div>
+            </StoryCard>
+          ))}
+        </StoryGrid>
+      </StorySection>
+
+      <StorySection title="Accessible names and attributes">
+        <IconAttributesExample />
+      </StorySection>
+
+      <StorySection title="Usage">
+        <StoryCode
+          label="tsx"
+          code={`<IconSceneFile width={24} height={28} />          // decorative
+<IconSceneFile title="Scene file" width={24} height={28} />
+<EyeDropperIcon aria-label="Pick a color" />`}
+        />
+      </StorySection>
+    </StoryPage>
+  ),
+}

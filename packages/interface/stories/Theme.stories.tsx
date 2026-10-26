@@ -9,15 +9,11 @@ import {
   type ResolvedTheme,
   type ThemePreference,
 } from '../src/foundation/theme'
-import { css } from '../styled-system/css'
-import {
-  ContractFrame,
-  ControlButton,
-  ControlField,
-  ControlSelect,
-  StatePanel,
-  contractStyles,
-} from './support/ContractFrame'
+import { Button } from '../src/widgets/buttons'
+import { Select } from '../src/widgets/choices/Select'
+import { Callout } from '../src/widgets/feedback'
+import { Text } from '../src/foundation/typography'
+import { StoryPage, StorySection, StoryCard, StoryRow, StoryField, StoryGrid, StoryState } from './support/StoryPage'
 
 function createThemeFixture(getTarget: () => HTMLElement | null) {
   let storedPreference: ThemePreference | null = 'system'
@@ -89,44 +85,29 @@ function createThemeFixture(getTarget: () => HTMLElement | null) {
   }
 }
 
+const preferenceOptions = [
+  { key: 'light', label: 'Light', value: 'light' },
+  { key: 'dark', label: 'Dark', value: 'dark' },
+  { key: 'system', label: 'System', value: 'system' },
+] as const
+
 function ThemeConsumer({ name }: { name: string }) {
   const { preference, resolvedTheme, setPreference } = useTheme()
   return (
-    <section
-      aria-label={name}
-      className={css({
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        padding: '16px',
-        border: '1px solid var(--colors-border)',
-        borderRadius: '8px',
-        backgroundColor: 'var(--colors-panelBg)',
-      })}>
-      <h2 className={css({ margin: 0, fontSize: '16px', fontWeight: 600 })}>{name}</h2>
-      <ControlField label={`${name} preference`}>
-        <ControlSelect
+    <StoryCard title={name} description="共享 store 的消费区域会同步更新。">
+      <StoryField label="Preference">
+        <Select
+          aria-label={`${name} preference`}
           value={preference}
-          onChange={(event) => {
-            if (isThemePreference(event.target.value)) setPreference(event.target.value)
-          }}>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-          <option value="system">System</option>
-        </ControlSelect>
-      </ControlField>
-      <StatePanel label={`${name} snapshot`} value={{ preference, resolvedTheme }} />
-      <div
-        className={css({
-          padding: '12px',
-          borderRadius: '6px',
-          color: 'var(--colors-successText)',
-          backgroundColor: 'var(--colors-successBg)',
-          border: '1px solid var(--colors-successBorder)',
-        })}>
-        语义颜色随 resolvedTheme 使用对应的明暗配色。
-      </div>
-    </section>
+          options={[...preferenceOptions]}
+          onValueChange={(value) => {
+            if (isThemePreference(value)) setPreference(value)
+          }}
+        />
+      </StoryField>
+      <StoryState label={`${name} snapshot`} value={{ preference, resolvedTheme }} open />
+      <Callout severity="success">语义颜色随 resolvedTheme 使用对应的明暗配色。</Callout>
+    </StoryCard>
   )
 }
 
@@ -134,11 +115,11 @@ type Scenario = 'preferences' | 'providers' | 'lifecycle'
 
 const descriptions: Record<Scenario, string> = {
   preferences:
-    '选择 Light、Dark 或 System，两个区域会同步显示。System 会根据系统主题解析出 resolvedTheme，同时保留用户的 System 偏好。此例把外观应用到局部容器，应用可选择自己的主题作用范围。',
+    '选择 Light、Dark 或 System，两个区域同步显示。System 根据系统主题解析 resolvedTheme，同时保留用户的 System 偏好；外观应用到局部容器。',
   providers:
-    'A 和 B 共享同一个 store，在任意一侧调用 setPreference 都会同步更新。移除一个 Provider 后另一个仍可使用；所有区域卸载后，store 清理系统和存储订阅，再挂载时读取最新值。',
+    'A 和 B 共享同一个 store，任意一侧切换都会同步。移除一个 Provider 后另一个仍可用；全部卸载后清理系统与存储订阅，再挂载时读取最新值。',
   lifecycle:
-    '外部存储更新可同步来自其他窗口的主题偏好。此例通过按钮发送通知，观察两个区域更新；所有区域卸载后修改存储，再挂载会读取新值。Clear storage 恢复创建 store 时的 System 偏好。',
+    '外部存储更新可同步其他窗口的主题偏好。用按钮发送通知，观察两个区域；全部卸载后修改存储，再挂载会读取新值。Clear storage 恢复初始 System 偏好。',
 }
 
 function ThemePlayground({ scenario, onReset }: { scenario: Scenario; onReset: () => void }) {
@@ -148,46 +129,86 @@ function ThemePlayground({ scenario, onReset }: { scenario: Scenario; onReset: (
   const [showB, setShowB] = useState(true)
   const diagnostics = useSyncExternalStore(fixture.subscribeDiagnostics, fixture.getDiagnostics, fixture.getDiagnostics)
   return (
-    <div ref={target} className={css({ backgroundColor: 'var(--colors-appBg)', minHeight: '100vh' })}>
-      <ContractFrame title="切换主题并同步多个区域" description={descriptions[scenario]} onReset={onReset}>
-        <div className={contractStyles.row}>
-          <ControlButton onClick={() => fixture.setSystemTheme('light')}>Simulate system light</ControlButton>
-          <ControlButton onClick={() => fixture.setSystemTheme('dark')}>Simulate system dark</ControlButton>
-          {scenario !== 'preferences' && (
-            <>
-              <ControlButton aria-pressed={showA} onClick={() => setShowA((value) => !value)}>
-                {showA ? 'Unmount A' : 'Mount A'}
-              </ControlButton>
-              <ControlButton aria-pressed={showB} onClick={() => setShowB((value) => !value)}>
-                {showB ? 'Unmount B' : 'Mount B'}
-              </ControlButton>
-            </>
-          )}
-        </div>
-        {scenario === 'lifecycle' && (
-          <div className={contractStyles.row}>
-            <ControlButton onClick={() => fixture.externalPreference('light')}>External storage light</ControlButton>
-            <ControlButton onClick={() => fixture.externalPreference('dark')}>External storage dark</ControlButton>
-            <ControlButton onClick={() => fixture.externalPreference('system')}>External storage system</ControlButton>
-            <ControlButton onClick={() => fixture.externalPreference(null)}>Clear storage</ControlButton>
-          </div>
-        )}
-        <div className={contractStyles.grid}>
-          {showA && (
-            <ThemeProvider store={fixture.store}>
-              <ThemeConsumer name="Consumer A" />
-            </ThemeProvider>
-          )}
-          {showB && (
-            <ThemeProvider store={fixture.store}>
-              <ThemeProvider>
-                <ThemeConsumer name="Consumer B" />
+    <div ref={target}>
+      <StoryPage
+        eyebrow="Foundation"
+        title="Theme"
+        summary={descriptions[scenario]}
+        meta={
+          <>
+            <span>preference: light / dark / system</span>
+            <span>·</span>
+            <span>local appearance target</span>
+          </>
+        }
+        actions={
+          <Button size="sm" variant="outline" onClick={onReset}>
+            Reset
+          </Button>
+        }>
+        <StorySection title="Scenario">
+          <StoryCard>
+            <StoryRow>
+              <Button size="sm" variant="outline" onClick={() => fixture.setSystemTheme('light')}>
+                Simulate system light
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => fixture.setSystemTheme('dark')}>
+                Simulate system dark
+              </Button>
+              {scenario !== 'preferences' && (
+                <>
+                  <Button size="sm" variant="outline" aria-pressed={showA} onClick={() => setShowA((value) => !value)}>
+                    {showA ? 'Unmount A' : 'Mount A'}
+                  </Button>
+                  <Button size="sm" variant="outline" aria-pressed={showB} onClick={() => setShowB((value) => !value)}>
+                    {showB ? 'Unmount B' : 'Mount B'}
+                  </Button>
+                </>
+              )}
+            </StoryRow>
+            {scenario === 'lifecycle' && (
+              <StoryRow>
+                <Button size="sm" variant="outline" onClick={() => fixture.externalPreference('light')}>
+                  External light
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => fixture.externalPreference('dark')}>
+                  External dark
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => fixture.externalPreference('system')}>
+                  External system
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => fixture.externalPreference(null)}>
+                  Clear storage
+                </Button>
+              </StoryRow>
+            )}
+          </StoryCard>
+        </StorySection>
+
+        <StorySection title="Consumers" description="每个 Provider 连接自己的 store；同一 store 的消费者同步。">
+          <StoryGrid>
+            {showA && (
+              <ThemeProvider store={fixture.store}>
+                <ThemeConsumer name="Consumer A" />
               </ThemeProvider>
-            </ThemeProvider>
-          )}
-        </div>
-        <StatePanel label="Injected adapter state" value={diagnostics} />
-      </ContractFrame>
+            )}
+            {showB && (
+              <ThemeProvider store={fixture.store}>
+                <ThemeProvider>
+                  <ThemeConsumer name="Consumer B" />
+                </ThemeProvider>
+              </ThemeProvider>
+            )}
+          </StoryGrid>
+        </StorySection>
+
+        <StorySection title="Diagnostics">
+          <StoryState label="Injected adapter state" value={diagnostics} open />
+          <Text size="sm" tone="muted">
+            两个消费者共享同一个 store；Provider 卸载后 store 释放订阅，重新挂载时读取存储和系统主题。
+          </Text>
+        </StorySection>
+      </StoryPage>
     </div>
   )
 }
@@ -204,7 +225,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'ThemeProvider 为组件提供浅色、深色或跟随系统的主题。useTheme 读取 preference 和最终 resolvedTheme，setPreference 发起切换；共享 store 的多个区域会同步更新。应用通过存储、系统主题和外观适配器接入运行环境，局部主题可用独立 Provider 限定作用范围。',
+          'ThemeProvider 提供浅色、深色或跟随系统的主题。useTheme 读取 preference 和最终 resolvedTheme，setPreference 发起切换；共享 store 的多个区域同步更新。应用通过存储、系统主题和外观适配器接入运行环境。',
       },
     },
     layout: 'fullscreen',
@@ -215,6 +236,12 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Preferences: Story = { render: () => <ThemeStory scenario="preferences" /> }
-export const SharedProviders: Story = { render: () => <ThemeStory scenario="providers" /> }
-export const StorageAndCleanup: Story = { render: () => <ThemeStory scenario="lifecycle" /> }
+export const Overview: Story = { render: () => <ThemeStory scenario="preferences" /> }
+export const SharedProviders: Story = {
+  render: () => <ThemeStory scenario="providers" />,
+  tags: ['!autodocs'],
+}
+export const StorageAndCleanup: Story = {
+  render: () => <ThemeStory scenario="lifecycle" />,
+  tags: ['!autodocs'],
+}

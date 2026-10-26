@@ -10,23 +10,23 @@ const textRecipe = cva({
   base: { margin: 0, fontFamily: 'var(--fonts-default)', fontSynthesis: 'none' },
   variants: {
     size: {
-      '0_5': { fontSize: 'var(--fontSizes-0_5)', lineHeight: 'var(--lineHeights-1)' },
-      xs: { fontSize: 'var(--fontSizes-xs)', lineHeight: 'var(--lineHeights-1)' },
-      sm: { fontSize: 'var(--fontSizes-1)', lineHeight: 'var(--lineHeights-1)' },
-      md: { fontSize: 'var(--fontSizes-2)', lineHeight: 'var(--lineHeights-2)' },
-      lg: { fontSize: 'var(--fontSizes-3)', lineHeight: 'var(--lineHeights-3)' },
+      '0_5': { fontSize: 'var(--fontSizes-micro)', lineHeight: 'var(--lineHeights-1)' },
+      xs: { fontSize: 'var(--fontSizes-micro)', lineHeight: 'var(--lineHeights-1)' },
+      sm: { fontSize: 'var(--fontSizes-control)', lineHeight: 'var(--lineHeights-1)' },
+      md: { fontSize: 'var(--fontSizes-controlLarge)', lineHeight: 'var(--lineHeights-2)' },
+      lg: { fontSize: 'var(--fontSizes-heading)', lineHeight: 'var(--lineHeights-3)' },
       xl: { fontSize: 'var(--fontSizes-4)', lineHeight: 'var(--lineHeights-4)' },
-      1: { fontSize: 'var(--fontSizes-1)', lineHeight: 'var(--lineHeights-1)' },
-      2: { fontSize: 'var(--fontSizes-2)', lineHeight: 'var(--lineHeights-2)' },
-      3: { fontSize: 'var(--fontSizes-3)', lineHeight: 'var(--lineHeights-3)' },
+      1: { fontSize: 'var(--fontSizes-control)', lineHeight: 'var(--lineHeights-1)' },
+      2: { fontSize: 'var(--fontSizes-controlLarge)', lineHeight: 'var(--lineHeights-2)' },
+      3: { fontSize: 'var(--fontSizes-heading)', lineHeight: 'var(--lineHeights-3)' },
       4: { fontSize: 'var(--fontSizes-4)', lineHeight: 'var(--lineHeights-4)' },
-      5: { fontSize: 'var(--fontSizes-6)', lineHeight: 'var(--lineHeights-6)' },
+      5: { fontSize: 'var(--fontSizes-display)', lineHeight: 'var(--lineHeights-6)' },
     },
     tone: {
       default: { color: 'inherit' },
       muted: { color: 'var(--colors-textMuted)' },
       strong: { color: 'var(--colors-textStrong)' },
-      danger: { color: 'var(--colors-dangerText, var(--colors-red11))' },
+      danger: { color: 'var(--colors-dangerText)' },
     },
     weight: {
       light: { fontWeight: 'var(--fontWeights-light)' },
@@ -107,11 +107,11 @@ const titleRecipe = cva({
   base: { display: 'block', margin: 0, color: 'var(--colors-textStrong)', fontFamily: 'var(--fonts-default)' },
   variants: {
     size: {
-      1: { fontSize: 'var(--fontSizes-1)', lineHeight: 1.2 },
-      2: { fontSize: 'var(--fontSizes-2)', lineHeight: 1.2 },
-      3: { fontSize: 'var(--fontSizes-4)', lineHeight: 1.4 },
-      4: { fontSize: 'var(--fontSizes-6)', lineHeight: 1.4 },
-      5: { fontSize: 'var(--fontSizes-8)', lineHeight: 1.4 },
+      1: { fontSize: 'var(--fontSizes-control)', lineHeight: 1.2 },
+      2: { fontSize: 'var(--fontSizes-controlLarge)', lineHeight: 1.2 },
+      3: { fontSize: 'var(--fontSizes-heading)', lineHeight: 1.4 },
+      4: { fontSize: 'var(--fontSizes-4)', lineHeight: 1.4 },
+      5: { fontSize: 'var(--fontSizes-display)', lineHeight: 1.4 },
       6: { fontSize: 'calc(var(--fontSizes-8) * 2)', lineHeight: 1.4 },
     },
   },
@@ -143,7 +143,11 @@ const linkStyles = {
   textUnderlineOffset: '3px',
   cursor: 'pointer',
   '&:hover': { color: 'var(--colors-textStrong)' },
-  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px', borderRadius: '2px' },
+  '&:focus-visible': {
+    outline: '2px solid var(--colors-focusRing)',
+    outlineOffset: '2px',
+    borderRadius: 'var(--radii-control)',
+  },
 } satisfies SystemStyleObject
 
 export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {

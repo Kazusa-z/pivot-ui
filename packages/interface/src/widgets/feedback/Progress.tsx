@@ -7,7 +7,7 @@ const progressRecipe = cva({
     position: 'relative',
     width: '100%',
     backgroundColor: 'var(--colors-softBg)',
-    borderRadius: '9999px',
+    borderRadius: 'var(--radii-pill)',
     overflow: 'hidden',
     boxSizing: 'border-box',
   },
@@ -18,7 +18,7 @@ const indicatorClass = css({
   height: '100%',
   borderRadius: 'inherit',
   backgroundColor: 'var(--colors-selectionBg)',
-  transition: 'width .2s ease-out',
+  transition: 'width 120ms ease-out',
   '&[data-state="indeterminate"]': {
     opacity: 0.6,
     backgroundImage: 'repeating-linear-gradient(135deg, transparent 0 4px, var(--colors-softBg) 4px 8px)',

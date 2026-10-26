@@ -4,6 +4,41 @@ Pivot UI 使用 Panda CSS 生成样式。应用和组件共用这里的颜色、
 
 首次接入请先完成[样式构建配置](../docs/CONSUMING.md)。`@pivot-ui/react/panda.css` 是 CSS layer 入口；应用通过 Panda 扫描源码生成实际使用的组件样式。
 
+## 两档密度
+
+组件只使用两档控件高度，不再新增 22/27/28/30px 这类一次性值。
+
+| 档位 | 高度        | 字号 | 圆角    | 图标      | 场景                             |
+| ---- | ----------- | ---- | ------- | --------- | -------------------------------- |
+| 紧凑 | `20 / 24px` | 12px | 4px     | 12 / 14px | 工具栏、属性面板、菜单、树、表格 |
+| 常规 | `32 / 36px` | 14px | 6 / 8px | 16 / 18px | 对话框、常规表单、文档页         |
+
+11px 只用于 micro 角色（Kbd、坐标轴标签、元信息）；10px 和 13px 不再用于新样式。Section/Tree/Table 的头部和行使用 `24 / 32px`。
+
+## 语义颜色与层级
+
+优先使用语义 token，而不是原始调色板：
+
+| 角色                                                | 用途                                               |
+| --------------------------------------------------- | -------------------------------------------------- |
+| `appBg` / `surface` / `surfaceRaised`               | 页面、卡片、浮层的三级背景                         |
+| `panelBg` / `surfaceSubtle`                         | 面板和下沉区域                                     |
+| `text` / `textStrong` / `textMuted`                 | 正文、强调、辅助文字；`textMuted` 已按 4.5:1 调整  |
+| `primary` / `primarySolid`                          | 强调色与实心填充；实心填充使用更深的一档以承载白字 |
+| `selectionBg` / `selectionText` / `selectionBorder` | 行、选项、勾选的实心选中                           |
+| `selectionSubtleBg` / `selectionSubtleBorder`       | 卡片/磁贴的浅底选中                                |
+| `info* / success* / warning* / danger*`             | 状态提示、Callout、Badge、Invalid                  |
+
+暗色下 `appBg` 比 `surface` 深一档，`surfaceRaised` 再亮一档；亮色下浮层使用 `white`。浮层统一使用 `shadows.overlay`，Dialog 使用 `shadows.modal`。
+
+## 状态约定
+
+- 焦点：`outline: 2px solid var(--colors-focusRing)` + `outline-offset: 2px`；整行内嵌的 Menu/Tree 行用 `-2px`。
+- 禁用：只使用 `opacity: 0.5` + `cursor: not-allowed`，不再同时替换背景和文字色。
+- 只读：保持正常颜色，仅 `cursor: default`。
+- 错误/成功：只改边框和文字色，不整块填充背景。
+- 选中：行/选项/勾选用实心 `selectionBg + selectionText`；卡片/磁贴用 `selectionSubtleBg + selectionSubtleBorder + textStrong`。
+
 ## 使用设计 token
 
 在应用中从 `@pivot-ui/react/styling/css`、`/styling/jsx` 和 `/styling/tokens` 导入样式工具。它们分别提供样式类、带样式的元素和 token 查询；样式类型从 `/styling/types` 导入。
@@ -22,7 +57,7 @@ export const Inspector = styled('aside', {
 
 `ThemeProvider` 管理 `light-theme` / `dark-theme` class。默认暗色变量定义在 `:root`，明色值定义在 `.light-theme`。Panda token 通过这些变量随主题切换，例如 `--panda-colors-gray3` 对应 `var(--colors-gray3)`。
 
-在 Storybook 的 `Foundation / Tokens` 中查看可用颜色、尺寸和字体。使用组件外观时优先选择语义 token，例如文本色和面板背景色，使明暗主题都能保持可读性。
+在 Storybook 的 `Foundation / Tokens` 中查看可用颜色、尺寸和字体。使用组件外观时优先选择语义 token，例如文本色和面板背景色，使明暗主题都能保持可读性；两档高度、圆角、状态和 surface 的对照也在该页展示。
 
 ## 为应用生成样式
 

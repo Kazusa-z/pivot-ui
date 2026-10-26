@@ -5,12 +5,12 @@ import type { SystemStyleObject } from '../../../styled-system/types'
 const valueRecipe = cva({
   base: {
     minWidth: 0,
-    fontSize: '12px',
-    lineHeight: '20px',
+    fontSize: 'var(--fontSizes-control)',
+    lineHeight: 'var(--lineHeights-2)',
     whiteSpace: 'pre-wrap',
     overflowWrap: 'anywhere',
     userSelect: 'text',
-    color: 'var(--colors-gray12)',
+    color: 'var(--colors-textStrong)',
   },
   variants: { code: { true: { fontFamily: 'var(--fonts-mono)' } } },
 })

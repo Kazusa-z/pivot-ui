@@ -1,8 +1,9 @@
 import { build } from 'esbuild'
 import path from 'node:path'
 import fs from 'node:fs'
+import { pathToFileURL } from 'node:url'
 
-const outdir = '/tmp/pivot-token-gen'
+const outdir = path.resolve('node_modules/.cache/pivot-token-gen')
 fs.rmSync(outdir, { recursive: true, force: true })
 await build({
   entryPoints: [path.resolve('panda/token-source/colors.ts'), path.resolve('panda/token-source/sizes.ts')],
@@ -11,8 +12,8 @@ await build({
   format: 'esm',
   outdir,
 })
-const { colors } = await import(`file://${outdir}/colors.js`)
-const sizesMod = await import(`file://${outdir}/sizes.js`)
+const { colors } = await import(pathToFileURL(path.join(outdir, 'colors.js')).href)
+const sizesMod = await import(pathToFileURL(path.join(outdir, 'sizes.js')).href)
 
 const resolveColor = (value, map) => {
   let current = value

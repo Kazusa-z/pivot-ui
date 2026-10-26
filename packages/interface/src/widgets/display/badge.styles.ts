@@ -9,16 +9,16 @@ export const badgeInnerRecipe = cva({
     alignItems: 'center',
     color: 'var(--badge-color)',
     backgroundColor: 'var(--badge-bg-color)',
-    padding: '2px 6px',
-    gap: '4px',
-    borderRadius: '4px',
+    padding: 'var(--space-0_5) var(--space-1_5)',
+    gap: 'var(--space-1)',
+    borderRadius: 'var(--radii-control)',
     border: 'var(--badge-border)',
   },
   variants: {
     closable: {
       true: {
-        borderRadius: '4px 0 0 4px',
-        padding: '0 4px',
+        borderRadius: 'var(--radii-control) 0 0 var(--radii-control)',
+        padding: '0 var(--space-1)',
       },
     },
   },
@@ -30,15 +30,12 @@ export const badgeRemoveRecipe = cva({
     display: 'flex',
     alignItems: 'center',
     height: '100%',
-    padding: '0 2px',
-    lineHeight: '14px',
-    borderRadius: '0 4px 4px 0',
-    marginLeft: '0.5px',
+    padding: '0 var(--space-0_5)',
+    borderRadius: '0 var(--radii-control) var(--radii-control) 0',
     textAlign: 'center',
     color: 'var(--badge-color)',
     backgroundColor: 'var(--badge-bg-color)',
     border: 'var(--badge-border)',
-    backdropFilter: 'var(--badge-backdrop-filter)',
     cursor: 'pointer',
     '&:hover': {
       color: 'var(--badge-highlight-color)',
@@ -48,7 +45,7 @@ export const badgeRemoveRecipe = cva({
   variants: {
     pill: {
       true: {
-        borderRadius: '9999px',
+        borderRadius: 'var(--radii-pill)',
       },
     },
   },
@@ -58,54 +55,55 @@ export const badgeRecipe = cva({
   base: {
     display: 'inline-flex',
     alignItems: 'center',
-    lineHeight: '16px',
+    lineHeight: 'var(--lineHeights-1)',
     userSelect: 'none',
     whiteSpace: 'nowrap',
     fontWeight: 500,
-    fontSize: 'var(--fontSizes-sm)',
+    fontSize: 'var(--fontSizes-control)',
   },
   variants: {
     size: {
       xs: {
-        fontSize: 'var(--fontSizes-0_5)',
+        fontSize: 'var(--fontSizes-micro)',
         height: '16px',
         '& [data-part="inner"]': {
-          padding: '0 4px',
+          padding: '0 var(--space-1)',
         },
       },
       sm: {
         height: '20px',
-        fontSize: 'var(--fontSizes-1)',
+        fontSize: 'var(--fontSizes-control)',
         '& [data-part="inner"]': {
-          padding: '0 6px',
+          padding: '0 var(--space-1_5)',
         },
       },
     },
     closable: {
       true: {
-        paddingRight: '4px',
+        paddingRight: 'var(--space-1)',
       },
     },
     pill: {
       true: {
         '& [data-part="inner"]': {
-          borderRadius: '9999px',
-          padding: '0 8px',
+          borderRadius: 'var(--radii-pill)',
+          padding: '0 var(--space-2)',
         },
       },
     },
     active: {
       true: {
-        '--badge-bg-color': 'var(--colors-blue10)',
-        '--badge-color': 'var(--colors-white)',
-        '--badge-highlight-color': 'var(--colors-blueA12)',
+        '--badge-bg-color': 'var(--colors-primarySolid)',
+        '--badge-color': 'var(--colors-selectionText)',
+        '--badge-highlight-color': 'var(--colors-selectionText)',
+        '--badge-highlight-bg-color': 'var(--colors-primarySolidHover)',
       },
     },
     dot: {
       true: {
         height: '8px',
         width: '8px',
-        borderRadius: '9999px',
+        borderRadius: 'var(--radii-pill)',
         padding: 0,
       },
     },
@@ -117,43 +115,42 @@ export const badgeRecipe = cva({
     variant: {
       solid: {
         '--badge-border': 'none',
-        '--badge-backdrop-filter': 'none',
       },
       surface: {
         '--badge-border': '1px solid var(--badge-border-color)',
-        '--badge-backdrop-filter': 'blur(8px)',
       },
     },
     color: {
       gray: {
-        '--badge-color': 'var(--colors-grayA11)',
-        '--badge-bg-color': 'var(--colors-grayA3)',
-        '--badge-highlight-color': 'var(--colors-grayA12)',
-        '--badge-highlight-bg-color': 'var(--colors-grayA5)',
-        '--badge-border-color': 'var(--colors-grayA9)',
+        '--badge-color': 'var(--colors-text)',
+        '--badge-bg-color': 'var(--colors-softBg)',
+        '--badge-highlight-color': 'var(--colors-textStrong)',
+        '--badge-highlight-bg-color': 'var(--colors-softBgHover)',
+        '--badge-border-color': 'var(--colors-border)',
       },
       green: {
-        '--badge-color': 'var(--colors-greenA11)',
-        '--badge-bg-color': 'var(--colors-greenA3)',
-        '--badge-highlight-color': 'var(--colors-greenA12)',
-        '--badge-highlight-bg-color': 'var(--colors-greenA5)',
-        '--badge-border-color': 'var(--colors-greenA9)',
+        '--badge-color': 'var(--colors-successText)',
+        '--badge-bg-color': 'var(--colors-successBg)',
+        '--badge-highlight-color': 'var(--colors-successText)',
+        '--badge-highlight-bg-color': 'var(--colors-successBgHover)',
+        '--badge-border-color': 'var(--colors-successBorder)',
       },
       red: {
-        '--badge-color': 'var(--colors-redA11)',
-        '--badge-bg-color': 'var(--colors-redA3)',
-        '--badge-highlight-color': 'var(--colors-redA12)',
-        '--badge-highlight-bg-color': 'var(--colors-redA5)',
-        '--badge-border-color': 'var(--colors-redA9)',
+        '--badge-color': 'var(--colors-dangerText)',
+        '--badge-bg-color': 'var(--colors-dangerBg)',
+        '--badge-highlight-color': 'var(--colors-dangerText)',
+        '--badge-highlight-bg-color': 'var(--colors-dangerBgHover)',
+        '--badge-border-color': 'var(--colors-dangerBorder)',
       },
       blue: {
-        '--badge-color': 'var(--colors-blueA11)',
-        '--badge-bg-color': 'var(--colors-blueA3)',
-        '--badge-highlight-color': 'var(--colors-blueA12)',
-        '--badge-highlight-bg-color': 'var(--colors-blueA5)',
-        '--badge-border-color': 'var(--colors-blueA9)',
+        '--badge-color': 'var(--colors-infoText)',
+        '--badge-bg-color': 'var(--colors-infoBg)',
+        '--badge-highlight-color': 'var(--colors-infoText)',
+        '--badge-highlight-bg-color': 'var(--colors-infoBgHover)',
+        '--badge-border-color': 'var(--colors-infoBorder)',
       },
       orange: {
+        // Categorical accent; not a status color.
         '--badge-color': 'var(--colors-orangeA11)',
         '--badge-bg-color': 'var(--colors-orangeA3)',
         '--badge-highlight-color': 'var(--colors-orangeA12)',
@@ -161,13 +158,14 @@ export const badgeRecipe = cva({
         '--badge-border-color': 'var(--colors-orangeA9)',
       },
       amber: {
-        '--badge-color': 'var(--colors-amberA11)',
-        '--badge-bg-color': 'var(--colors-amberA3)',
-        '--badge-highlight-color': 'var(--colors-amberA12)',
-        '--badge-highlight-bg-color': 'var(--colors-amberA5)',
-        '--badge-border-color': 'var(--colors-amberA9)',
+        '--badge-color': 'var(--colors-warningText)',
+        '--badge-bg-color': 'var(--colors-warningBg)',
+        '--badge-highlight-color': 'var(--colors-warningText)',
+        '--badge-highlight-bg-color': 'var(--colors-warningBgHover)',
+        '--badge-border-color': 'var(--colors-warningBorder)',
       },
       gold: {
+        // Categorical accent; not a status color.
         '--badge-color': 'var(--colors-goldA11)',
         '--badge-bg-color': 'var(--colors-goldA3)',
         '--badge-highlight-color': 'var(--colors-goldA12)',
@@ -175,6 +173,7 @@ export const badgeRecipe = cva({
         '--badge-border-color': 'var(--colors-goldA9)',
       },
       violet: {
+        // Categorical accent; not a status color.
         '--badge-color': 'var(--colors-violetA11)',
         '--badge-bg-color': 'var(--colors-violetA3)',
         '--badge-highlight-color': 'var(--colors-violetA12)',
@@ -194,7 +193,7 @@ export const badgeRecipe = cva({
       size: 'xs',
       css: {
         '& [data-part="inner"]': {
-          padding: '0 6px',
+          padding: '0 var(--space-1_5)',
         },
       },
     },
@@ -204,10 +203,10 @@ export const badgeRecipe = cva({
       size: 'sm',
       css: {
         '& [data-part="inner"]': {
-          borderRadius: '9999px 0 0 9999px',
+          borderRadius: 'var(--radii-pill) 0 0 var(--radii-pill)',
         },
         '& [data-part="close"]': {
-          borderRadius: '0 9999px 9999px 0',
+          borderRadius: '0 var(--radii-pill) var(--radii-pill) 0',
         },
       },
     },
@@ -217,10 +216,10 @@ export const badgeRecipe = cva({
       size: 'xs',
       css: {
         '& [data-part="inner"]': {
-          borderRadius: '9999px 0 0 9999px',
+          borderRadius: 'var(--radii-pill) 0 0 var(--radii-pill)',
         },
         '& [data-part="close"]': {
-          borderRadius: '0 9999px 9999px 0',
+          borderRadius: '0 var(--radii-pill) var(--radii-pill) 0',
         },
       },
     },

@@ -61,8 +61,8 @@ export const resetCSS = {
     borderRadius: '3px',
   },
   '::selection': {
-    backgroundColor: '$blue10',
-    color: '$white',
+    backgroundColor: '$selectionBg',
+    color: '$selectionText',
   },
   'div[role=button]': {
     outline: 'none',

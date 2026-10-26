@@ -30,6 +30,7 @@ pnpm-debug.log*
 # Generated reports
 stats.html
 temp/
+tmp/
 
 # Editors
 .idea/

@@ -37,7 +37,9 @@ export const sizes = {
 }
 
 export const fontSizes = {
-  '0_5': '10px',
+  // Unified UI type scale: micro 11, compact 12, regular 14, heading 16, display 24.
+  // 10px and 13px are legacy values and must not be used by new component styles.
+  '0_5': '11px',
   1: '12px',
   '1_5': '13px',
   2: '14px',
@@ -48,6 +50,11 @@ export const fontSizes = {
   7: '28px',
   8: '32px',
   9: '48px',
+  micro: '11px',
+  control: '12px',
+  controlLarge: '14px',
+  heading: '16px',
+  display: '24px',
   sm: '$1',
   xs: '$0_5',
 }
@@ -95,8 +102,16 @@ export const radii = {
   xs: '4px',
   sm: '4px',
   md: '6px',
-  lg: '6px',
-  xl: '8px',
+  lg: '8px',
+  xl: '10px',
+  // Semantic radii for the unified component layer.
+  control: '4px',
+  controlMd: '6px',
+  controlLg: '8px',
+  overlay: '6px',
+  modal: '8px',
+  card: '8px',
+  pill: '9999px',
   round: '9999px',
 }
 
@@ -107,6 +122,11 @@ export const shadows = {
   border: '0 0 0 1px $colors$border',
   focus: '0 0 0 2px $colors$focusRing',
   subtleFocus: '0 0 0 2px $colors$focusRingMuted',
+  // Shared elevations for overlays and modals.
+  overlay: '0 10px 28px rgba(0, 0, 0, 0.24), 0 2px 8px rgba(0, 0, 0, 0.16)',
+  modal: '0 24px 64px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.24)',
+  // Deprecated: use `overlay`.
   popContainer: '0 10px 28px rgba(0, 0, 0, 0.24), 0 2px 8px rgba(0, 0, 0, 0.16)',
+  // Deprecated: remove once ActionButton stops referencing it.
   prepend: '0 0 0 0 transparent',
 }
