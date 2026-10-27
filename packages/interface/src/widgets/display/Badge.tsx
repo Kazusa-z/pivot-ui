@@ -4,7 +4,8 @@ import type { SystemStyleObject } from '../../../styled-system/types'
 import { getBadgeClassName, badgeInnerRecipe, getBadgeRemoveClassName } from './badge.styles'
 
 export interface BadgeProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'> {
-  color?: 'gray' | 'green' | 'red' | 'blue' | 'orange' | 'amber' | 'gold' | 'violet'
+  /** gray / blue / green / amber / red carry state; violet is the only categorical color. */
+  color?: 'gray' | 'green' | 'red' | 'blue' | 'amber' | 'violet'
   size?: 'xs' | 'sm'
   variant?: 'solid' | 'surface'
   pill?: boolean

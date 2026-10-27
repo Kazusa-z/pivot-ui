@@ -77,10 +77,12 @@ const itemRecipe = cva({
       },
     },
     variant: {
+      // subtle lifts the selected item out of the neutral track; solid fills it with the accent.
       subtle: {
         '&:is([data-state=on], [data-state=checked])': {
-          color: 'var(--colors-selectionText)',
-          backgroundColor: 'var(--colors-selectionBg)',
+          color: 'var(--colors-textStrong)',
+          backgroundColor: 'var(--colors-controlRaisedBg)',
+          boxShadow: 'var(--shadows-raised)',
         },
       },
       solid: {

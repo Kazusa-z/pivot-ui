@@ -5,7 +5,7 @@ import { Button } from '../src/widgets/buttons'
 import { Text } from '../src/foundation/typography'
 import { StoryPage, StorySection, StoryCard, StoryRow, StoryGrid, StoryState, StoryCode } from './support/StoryPage'
 
-const colors = ['gray', 'green', 'red', 'blue', 'orange', 'amber', 'gold', 'violet'] as const
+const colors = ['gray', 'blue', 'green', 'amber', 'red', 'violet'] as const
 const initialTags = ['Mesh', 'Material', 'Texture']
 
 const meta = {
@@ -35,7 +35,7 @@ function BadgeExample() {
       summary="用短文字和颜色标记状态或分类。Badge 只展示；Tag 提供可移除入口，移除结果由应用决定。"
       meta={
         <>
-          <span>8 colors</span>
+          <span>6 colors</span>
           <span>·</span>
           <span>solid / surface</span>
           <span>·</span>
@@ -55,7 +55,7 @@ function BadgeExample() {
       }>
       <StorySection
         title="Colors"
-        description="solid 是实心 tint，surface 增加 1px 边框；orange/gold/violet 属于分类色，不表示状态。">
+        description="solid 是浅色 tint，surface 增加 1px 边框；gray/blue/green/amber/red 表示状态，violet 是唯一的分类色。">
         {(['solid', 'surface'] as const).map((variant) => (
           <StoryRow key={variant}>
             <Text size="xs" tone="muted" css={{ width: '56px' }}>
@@ -123,8 +123,8 @@ function BadgeExample() {
           />
           <StoryCard title="Rules">
             <Text size="sm" tone="muted">
-              用颜色表达状态时优先使用 green / red / blue / amber；分类用 orange / gold /
-              violet。不要只靠颜色传达含义，文字本身要能读懂。
+              用颜色表达状态时使用 blue / green / amber / red；分类只用 violet，更多分类用文字区分。
+              不要只靠颜色传达含义，文字本身要能读懂。
             </Text>
           </StoryCard>
         </StoryGrid>

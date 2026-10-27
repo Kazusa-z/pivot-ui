@@ -103,8 +103,11 @@ Provider 只放在使用相应功能的区域。局部主题使用 `ThemeProvide
 - 禁用：`opacity: 0.5` + `cursor: not-allowed`。
 - 只读：保持正常颜色，仅 `cursor: default`。
 - 错误/成功：改边框和文字色，不整块填充背景。
-- 选中：行、选项、勾选使用 `selectionBg + selectionText`；卡片/磁贴使用 `selectionSubtleBg + selectionSubtleBorder + textStrong`。
-- 实心主按钮使用 `primarySolid`，确保白字对比度；critical/positive 使用加深的 status solid。
+- 选中：行、选项、勾选使用 `selectionBg + selectionText`；卡片/磁贴使用 `selectionSubtleBg + selectionSubtleBorder + textStrong`；SegmentControl/ToggleGroup 的 subtle 变体用 `controlRaisedBg` 抬起选中项，solid 变体用强调色填充。
+- 强调色只有一个蓝色：实心按钮、选中、曲线和进度共用 `primary`；块状 Slider 的填充使用 `primaryMuted`，让上面的标签和单位保持可读。critical/positive 使用加深的 status solid。
+- Hover 在暗色主题中变亮、在亮色主题中变暗。
+- Callout 使用状态色 10% 的浅色底，图标和标题用状态色，正文保持 `text`。
+- 色相只用 slate、blue、green、amber、red 和 violet；Badge 的分类色只有 violet。
 
 ### 3.4 Token 使用
 

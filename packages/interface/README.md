@@ -76,16 +76,16 @@ export function Example() {
 
 需要保存到应用配置或嵌入其他宿主时，使用 `createThemeStore({ initialPreference, storage, system, appearance })` 并传入 Provider。三个适配器分别处理偏好读写、系统主题变化和界面主题应用，可以独立替换。
 
-| 组件                    | 用途与使用方式                                                                                           |
-| ----------------------- | -------------------------------------------------------------------------------------------------------- |
-| Text、Bold、Title、Link | 展示正文、强调文字、标题和链接。`as` 选择 HTML 语义，`size` 选择视觉字号                                 |
-| 图标与 Arrow            | 为动作、文件类型或方向提供图形提示。独立表达含义时提供可访问名称；旁边已有完整文字时可作为装饰           |
-| Button、ActionButton    | 触发操作；ActionButton 适合图标动作。`onClick` 接收点击，`async` 可等待 Promise，`onAsyncError` 接收失败 |
-| ActionButtonGroup       | 将相关图标动作排在一起，每个按钮保留自己的回调和可用状态                                                 |
-| Badge、Tag              | Badge 展示状态；Tag 适合可移除的标签，`onRemove` 通知父组件更新标签列表                                  |
-| Kbd、KbdGroup           | 展示快捷键或手势提示。应用通过键盘事件注册对应命令                                                       |
-| Callout                 | 显示说明、警告或错误；`severity` 选择外观，`role="status"` 或 `"alert"` 用于需要即时播报的变化           |
-| Progress、Spin          | 显示已知进度或等待状态。Progress 按 `value / max` 展示进度，空值表示进度未知；Spin 可提供加载名称        |
+| 组件                    | 用途与使用方式                                                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Text、Bold、Title、Link | 展示正文、强调文字、标题和链接。`as` 选择 HTML 语义，`size` 选择视觉字号                                             |
+| 图标与 Arrow            | 为动作、文件类型或方向提供图形提示。独立表达含义时提供可访问名称；旁边已有完整文字时可作为装饰                       |
+| Button、ActionButton    | 触发操作；ActionButton 适合图标动作。`onClick` 接收点击，`async` 可等待 Promise，`onAsyncError` 接收失败             |
+| ActionButtonGroup       | 将相关图标动作排在一起，每个按钮保留自己的回调和可用状态                                                             |
+| Badge、Tag              | Badge 展示状态（gray/blue/green/amber/red）或分类（violet）；Tag 适合可移除的标签，`onRemove` 通知父组件更新标签列表 |
+| Kbd、KbdGroup           | 展示快捷键或手势提示。应用通过键盘事件注册对应命令                                                                   |
+| Callout                 | 显示说明、警告或错误；`severity` 选择外观，`role="status"` 或 `"alert"` 用于需要即时播报的变化                       |
+| Progress、Spin          | 显示已知进度或等待状态。Progress 按 `value / max` 展示进度，空值表示进度未知；Spin 可提供加载名称                    |
 
 Button 的 `loading` 和异步等待状态会禁用重复激活。保存、网络请求和撤销逻辑写在应用回调中。使用 `asChild` 时，自定义子组件需要将 props 和 ref 转发到实际 DOM 元素。Progress 的 `max` 应为正有限数，非法范围按 100 显示。
 

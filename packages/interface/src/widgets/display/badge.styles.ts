@@ -149,14 +149,6 @@ export const badgeRecipe = cva({
         '--badge-highlight-bg-color': 'var(--colors-infoBgHover)',
         '--badge-border-color': 'var(--colors-infoBorder)',
       },
-      orange: {
-        // Categorical accent; not a status color.
-        '--badge-color': 'var(--colors-orangeA11)',
-        '--badge-bg-color': 'var(--colors-orangeA3)',
-        '--badge-highlight-color': 'var(--colors-orangeA12)',
-        '--badge-highlight-bg-color': 'var(--colors-orangeA5)',
-        '--badge-border-color': 'var(--colors-orangeA9)',
-      },
       amber: {
         '--badge-color': 'var(--colors-warningText)',
         '--badge-bg-color': 'var(--colors-warningBg)',
@@ -164,21 +156,13 @@ export const badgeRecipe = cva({
         '--badge-highlight-bg-color': 'var(--colors-warningBgHover)',
         '--badge-border-color': 'var(--colors-warningBorder)',
       },
-      gold: {
-        // Categorical accent; not a status color.
-        '--badge-color': 'var(--colors-goldA11)',
-        '--badge-bg-color': 'var(--colors-goldA3)',
-        '--badge-highlight-color': 'var(--colors-goldA12)',
-        '--badge-highlight-bg-color': 'var(--colors-goldA5)',
-        '--badge-border-color': 'var(--colors-goldA9)',
-      },
       violet: {
-        // Categorical accent; not a status color.
-        '--badge-color': 'var(--colors-violetA11)',
+        // The single categorical accent; it mirrors the status tint/border steps.
+        '--badge-color': 'var(--colors-violet12)',
         '--badge-bg-color': 'var(--colors-violetA3)',
-        '--badge-highlight-color': 'var(--colors-violetA12)',
-        '--badge-highlight-bg-color': 'var(--colors-violetA5)',
-        '--badge-border-color': 'var(--colors-violetA9)',
+        '--badge-highlight-color': 'var(--colors-violet12)',
+        '--badge-highlight-bg-color': 'var(--colors-violetA4)',
+        '--badge-border-color': 'var(--colors-violetA7)',
       },
     },
   },

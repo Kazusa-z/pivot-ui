@@ -19,15 +19,17 @@ Pivot UI 使用 Panda CSS 生成样式。应用和组件共用这里的颜色、
 
 优先使用语义 token，而不是原始调色板：
 
-| 角色                                                | 用途                                               |
-| --------------------------------------------------- | -------------------------------------------------- |
-| `appBg` / `surface` / `surfaceRaised`               | 页面、卡片、浮层的三级背景                         |
-| `panelBg` / `surfaceSubtle`                         | 面板和下沉区域                                     |
-| `text` / `textStrong` / `textMuted`                 | 正文、强调、辅助文字；`textMuted` 已按 4.5:1 调整  |
-| `primary` / `primarySolid`                          | 强调色与实心填充；实心填充使用更深的一档以承载白字 |
-| `selectionBg` / `selectionText` / `selectionBorder` | 行、选项、勾选的实心选中                           |
-| `selectionSubtleBg` / `selectionSubtleBorder`       | 卡片/磁贴的浅底选中                                |
-| `info* / success* / warning* / danger*`             | 状态提示、Callout、Badge、Invalid                  |
+| 角色                                                | 用途                                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------ |
+| `appBg` / `surface` / `surfaceRaised`               | 页面、卡片、浮层的三级背景                                               |
+| `panelBg` / `surfaceSubtle`                         | 面板和下沉区域                                                           |
+| `text` / `textStrong` / `textMuted`                 | 正文、强调、辅助文字；`textMuted` 已按 4.5:1 调整                        |
+| `primary` / `primarySolid`                          | 唯一的强调蓝：实心按钮、选中、曲线与进度共用同一色值，白字对比度 ≥ 4.5:1 |
+| `primaryMuted`                                      | 低强调填充，用于承载文字的大面积数值条（块状 Slider）                    |
+| `controlRaisedBg` + `shadows.raised`                | 中性轨道上被抬起的选中项（subtle 的 SegmentControl / ToggleGroup）       |
+| `selectionBg` / `selectionText` / `selectionBorder` | 行、选项、勾选的实心选中                                                 |
+| `selectionSubtleBg` / `selectionSubtleBorder`       | 卡片/磁贴的浅底选中                                                      |
+| `info* / success* / warning* / danger*`             | 状态提示、Badge、Invalid；`*Icon`（第 11 阶）用于图标与标题              |
 
 暗色下 `appBg` 比 `surface` 深一档，`surfaceRaised` 再亮一档；亮色下浮层使用 `white`。浮层统一使用 `shadows.overlay`，Dialog 使用 `shadows.modal`。
 
@@ -37,7 +39,9 @@ Pivot UI 使用 Panda CSS 生成样式。应用和组件共用这里的颜色、
 - 禁用：只使用 `opacity: 0.5` + `cursor: not-allowed`，不再同时替换背景和文字色。
 - 只读：保持正常颜色，仅 `cursor: default`。
 - 错误/成功：只改边框和文字色，不整块填充背景。
-- 选中：行/选项/勾选用实心 `selectionBg + selectionText`；卡片/磁贴用 `selectionSubtleBg + selectionSubtleBorder + textStrong`。
+- 选中：行/选项/勾选用实心 `selectionBg + selectionText`；卡片/磁贴用 `selectionSubtleBg + selectionSubtleBorder + textStrong`；分段控件默认用 `controlRaisedBg` 抬起选中项，`variant="solid"` 才用强调色填充。
+- Hover：暗色主题向更亮一档变化，亮色主题向更暗一档变化。
+- 色相：只使用 slate（灰）、blue（强调/信息）、green、amber、red（状态）和 violet（唯一分类色）。新增色相需要新的语义。
 
 ## 使用设计 token
 

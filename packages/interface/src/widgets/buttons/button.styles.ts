@@ -130,15 +130,18 @@ export const buttonRecipe = cva({
           backgroundColor: 'var(--colors-surfaceStrong)',
         },
       },
+      // Body-text gray instead of the strongest gray keeps the reversed button from
+      // becoming the brightest element in a dark editor; hover steps up to textStrong.
       inverted: {
         color: 'var(--colors-textInverted)',
-        backgroundColor: 'var(--colors-textStrong)',
-        borderColor: 'var(--colors-textStrong)',
+        backgroundColor: 'var(--colors-text)',
+        borderColor: 'var(--colors-text)',
         '&:hover': {
-          opacity: 0.9,
+          backgroundColor: 'var(--colors-textStrong)',
+          borderColor: 'var(--colors-textStrong)',
         },
         '&:active': {
-          opacity: 0.8,
+          opacity: 0.85,
         },
       },
     },

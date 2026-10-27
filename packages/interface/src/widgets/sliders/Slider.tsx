@@ -73,6 +73,8 @@ const rootRecipe = cva({
     compact: {
       true: {
         backgroundColor: 'transparent',
+        // Thin tracks need the full accent to stay visible; block tracks use the muted fill.
+        '& [data-part=range]': { backgroundColor: 'var(--colors-primary)' },
         '& [data-part=track][data-orientation=horizontal]': { height: '4px' },
         '& [data-part=track][data-orientation=vertical]': { width: '4px' },
       },
@@ -90,7 +92,8 @@ const trackClass = css({
 })
 const rangeClass = css({
   position: 'absolute',
-  backgroundColor: 'var(--colors-selectionBg)',
+  // Block sliders carry labels and units on top of the fill, so the fill stays muted.
+  backgroundColor: 'var(--colors-primaryMuted)',
   '&[data-orientation=horizontal]': { height: '100%' },
   '&[data-orientation=vertical]': { width: '100%' },
 })
@@ -131,7 +134,7 @@ const slotClass = css({
   transform: 'translateY(-50%)',
   pointerEvents: 'none',
   fontSize: 'var(--fontSizes-micro)',
-  color: 'var(--colors-textMuted)',
+  color: 'var(--colors-text)',
   zIndex: 1,
 })
 
