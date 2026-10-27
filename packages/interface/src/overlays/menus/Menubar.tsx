@@ -7,6 +7,7 @@ import { getMenubarClass, getMenubarTriggerClass, type MenuSize } from './menu.s
 import { assertMenuChild } from './slot'
 
 export interface MenubarRootProps extends Primitive.MenubarProps {
+  /** 菜单项高度，子菜单和 Portal 内容会继承：`xs` 20、`sm` 24（默认）、`md` 32。 */
   size?: MenuSize
   css?: SystemStyleObject
 }

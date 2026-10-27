@@ -19,6 +19,7 @@ export function HoverCardPortal(props: HoverCardPortalProps) {
   return <Primitive.Portal {...props} forceMount={undefined} />
 }
 export interface HoverCardContentProps extends Omit<Primitive.HoverCardContentProps, 'forceMount'> {
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 const contentStyles = css.raw({
@@ -61,11 +62,17 @@ export const HoverCardArrow = forwardRef<SVGSVGElement, HoverCardArrowProps>(fun
 })
 /** Nonessential hover/focus preview. Use Popover for a focusable form or required actions. */
 export interface HoverCardProps {
+  /** 触发元素，悬停或聚焦时显示卡片；必须能转发 props 和 ref。 */
   trigger: ReactNode
+  /** 浮层里的内容。 */
   children?: ReactNode
+  /** 传给 Root 的属性：`open` / `defaultOpen` / `onOpenChange` 控制开关，`openDelay` / `closeDelay` 悬停延迟。 */
   rootProps?: Omit<HoverCardRootProps, 'children'>
+  /** 合并到触发元素上的额外属性。 */
   triggerProps?: Omit<HoverCardTriggerProps, 'children' | 'asChild'>
+  /** 传给 Portal 的属性，例如 `container`。 */
   portalProps?: Omit<HoverCardPortalProps, 'children'>
+  /** 传给浮层内容的属性：`side`、`align`、`sideOffset` 等定位参数。 */
   contentProps?: Omit<HoverCardContentProps, 'children'>
 }
 export const HoverCard = forwardRef<HTMLDivElement, HoverCardProps>(function HoverCard(

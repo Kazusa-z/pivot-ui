@@ -55,8 +55,11 @@ export function PopoverPortal(props: PopoverPortalProps) {
 }
 
 export interface PopoverContentProps extends Omit<Primitive.PopoverContentProps, 'forceMount'> {
+  /** 去掉内边距，适合内容自带内边距的列表或菜单。 */
   compact?: boolean
+  /** 宽度与触发器相同，最大高度限制在可用空间内。 */
   constrainSize?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -115,12 +118,17 @@ export const PopoverArrow = forwardRef<SVGSVGElement, PopoverArrowProps>(functio
 })
 
 export interface PopoverProps {
-  /** A single element that forwards its native props and ref. */
+  /** 触发元素，点击打开浮层；必须是一个能转发 props 和 ref 的元素（例如 `Button`）。 */
   trigger: ReactNode
+  /** 浮层里的内容。 */
   children?: ReactNode
+  /** 传给 Root 的属性：`open` / `defaultOpen` / `onOpenChange` 控制开关，`keepMounted` 关闭后保留内容状态。 */
   rootProps?: Omit<PopoverRootProps, 'children'>
+  /** 合并到触发元素上的额外属性。 */
   triggerProps?: Omit<PopoverTriggerProps, 'children' | 'asChild'>
+  /** 传给 Portal 的属性，例如 `container`。 */
   portalProps?: Omit<PopoverPortalProps, 'children'>
+  /** 传给浮层内容的属性：`side`、`align`、`sideOffset` 等定位参数，以及 `compact`、`constrainSize`。 */
   contentProps?: Omit<PopoverContentProps, 'children'>
 }
 export const Popover = forwardRef<HTMLDivElement, PopoverProps>(function Popover(

@@ -6,11 +6,17 @@ import { Spin } from '../../display/feedback/Spin'
 import { getOverlaySurfaceClass, useOverlayTheme } from '../shared'
 
 export interface ToastViewProps extends HTMLAttributes<HTMLDivElement> {
+  /** 状态：决定图标；`error` 应同时设置 `role="alert"`。 */
   tone?: 'info' | 'success' | 'error' | 'loading'
+  /** 替换默认的状态图标。 */
   icon?: ReactNode
+  /** 进入 / 离开动画状态，由 Toaster 控制；单独使用时不需要设置。 */
   visible?: boolean
+  /** 提供时显示关闭按钮。 */
   onDismiss?: () => void
+  /** 关闭按钮的无障碍名称，默认 "Dismiss notification"。 */
   dismissLabel?: string
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

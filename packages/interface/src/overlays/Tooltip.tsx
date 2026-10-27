@@ -22,6 +22,7 @@ export function TooltipPortal(props: TooltipPortalProps) {
   return <Primitive.Portal {...props} forceMount={undefined} />
 }
 export interface TooltipContentProps extends Omit<Primitive.TooltipContentProps, 'forceMount'> {
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 const contentStyles = css.raw({
@@ -66,12 +67,17 @@ export const TooltipArrow = forwardRef<SVGSVGElement, TooltipArrowProps>(functio
   )
 })
 export interface TooltipProps {
-  /** A single element that forwards native props/ref. Essential information belongs in visible text. */
+  /** 触发元素，悬停或聚焦时显示提示；必须能转发 props 和 ref。必要信息应写在可见文字里，提示只做补充。 */
   trigger: ReactNode
+  /** 浮层里的内容。 */
   children?: ReactNode
+  /** 传给 Root 的属性：`open` / `defaultOpen` / `onOpenChange` 控制开关，`delayDuration` 悬停延迟。 */
   rootProps?: Omit<TooltipRootProps, 'children'>
+  /** 合并到触发元素上的额外属性。 */
   triggerProps?: Omit<TooltipTriggerProps, 'children' | 'asChild'>
+  /** 传给 Portal 的属性，例如 `container`。 */
   portalProps?: Omit<TooltipPortalProps, 'children'>
+  /** 传给浮层内容的属性：`side`、`align`、`sideOffset` 等定位参数。 */
   contentProps?: Omit<TooltipContentProps, 'children'>
 }
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(function Tooltip(

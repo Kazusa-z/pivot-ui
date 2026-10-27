@@ -4,8 +4,9 @@ import { css, cx } from '../../styled-system/css'
 import { OverlayLayerContext, useOverlayLayer, useOverlayTheme } from './shared'
 
 export interface OverlayLayerProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
-  /** The single child must forward native props and its ref to the actual overlay surface. */
+  /** 必须为 `true`：样式、主题 class 和层级直接合并到子元素上，不额外增加 DOM。 */
   asChild: true
+  /** 第三方浮层的实际内容元素（不是触发器），必须转发 props 和 ref。 */
   children: ReactElement
 }
 

@@ -5,6 +5,7 @@ import type { MenuSize } from './menu.styles'
 import { assertMenuChild } from './slot'
 
 export interface DropdownMenuRootProps extends Primitive.DropdownMenuProps {
+  /** 菜单项高度，子菜单和 Portal 内容会继承：`xs` 20、`sm` 24（默认）、`md` 32。 */
   size?: MenuSize
 }
 export function DropdownMenuRoot({ size = 'sm', children, ...props }: DropdownMenuRootProps) {

@@ -5,11 +5,17 @@ export type NotificationMessage = string | ReactElement | null
 export type NotificationPosition =
   'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
 export interface NotificationOptions {
+  /** 通知 id；传入已存在的 id 会更新那条通知，而不是新增。 */
   id?: string
+  /** 显示时长（毫秒）；loading 默认不会自动消失。 */
   duration?: number
+  /** 替换默认图标。 */
   icon?: NotificationMessage
+  /** 这条通知出现的位置。 */
   position?: NotificationPosition
+  /** 读屏语义：`status` 礼貌播报（默认），`alert` 立即播报。 */
   role?: 'status' | 'alert'
+  /** 覆盖 live region 的播报级别。 */
   ariaLive?: 'polite' | 'assertive' | 'off'
   className?: string
   style?: CSSProperties

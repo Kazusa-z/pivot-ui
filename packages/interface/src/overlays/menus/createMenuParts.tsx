@@ -25,8 +25,20 @@ import {
 
 export const MenuSizeContext = createContext<MenuSize>('sm')
 
-type StyledProps = { css?: SystemStyleObject }
-type ItemSlots = { icon?: ReactNode; shortcuts?: KbdGroupProps['shortcuts']; critical?: boolean }
+interface StyledProps {
+  /** 追加 Panda 样式对象。 */
+  css?: SystemStyleObject
+}
+/** Extra slots every menu item accepts on top of the Radix item props. */
+export interface MenuItemSlots {
+  /** 文字前的图标。 */
+  icon?: ReactNode
+  /** 右侧显示的快捷键提示（只显示，不注册快捷键），格式同 `KbdGroup`。 */
+  shortcuts?: KbdGroupProps['shortcuts']
+  /** 危险操作（删除等）的红色语义。 */
+  critical?: boolean
+}
+type ItemSlots = MenuItemSlots
 export type SharedMenuItemProps = Primitive.DropdownMenuItemProps & StyledProps & ItemSlots
 export type SharedMenuCheckboxItemProps = Primitive.DropdownMenuCheckboxItemProps & StyledProps & ItemSlots
 export type SharedMenuRadioItemProps = Primitive.DropdownMenuRadioItemProps & StyledProps & ItemSlots

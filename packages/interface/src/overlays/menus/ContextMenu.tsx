@@ -6,6 +6,7 @@ import { assertMenuChild } from './slot'
 
 // This primitive has open/onOpenChange but no defaultOpen: opening needs a trigger position.
 export interface ContextMenuRootProps extends Primitive.ContextMenuProps {
+  /** 菜单项高度，子菜单和 Portal 内容会继承：`xs` 20、`sm` 24（默认）、`md` 32。 */
   size?: MenuSize
 }
 export function ContextMenuRoot({ size = 'sm', children, ...props }: ContextMenuRootProps) {

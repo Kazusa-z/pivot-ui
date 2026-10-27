@@ -1,285 +1,106 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/controls/buttons'
 import {
   createNotificationService,
   NotificationProvider,
   ToastView,
   useNotifications,
 } from '../src/overlays/notifications'
-import { css } from '../styled-system/css'
-import {
-  StoryPage,
-  StorySection,
-  StoryCard,
-  StoryRow,
-  StoryGrid,
-  StoryState,
-  StoryCode,
-  StoryProps,
-  StoryKeyboard,
-  StoryNote,
-} from './support/StoryPage'
-
-const toastStack = css({
-  display: 'grid',
-  gap: 'var(--space-2)',
-  minWidth: 0,
-  maxWidth: '100%',
-})
-const longWord = css({ minWidth: 0, overflowWrap: 'anywhere' })
-
-function DismissibleToast() {
-  const [visible, setVisible] = useState(true)
-  const [dismissed, setDismissed] = useState(0)
-  return (
-    <div className={toastStack}>
-      <ToastView
-        visible={visible}
-        onDismiss={() => {
-          setVisible(false)
-          setDismissed((value) => value + 1)
-        }}>
-        Changes saved to “Scene 04”
-      </ToastView>
-      {!visible && (
-        <Button size="sm" variant="outline" onClick={() => setVisible(true)}>
-          Show notification again
-        </Button>
-      )}
-      <StoryState label="Visibility state" value={{ visible, dismissed }} />
-    </div>
-  )
-}
-
-function ActionToast() {
-  const [actions, setActions] = useState(0)
-  return (
-    <div className={toastStack}>
-      <ToastView>
-        <span>Change applied to the active layer. </span>
-        <Button size="xs" variant="subtle" onClick={() => setActions((value) => value + 1)}>
-          Undo
-        </Button>
-      </ToastView>
-      <StoryState label="Inline actions" value={{ undoCount: actions }} />
-    </div>
-  )
-}
+import { Button } from '../src/controls/buttons'
+import { describeComponent } from './support/describe'
+import { Column, Row } from './support/layout'
 
 function NotificationActions() {
-  const service = useNotifications()
-  const [events, setEvents] = useState<string[]>([])
-  const record = (event: string) => setEvents((previous) => [...previous.slice(-5), event])
+  const notifications = useNotifications()
   return (
-    <div className={css({ display: 'grid', gap: 'var(--space-3)' })}>
-      <StoryRow>
-        <Button size="sm" onClick={() => (service.info('Scene saved', { duration: 60000 }), record('info'))}>
-          Info
-        </Button>
-        <Button size="sm" onClick={() => (service.success('Export finished', { duration: 60000 }), record('success'))}>
-          Success
-        </Button>
-        <Button
-          size="sm"
-          critical
-          onClick={() => (
-            service.error('Export failed', { duration: 60000, role: 'alert', ariaLive: 'assertive' }),
-            record('error')
-          )}>
-          Error
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => {
-            service.loading('Task update', { id: 'one-task', duration: 60000 })
-            record('loading:one-task')
-          }}>
-          Update same task
-        </Button>
-      </StoryRow>
-      <StoryRow>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => {
-            const operation = new Promise<string>((resolve) => setTimeout(() => resolve('Export finished'), 800))
-            void service.promise(
-              operation,
-              { loading: 'Exporting scene…', success: (value) => value, error: 'Export failed' },
-              { duration: 60000 }
-            )
-            record('promise:start')
-          }}>
-          Run promise
-        </Button>
-        <Button size="sm" variant="subtle" onClick={() => (service.dismiss(), record('dismiss-all'))}>
-          Dismiss all
-        </Button>
-        <Button size="sm" variant="subtle" onClick={() => (service.clear(), record('clear'))}>
-          Clear immediately
-        </Button>
-      </StoryRow>
-      <StoryState label="Service events" value={{ events }} />
-    </div>
+    <Row>
+      <Button onClick={() => notifications.success('Scene saved')}>Success</Button>
+      <Button onClick={() => notifications.info('Lightmaps will rebuild on the next bake')}>Info</Button>
+      <Button onClick={() => notifications.error('Export failed: disk is full', { role: 'alert' })}>Error</Button>
+      <Button
+        onClick={() =>
+          notifications.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
+            loading: 'Exporting scene…',
+            success: 'Exported to Assets/Exports',
+            error: 'Export failed',
+          })
+        }>
+        Promise
+      </Button>
+      <Button variant="subtle" onClick={() => notifications.clear()}>
+        Clear
+      </Button>
+    </Row>
   )
 }
 
 const meta = {
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '通知用于保存结果、后台任务和短暂提示。应用创建 createNotificationService，用 NotificationProvider 提供显示区域，再从 useNotifications 发送、更新或关闭消息；同一 id 更新同一条通知。ToastView 可以脱离服务单独渲染，适合自定义内容和内联操作。',
-      },
-    },
-    layout: 'fullscreen',
-  },
   title: 'Overlays/Notifications',
-} satisfies Meta
+  component: NotificationProvider,
+  tags: ['autodocs'],
+  parameters: describeComponent({
+    summary: '在屏幕角落短暂显示的通知：保存结果、后台任务进度、错误。',
+    use: [
+      '操作完成后的反馈："已保存"',
+      '后台任务：`promise()` 从 loading 自动切换到 success 或 error',
+      '同一个任务的进度更新：传相同的 `id`',
+    ],
+    avoid: ['需要用户做决定 → 用 `AlertDialog`', '一直需要可见的状态 → 用 `Callout`', '字段校验错误 → 显示在字段旁边'],
+    related: ['`Callout`：持续可见的提示', '`AlertDialog`：需要明确回答的确认'],
+    notes: [
+      '应用启动时 `createNotificationService()` 创建一次，用 `NotificationProvider` 放在根部；组件里用 `useNotifications()` 发送',
+      '服务方法：`info` / `success` / `error` / `loading` / `promise` / `dismiss` / `clear`',
+      '`ToastView` 是通知的外观，可以单独渲染在自定义位置',
+      '通知不应是唯一的信息来源，重要结果也要能在界面其他地方找到',
+    ],
+  }),
+  args: { children: null },
+  argTypes: { children: { control: false }, service: { control: false } },
+} satisfies Meta<typeof NotificationProvider>
 export default meta
 type Story = StoryObj<typeof meta>
 
-function NotificationsPage() {
-  const [service] = useState(createNotificationService)
-  return (
-    <StoryPage
-      eyebrow="Overlays"
-      title="Notifications"
-      summary="用状态图标、简短消息和可选操作反馈结果。独立 ToastView 适合自定义展示；NotificationProvider + service 负责排队、同 id 更新、Promise 状态和关闭。"
-      meta={
-        <>
-          <span>320px width</span>
-          <span>·</span>
-          <span>32px min height</span>
-          <span>·</span>
-          <span>status / alert</span>
-        </>
-      }>
-      <StorySection
-        title="Variants"
-        description="info、success、error 和 loading 使用同一表面与图标槽位；error 使用 alert/assertive。">
-        <StoryGrid>
-          <StoryCard title="Status tones" description="Standalone ToastView; no service or provider required.">
-            <div className={toastStack}>
-              <ToastView>Scene saved locally</ToastView>
-              <ToastView tone="success">Export finished</ToastView>
-              <ToastView tone="error" role="alert" aria-live="assertive">
-                Export failed
-              </ToastView>
-              <ToastView tone="loading">Preparing preview</ToastView>
-            </div>
-          </StoryCard>
-          <StoryCard
-            title="Custom content"
-            description="Inline actions stay inside the notification; dismiss remains optional.">
-            <ActionToast />
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection
-        title="Sizes & layout"
-        description="通知固定 320px 宽，视口不足时收缩；内容换行，长单词不会撑破表面。">
-        <StoryGrid>
-          <StoryCard title="320px surface" description="8px/10px padding, 32px minimum height, 16px status icon.">
-            <div className={toastStack}>
-              <ToastView tone="success">Exported “Scene 04” to the asset library</ToastView>
-              <ToastView>
-                <span className={longWord}>LongUnbrokenNotificationContentMustRemainInsideTheNarrowViewport</span>
-              </ToastView>
-            </div>
-          </StoryCard>
-          <StoryCard
-            title="Visible state"
-            description="visible=false keeps the surface mounted for exit while making it inert.">
-            <DismissibleToast />
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection
-        title="Behavior"
-        description="服务连接后按钮才会发送通知；同一个 id 更新已有任务，Promise 会从 loading 进入 success 或 error。">
-        <StoryCard
-          title="Notification service"
-          description="The Toaster is owned by NotificationProvider at the application boundary.">
-          <NotificationProvider service={service}>
-            <NotificationActions />
-          </NotificationProvider>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection title="Keyboard & accessibility">
-        <StoryKeyboard
-          rows={[
-            { keys: 'Tab', action: 'Moves focus to the dismiss button or an inline action when present.' },
-            { keys: ['Enter', 'Space'], action: 'Activates the focused dismiss button or inline action.' },
-            {
-              keys: 'Focus',
-              action: 'Notification surfaces do not trap focus; close and inline actions remain reachable.',
-            },
-          ]}
-        />
-        <StoryNote>
-          默认通知使用 role=status 和 polite live region；错误使用 role=alert 和
-          assertive。通知不应是唯一的信息来源，关闭按钮通过 `dismissLabel` 提供可读名称，不要只显示图标。
-        </StoryNote>
-      </StorySection>
-
-      <StorySection title="Usage">
-        <StoryGrid>
-          <StoryCode
-            label="tsx"
-            code={`const service = createNotificationService()
-
-<NotificationProvider service={service}>
-  <App />
-</NotificationProvider>
-
-service.success('Saved', { id: 'save' })
-service.promise(save(), {
-  loading: 'Saving…',
-  success: 'Saved',
-  error: 'Could not save',
-}, { id: 'save' })`}
-          />
-          <StoryProps
-            rows={[
-              {
-                name: 'NotificationProvider.service',
-                type: 'NotificationService',
-                description: '省略时 Provider 创建自己的服务；传入时可在应用其他位置发送通知。',
-              },
-              {
-                name: 'ToastView.tone',
-                type: "'info' | 'success' | 'error' | 'loading'",
-                defaultValue: "'info'",
-                description: '选择状态图标与语义色。',
-              },
-              {
-                name: 'ToastView.onDismiss',
-                type: '() => void',
-                description: '提供时显示关闭按钮；服务宿主会自动传入 dismiss。',
-              },
-              {
-                name: 'NotificationOptions.id',
-                type: 'string',
-                description: '同一 id 更新已有通知，而不是新增一条。',
-              },
-              {
-                name: 'NotificationOptions.role / ariaLive',
-                type: "'status' | 'alert' / 'polite' | 'assertive' | 'off'",
-                description: '错误等需要立即播报的内容使用 alert/assertive。',
-              },
-            ]}
-          />
-        </StoryGrid>
-      </StorySection>
-    </StoryPage>
-  )
+/** 每个按钮通过 `useNotifications()` 发送一条通知；Promise 按钮演示 loading → success。 */
+export const Basic: Story = {
+  render: function Render(args) {
+    const [service] = useState(createNotificationService)
+    return (
+      <NotificationProvider {...args} service={service}>
+        <NotificationActions />
+      </NotificationProvider>
+    )
+  },
 }
 
-export const Overview: Story = { render: () => <NotificationsPage /> }
+/** `ToastView` 的四种状态，可以脱离服务单独使用；提供 `onDismiss` 时显示关闭按钮。 */
+export const Appearance: Story = {
+  render: () => (
+    <Column width={360}>
+      <ToastView>Scene saved locally</ToastView>
+      <ToastView tone="success">Export finished</ToastView>
+      <ToastView tone="error" role="alert" aria-live="assertive" onDismiss={() => {}}>
+        Upload failed. Check your connection.
+      </ToastView>
+      <ToastView tone="loading">Preparing preview</ToastView>
+    </Column>
+  ),
+}
+
+/** 相同 `id` 更新同一条通知：loading 之后用 success 覆盖。 */
+export const BehaviorUpdateById: Story = {
+  tags: ['!autodocs'],
+  render: function Render() {
+    const [service] = useState(createNotificationService)
+    return (
+      <NotificationProvider service={service}>
+        <Row>
+          <Button onClick={() => service.loading('Uploading 3 assets…', { id: 'upload' })}>Start</Button>
+          <Button onClick={() => service.success('Uploaded 3 assets', { id: 'upload' })}>Finish</Button>
+          <Button variant="subtle" onClick={() => service.dismiss('upload')}>
+            Dismiss
+          </Button>
+        </Row>
+      </NotificationProvider>
+    )
+  },
+}
