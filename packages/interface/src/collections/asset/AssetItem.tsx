@@ -6,17 +6,29 @@ import { AssetName } from './AssetName'
 import { AssetThumbnail } from './AssetThumbnail'
 
 export interface AssetItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onSelect'> {
+  /** 资源描述：id、名称、类型、缩略图和状态（loading / error / missing 等）。 */
   asset: AssetDescriptor
+  /** 是否选中。 */
   selected?: boolean
+  /** 点击或按 Enter 选择时调用。 */
   onSelect?: (id: string) => void
+  /** 提供后名称可以就地改名；返回 Promise 时失败会保留草稿。 */
   onRename?: (name: string) => void | Promise<void>
+  /** 禁用：不能选择和改名。 */
   disabled?: boolean
+  /** 只读：可以选择，但不能改名。 */
   readOnly?: boolean
+  /** `grid` 缩略图磁贴（默认），`list` 单行列表。 */
   viewMode?: 'grid' | 'list'
+  /** 文字密度：`compact` 名称 12px（默认），`regular` 名称 14px。 */
   density?: 'compact' | 'regular'
+  /** 附加操作，例如更多菜单按钮。 */
   actions?: ReactNode
+  /** 外部更新资源时改变，取消正在进行的改名。 */
   resetKey?: unknown
+  /** 传给内部选择按钮的属性，例如拖动相关事件。 */
   selectionButtonProps?: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'disabled' | 'type' | 'onSelect'>
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

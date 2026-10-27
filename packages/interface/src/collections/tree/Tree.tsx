@@ -35,10 +35,14 @@ export interface TreeDropRequest {
   readonly position: TreeDropPosition
 }
 export interface TreeDragDropOptions {
+  /** 拖放数据类型，只有相同 type 的树之间可以互相拖放。 */
   type: string
   resetKey?: unknown
+  /** 判断某个放置位置是否允许，用于显示禁止状态。 */
   canDrop?: (request: TreeDropRequest) => boolean
+  /** 放下时调用；应用移动数据并更新 `collection`，返回 `false` 表示拒绝。 */
   onDrop: (request: TreeDropRequest) => boolean | void
+  /** 拖动结束（放下或取消）时调用。 */
   onDragEnd?: (result: DragResult<TreeDragData>) => void
 }
 export interface TreeItemState {
@@ -50,27 +54,45 @@ export interface TreeItemState {
   readonly density: TreeDensity
 }
 export interface TreeRootProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect' | 'children'> {
+  /** 树数据，用 `createTreeCollection(nodes)` 创建；数据变化时重新创建。 */
   collection: TreeCollection<T>
+  /** `single` 单选（默认）、`multiple` 多选（Shift 范围、Ctrl / ⌘ 追加）、`none` 只浏览。 */
   selectionMode?: TreeSelectionMode
+  /** 行高：`compact` 24（默认）、`regular` 32。 */
   density?: TreeDensity
+  /** 选中的节点 key（受控）。 */
   selectedKeys?: readonly CollectionKey[]
+  /** 非受控时初始选中的节点。 */
   defaultSelectedKeys?: readonly CollectionKey[]
+  /** 选择变化请求。 */
   onSelectedKeysChange?: (keys: readonly CollectionKey[]) => void
+  /** 展开的节点 key（受控）。 */
   expandedKeys?: readonly CollectionKey[]
+  /** 非受控时初始展开的节点。 */
   defaultExpandedKeys?: readonly CollectionKey[]
+  /** 展开变化请求。 */
   onExpandedKeysChange?: (keys: readonly CollectionKey[]) => void
+  /** 键盘焦点所在的节点（受控）。 */
   focusedKey?: CollectionKey | null
+  /** 非受控时初始的焦点节点。 */
   defaultFocusedKey?: CollectionKey | null
+  /** 焦点节点变化时调用。 */
   onFocusedKeyChange?: (key: CollectionKey | null) => void
+  /** 按 Enter 激活节点时调用，例如打开资源。 */
   onActivate?: (key: CollectionKey) => void
+  /** 禁用整棵树。 */
   disabled?: boolean
-  /** Selection, rename and movement are read-only; browsing expansion remains available. */
+  /** 只读：不能选择、改名或移动，但仍可展开浏览。 */
   readOnly?: boolean
   /** 启用树节点拖放。外层包裹 DragDropProvider，应用在移动回调中更新树数据。 */
   dragDrop?: TreeDragDropOptions
+  /** 自定义节点结构（`TreeItem` 等部件）；通常用 `renderItem` 即可。 */
   children?: ReactNode
+  /** 渲染每个节点的内容，通常返回 `TreeItemContent`。 */
   renderItem?: (node: TreeNode<T>, state: TreeItemState) => ReactNode
+  /** 树为空时显示的内容。 */
   emptyContent?: ReactNode
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 interface TreeContextValue {

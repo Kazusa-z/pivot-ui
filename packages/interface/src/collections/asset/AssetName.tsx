@@ -5,11 +5,17 @@ import { assertAssetDescriptor, type AssetDescriptor } from '../../values/assets
 import { EditableText } from '../../controls/inputs/EditableText'
 
 export interface AssetNameProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'> {
+  /** 资源描述。 */
   asset: AssetDescriptor
+  /** 提供后可以就地改名。 */
   onRename?: (name: string) => void | Promise<void>
+  /** 禁用改名。 */
   disabled?: boolean
+  /** 只读：显示名称，不能改名。 */
   readOnly?: boolean
+  /** 外部更新时改变，取消正在进行的改名。 */
   resetKey?: unknown
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

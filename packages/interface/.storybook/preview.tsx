@@ -20,7 +20,7 @@ const preview: Preview = {
       storySort: {
         order: [
           'Guides',
-          ['介绍', '快速开始', '选择组件', '编辑与数据'],
+          ['介绍', '快速开始', '选择组件', '编辑与数据', '拖放'],
           'Foundation',
           'Display',
           'Overlays',

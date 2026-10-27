@@ -42,33 +42,55 @@ export interface CollectionReorder {
   readonly toIndex: number
 }
 export interface CollectionEditorProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onSelect'> {
+  /** 条目列表；增删改名排序后由应用更新它。 */
   items: readonly T[]
+  /** 返回条目的稳定 key。 */
   getKey: (item: T) => CollectionKey
+  /** 返回条目显示的名称。 */
   getLabel: (item: T) => string
+  /** 条目展开后显示的编辑内容，例如该条目的属性字段。 */
   renderItem?: (item: T, context: CollectionItemContext) => ReactNode
+  /** 展开的条目（受控）。 */
   expandedKeys?: readonly CollectionKey[]
+  /** 非受控时初始展开的条目。 */
   defaultExpandedKeys?: readonly CollectionKey[]
+  /** 展开变化请求。 */
   onExpandedKeysChange?: (keys: readonly CollectionKey[]) => void
+  /** 选中的条目（受控）。 */
   selectedKeys?: readonly CollectionKey[]
+  /** 非受控时初始选中的条目。 */
   defaultSelectedKeys?: readonly CollectionKey[]
+  /** 选择变化请求。 */
   onSelectedKeysChange?: (keys: readonly CollectionKey[]) => void
+  /** 选择方式，默认 `single`。 */
   selectionMode?: 'none' | 'single' | 'multiple'
   /** 添加项目并更新 items 后完成 Promise；返回新项目的 key，可将焦点移到该项目。 */
   onAdd?: () => CollectionKey | void | Promise<CollectionKey | void>
+  /** 提供后每个条目显示删除按钮。 */
   onDelete?: (item: T, key: CollectionKey) => void | Promise<void>
+  /** 提供后条目名称可以就地改名。 */
   onRename?: (item: T, name: string, key: CollectionKey) => void | Promise<void>
   /** 接收排好序的项目，应用在此更新 items。拖动排序需要包裹 DragDropProvider，也可使用排序按钮。 */
   onReorder?: (items: readonly T[], change: CollectionReorder) => void | Promise<void>
+  /** 按条目禁止删除，例如必须保留至少一个。 */
   canDelete?: (item: T, key: CollectionKey) => boolean
+  /** 按条目禁止改名。 */
   canRename?: (item: T, key: CollectionKey) => boolean
+  /** 整个列表的无障碍名称，例如 "Materials"。 */
   label?: string
+  /** 添加按钮的文字。 */
   addLabel?: string
+  /** 没有条目时显示的内容。 */
   emptyContent?: ReactNode
+  /** 禁用整个编辑器。 */
   disabled?: boolean
+  /** 只读：可以展开查看，不能增删改名排序。 */
   readOnly?: boolean
   /** 紧凑 24px 行或常规 32px 行。 */
   density?: 'compact' | 'regular'
+  /** 切换编辑对象时改变，取消正在进行的改名。 */
   resetKey?: unknown
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 type Operation = { kind: 'add' | 'delete' | 'rename' | 'reorder'; key?: CollectionKey; epoch: object }

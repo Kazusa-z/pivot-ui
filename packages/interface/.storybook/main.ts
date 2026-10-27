@@ -1,11 +1,19 @@
 import type { StorybookConfig } from '@storybook/react-vite'
+import remarkGfm from 'remark-gfm'
 import { mergeConfig } from 'vite'
 import { storybookViteConfig } from '../../../storybook/vite.ts'
 
 const config: StorybookConfig = {
   viteFinal: (config) => mergeConfig(config, storybookViteConfig),
   stories: ['../stories/guides/*.mdx', '../{src,stories}/**/*.stories.@(ts|tsx)'],
-  addons: ['@storybook/addon-links', '@storybook/addon-docs'],
+  addons: [
+    '@storybook/addon-links',
+    // Guides use GitHub-flavoured markdown tables; MDX alone renders them as plain text.
+    {
+      name: '@storybook/addon-docs',
+      options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
+    },
+  ],
   framework: {
     name: '@storybook/react-vite',
     options: {},

@@ -1,0 +1,75 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { DragDropDemo, FileDropDemo } from './DragDropDemo'
+
+<Meta title="Guides/拖放" />
+
+# 拖放
+
+`TreeRoot` 和 `CollectionEditor` 内置了拖动排序，只要在外层放一个 `DragDropProvider`。要在自己的界面里拖放对象（把资源拖到属性槽、把节点拖到视口），使用 `@pivot-ui/react/interaction` 的三个部分：
+
+| 部分               | 作用                                                                      |
+| ------------------ | ------------------------------------------------------------------------- |
+| `DragDropProvider` | 划定拖放范围：源和目标必须在同一个 Provider 里；`resetKey` 变化时取消拖动 |
+| `useDragSource`    | 声明可拖动的对象：`type` 类型和 `data` 数据，`onEnd` 报告结果             |
+| `useDropTarget`    | 声明放置区域：`accept` 接受的类型，`onDrop` 交给应用处理                  |
+
+## 试一试
+
+把 Cube 拖到右边三个区域。第一个接受；第二个类型匹配，但 `onDrop` 返回 `false` 拒绝；第三个只接受另一种类型，不会高亮。拖动中按 Escape 或点"取消拖动"会取消。
+
+<DragDropDemo />
+
+## 写法
+
+```tsx
+function AssetTile({ asset }: { asset: Asset }) {
+  const source = useDragSource({ type: 'asset/texture', data: { id: asset.id } })
+  return <div ref={source.ref}>{asset.name}</div>
+}
+
+function TextureSlot({ onAssign }: { onAssign: (id: string) => void }) {
+  const target = useDropTarget<{ id: string }>({
+    accept: ['asset/texture'],
+    onDrop: ({ data }) => onAssign(data.id),
+  })
+  return <div ref={target.ref} data-over={target.isOver || undefined} />
+}
+
+function MaterialPanel() {
+  return (
+    <DragDropProvider>
+      <AssetTile asset={asset} />
+      <TextureSlot onAssign={assignTexture} />
+    </DragDropProvider>
+  )
+}
+```
+
+- `data` 在拖动过程中不变；放置后由应用修改自己的数据，拖放 hooks 不会改动任何东西。
+- `onDrop` 返回 `false` 表示拒绝，源的 `onEnd` 收到 `{ status: 'cancelled', reason: 'rejected' }`。
+- 需要按内容判断（例如同一类型里只接受某些资源）时用 `canDrop`，不接受的目标不会高亮。
+- 拖动预览：把 `previewRef` 挂到一个隐藏的元素上，浏览器用它作为跟随指针的图像。
+
+## 什么时候会取消
+
+拖动可能因为以下原因结束，`onEnd` 的 `reason` 会说明：
+
+| reason                 | 原因                                    |
+| ---------------------- | --------------------------------------- |
+| `escape`               | 按 Escape，或调用 `useDragDropCancel()` |
+| `outside`              | 在没有目标的地方松开                    |
+| `rejected`             | 目标的 `onDrop` 返回 `false`            |
+| `window-blur`          | 窗口失去焦点                            |
+| `disabled` / `unmount` | 源被禁用或被移除                        |
+| `reset`                | Provider 或源的 `resetKey` 变化         |
+| `replaced`             | 新的拖动替换了旧的                      |
+
+## 系统文件
+
+`onFilesDrop` 接收从操作系统拖进来的文件，与对象拖放互不干扰：
+
+<FileDropDemo />
+
+## 键盘
+
+拖放只是快捷方式，不能是唯一入口，每个拖放操作都要有键盘可用的替代。`CollectionEditor` 自带上移 / 下移按钮；`TreeRoot` 和自定义界面需要应用提供，例如右键菜单里的"移到…"或属性槽旁的选择按钮。

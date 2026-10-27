@@ -1,20 +1,9 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Breadcrumbs, type BreadcrumbEntry } from '../src/collections/navigation/Breadcrumbs'
-import { Button } from '../src/controls/buttons/Button'
-import {
-  StoryPage,
-  StorySection,
-  StoryCard,
-  StoryRow,
-  StoryGrid,
-  StoryField,
-  StoryCode,
-  StoryProps,
-  StoryState,
-  StoryKeyboard,
-  StoryNote,
-} from './support/StoryPage'
+import { Button } from '../src/controls/buttons'
+import { describeComponent } from './support/describe'
+import { Column, Item, Row, StateView } from './support/layout'
 
 const path: readonly BreadcrumbEntry[] = [
   { key: 'assets', label: 'Assets' },
@@ -23,168 +12,107 @@ const path: readonly BreadcrumbEntry[] = [
 ]
 
 const meta = {
+  title: 'Collections/Breadcrumbs',
+  component: Breadcrumbs,
   tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Breadcrumbs 显示当前位置的层级路径，适合文件目录、资源库或多层页面。上级项可以用 href 直接导航，也可以用 onNavigate 请求应用切换路径；当前项带有 aria-current="page"。禁用项用于表示当前无法到达的位置。',
-      },
-    },
-    layout: 'fullscreen',
-  },
-  title: 'Navigation/Breadcrumbs',
-} satisfies Meta
+  parameters: describeComponent({
+    summary: '当前位置的层级路径；上级可以点击返回，最后一级是当前位置。',
+    use: ['资源库、文件夹、多层页面中显示"在哪里"', '在浏览器顶部提供快速返回上级的入口'],
+    avoid: ['同级页面之间切换 → 用 `SegmentControl` 或标签页', '完整的层级浏览 → 用 `TreeRoot`'],
+    related: ['`ResourceBrowser`：资源目录导航', '`Pagination`：同一层结果的分页'],
+    notes: [
+      '`onNavigate` 只是请求，应用切换位置后再传入新的 `items`',
+      '提供 `href` 的级别渲染为链接，由浏览器导航',
+      '页面上有多个导航区时，传入不同的 `aria-label`',
+    ],
+    keyboard: [
+      ['Tab', '在可点击的级别之间移动；禁用的级别跳过'],
+      ['Enter / Space', '导航到这一级'],
+    ],
+  }),
+  args: { items: path, 'aria-label': 'Asset path' },
+  argTypes: { items: { control: false }, separator: { control: false } },
+} satisfies Meta<typeof Breadcrumbs>
 export default meta
 type Story = StoryObj<typeof meta>
 
-function BreadcrumbsExample() {
-  const [depth, setDepth] = useState(path.length)
-  const [refused, setRefused] = useState<string[]>([])
-  const items = path.slice(0, depth)
-  return (
-    <StoryPage
-      eyebrow="Navigation"
-      title="Breadcrumbs"
-      summary="用一条可换行的路径表达层级位置。紧凑档 20、常规档 24；当前页是文字，其余位置可以是链接或请求按钮。"
-      meta={
-        <>
-          <span>2 sizes</span>
-          <span>·</span>
-          <span>aria-current</span>
-          <span>·</span>
-          <span>可控导航</span>
-        </>
-      }
-      actions={
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => {
-            setDepth(path.length)
-            setRefused([])
-          }}>
-          Reset path
-        </Button>
-      }>
-      <StorySection title="Variants" description="默认用分隔符连接层级；可以替换分隔符，也可以给上级项提供 href。">
-        <StoryCard>
-          <StoryRow align="center">
-            <Breadcrumbs items={path} aria-label="Default path" />
-          </StoryRow>
-          <StoryRow align="center">
-            <Breadcrumbs items={path} size="md" separator="›" aria-label="Chevron path" />
-          </StoryRow>
-          <StoryRow align="center">
-            <Breadcrumbs items={path.map((item) => ({ ...item, href: `#${item.key}` }))} aria-label="Linked path" />
-          </StoryRow>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection title="Sizes" description="紧凑档 20/12，常规档 24/14；路径与分隔符一起缩放。">
-        <StoryGrid>
-          <StoryField label="Compact · 20">
-            <StoryCard>
-              <Breadcrumbs items={path} size="sm" aria-label="Compact breadcrumbs" />
-            </StoryCard>
-          </StoryField>
-          <StoryField label="Regular · 24">
-            <StoryCard>
-              <Breadcrumbs items={path} size="md" aria-label="Regular breadcrumbs" />
-            </StoryCard>
-          </StoryField>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection title="States" description="整条路径或单个位置都可以禁用；空路径仍保留 nav 的可访问名称。">
-        <StoryCard>
-          <StoryRow align="center">
-            <Breadcrumbs items={path} disabled aria-label="Disabled path" />
-          </StoryRow>
-          <StoryRow align="center">
-            <Breadcrumbs
-              items={path.map((item) => ({ ...item, disabled: item.key === 'materials' }))}
-              aria-label="Partially disabled path"
-            />
-          </StoryRow>
-          <StoryRow align="center">
-            <Breadcrumbs items={[]} aria-label="Empty path" />
-            <StoryNote>Empty path (nav label remains)</StoryNote>
-          </StoryRow>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection
-        title="Behavior"
-        description="点击上级项只发出请求，应用决定是否缩短路径。下面的路径会接受请求；第二条路径记录并拒绝请求。">
-        <StoryCard>
-          <StoryRow align="center">
-            <Breadcrumbs
-              items={items}
-              onNavigate={(key) => {
-                const index = path.findIndex((item) => item.key === key)
-                if (index >= 0) setDepth(index + 1)
-              }}
-              aria-label="Accepted navigation"
-            />
-            <Button size="sm" variant="subtle" onClick={() => setDepth((value) => Math.min(value + 1, path.length))}>
-              Go deeper
-            </Button>
-          </StoryRow>
-          <StoryRow align="center">
-            <Breadcrumbs
-              items={path}
-              onNavigate={(key) => setRefused((current) => [...current, String(key)])}
-              aria-label="Refused navigation"
-            />
-          </StoryRow>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection
-        title="Keyboard and accessibility"
-        description="链接和按钮保留浏览器/按钮的键盘行为；导航区域有名称，当前页用 aria-current 标记。">
-        <StoryKeyboard
-          rows={[
-            { keys: 'Tab', action: '在上一个可交互位置、链接与下一个位置之间移动。' },
-            { keys: ['Enter', 'Space'], action: '按钮形式的位置触发 onNavigate；链接使用浏览器导航。' },
-            { keys: 'Shift + Tab', action: '反向移动；禁用项不进入 Tab 顺序。' },
-          ]}
+/** 点击上级缩短路径；当前位置是文字，带 `aria-current="page"`。 */
+export const Basic: Story = {
+  render: function Render(args) {
+    const [depth, setDepth] = useState(path.length)
+    return (
+      <Row>
+        <Breadcrumbs
+          {...args}
+          items={path.slice(0, depth)}
+          onNavigate={(key) => setDepth(path.findIndex((item) => item.key === key) + 1)}
         />
-        <StoryNote>
-          当前页使用 <code>aria-current="page"</code>；如果路径本身是导航区，给 Breadcrumbs 传入明确的{' '}
-          <code>aria-label</code>，避免页面上出现多个同名 navigation。
-        </StoryNote>
-      </StorySection>
-
-      <StorySection title="Usage">
-        <StoryGrid>
-          <StoryCode
-            label="tsx"
-            code={`const path = [
-  { key: 'assets', label: 'Assets' },
-  { key: 'materials', label: 'Materials' },
-  { key: 'paint', label: 'Car paint' },
-]
-
-<Breadcrumbs items={path} onNavigate={goToLevel} />
-<Breadcrumbs items={path} size="md" separator="›" />`}
-          />
-          <StoryProps
-            rows={[
-              { name: 'items', type: 'readonly BreadcrumbEntry[]', description: 'key、label，可选 href/disabled。' },
-              { name: 'onNavigate', type: '(key: CollectionKey) => void', description: '按钮形式的位置发出导航请求。' },
-              { name: 'size', type: "'sm' | 'md'", defaultValue: "'sm'", description: '20/12 或 24/14。' },
-              { name: 'disabled', type: 'boolean', defaultValue: 'false', description: '禁用整条路径。' },
-              { name: 'separator', type: 'ReactNode', defaultValue: "'/'", description: '非当前项之后的分隔符。' },
-            ]}
-          />
-        </StoryGrid>
-      </StorySection>
-
-      <StoryState label="Breadcrumb state" value={{ depth, current: items.map((item) => item.key), refused }} />
-    </StoryPage>
-  )
+        {depth < path.length && (
+          <Button size="xs" variant="subtle" onClick={() => setDepth(path.length)}>
+            Reset
+          </Button>
+        )}
+      </Row>
+    )
+  },
 }
 
-export const Overview: Story = { render: () => <BreadcrumbsExample /> }
+/** `sm` 20（面板默认），`md` 24。 */
+export const Sizes: Story = {
+  render: () => (
+    <Column>
+      {(['sm', 'md'] as const).map((size) => (
+        <Item key={size} label={size}>
+          <Breadcrumbs items={path} size={size} aria-label={`${size} path`} />
+        </Item>
+      ))}
+    </Column>
+  ),
+}
+
+/** 替换分隔符，或给上级提供 `href` 渲染为链接。 */
+export const SeparatorAndLinks: Story = {
+  render: () => (
+    <Column>
+      <Breadcrumbs items={path} separator="›" aria-label="Chevron path" />
+      <Breadcrumbs items={path.map((item) => ({ ...item, href: `#${item.key}` }))} aria-label="Linked path" />
+    </Column>
+  ),
+}
+
+/** 整条禁用，或只禁用某一级。 */
+export const Disabled: Story = {
+  render: () => (
+    <Column>
+      <Item label="disabled">
+        <Breadcrumbs items={path} disabled onNavigate={() => {}} aria-label="Disabled path" />
+      </Item>
+      <Item label="Materials 禁用">
+        <Breadcrumbs
+          items={path.map((item) => ({ ...item, disabled: item.key === 'materials' }))}
+          onNavigate={() => {}}
+          aria-label="Partially disabled path"
+        />
+      </Item>
+    </Column>
+  ),
+}
+
+/** 应用不接受导航时，路径保持不变；请求被记录下来。 */
+export const BehaviorRefusedNavigation: Story = {
+  tags: ['!autodocs'],
+  render: function Render() {
+    const [requests, setRequests] = useState<string[]>([])
+    return (
+      <Column width={480}>
+        <Breadcrumbs
+          items={path}
+          onNavigate={(key) => setRequests((current) => [...current, String(key)])}
+          aria-label="Refused navigation"
+        />
+        <Breadcrumbs items={[]} aria-label="Empty path" />
+        <StateView value={{ requests }} />
+      </Column>
+    )
+  },
+}

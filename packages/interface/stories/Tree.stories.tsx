@@ -2,29 +2,19 @@ import { useMemo, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { IconFile, IconFolder } from '@tabler/icons-react'
 import {
-  TreeRoot,
   TreeItemContent,
   TreeItemIcon,
-  TreeDragPreview,
-  TreeInsertionIndicator,
+  TreeRoot,
   type TreeDropRequest,
+  type TreeRootProps,
 } from '../src/collections/tree'
 import { createTreeCollection } from '../src/values/tree'
 import type { CollectionKey } from '../src/values/collection'
 import { DragDropProvider, useDragDropState } from '../src/interaction/drag-drop'
 import { Button } from '../src/controls/buttons'
 import { css } from '../styled-system/css'
-import {
-  StoryPage,
-  StorySection,
-  StoryCard,
-  StoryRow,
-  StoryGrid,
-  StoryState,
-  StoryCode,
-  StoryProps,
-  StoryKeyboard,
-} from './support/StoryPage'
+import { describeComponent } from './support/describe'
+import { Item, Panel, Row, StateView } from './support/layout'
 
 interface Entry {
   id: CollectionKey
@@ -123,8 +113,7 @@ function StaticTree({
 }
 
 function DragState() {
-  const state = useDragDropState()
-  return <StoryState label="Shared drag state" value={state} />
+  return <StateView value={useDragDropState()} />
 }
 
 function TreeDemo({
@@ -208,7 +197,7 @@ function TreeDemo({
 
   return (
     <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
-      <StoryRow>
+      <Row>
         <Button size="sm" variant="outline" onClick={() => setExpanded(['documents', 'reference'])}>
           Expand all
         </Button>
@@ -243,7 +232,7 @@ function TreeDemo({
             </Button>
           </>
         )}
-      </StoryRow>
+      </Row>
       {dnd ? (
         <DragDropProvider>
           {tree}
@@ -252,191 +241,153 @@ function TreeDemo({
       ) : (
         tree
       )}
-      <StoryState
-        label="Tree state"
-        value={{ selected, expanded, focused, events, count: collection.size }}
-        open={false}
-      />
+      <StateView value={{ selected, expanded, focused, events, count: collection.size }} />
     </div>
   )
 }
 
+const collection = createTreeCollection(initial, options)
+const renderEntry = (node: { item: unknown }) => {
+  const entry = node.item as Entry
+  return <TreeItemContent label={entry.name} startSlot={itemIcon(entry)} />
+}
+
 const meta = {
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Tree 展示可展开的层级数据，TreeRoot 管理选择、展开与焦点，应用通过回调保存状态。重命名和拖放由应用更新数据；拖放使用 6px overlay 预览和 2px 插入线，键盘提供与拖动等价的移动入口。',
-      },
-    },
-    layout: 'fullscreen',
-  },
   title: 'Collections/Tree',
-} satisfies Meta
+  component: TreeRoot,
+  tags: ['autodocs'],
+  parameters: describeComponent({
+    summary: '可展开的层级列表：场景层级、文件夹、资源分组。支持单选 / 多选、键盘导航、改名和拖放。',
+    use: ['场景层级（Hierarchy）', '资源目录、文件夹树', '任何父子结构的数据'],
+    avoid: [
+      '没有层级的列表 → 用 `DataTable` 或 `AssetItem` 列表',
+      '可增删、排序、展开编辑的配置项列表 → 用 `CollectionEditor`',
+    ],
+    related: ['`DataTable`：表格', '`CollectionEditor`：可编辑的条目列表'],
+    notes: [
+      '数据用 `createTreeCollection(items, { getKey, getChildren, getTextValue })` 转换；数据变化时重新创建',
+      '选择、展开、焦点都可以受控；`renderItem` 返回 `TreeItemContent` 设置图标和改名',
+      '拖放需要外层 `DragDropProvider`，在 `dragDrop.onDrop` 里移动数据',
+    ],
+    keyboard: [
+      ['↑ / ↓', '移动焦点'],
+      ['→ / ←', '展开 / 收起，或移到父节点'],
+      ['Home / End', '第一个 / 最后一个节点'],
+      ['Space', '选择（多选模式下切换）'],
+      ['Enter', '选择并激活（`onActivate`）'],
+      ['F2', '改名（提供了 `onRename` 时）'],
+      ['Ctrl / ⌘ + A', '全选（多选模式）'],
+      ['输入字母', '跳到以该字母开头的节点'],
+    ],
+  }),
+  args: {
+    collection,
+    'aria-label': 'Documents',
+    defaultExpandedKeys: ['documents'],
+    defaultSelectedKeys: ['notes'],
+    renderItem: renderEntry,
+  },
+  argTypes: { collection: { control: false }, renderItem: { control: false } },
+} satisfies Meta<typeof TreeRoot>
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Overview: Story = {
-  render: () => (
-    <StoryPage
-      eyebrow="Collections"
-      title="Tree"
-      summary="文件目录、场景层级和其他可展开数据使用同一套树。紧凑 24 / 常规 32，选中为实心 selection surface；重命名与拖放只发出请求，数据由应用更新。"
-      meta={
-        <>
-          <span>Compact 24</span>
-          <span>·</span>
-          <span>Regular 32</span>
-          <span>·</span>
-          <span>Single / multiple</span>
-        </>
-      }>
-      <StorySection
-        title="Browse and select"
-        description="方向键移动焦点，Right/Left 展开收起，Space 选择；下方记录选择、展开和焦点回调。">
-        <StoryCard>
-          <TreeDemo />
-        </StoryCard>
-      </StorySection>
+export const Basic: Story = {
+  render: (args) => (
+    <Panel width={300}>
+      <TreeRoot {...(args as TreeRootProps<Entry>)} />
+    </Panel>
+  ),
+}
 
-      <StorySection
-        title="Selection modes"
-        description="single 只保留一个选中项；multiple 支持 Space 切换和 Shift 范围选择；none 只用于浏览。">
-        <StoryGrid>
-          <StoryCard title="Single" description="默认模式，选中一个条目。">
-            <StaticTree selectionMode="single" />
-          </StoryCard>
-          <StoryCard title="Multiple" description="多个条目可同时选中。">
-            <StaticTree selectionMode="multiple" />
-          </StoryCard>
-          <StoryCard title="None" description="不显示选择语义，只保留展开与焦点。">
-            <StaticTree selectionMode="none" />
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
+/** `selectionMode="multiple"`：Shift 选范围，Ctrl / ⌘ 追加。 */
+export const MultipleSelection: Story = {
+  args: { selectionMode: 'multiple', defaultSelectedKeys: ['notes', 'reference'] },
+  render: (args) => (
+    <Panel width={300}>
+      <TreeRoot {...(args as TreeRootProps<Entry>)} />
+    </Panel>
+  ),
+}
 
-      <StorySection
-        title="Density"
-        description="compact 行高 24、字号 12；regular 行高 32、字号 14。重命名输入框跟随同一档位。">
-        <StoryGrid>
-          <StoryCard title="Compact · 24" description="树、菜单、属性面板。">
-            <StaticTree density="compact" />
-          </StoryCard>
-          <StoryCard title="Regular · 32" description="对话框、常规表单。">
-            <StaticTree density="regular" />
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
+/** `compact` 24px 行用于面板，`regular` 32px 行用于对话框。 */
+export const Density: Story = {
+  render: (args) => (
+    <Row>
+      {(['compact', 'regular'] as const).map((density) => (
+        <Item key={density} label={density}>
+          <Panel width={280}>
+            <TreeRoot {...(args as TreeRootProps<Entry>)} density={density} aria-label={`Documents (${density})`} />
+          </Panel>
+        </Item>
+      ))}
+    </Row>
+  ),
+}
 
-      <StorySection
-        title="Rename"
-        description="F2 或双击进入编辑；Enter/失焦提交，Escape 取消。异步提交失败时保留草稿，可修正后重试。">
-        <StoryCard>
-          <TreeDemo renameEnabled />
-        </StoryCard>
-      </StorySection>
-
-      <StorySection
-        title="Drag and drop"
-        description="拖动行标签请求移动；目标上/下边缘插入前后，中间移入文件夹。Escape 取消，移动按钮提供键盘等价操作。">
-        <StoryCard>
-          <TreeDemo dnd multiple />
-        </StoryCard>
-        <StoryGrid>
-          <StoryCard title="Drag preview" description="surfaceRaised、6px 圆角、overlay shadow。">
-            <TreeDragPreview count={2}>
-              <TreeItemIcon>
-                <IconFolder size={14} />
-              </TreeItemIcon>
-              Documents
-            </TreeDragPreview>
-          </StoryCard>
-          <StoryCard title="Insertion indicator" description="2px focusRing 线，标记 before/after 位置。">
-            <div className={css({ display: 'grid', gap: 'var(--space-2)' })}>
-              <TreeInsertionIndicator active />
-              <TreeInsertionIndicator />
-            </div>
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection
-        title="Disabled and read-only"
-        description="disabled 整棵树不可聚焦；readOnly 仍可浏览和展开，但不可选择、重命名或移动。">
-        <StoryGrid>
-          <StoryCard title="Disabled">
-            <StaticTree disabled />
-          </StoryCard>
-          <StoryCard title="Read only">
-            <StaticTree readOnly />
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection title="Keyboard" description="焦点与选择分离；树本身只保留一个 tab stop。">
-        <StoryKeyboard
-          rows={[
-            { keys: '↑ / ↓', action: '移动焦点' },
-            { keys: '→ / ←', action: '展开/收起，或在父子节点间移动' },
-            { keys: 'Space', action: '选择当前节点' },
-            { keys: 'Enter', action: '选择并激活当前节点' },
-            { keys: 'F2', action: '开始重命名' },
-            { keys: 'Home / End', action: '跳到第一个/最后一个可聚焦节点' },
-            { keys: 'Escape', action: '取消拖动或重命名' },
-          ]}
+/** 提供 `onRename` 后，双击名称或按 F2 改名；Enter 提交，Escape 取消。 */
+export const Rename: Story = {
+  render: function Render() {
+    const [items, setItems] = useState(initial)
+    const tree = useMemo(() => createTreeCollection(items, options), [items])
+    return (
+      <Panel width={300}>
+        <TreeRoot
+          collection={tree}
+          aria-label="Documents"
+          defaultExpandedKeys={['documents']}
+          renderItem={(node) => (
+            <TreeItemContent
+              label={node.item.name}
+              startSlot={itemIcon(node.item)}
+              onRename={(name) => setItems((old) => rename(old, node.key, name))}
+            />
+          )}
         />
-      </StorySection>
+      </Panel>
+    )
+  },
+}
 
-      <StorySection title="Usage">
-        <StoryGrid>
-          <StoryCode
-            label="tsx"
-            code={`const collection = createTreeCollection(items, {
-  getKey: (item) => item.id,
-  getChildren: (item) => item.children,
-  getTextValue: (item) => item.name,
-})
+/** 拖动节点到其他节点之前、之后或内部（只有文件夹可以放入）；外层需要 `DragDropProvider`。 */
+export const DragAndDrop: Story = {
+  render: function Render() {
+    const [items, setItems] = useState(initial)
+    const tree = useMemo(() => createTreeCollection(items, options), [items])
+    return (
+      <DragDropProvider>
+        <Panel width={300}>
+          <TreeRoot
+            collection={tree}
+            aria-label="Documents"
+            selectionMode="multiple"
+            defaultExpandedKeys={['documents', 'archive']}
+            dragDrop={{
+              type: 'story/tree-items',
+              canDrop: ({ targetKey, position }) => position !== 'inside' || !!tree.get(targetKey)?.children,
+              onDrop: (request) => setItems((old) => move(old, request)),
+            }}
+            renderItem={renderEntry}
+          />
+        </Panel>
+      </DragDropProvider>
+    )
+  },
+}
 
-<TreeRoot
-  collection={collection}
-  density="compact"
-  selectionMode="multiple"
-  selectedKeys={selected}
-  expandedKeys={expanded}
-  focusedKey={focused}
-  onSelectedKeysChange={setSelected}
-  onExpandedKeysChange={setExpanded}
-  onFocusedKeyChange={setFocused}
-  renderItem={(node) => <TreeItemContent label={node.item.name} />}
-/>`}
-          />
-          <StoryProps
-            rows={[
-              { name: 'collection', type: 'TreeCollection<T>', description: '稳定的 key、子项与文本值。' },
-              {
-                name: 'density',
-                type: "'compact' | 'regular'",
-                defaultValue: "'compact'",
-                description: '24 或 32 行高。',
-              },
-              {
-                name: 'selectionMode',
-                type: "'none' | 'single' | 'multiple'",
-                defaultValue: "'single'",
-                description: '选择语义。',
-              },
-              {
-                name: 'selectedKeys / expandedKeys / focusedKey',
-                type: 'readonly CollectionKey[] / key',
-                description: '受控状态。',
-              },
-              { name: 'dragDrop', type: 'TreeDragDropOptions', description: '启用移动并提供 canDrop/onDrop。' },
-              { name: 'readOnly / disabled', type: 'boolean', description: '只读浏览或完全禁用。' },
-            ]}
-          />
-        </StoryGrid>
-      </StorySection>
-    </StoryPage>
+/** 全受控：记录选择、展开、焦点、改名和拖放事件；可以拒绝改名请求。 */
+export const BehaviorControlled: Story = {
+  tags: ['!autodocs'],
+  render: () => <TreeDemo multiple dnd renameEnabled />,
+}
+
+/** 只读和禁用：只读仍可展开浏览。 */
+export const BehaviorReadOnlyAndDisabled: Story = {
+  tags: ['!autodocs'],
+  render: () => (
+    <Row>
+      <TreeDemo readOnly />
+      <TreeDemo disabled />
+    </Row>
   ),
 }

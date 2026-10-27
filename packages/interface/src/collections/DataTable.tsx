@@ -14,37 +14,57 @@ import {
 } from './Table'
 
 export interface DataTableColumn<T> {
+  /** 列的唯一标识。 */
   key: CollectionKey
+  /** 表头内容。 */
   header: ReactNode
+  /** 渲染这一列的单元格。 */
   cell: (row: T) => ReactNode
+  /** 列宽。 */
   width?: CSSProperties['width']
   align?: 'start' | 'center' | 'end'
+  /** 这一列的单元格作为行标题（`<th scope="row">`），通常是名称列。 */
   rowHeader?: boolean
 }
 export interface DataTableAction<T> {
   key: CollectionKey
+  /** 操作按钮的文字，可以按行生成，例如 "Delete Metal"。 */
   label: string | ((row: T) => string)
+  /** 点击时调用。 */
   onAction: (row: T) => void
   disabled?: boolean | ((row: T) => boolean)
 }
 export interface DataTableSelection {
-  /** Controlled selection. Missing keys are retained during partial/filtered result updates. */
+  /** 选中的行（受控）。筛选或分页后不在当前结果里的 key 会保留。 */
   selectedKeys: readonly CollectionKey[]
   onSelectedKeysChange?: (keys: CollectionKey[]) => void
 }
 export interface DataTableProps<T> extends Omit<TableProps, 'children'> {
+  /** 行高：`compact` 24（默认）、`regular` 32。 */
+  density?: 'compact' | 'regular'
+  /** 行数据；排序、筛选、分页由应用完成后再传入。 */
   rows: readonly T[]
+  /** 返回每行的稳定 key，重新排序时保持选中和焦点。 */
   rowKey: (row: T) => CollectionKey
+  /** 列定义。 */
   columns: readonly DataTableColumn<T>[]
+  /** 表格标题，也是表格的无障碍名称。 */
   caption?: ReactNode
+  /** 没有行时显示的内容。 */
   emptyState?: ReactNode
+  /** 每行末尾的操作按钮。 */
   actions?: readonly DataTableAction<T>[]
+  /** 操作列的表头文字。 */
   actionsLabel?: string
+  /** 提供后显示勾选列，支持全选。 */
   selection?: DataTableSelection
+  /** 勾选列表头复选框的无障碍名称。 */
   selectionLabel?: string
+  /** 行的名称，用于勾选框和操作按钮的无障碍名称。 */
   getRowLabel?: (row: T) => string
-  /** Disables the generated selection and action controls; custom cells own their controls. */
+  /** 禁用勾选列和操作按钮；自定义单元格里的控件需要自己处理禁用。 */
   disabled?: boolean
+  /** 锁定的行：仍然显示，但不能勾选和操作。 */
   isRowDisabled?: (row: T) => boolean
 }
 const keyString = (key: CollectionKey) => `${typeof key}:${String(key)}`

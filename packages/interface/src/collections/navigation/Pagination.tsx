@@ -13,16 +13,27 @@ export interface PaginationLabels {
   empty: string
 }
 export interface PaginationProps extends HTMLAttributes<HTMLElement> {
+  /** 条目总数。 */
   totalCount: number
+  /** 每页条目数。 */
   pageSize: number
+  /** 当前页（从 1 开始，受控）。 */
   page?: number
+  /** 非受控时的初始页，默认 1。 */
   defaultPage?: number
+  /** 翻页请求。 */
   onPageChange?: (page: number) => void
+  /** 当前页两侧显示的页码数，默认 1。 */
   siblingCount?: number
+  /** 首尾始终显示的页码数，默认 1。 */
   boundaryCount?: number
+  /** 禁用翻页，例如加载中。 */
   disabled?: boolean
+  /** `sm` 24（面板）、`md` 32。 */
   size?: 'sm' | 'md'
+  /** 导航区、前后页按钮、页码、省略号和空结果的文字。 */
   labels?: Partial<PaginationLabels>
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 const defaults: PaginationLabels = {

@@ -6,10 +6,13 @@ import { assertAssetDescriptor, type AssetDescriptor } from '../../values/assets
 import { Spin } from '../../display/feedback/Spin'
 
 export interface AssetThumbnailProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'children'> {
+  /** 资源描述；根据状态显示缩略图、加载中或缺失图标。 */
   asset: AssetDescriptor
+  /** `grid` 大缩略图、`list` 小图标。 */
   viewMode?: 'grid' | 'list'
-  /** The containing control already names the asset. */
+  /** 外层控件已经说明了资源名称时设为 `true`，缩略图对读屏隐藏。 */
   decorative?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

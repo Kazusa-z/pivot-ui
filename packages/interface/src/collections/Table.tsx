@@ -9,8 +9,9 @@ import { css, cva, cx } from '../../styled-system/css'
 import type { SystemStyleObject } from '../../styled-system/types'
 
 export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
-  /** Legacy compact flag; equivalent to density="compact". */
+  /** 旧写法，等同于 `density="compact"`。 */
   compact?: boolean
+  /** 行高：`compact` 24（默认）、`regular` 32。 */
   density?: 'compact' | 'regular'
   css?: SystemStyleObject
 }
@@ -18,10 +19,12 @@ export interface TableSectionProps extends HTMLAttributes<HTMLTableSectionElemen
   css?: SystemStyleObject
 }
 export interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
+  /** 选中的行，以强调色填充。 */
   selected?: boolean
   css?: SystemStyleObject
 }
 export interface TableHeaderCellProps extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'align'> {
+  /** 单元格对齐；数字列用 `end`。 */
   align?: 'start' | 'center' | 'end'
   css?: SystemStyleObject
 }

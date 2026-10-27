@@ -4,17 +4,27 @@ import type { SystemStyleObject } from '../../../styled-system/types'
 import { createCollection, type CollectionKey } from '../../values/collection'
 
 export interface BreadcrumbEntry {
+  /** 稳定 key，`onNavigate` 回传它。 */
   key: CollectionKey
+  /** 显示的文字。 */
   label: ReactNode
+  /** 提供后渲染为链接，由浏览器导航。 */
   href?: string
+  /** 禁用这一级。 */
   disabled?: boolean
 }
 export interface BreadcrumbsProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+  /** 路径上的每一级：`key`、`label`，可选 `href`；最后一级是当前位置。 */
   items: readonly BreadcrumbEntry[]
+  /** 点击某一级时调用，应用切换到对应位置。 */
   onNavigate?: (key: CollectionKey) => void
+  /** `sm` 20（默认，面板）、`md` 24。 */
   size?: 'sm' | 'md'
+  /** 禁用整条路径。 */
   disabled?: boolean
+  /** 替换默认的分隔符 `/`。 */
   separator?: ReactNode
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 export interface BreadcrumbItemProps extends HTMLAttributes<HTMLLIElement> {
