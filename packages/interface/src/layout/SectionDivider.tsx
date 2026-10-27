@@ -3,10 +3,11 @@ import { css, cx } from '../../styled-system/css'
 import type { SystemStyleObject } from '../../styled-system/types'
 
 export interface SectionDividerProps extends HTMLAttributes<HTMLDivElement> {
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
-/** A visual group label. Use a heading as children when it names a document section. */
+/** 带文字的分组标题线：文字两侧延伸出细线。命名文档结构里的一节时，用标题元素（h3 等）作为 children。 */
 export const SectionDivider = forwardRef<HTMLDivElement, SectionDividerProps>(function SectionDivider(
   { children, css: cssProp, className, ...props },
   ref

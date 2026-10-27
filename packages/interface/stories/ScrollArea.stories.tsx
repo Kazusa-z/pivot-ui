@@ -1,197 +1,107 @@
-import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { ScrollArea, ScrollAreaRoot, ScrollAreaViewport } from '../src/layout/ScrollArea'
-import { Button } from '../src/controls/buttons'
-import { Text } from '../src/foundation/typography'
+import { ScrollArea } from '../src/layout/ScrollArea'
 import { css } from '../styled-system/css'
-import { StoryPage, StorySection, StoryCard, StoryRow, StoryGrid, StoryCode, StoryState } from './support/StoryPage'
+import { describeComponent } from './support/describe'
+import { Item, Row } from './support/layout'
 
 const frame = css({
-  width: 'min(340px, 100%)',
-  height: '220px',
+  width: '260px',
+  height: '180px',
   border: '1px solid var(--colors-border)',
-  borderRadius: 'var(--radii-control)',
-  overflow: 'hidden',
+  borderRadius: 'var(--radii-controlMd)',
 })
 const row = css({
-  padding: 'var(--space-3)',
-  borderBottom: '1px solid var(--colors-border)',
-  overflowWrap: 'anywhere',
+  padding: 'var(--space-1_5) var(--space-3)',
   fontSize: 'var(--fontSizes-control)',
+  color: 'var(--colors-text)',
+  borderBottom: '1px solid var(--colors-border)',
 })
-const horizontalFrame = css({ width: '100%', height: '160px' })
-const wideContent = css({ display: 'flex', gap: 'var(--space-3)', width: '880px', padding: 'var(--space-4)' })
-const cardContent = css({
-  minWidth: '120px',
-  padding: 'var(--space-3)',
-  border: '1px solid var(--colors-border)',
-  borderRadius: 'var(--radii-control)',
-  backgroundColor: 'var(--colors-surface)',
-})
+const rows = Array.from({ length: 24 }, (_, index) => `Asset_${String(index + 1).padStart(2, '0')}.prefab`)
 
 const meta = {
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'ScrollArea 用于在有限空间里浏览长内容，支持横向、纵向和双向滚动。Root 管理尺寸和滚动条，Viewport 承载实际内容；onScroll 和 scrollTo ref 放在 Viewport。固定区域设置明确尺寸，随内容增长的区域使用 sizing="content" 并提供 maxHeight。',
-      },
-    },
-    layout: 'fullscreen',
-  },
-  title: 'Display/ScrollArea',
+  title: 'Layout/ScrollArea',
   component: ScrollArea,
+  tags: ['autodocs'],
+  parameters: describeComponent({
+    summary: '使用原生滚动、但滚动条外观与主题一致的滚动区域。',
+    use: ['面板内容、长列表、浮层里的可滚动内容'],
+    notes: [
+      '`sizing="fill"`（默认）填满父元素给定的高度；`sizing="content"` 随内容增长，配合 `maxHeight`',
+      '`shadows` 在还能继续滚动的一侧显示渐隐阴影',
+      '滚动依旧是原生行为，键盘、触控板和读屏都正常工作',
+    ],
+  }),
+  args: { scrollbars: 'vertical' },
 } satisfies Meta<typeof ScrollArea>
 export default meta
 type Story = StoryObj<typeof meta>
 
-function VerticalExample() {
-  const rootRef = useRef<HTMLDivElement>(null)
-  const viewportRef = useRef<HTMLDivElement>(null)
-  const [offset, setOffset] = useState(0)
-  const [count, setCount] = useState(12)
-  return (
-    <StoryCard title="Vertical" description="Viewport 的 ref 和 scroll 事件用于读取位置、调用 scrollTo。">
-      <StoryRow>
-        <Button size="sm" variant="outline" onClick={() => viewportRef.current?.scrollTo({ top: 0 })}>
-          Scroll to top
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => viewportRef.current?.scrollTo({ top: viewportRef.current.scrollHeight })}>
-          Scroll to bottom
-        </Button>
-        <Button size="sm" variant="outline" onClick={() => setCount((value) => (value === 12 ? 2 : 12))}>
-          Toggle content
-        </Button>
-      </StoryRow>
-      <ScrollAreaRoot ref={rootRef} className={frame} scrollbars="vertical" type="always" shadows>
-        <ScrollAreaViewport
-          ref={viewportRef}
-          aria-label="Scrollable rows"
-          onScroll={(event) => setOffset(Math.round(event.currentTarget.scrollTop))}>
-          {Array.from({ length: count }, (_, index) => (
-            <div key={index} className={row}>
-              Row {index + 1}: editable properties and contextual details
+export const Basic: Story = {
+  render: (args) => (
+    <div className={frame}>
+      <ScrollArea {...args}>
+        {rows.map((name) => (
+          <div key={name} className={row}>
+            {name}
+          </div>
+        ))}
+      </ScrollArea>
+    </div>
+  ),
+}
+
+/** `shadows` 提示还有更多内容；`scrollbarVariant="track"` 显示轨道。 */
+export const Appearance: Story = {
+  render: () => (
+    <Row>
+      {(
+        [
+          ['shadows', { shadows: true }],
+          ['track', { scrollbarVariant: 'track' as const, type: 'always' as const }],
+        ] as const
+      ).map(([label, props]) => (
+        <Item key={label} label={label}>
+          <div className={frame}>
+            <ScrollArea scrollbars="vertical" {...props}>
+              {rows.map((name) => (
+                <div key={name} className={row}>
+                  {name}
+                </div>
+              ))}
+            </ScrollArea>
+          </div>
+        </Item>
+      ))}
+    </Row>
+  ),
+}
+
+/** 横向滚动：`viewportProps.contentLayout="intrinsic"` 让内容保持自身宽度。 */
+export const Horizontal: Story = {
+  render: () => (
+    <div
+      className={css({
+        width: '260px',
+        border: '1px solid var(--colors-border)',
+        borderRadius: 'var(--radii-controlMd)',
+      })}>
+      <ScrollArea scrollbars="horizontal" sizing="content" viewportProps={{ contentLayout: 'intrinsic' }}>
+        <div className={css({ display: 'flex', gap: 'var(--space-2)', padding: 'var(--space-2)' })}>
+          {rows.slice(0, 10).map((name) => (
+            <div
+              key={name}
+              className={css({
+                flexShrink: 0,
+                padding: 'var(--space-2)',
+                backgroundColor: 'var(--colors-softBg)',
+                borderRadius: 'var(--radii-control)',
+                fontSize: 'var(--fontSizes-control)',
+              })}>
+              {name}
             </div>
           ))}
-        </ScrollAreaViewport>
-      </ScrollAreaRoot>
-      <Text size="sm" tone="muted">
-        Scroll top: {offset}px
-      </Text>
-      <StoryState label="Scroll state" value={{ offset }} />
-    </StoryCard>
-  )
+        </div>
+      </ScrollArea>
+    </div>
+  ),
 }
-
-function ScrollExample() {
-  const [long, setLong] = useState(false)
-  return (
-    <StoryPage
-      eyebrow="Display"
-      title="ScrollArea"
-      summary="在有限高度的面板里滚动长内容。Root 管尺寸，Viewport 管滚动；固定面板用 fill，随内容增长的面板用 content + maxHeight。"
-      meta={
-        <>
-          <span>vertical</span>
-          <span>·</span>
-          <span>horizontal</span>
-          <span>·</span>
-          <span>both axes</span>
-        </>
-      }>
-      <StorySection title="Vertical" description="固定高度，滚动条按需出现；阴影提示还有内容。">
-        <VerticalExample />
-      </StorySection>
-
-      <StorySection title="Horizontal" description="内容保持自身宽度，Viewport 使用 intrinsic 布局。">
-        <StoryCard>
-          <ScrollArea
-            className={horizontalFrame}
-            scrollbars="horizontal"
-            type="always"
-            shadows
-            viewportProps={{ 'aria-label': 'Horizontal strip', contentLayout: 'intrinsic' }}>
-            <div className={wideContent}>
-              {Array.from({ length: 8 }, (_, index) => (
-                <div key={index} className={cardContent}>
-                  <Text size="sm">Card {index + 1}</Text>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection title="Both axes" description="二维内容；track variant 显示明确轨道。">
-        <StoryCard>
-          <ScrollArea
-            className={frame}
-            scrollbars="both"
-            type="always"
-            scrollbarVariant="track"
-            shadows
-            viewportProps={{ 'aria-label': 'Two dimensional content', contentLayout: 'intrinsic' }}>
-            <div className={css({ width: '720px' })}>
-              {Array.from({ length: 12 }, (_, index) => (
-                <div key={index} className={row}>
-                  Wide row {index + 1}: column A — column B — column C — column D — column E
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection title="Content height" description="内容较少时随内容增高，超过 maxHeight 后开始滚动。">
-        <StoryCard>
-          <StoryRow>
-            <Button size="sm" variant="outline" onClick={() => setLong((value) => !value)}>
-              Toggle long content
-            </Button>
-          </StoryRow>
-          <ScrollArea
-            sizing="content"
-            scrollbars="vertical"
-            type="auto"
-            shadows
-            css={{ maxHeight: '180px', border: '1px solid var(--colors-border)', borderRadius: 'var(--radii-control)' }}
-            viewportProps={{ 'aria-label': 'Content sized scroll area' }}>
-            {Array.from({ length: long ? 10 : 2 }, (_, index) => (
-              <div key={index} className={row}>
-                Content row {index + 1}
-              </div>
-            ))}
-          </ScrollArea>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection title="Usage">
-        <StoryGrid>
-          <StoryCode
-            label="tsx"
-            code={`const viewport = useRef<HTMLDivElement>(null)
-
-<ScrollArea
-  sizing="fill"
-  viewportRef={viewport}
-  viewportProps={{ onScroll: handleScroll }}>
-  {rows}
-</ScrollArea>`}
-          />
-          <StoryCard title="Sizing">
-            <Text size="sm" tone="muted">
-              固定面板用 fill，需要父容器有明确高度；内容面板用 content + maxHeight。滚动条策略由 type 和 scrollbars
-              控制。
-            </Text>
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-    </StoryPage>
-  )
-}
-
-export const Overview: Story = { render: () => <ScrollExample /> }

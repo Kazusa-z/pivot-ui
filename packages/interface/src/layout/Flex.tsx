@@ -44,13 +44,17 @@ const flexRecipe = cva({
 })
 
 export interface FlexProps extends HTMLAttributes<HTMLDivElement> {
+  /** 主轴方向。 */
   direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse'
+  /** 间距：`xxs` 2、`xs` 4、`sm` 8、`md` 12、`lg` 16。 */
   gap?: 'none' | 'xxs' | 'xs' | 'sm' | 'md' | 'lg'
-  /** Alignment on the cross axis. */
+  /** 交叉轴对齐。 */
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline'
-  /** Distribution on the main axis. */
+  /** 主轴分布。 */
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly'
+  /** 是否换行。 */
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse'
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

@@ -14,9 +14,11 @@ const separatorRecipe = cva({
 })
 
 export interface SeparatorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'role' | 'aria-orientation'> {
+  /** 方向。 */
   orientation?: 'horizontal' | 'vertical'
-  /** Decorative lines are hidden from assistive technology. */
+  /** 纯装饰的线设为 `true`，对读屏隐藏；默认作为内容分组的分隔被读屏识别。 */
   decorative?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

@@ -23,8 +23,11 @@ const AccordionContext = createContext<{ size: DisclosureSize; variant: Disclosu
 export type AccordionProps = (
   Omit<Primitive.AccordionSingleProps, 'asChild'> | Omit<Primitive.AccordionMultipleProps, 'asChild'>
 ) & {
+  /** 标题栏高度：`sm` 24、`md` 32。 */
   size?: DisclosureSize
+  /** 外观：`surface` 带边框的连续卡片（默认），`subtle` 面板底色，`transparent` 无底色。 */
   variant?: DisclosureVariant
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -45,20 +48,27 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
 })
 
 export interface AccordionItemProps extends Omit<Primitive.AccordionItemProps, 'title' | 'asChild'> {
-  /** Non-interactive title content. Put buttons and inputs in actions. */
+  /** 标题文字（不可交互）；按钮等放在 `actions`。 */
   title: ReactNode
+  /** 标题栏右侧的操作。 */
   actions?: ReactNode
+  /** 是否显示折叠箭头，默认显示。 */
   arrow?: boolean
+  /** 标题的 HTML 层级（h2–h6）。 */
   headingLevel?: DisclosureHeadingLevel
+  /** 传给折叠按钮的其他属性。 */
   triggerProps?: Omit<
     ComponentPropsWithRef<typeof Primitive.Trigger>,
     'asChild' | 'children' | 'id' | 'type' | 'aria-controls' | 'aria-expanded'
   >
+  /** 传给内容区域的其他属性。 */
   contentProps?: Omit<
     ComponentPropsWithRef<typeof Primitive.Content>,
     'asChild' | 'children' | 'forceMount' | 'id' | 'hidden' | 'aria-labelledby'
   >
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
+  /** 内容区域的 Panda 样式。 */
   contentCss?: SystemStyleObject
 }
 

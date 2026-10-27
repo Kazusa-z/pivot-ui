@@ -22,30 +22,45 @@ import type { SystemStyleObject } from '../../styled-system/types'
 
 export type ResizeCancelReason = 'escape' | 'pointer-cancel' | 'capture-lost' | 'window-blur' | 'configuration-change'
 export interface ResizableSplitProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
-  /** The pane whose size is controlled, in CSS pixels. */
+  /** 可调整尺寸的面板，例如属性侧栏；尺寸单位是 CSS 像素。 */
   primary: ReactNode
-  /** Omit the secondary pane to resize a standalone region. */
+  /** 另一侧占据剩余空间的内容；省略时只调整 `primary` 自身的大小。 */
   children?: ReactNode
+  /** `horizontal` 左右分栏、调整宽度（默认）；`vertical` 上下分栏、调整高度。 */
   orientation?: 'horizontal' | 'vertical'
+  /** `primary` 在开始一侧（左 / 上，默认）还是结束一侧（右 / 下）。 */
   primarySide?: 'start' | 'end'
+  /** `primary` 的尺寸（受控）。 */
   size?: number
+  /** 非受控时的初始尺寸。 */
   defaultSize?: number
+  /** `primary` 的最小尺寸。 */
   minSize?: number
+  /** `primary` 的最大尺寸。 */
   maxSize?: number
+  /** 另一侧至少保留的尺寸。 */
   minSecondarySize?: number
+  /** 方向键每次调整的像素；按住 Shift 加速。 */
   keyboardStep?: number
+  /** 禁止调整，分隔条不可拖动、不可聚焦。 */
   disabled?: boolean
+  /** 分隔条的无障碍名称，例如 "Resize inspector"。 */
   separatorLabel?: string
   /** 返回交互中的尺寸；受控使用时将接受的结果写回 size。 */
   onSizeChange?: (size: number) => void
   /** 在指针释放或键盘调整后返回最终请求尺寸，应用可在此保存布局偏好。 */
   onSizeCommit?: (size: number) => void
+  /** Escape、指针取消等原因中止拖动时调用。 */
   onResizeCancel?: (reason: ResizeCancelReason) => void
+  /** 传给 `primary` 包装层的属性。 */
   primaryProps?: HTMLAttributes<HTMLDivElement>
+  /** 传给另一侧包装层的属性。 */
   secondaryProps?: HTMLAttributes<HTMLDivElement>
+  /** `primary` 包装层的 ref。 */
   primaryRef?: Ref<HTMLDivElement>
-  /** The primary child must forward its props and ref to a single element. */
+  /** 不额外包一层，直接把尺寸样式合并到 `primary` 元素上（它必须转发 props 和 ref）。 */
   primaryAsChild?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

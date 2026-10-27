@@ -16,25 +16,43 @@ import {
 } from './disclosure.styles'
 
 export interface SectionProps extends Omit<Primitive.CollapsibleProps, 'title' | 'asChild'> {
-  /** Non-interactive title content. Put buttons and inputs in actions. */
+  /** 是否展开（受控）。 */
+  open?: boolean
+  /** 非受控时初始是否展开，默认 `true`。 */
+  defaultOpen?: boolean
+  /** 展开或收起时调用。 */
+  onOpenChange?: (open: boolean) => void
+  /** 禁用折叠按钮，内容保持当前状态。 */
+  disabled?: boolean
+  /** 标题文字（不可交互）；按钮、输入框等放在 `actions`。 */
   title: ReactNode
+  /** 标题栏右侧的操作，例如 `IconButton`；点击它们不会折叠分组。 */
   actions?: ReactNode
+  /** 标题栏高度：`sm` 24（面板）、`md` 32（表单、对话框）。 */
   size?: DisclosureSize
+  /** 外观：`subtle` 面板底色（默认），`surface` 带边框的卡片，`transparent` 无底色。 */
   variant?: DisclosureVariant
+  /** 折叠触发区域：`title` 整个标题可点（默认），`icon` 只有箭头可点（标题里有其他交互时）。 */
   triggerMode?: 'title' | 'icon'
+  /** `triggerMode="icon"` 时箭头按钮的无障碍名称。 */
   triggerLabel?: string
-  /** False renders a fixed, expanded section with no disclosure button. */
+  /** `false` 时固定展开，不显示箭头。 */
   collapsible?: boolean
+  /** 标题的 HTML 层级（h2–h6），按页面结构选择。 */
   headingLevel?: DisclosureHeadingLevel
+  /** 传给折叠按钮的其他属性。 */
   triggerProps?: Omit<
     ComponentPropsWithRef<typeof Primitive.Trigger>,
     'asChild' | 'children' | 'id' | 'type' | 'aria-controls' | 'aria-expanded'
   >
+  /** 传给内容区域的其他属性。 */
   contentProps?: Omit<
     ComponentPropsWithRef<typeof Primitive.Content>,
     'asChild' | 'children' | 'forceMount' | 'id' | 'hidden'
   >
+  /** 追加 Panda 样式对象（作用于外框）。 */
   css?: SystemStyleObject
+  /** 内容区域的 Panda 样式，例如调整内边距。 */
   contentCss?: SystemStyleObject
 }
 

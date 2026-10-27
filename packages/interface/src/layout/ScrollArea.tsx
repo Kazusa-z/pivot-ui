@@ -125,12 +125,15 @@ export interface ScrollAreaRootProps extends Omit<
   ComponentPropsWithoutRef<typeof Primitive.Root>,
   'asChild' | 'onScroll' | 'onScrollCapture'
 > {
-  /** Fill a definite parent height, or grow with content up to maxHeight. */
+  /** `fill` 填满父元素给定的高度（默认）；`content` 随内容增长，配合 `maxHeight` 使用。 */
   sizing?: Sizing
-  /** Enabled native scrolling axes; scrollbar visibility is controlled by type. */
+  /** 允许滚动的方向：`both`（默认）、`vertical` 或 `horizontal`。 */
   scrollbars?: Scrollbars
+  /** `subtle` 只有滑块（默认）；`track` 带轨道底色，适合需要明确可滚动的区域。 */
   scrollbarVariant?: 'subtle' | 'track'
+  /** 内容超出时在边缘显示渐隐阴影，提示还可以滚动。 */
   shadows?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -198,8 +201,9 @@ export interface ScrollAreaViewportProps extends Omit<
   ComponentPropsWithoutRef<typeof Primitive.Viewport>,
   'asChild' | 'disableImplicitContentElement'
 > {
-  /** Block content wraps to the viewport; intrinsic content can size horizontal overflow. */
+  /** `block` 内容按视口宽度换行（默认）；`intrinsic` 内容保持自身宽度，用于横向滚动的表格。 */
   contentLayout?: 'block' | 'intrinsic'
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -267,7 +271,9 @@ export const ScrollAreaViewport = forwardRef<HTMLDivElement, ScrollAreaViewportP
 })
 
 export interface ScrollAreaProps extends ScrollAreaRootProps {
+  /** 传给滚动视口的属性。 */
   viewportProps?: Omit<ScrollAreaViewportProps, 'children'>
+  /** 滚动视口的 ref，可用于读取或设置滚动位置。 */
   viewportRef?: Ref<HTMLDivElement>
 }
 

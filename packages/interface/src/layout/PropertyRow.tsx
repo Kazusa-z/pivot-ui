@@ -50,13 +50,15 @@ const rowRecipe = cva({
 })
 
 export interface PropertyRowProps extends HTMLAttributes<HTMLDivElement> {
+  /** `row` 标签在左、控件在右（默认）；`column` 标签在上，适合很窄的面板或长控件。 */
   direction?: 'row' | 'column'
   /** 将整行空间用于内容，适合没有字段标签的布局。 */
   withoutLabel?: boolean
   /** 紧凑 24px 行或常规 32px 行。 */
   density?: 'compact' | 'regular'
-  /** Any CSS grid track size, for example 120px or minmax(0, 1fr). */
+  /** 标签列宽度，任意 CSS grid 轨道值，例如 `120px`；默认随面板宽度在 64–120px（紧凑）或 80–160px（常规）之间。 */
   labelWidth?: string
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -76,10 +78,13 @@ export const PropertyRow = forwardRef<HTMLDivElement, PropertyRowProps>(function
 })
 
 export interface PropertyLabelProps extends HTMLAttributes<HTMLDivElement> {
-  /** Set for a single labelable control; omit for a group name or read-only content. */
+  /** 单个可标记控件（input、select）的 id，点击标签会聚焦它；标签对应一组控件或只读内容时省略。 */
   htmlFor?: string
+  /** 标签前的图标或开关，例如属性的启用复选框。 */
   startSlot?: ReactNode
+  /** 标签后的附加内容，例如帮助图标或重置按钮。 */
   endSlot?: ReactNode
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -166,8 +171,9 @@ export const PropertyControl = forwardRef<HTMLDivElement, PropertyControlProps>(
 })
 
 export interface PropertyDescriptionProps extends HTMLAttributes<HTMLDivElement> {
-  /** Muted help text by default; danger for validation or save errors. */
+  /** `muted` 帮助文字（默认），`danger` 校验或保存错误。 */
   tone?: 'muted' | 'danger'
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
