@@ -33,44 +33,82 @@ interface ComboboxBaseProps<T extends ChoiceValue> extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'value' | 'defaultValue' | 'onChange' | 'children'
 > {
+  /** 选项列表，结构同 `Select`。 */
   options: readonly ChoiceOption<T>[]
+  /** 只读：可以打开查看，但不能修改。 */
   readOnly?: boolean
+  /** 未选择时显示的文字。 */
   placeholder?: string
+  /** 没有匹配项时显示的文字。 */
   emptyText?: string
+  /** 在浮层顶部显示搜索框，按 label 过滤。 */
   searchable?: boolean
+  /** 搜索框占位文字。 */
   searchPlaceholder?: string
+  /** 搜索词变化时调用；需要远程查询时由应用更新 `options`。 */
   onSearch?: (search: string) => void
+  /** 高度：`xs` 20、`sm` 24、`md` 32。 */
   size?: ChoiceSize
+  /** 与 `Input` 相同的 `soft` / `outline` / `subtle`。 */
   variant?: ChoiceVariant
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
+  /** 触发器左侧的图标。 */
   startSlot?: ReactNode
+  /** 自定义列表中每个选项的内容。 */
   renderOption?: (option: ChoiceOption<T>) => ReactNode
+  /** 自定义触发器里显示的已选内容。 */
   renderValue?: (option: ChoiceOption<T>) => ReactNode
+  /** 多选时，选择后是否关闭浮层。 */
   autoClose?: boolean
+  /** 多选时触发器最多列出的选项数，超出部分折叠为计数。 */
   maxDisplayCount?: number
+  /** 超出 `maxDisplayCount` 时显示的文字。 */
   maxDisplayText?: string
+  /** 多选时显示"全选"项。 */
   showSelectAll?: boolean
+  /** "全选"项的文字。 */
   selectAllText?: string
+  /** 浮层是否展开（受控）。 */
   open?: boolean
+  /** 非受控时初始是否展开。 */
   defaultOpen?: boolean
+  /** 展开或收起时调用。 */
   onOpenChange?: (open: boolean) => void
+  /** 收起时保留浮层 DOM，适合选项很多、反复打开的场景。 */
   keepMounted?: boolean
+  /** 传给浮层 Portal 的属性。 */
   portalProps?: Omit<PopoverPortalProps, 'children'>
+  /** 传给浮层内容的属性。 */
   contentProps?: Omit<PopoverContentProps, 'children'>
 }
-export interface SingleComboboxProps<T extends ChoiceValue = ChoiceValue> extends ComboboxBaseProps<T> {
+interface SingleSelection<T extends ChoiceValue> {
+  /** 单选（默认）。 */
   multiple?: false
+  /** 当前选中的值（受控）；`null` 表示未选择。 */
   value?: T | null
+  /** 非受控时的初始值。 */
   defaultValue?: T | null
+  /** 选择请求；受控使用时由应用更新 `value`。 */
   onValueChange?: (value: T | null) => void
 }
-export interface MultipleComboboxProps<T extends ChoiceValue = ChoiceValue> extends ComboboxBaseProps<T> {
+interface MultipleSelection<T extends ChoiceValue> {
+  /** 多选：`value`、`defaultValue` 和 `onValueChange` 都使用数组。 */
   multiple: true
+  /** 当前选中的值数组（受控）。 */
   value?: readonly T[]
+  /** 非受控时的初始值。 */
   defaultValue?: readonly T[]
+  /** 选择请求；受控使用时由应用更新 `value`。 */
   onValueChange?: (value: readonly T[]) => void
 }
-export type ComboboxProps<T extends ChoiceValue = ChoiceValue> = SingleComboboxProps<T> | MultipleComboboxProps<T>
+export interface SingleComboboxProps<T extends ChoiceValue = ChoiceValue>
+  extends ComboboxBaseProps<T>, SingleSelection<T> {}
+export interface MultipleComboboxProps<T extends ChoiceValue = ChoiceValue>
+  extends ComboboxBaseProps<T>, MultipleSelection<T> {}
+// Written as base & (single | multiple) so docs tooling can read the shared props.
+export type ComboboxProps<T extends ChoiceValue = ChoiceValue> = ComboboxBaseProps<T> &
+  (SingleSelection<T> | MultipleSelection<T>)
 
 function ComboboxImpl<T extends ChoiceValue>(props: ComboboxProps<T>, ref: ForwardedRef<HTMLButtonElement>) {
   const {

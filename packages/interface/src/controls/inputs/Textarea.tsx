@@ -4,10 +4,15 @@ import type { SystemStyleObject } from '../../../styled-system/types'
 import { getTextareaClass, type TextInputState, type TextInputVariant } from './text.styles'
 
 export interface TextareaProps extends ComponentPropsWithoutRef<'textarea'> {
+  /** `sm` 用于面板（12px 字号），`md` 用于表单（14px）；高度随内容由 `rows` / 样式决定。 */
   size?: 'sm' | 'md'
+  /** 与 `Input` 相同的 `soft` / `outline` / `subtle`。 */
   variant?: TextInputVariant
+  /** 校验结果：只改变边框和文字色。 */
   state?: TextInputState
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
+  /** 每次输入时收到新文本。 */
   onValueChange?: (value: string) => void
 }
 

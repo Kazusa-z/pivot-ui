@@ -1,23 +1,32 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { css } from '../../../styled-system/css'
 import { boundariesToPartition, partitionToBoundaries, validatePartition } from '../../values/partition'
-import { Slider, type SliderProps } from './Slider'
+import { Slider, type SliderProps, type SliderSharedProps } from './Slider'
 
-export interface PartitionSliderProps extends Omit<
-  SliderProps,
-  | 'min'
-  | 'max'
-  | 'minStepsBetweenThumbs'
-  | 'minStepsToEdges'
-  | 'preserveThumbOrder'
-  | 'trackContent'
-  | 'formatValue'
-  | 'compact'
-> {
-  /** Fixed sum of segment lengths. Omit to derive it from the current lengths. */
+export interface PartitionSliderProps
+  extends
+    SliderSharedProps,
+    Omit<
+      SliderProps,
+      | keyof SliderSharedProps
+      | 'min'
+      | 'max'
+      | 'minStepsBetweenThumbs'
+      | 'minStepsToEdges'
+      | 'preserveThumbOrder'
+      | 'trackContent'
+      | 'formatValue'
+      | 'compact'
+    > {
+  /** 各段的长度（受控）；n 段对应 n − 1 个可拖动的分界点。 */
+  value?: number[]
+  /** 各段长度之和。省略时取当前长度之和。 */
   total?: number
+  /** 每段的最小长度，拖动分界点时不会压缩到更小。 */
   minSegment?: number
+  /** 段内数值后的单位，默认 `%`。 */
   unit?: string
+  /** 自定义每段显示的文字。 */
   formatter?: (length: number, index: number, total: number) => string | number
 }
 

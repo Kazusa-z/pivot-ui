@@ -16,31 +16,76 @@ import type { NumericEditCallbacks } from '../../interaction/numeric/types'
 import { snapNumericValue } from '../../values/numeric'
 import { equalSliderValues, useSliderEdit } from './useSliderEdit'
 
+/** Options shared by Slider and PartitionSlider. */
+export interface SliderSharedProps extends NumericEditCallbacks<number[]> {
+  /** 当前值数组（受控）：单值滑块传一个元素，区间传两个。 */
+  value?: number[]
+  /** 非受控时的初始值。 */
+  defaultValue?: number[]
+  /** 拖动或键盘调整时的实时预览值。 */
+  onValueChange?: (value: number[]) => void
+  /** 只读：可以聚焦和用键盘浏览，但不会请求修改。 */
+  readOnly?: boolean
+  /** 禁用：不可聚焦、不可拖动。 */
+  disabled?: boolean
+  /** 切换编辑对象时更新，取消正在进行的拖动。 */
+  resetKey?: unknown
+  /** 键盘和拖动的步长。 */
+  step?: number
+  /** 值保留的小数位数。 */
+  precision?: number
+  /** 方向。竖向滑块默认高 160px。 */
+  orientation?: 'horizontal' | 'vertical'
+  /** 高度：`xs` 20、`sm` 24、`md` 32。 */
+  size?: 'xs' | 'sm' | 'md'
+  /** 滑块获得焦点或拖动时在上方显示当前值，悬停时也作为 title 提示。 */
+  tooltip?: boolean
+  /** 在轨道上显示刻度。 */
+  showRuler?: boolean
+  /** 刻度间隔，默认按范围自动计算。 */
+  rulerInterval?: number
+  /** 轨道内左侧的标签，例如参数名。 */
+  startSlot?: ReactNode
+  /** 轨道内右侧的标签，例如单位。 */
+  endSlot?: ReactNode
+  /** 每个滑块的无障碍名称；省略时用 `aria-label` 加序号。 */
+  thumbLabels?: readonly string[]
+  /** 追加 Panda 样式对象。 */
+  css?: SystemStyleObject
+}
+
 export interface SliderProps
   extends
-    Omit<Primitive.SliderProps, 'value' | 'defaultValue' | 'onValueChange' | 'onValueCommit' | 'children' | 'asChild'>,
-    NumericEditCallbacks<number[]> {
-  value?: number[]
-  defaultValue?: number[]
-  onValueChange?: (value: number[]) => void
-  readOnly?: boolean
-  resetKey?: unknown
-  precision?: number
+    SliderSharedProps,
+    Omit<
+      Primitive.SliderProps,
+      | 'value'
+      | 'defaultValue'
+      | 'onValueChange'
+      | 'onValueCommit'
+      | 'children'
+      | 'asChild'
+      | 'disabled'
+      | 'step'
+      | 'orientation'
+      | 'min'
+      | 'max'
+      | 'minStepsBetweenThumbs'
+    > {
+  /** 范围下限。 */
+  min?: number
+  /** 范围上限。 */
+  max?: number
+  /** 多个滑块之间至少相隔的步数。 */
+  minStepsBetweenThumbs?: number
   /** 设置滑块距范围端点的最少步数，用于在端点保留可操作空间；轨道仍显示完整范围。 */
   minStepsToEdges?: number
+  /** 细轨道 + 短竖条滑块，隐藏轨道背景，适合紧凑面板里的多滑块。 */
   compact?: boolean
-  size?: 'xs' | 'sm' | 'md'
-  tooltip?: boolean
-  showRuler?: boolean
-  rulerInterval?: number
-  startSlot?: ReactNode
-  endSlot?: ReactNode
-  /** Labels for individual thumbs; a group aria-label is used as their fallback prefix. */
-  thumbLabels?: readonly string[]
+  /** 自定义滑块的显示值和 `aria-valuetext`，例如带单位的文字。 */
   formatValue?: (value: number, index: number) => string
-  /** Decorative track content, e.g. fixed-total distribution segments. */
+  /** 轨道内的装饰内容，例如 PartitionSlider 的分段色块。 */
   trackContent?: ReactNode
-  css?: SystemStyleObject
 }
 
 const rootRecipe = cva({

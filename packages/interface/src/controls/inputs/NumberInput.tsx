@@ -1,20 +1,18 @@
 import { forwardRef, useId, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { css } from '../../../styled-system/css'
-import { Input, type InputProps } from './Input'
+import { Input, type InputProps, type TextInputAppearance } from './Input'
 import { useNumericInput, type NumericInputOptions } from '../../interaction/numeric/useNumericInput'
 import { numericModifierScale, useNumericDrag } from '../../interaction/numeric/useNumericDrag'
 import { normalizeNumericConstraints, roundNumeric } from '../../values/numeric'
 
 export interface NumberInputProps
   extends
-    Omit<InputProps, 'value' | 'defaultValue' | 'onValueChange' | 'type' | 'min' | 'max' | 'step'>,
-    NumericInputOptions {
-  /** Optional native increase/decrease buttons. ArrowUp/ArrowDown always work. */
+    NumericInputOptions,
+    TextInputAppearance,
+    Omit<InputProps, 'value' | 'defaultValue' | 'onValueChange' | 'type' | 'min' | 'max' | 'step'> {
+  /** 在右侧显示 − / + 步进按钮；方向键 ↑ / ↓ 始终可用。 */
   stepper?: boolean
-  /**
-   * Decimal places shown while the field is not being typed into. Values keep their full
-   * `precision`; text editing still starts from the exact value.
-   */
+  /** 未在输入时显示的小数位数。存储值仍保留完整的 `precision`，开始输入时显示精确值。 */
   displayPrecision?: number
 }
 

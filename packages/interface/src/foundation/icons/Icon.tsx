@@ -1,8 +1,9 @@
 import { forwardRef, useId, type SVGProps } from 'react'
 
 export interface IconProps extends SVGProps<SVGSVGElement> {
-  /** A meaningful icon name. Omit for decoration next to an existing text label. */
+  /** 图标单独表达含义时的名称（也可用 `aria-label`）；放在已有文字旁作装饰时省略，图标会对读屏隐藏。 */
   title?: string
+  /** 自定义 `<title>` 元素的 id。 */
   titleId?: string
 }
 

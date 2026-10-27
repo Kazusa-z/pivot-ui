@@ -11,11 +11,21 @@ export interface CheckboxProps extends Omit<
   CheckboxPrimitive.CheckboxProps,
   'onCheckedChange' | 'children' | 'asChild'
 > {
-  /** Mixed state is displayable; a user activation always requests a boolean value. */
+  /** 是否勾选（受控）；`'indeterminate'` 显示为部分选中，例如多选对象的值不一致。 */
+  checked?: CheckboxState
+  /** 非受控时的初始状态。 */
+  defaultChecked?: CheckboxState
+  /** 用户点击时请求新的布尔值；部分选中状态点击后总是请求 `true` 或 `false`。 */
   onCheckedChange?: (checked: boolean) => void
+  /** 禁用：半透明，不可聚焦。 */
+  disabled?: boolean
+  /** 只读：可以聚焦，但点击不会请求修改。 */
   readOnly?: boolean
+  /** 右侧的文字标签，点击文字同样会切换。 */
   label?: ReactNode
+  /** 方框尺寸：`sm` 14、`md` 18、`lg` 22。 */
   size?: 'sm' | 'md' | 'lg'
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

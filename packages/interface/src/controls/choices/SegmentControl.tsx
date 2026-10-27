@@ -85,14 +85,24 @@ export const SegmentControlItem = forwardRef<HTMLButtonElement, SegmentControlIt
   )
 })
 
-export interface SegmentControlProps<T extends ChoiceValue = ChoiceValue> extends Omit<
-  SegmentControlRootProps,
-  'value' | 'defaultValue' | 'onValueChange' | 'children' | 'asChild'
-> {
+export interface SegmentControlProps<T extends ChoiceValue = ChoiceValue>
+  extends
+    ChoiceGroupStyleProps,
+    Omit<SegmentControlRootProps, 'value' | 'defaultValue' | 'onValueChange' | 'children' | 'asChild'> {
+  /** 选项列表，结构同 `Select`；禁用项用 `disabledReason` 说明原因。 */
   options: readonly ChoiceOption<T>[]
+  /** 当前选中的值（受控）。 */
   value?: T | null
+  /** 非受控时的初始值。 */
   defaultValue?: T | null
+  /** 选择请求；受控使用时由应用更新 `value`。 */
   onValueChange?: (value: T) => void
+  /** 只读：可以用键盘浏览，但不会请求修改。 */
+  readOnly?: boolean
+  /** 禁用整组。 */
+  disabled?: boolean
+  /** 追加 Panda 样式对象；默认占满容器宽度。 */
+  css?: SystemStyleObject
   ref?: Ref<HTMLDivElement>
 }
 

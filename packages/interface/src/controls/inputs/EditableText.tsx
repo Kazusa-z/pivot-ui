@@ -3,15 +3,18 @@ import { IconEdit } from '@tabler/icons-react'
 import { css, cx } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
 import { Input, type InputProps } from './Input'
-import { useTextEdit, type UseTextEditOptions } from './useTextEdit'
+import { useTextEdit, type TextEditValueOptions } from './useTextEdit'
 
-export interface EditableTextProps
-  extends Omit<ComponentPropsWithoutRef<'div'>, 'onChange'>, Omit<UseTextEditOptions, 'multiline'> {
-  /** Accessible name for the editing input. */
+export interface EditableTextProps extends TextEditValueOptions, Omit<ComponentPropsWithoutRef<'div'>, 'onChange'> {
+  /** 编辑输入框的无障碍名称，例如 "Object name"。 */
   label?: string
+  /** 值为空时显示的占位文字。 */
   emptyText?: string
+  /** 在文字旁显示编辑图标，提示可以双击修改。 */
   showIcon?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
+  /** 传给编辑状态下 `Input` 的其他属性，例如 `size`、`placeholder`。 */
   inputProps?: Omit<InputProps, 'value' | 'defaultValue' | 'onValueChange' | 'disabled' | 'readOnly'>
 }
 

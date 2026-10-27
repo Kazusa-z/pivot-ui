@@ -14,20 +14,29 @@ export type TextEditCommitReason = 'enter' | 'blur' | 'programmatic'
 export type TextEditCancelReason =
   'escape' | 'external-update' | 'disabled' | 'read-only' | 'unmount' | 'reset' | 'target-change'
 
-export interface UseTextEditOptions {
+/** Editing callbacks shared by every text editor; EditableText exposes exactly these. */
+export interface TextEditValueOptions {
+  /** 应用当前接受的文本。 */
   value: string
   /** 切换编辑对象或收到外部数据版本时更新此值，以重新开始草稿；即使文本相同也可重置。 */
   resetKey?: unknown
+  /** 禁用：不可聚焦、不可编辑。 */
   disabled?: boolean
+  /** 只读：可以聚焦和选中文字，但不能进入编辑。 */
   readOnly?: boolean
-  /** Plain Enter inserts a newline; Ctrl/Meta+Enter commits. */
-  multiline?: boolean
+  /** 开始编辑时调用；返回 `false` 拒绝进入编辑。 */
   onBegin?: () => boolean | void
+  /** 草稿每次变化时调用，可用于实时预览；此时尚未提交。 */
   onDraftChange?: (draft: string) => void
   /** 接收完成的草稿。应用保存并更新 value 后完成 Promise；抛出错误可保留草稿并显示错误，方便用户修正或重试。 */
   onCommit: (draft: string, reason: TextEditCommitReason) => void | Promise<void>
   /** 未提交或保存失败后取消编辑时接收原因。已发送的保存请求由应用继续处理，需要撤销时调用应用的撤销操作。 */
   onCancel?: (reason: TextEditCancelReason) => void
+}
+
+export interface UseTextEditOptions extends TextEditValueOptions {
+  /** Plain Enter inserts a newline; Ctrl/Meta+Enter commits. */
+  multiline?: boolean
 }
 
 type TextElement = HTMLInputElement | HTMLTextAreaElement

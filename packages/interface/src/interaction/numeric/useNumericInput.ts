@@ -9,12 +9,19 @@ import {
 import type { NumericCancelReason, NumericCommitReason, NumericEditCallbacks, NumericEditSource } from './types'
 
 export interface NumericInputOptions extends NumericConstraints, NumericEditCallbacks<number> {
+  /** 应用当前接受的数值（受控）。 */
   value?: number
+  /** 非受控时的初始值。 */
   defaultValue?: number
+  /** 输入、拖动或步进时的实时预览值。 */
   onValueChange?: (value: number) => void
+  /** 切换编辑对象时更新，丢弃上一个对象的草稿。 */
   resetKey?: unknown
+  /** 禁用：不可聚焦、不可拖动。 */
   disabled?: boolean
+  /** 只读：可以聚焦和复制，但不能修改。 */
   readOnly?: boolean
+  /** 多个对象的值不一致：显示为空，输入新值后统一。 */
   mixed?: boolean
 }
 

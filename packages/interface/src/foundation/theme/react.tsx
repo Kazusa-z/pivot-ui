@@ -6,6 +6,7 @@ export const ThemeContext = createContext<ThemeStore | null>(null)
 
 export interface ThemeProviderProps {
   readonly children: ReactNode
+  /** 主题状态来源。省略时继承外层 Provider，最外层使用默认的浏览器 store；传入 `createThemeStore()` 可得到局部主题。 */
   readonly store?: ThemeStore
 }
 

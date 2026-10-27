@@ -13,7 +13,9 @@ import {
 } from './choice-group.styles'
 
 interface ToggleGroupStyleProps extends ChoiceGroupStyleProps {
+  /** 只读：可以用键盘浏览，但不会请求修改。 */
   readOnly?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 export interface ToggleGroupRootSingleProps extends TogglePrimitive.ToggleGroupSingleProps, ToggleGroupStyleProps {}
@@ -133,26 +135,42 @@ export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProp
   )
 })
 
-type OptionProps<T extends ChoiceValue> = { options: readonly ChoiceOption<T>[]; ref?: Ref<HTMLDivElement> }
+interface OptionProps<T extends ChoiceValue> extends ToggleGroupStyleProps {
+  /** 按钮列表，结构同 `Select`。 */
+  options: readonly ChoiceOption<T>[]
+  /** 禁用整组。 */
+  disabled?: boolean
+  ref?: Ref<HTMLDivElement>
+}
 export interface ToggleGroupSingleProps<T extends ChoiceValue = ChoiceValue>
   extends
-    Omit<ToggleGroupRootSingleProps, 'value' | 'defaultValue' | 'onValueChange' | 'children' | 'asChild'>,
-    OptionProps<T> {
+    OptionProps<T>,
+    Omit<ToggleGroupRootSingleProps, 'value' | 'defaultValue' | 'onValueChange' | 'children' | 'asChild'> {
+  /** `single`：最多选中一个，再次点击当前项会取消选中。 */
+  type: 'single'
+  /** 当前选中的值；`null` 表示都未选中。 */
   value?: T | null
+  /** 非受控时的初始值。 */
   defaultValue?: T | null
+  /** 选择请求；受控使用时由应用更新 `value`。 */
   onValueChange?: (value: T | null) => void
 }
 export interface ToggleGroupMultipleProps<T extends ChoiceValue = ChoiceValue>
   extends
-    Omit<ToggleGroupRootMultipleProps, 'value' | 'defaultValue' | 'onValueChange' | 'children' | 'asChild'>,
-    OptionProps<T> {
+    OptionProps<T>,
+    Omit<ToggleGroupRootMultipleProps, 'value' | 'defaultValue' | 'onValueChange' | 'children' | 'asChild'> {
+  /** `multiple`：每个按钮独立开关。 */
+  type: 'multiple'
+  /** 当前选中的值数组。 */
   value?: readonly T[]
+  /** 非受控时的初始值。 */
   defaultValue?: readonly T[]
+  /** 选择请求；受控使用时由应用更新 `value`。 */
   onValueChange?: (value: T[]) => void
 }
-export type ToggleGroupProps<T extends ChoiceValue = ChoiceValue> =
-  ToggleGroupSingleProps<T> | ToggleGroupMultipleProps<T>
-
+// Written as shared & (single | multiple) so docs tooling can read the shared props.
+export type ToggleGroupProps<T extends ChoiceValue = ChoiceValue> = OptionProps<T> &
+  (ToggleGroupSingleProps<T> | ToggleGroupMultipleProps<T>)
 function SingleOptions<T extends ChoiceValue>({
   options,
   value,

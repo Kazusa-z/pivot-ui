@@ -21,24 +21,43 @@ export interface SelectProps<T extends ChoiceValue = ChoiceValue> extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'value' | 'defaultValue' | 'onChange' | 'children'
 > {
+  /** 选项列表：`key` 稳定标识，`label` 显示文字，`value` 原样回传的业务值；`disabled` + `disabledReason` 显示不可选原因。 */
   options: readonly ChoiceOption<T>[]
+  /** 当前选中的值（受控）；`null` 表示未选择。 */
   value?: T | null
+  /** 非受控时的初始值。 */
   defaultValue?: T | null
+  /** 选择请求；受控使用时由应用更新 `value`。 */
   onValueChange?: (value: T | null) => void
+  /** 只读：可以打开查看选项，但不能修改。 */
   readOnly?: boolean
+  /** 未选择时显示的文字。 */
   placeholder?: string
+  /** 没有选项时列表里显示的文字。 */
   emptyText?: string
+  /** 高度：`xs` 20、`sm` 24、`md` 32。 */
   size?: ChoiceSize
+  /** 与 `Input` 相同的 `soft` / `outline` / `subtle`。 */
   variant?: ChoiceVariant
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
+  /** 触发器左侧的图标。 */
   startSlot?: ReactNode
+  /** 替换右侧的下拉箭头。 */
   indicator?: ReactNode
+  /** 自定义列表中每个选项的内容。 */
   renderOption?: (option: ChoiceOption<T>) => ReactNode
+  /** 自定义触发器里显示的已选内容。 */
   renderValue?: (option: ChoiceOption<T>) => ReactNode
+  /** 列表是否展开（受控）。 */
   open?: boolean
+  /** 非受控时初始是否展开。 */
   defaultOpen?: boolean
+  /** 展开或收起时调用。 */
   onOpenChange?: (open: boolean) => void
+  /** 传给浮层 Portal 的属性，例如 `container`。 */
   portalProps?: Omit<Primitive.SelectPortalProps, 'children'>
+  /** 传给浮层内容的属性，例如 `side`、`align`。 */
   contentProps?: Omit<Primitive.SelectContentProps, 'children'>
 }
 

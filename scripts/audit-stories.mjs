@@ -46,7 +46,12 @@ for (const file of files) {
   if (segments[0] === 'Editors' && (segments.length !== 3 || !editorGroups.includes(segments[1])))
     problems.push(`${file}: editor pages are titled Editors/<${editorGroups.join('|')}>/<Component>`)
   if (segments[0] !== 'Editors' && segments.length !== 2) problems.push(`${file}: "${title}" must be <Layer>/<Page>`)
-  const page = segments.at(-1).replace(/[^A-Za-z0-9]/g, '')
+  const page = segments
+    .at(-1)
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('')
+    .replace(/[^A-Za-z0-9]/g, '')
   if (file !== `${page}.stories.tsx`) problems.push(`${file}: file name should be ${page}.stories.tsx for "${title}"`)
   if (!/describeComponent\(/.test(text)) problems.push(`${file}: describe the page with describeComponent()`)
 

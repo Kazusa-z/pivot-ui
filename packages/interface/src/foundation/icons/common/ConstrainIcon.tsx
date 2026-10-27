@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import { IconFrame, type IconProps } from '../Icon'
 
 export interface ConstrainIconProps extends IconProps {
+  /** 锁定比例时显示为连接状态。 */
   active?: boolean
 }
 

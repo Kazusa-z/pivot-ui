@@ -1,205 +1,155 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { css } from '../styled-system/css'
 import {
+  Arrow,
+  ConstrainIcon,
   EyeDropperIcon,
+  IconAnimationControllerFile,
+  IconAnimatorClipFile,
+  IconCodeFile,
+  IconFontFile,
+  IconPendingFile,
+  IconPrefabFile,
+  IconRightBottomCorner,
+  IconSceneFile,
+  IconShaderFile,
+  IconSpineFile,
+  IconSpineSkeletonFile,
+  IconSpriteAtlasFile,
+  IconSpriteFile,
+  IconUnknownFile,
+  IconVrReferenceImageFile,
   MouseDoubleDownIcon,
   MouseLeftDownIcon,
   MouseRightDownIcon,
-  IconRightBottomCorner,
-  IconCodeFile,
-  IconAnimationControllerFile,
-  IconAnimatorClipFile,
-  IconFontFile,
-  IconPrefabFile,
-  IconSceneFile,
-  IconShaderFile,
-  IconSpineSkeletonFile,
-  IconSpineFile,
-  IconSpriteFile,
-  IconSpriteAtlasFile,
-  IconUnknownFile,
-  IconVrReferenceImageFile,
-  IconPendingFile,
-  ConstrainIcon,
+  type ArrowDirection,
 } from '../src/foundation/icons'
 import { Button } from '../src/controls/buttons'
-import { Text } from '../src/foundation/typography'
-import { StoryPage, StorySection, StoryCard, StoryGrid, StoryRow, StoryState, StoryCode } from './support/StoryPage'
-
-const commonIcons = {
-  EyeDropperIcon,
-  MouseDoubleDownIcon,
-  MouseLeftDownIcon,
-  MouseRightDownIcon,
-  IconRightBottomCorner,
-}
+import { css } from '../styled-system/css'
+import { describeComponent } from './support/describe'
+import { Grid, Item, Row } from './support/layout'
 
 const fileIcons = {
-  IconCodeFile,
-  IconAnimationControllerFile,
-  IconAnimatorClipFile,
-  IconFontFile,
-  IconPrefabFile,
   IconSceneFile,
+  IconPrefabFile,
+  IconCodeFile,
   IconShaderFile,
-  IconSpineSkeletonFile,
-  IconSpineFile,
+  IconFontFile,
   IconSpriteFile,
   IconSpriteAtlasFile,
-  IconUnknownFile,
+  IconSpineFile,
+  IconSpineSkeletonFile,
+  IconAnimationControllerFile,
+  IconAnimatorClipFile,
   IconVrReferenceImageFile,
+  IconUnknownFile,
   IconPendingFile,
 }
-
-const iconCell = css({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: 'var(--space-2)',
-  minWidth: 0,
-  textAlign: 'center',
+const toolIcons = { EyeDropperIcon, MouseLeftDownIcon, MouseRightDownIcon, MouseDoubleDownIcon, IconRightBottomCorner }
+const cell = css({ display: 'grid', justifyItems: 'center', gap: 'var(--space-1_5)' })
+const name = css({
+  fontFamily: 'var(--fonts-mono)',
+  fontSize: 'var(--fontSizes-micro)',
+  color: 'var(--colors-textMuted)',
 })
 
 const meta = {
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '图标组件标识文件类型、鼠标操作和工具状态，接收 SVG 尺寸、颜色和原生属性。图标默认装饰；独立表达含义时提供 title 或 aria-label。放入按钮时由按钮提供操作名称。',
-      },
-    },
-    layout: 'fullscreen',
-  },
   title: 'Foundation/Icons',
-} satisfies Meta
+  component: IconCodeFile,
+  tags: ['autodocs'],
+  parameters: describeComponent({
+    summary: '编辑器专用的 SVG 图标：资源文件类型、鼠标操作、工具状态和方向箭头。通用图标使用 `@tabler/icons-react`。',
+    use: ['资源列表、树和磁贴里标识文件类型', '快捷键说明里表示鼠标操作', '折叠、展开等方向提示：`Arrow`'],
+    notes: [
+      '图标默认是装饰，会对读屏隐藏；单独表达含义时传 `title` 或 `aria-label`',
+      '放进按钮时由按钮提供名称（`IconButton` 的 `aria-label`），图标保持装饰',
+      '颜色跟随 `currentColor`，尺寸用 `width` / `height`',
+    ],
+  }),
+  args: { width: 32, height: 32 },
+} satisfies Meta<typeof IconCodeFile>
 export default meta
 type Story = StoryObj<typeof meta>
 
-function IconAttributesExample() {
-  const ref = useRef<SVGSVGElement>(null)
-  const [width, setWidth] = useState(32)
-  const [message, setMessage] = useState('Ref is attached to the SVG')
-  return (
-    <StoryCard
-      title="Accessible names and attributes"
-      description="title/aria-label 决定可访问名称；ref 指向实际 SVG。">
-      <StoryRow align="start">
-        <div className={iconCell}>
-          <IconCodeFile title="Source code file" width={width} height={48} ref={ref} data-testid="named-icon" />
-          <Text size="xs" tone="muted">
-            Source code file
-          </Text>
+export const Basic: Story = {}
+
+/** 资源文件类型图标；`IconPendingFile` 表示仍在加载。 */
+export const FileTypes: Story = {
+  render: () => (
+    <Grid>
+      {Object.entries(fileIcons).map(([iconName, Icon]) => (
+        <div key={iconName} className={cell}>
+          <Icon width={32} height={32} />
+          <span className={name}>{iconName}</span>
         </div>
-        <div className={iconCell}>
-          <IconCodeFile title="Second source code file" width={width} height={48} />
-          <Text size="xs" tone="muted">
-            Second source file
-          </Text>
-        </div>
-        <div className={iconCell}>
-          <EyeDropperIcon
-            aria-label="Pick a color"
-            width={width}
-            height={48}
-            style={{ color: 'var(--colors-primary)' }}
-          />
-          <Text size="xs" tone="muted">
-            Pick a color
-          </Text>
-        </div>
-      </StoryRow>
-      <StoryRow>
-        <Button
-          onClick={() => {
-            setWidth(width === 32 ? 48 : 32)
-            setMessage(ref.current ? `Ref points to ${ref.current.tagName}` : 'Ref is not attached')
-          }}>
-          Resize icons
-        </Button>
-        <Text size="sm" tone="muted">
-          {message}; width {width}
-        </Text>
-      </StoryRow>
-      <StoryState label="Icon state" value={{ width, message }} />
-    </StoryCard>
-  )
+      ))}
+    </Grid>
+  ),
 }
 
-export const Overview: Story = {
+/** 鼠标操作与工具图标；`ConstrainIcon` 的 `active` 表示比例已锁定。 */
+export const Tools: Story = {
   render: () => (
-    <StoryPage
-      eyebrow="Foundation"
-      title="Icons"
-      summary="文件类型、鼠标手势和工具状态图标。固定尺寸的 viewBox 加原生 SVG 属性，业务颜色和尺寸由调用方控制。"
-      meta={
-        <>
-          <span>SVG</span>
-          <span>·</span>
-          <span>title / aria-label</span>
-          <span>·</span>
-          <span>currentColor</span>
-        </>
-      }>
-      <StorySection title="Common icons" description="鼠标操作和工具状态图标；默认 1em，示例使用 28px。">
-        <StoryGrid>
-          {Object.entries(commonIcons).map(([name, Icon]) => (
-            <StoryCard key={name}>
-              <div className={iconCell}>
-                <Icon width={28} height={28} />
-                <Text size="xs" tone="muted">
-                  {name}
-                </Text>
-              </div>
-            </StoryCard>
-          ))}
-          <StoryCard>
-            <div className={iconCell}>
-              <ConstrainIcon width={28} height={28} />
-              <Text size="xs" tone="muted">
-                Unconstrained
-              </Text>
-            </div>
-          </StoryCard>
-          <StoryCard>
-            <div className={iconCell}>
-              <ConstrainIcon active width={28} height={28} />
-              <Text size="xs" tone="muted">
-                Constrained
-              </Text>
-            </div>
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
+    <Grid>
+      {Object.entries(toolIcons).map(([iconName, Icon]) => (
+        <div key={iconName} className={cell}>
+          <Icon width={24} height={24} />
+          <span className={name}>{iconName}</span>
+        </div>
+      ))}
+      <div className={cell}>
+        <ConstrainIcon width={24} height={24} />
+        <span className={name}>ConstrainIcon</span>
+      </div>
+      <div className={cell}>
+        <ConstrainIcon active width={24} height={24} />
+        <span className={name}>ConstrainIcon active</span>
+      </div>
+    </Grid>
+  ),
+}
 
-      <StorySection title="File types" description="文件图标使用固定配色；在树或资源网格中按文件类型选择。">
-        <StoryGrid>
-          {Object.entries(fileIcons).map(([name, Icon]) => (
-            <StoryCard key={name}>
-              <div className={iconCell}>
-                <Icon width={48} height={56} />
-                <Text size="xs" tone="muted">
-                  {name}
-                </Text>
-              </div>
-            </StoryCard>
-          ))}
-        </StoryGrid>
-      </StorySection>
+/** `Arrow` 支持八个方向；`animate` 让方向变化带旋转过渡。展开状态由外层按钮保存。 */
+export const Arrows: Story = {
+  render: function Render() {
+    const [expanded, setExpanded] = useState(false)
+    const directions: ArrowDirection[] = [
+      'up',
+      'right',
+      'down',
+      'left',
+      'up-left',
+      'up-right',
+      'down-left',
+      'down-right',
+    ]
+    return (
+      <Row>
+        {directions.map((direction) => (
+          <Item key={direction} label={direction}>
+            <Arrow direction={direction} />
+          </Item>
+        ))}
+        <Item label="animate">
+          <Button
+            variant="subtle"
+            aria-expanded={expanded}
+            startSlot={<Arrow direction={expanded ? 'down' : 'right'} animate size="xs" />}
+            onClick={() => setExpanded((value) => !value)}>
+            {expanded ? 'Collapse' : 'Expand'}
+          </Button>
+        </Item>
+      </Row>
+    )
+  },
+}
 
-      <StorySection title="Accessible names and attributes">
-        <IconAttributesExample />
-      </StorySection>
-
-      <StorySection title="Usage">
-        <StoryCode
-          label="tsx"
-          code={`<IconSceneFile width={24} height={28} />          // decorative
-<IconSceneFile title="Scene file" width={24} height={28} />
-<EyeDropperIcon aria-label="Pick a color" />`}
-        />
-      </StorySection>
-    </StoryPage>
+/** 单独出现时提供 `title`（悬停显示并供读屏朗读）；颜色由 `currentColor` 控制。 */
+export const Labelled: Story = {
+  render: () => (
+    <Row>
+      <IconCodeFile title="Source code file" width={32} height={32} />
+      <EyeDropperIcon aria-label="Pick a color" width={24} height={24} style={{ color: 'var(--colors-primary)' }} />
+    </Row>
   ),
 }

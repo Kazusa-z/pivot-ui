@@ -1,11 +1,18 @@
 /** Hard limits constrain values. Soft limits only constrain pointer/step editing. */
 export interface NumericConstraints {
+  /** 硬下限：输入和拖动都不能低于它。 */
   readonly min?: number
+  /** 硬上限。 */
   readonly max?: number
+  /** 常用范围下限：拖动和滑块停在这里，但仍可输入到 `min`。 */
   readonly softMin?: number
+  /** 常用范围上限：拖动和滑块停在这里，但仍可输入到 `max`。 */
   readonly softMax?: number
+  /** 方向键和步进按钮的步长。 */
   readonly step?: number
+  /** 拖动时每像素的变化量。 */
   readonly dragStep?: number
+  /** 存储值保留的小数位数。 */
   readonly precision?: number
 }
 

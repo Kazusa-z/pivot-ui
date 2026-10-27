@@ -51,14 +51,23 @@ const textRecipe = cva({
 export interface TextProps extends HTMLAttributes<HTMLElement> {
   /** 选择段落、行内文字或代码等 HTML 语义；视觉字号通过 size 设置。 */
   as?: 'p' | 'span' | 'div' | 'small' | 'code' | 's' | 'del'
+  /** 视觉字号；不设置时继承父元素。`xs` 11、`sm` 12、`md` 14、`lg` 16，`5` 为页面标题字号。 */
   size?: TextSize
+  /** 文字色：`muted` 次要说明，`strong` 强调，`danger` 错误说明。 */
   tone?: TextTone
+  /** 字重。 */
   weight?: TextWeight
+  /** 对齐方式。 */
   align?: 'start' | 'center' | 'end' | 'justify'
+  /** 使用等宽字体，适合代码、数值和路径。 */
   monospace?: boolean
+  /** 是否允许选中文字；界面标签默认不需要。 */
   selectable?: boolean
+  /** 单行截断并显示省略号；建议同时设置 title 提供完整内容。 */
   truncate?: boolean
+  /** 删除线样式（不改变语义；需要语义时用 `as="del"`）。 */
   strikethrough?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -120,8 +129,11 @@ const titleRecipe = cva({
 export interface TitleProps extends HTMLAttributes<HTMLHeadingElement> {
   /** 按文档层级选择 h1–h6，视觉字号通过 size 设置。 */
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+  /** 视觉尺寸，1 最大；与 `as` 独立选择。 */
   size?: 1 | 2 | 3 | 4 | 5 | 6
+  /** 字重。 */
   weight?: TextWeight
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

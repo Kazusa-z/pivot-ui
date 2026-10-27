@@ -10,18 +10,32 @@ import {
   type TextInputVariant,
 } from './text.styles'
 
-export interface InputProps extends Omit<ComponentPropsWithoutRef<'input'>, 'size'> {
+/** Frame appearance shared by every single-line input (Input, NumberInput and the numeric editors). */
+export interface TextInputAppearance {
+  /** 高度：`xs` 20、`sm` 24（面板）；`md` 32、`lg` 36（表单）。 */
   size?: TextInputSize
+  /** `soft` 默认浅底，适合面板内嵌；`outline` 带边框，适合独立字段；`subtle` 无底色。 */
   variant?: TextInputVariant
+  /** 校验结果：只改变边框和文字色。 */
   state?: TextInputState
+  /** 输入框内左侧的图标、前缀或轴标签。 */
   startSlot?: ReactNode
+  /** 输入框内右侧的单位、后缀或按钮。 */
   endSlot?: ReactNode
+}
+
+export interface InputProps extends TextInputAppearance, Omit<ComponentPropsWithoutRef<'input'>, 'size'> {
+  /** 不套用默认的左侧插槽样式，完全由传入内容决定。 */
   overrideStartSlotStyle?: boolean
+  /** 不套用默认的右侧插槽样式，完全由传入内容决定。 */
   overrideEndSlotStyle?: boolean
+  /** 文字过长时显示省略号（失焦时）。 */
   ellipsis?: boolean
+  /** 外层框元素的 ref；`ref` 指向内部的 `<input>`。 */
   rootRef?: Ref<HTMLDivElement>
-  /** Styles the surrounding input frame; native className/style belong to the input. */
+  /** 外层框的 Panda 样式；原生 className / style 作用于内部 input。 */
   css?: SystemStyleObject
+  /** 每次输入时收到新文本；与原生 `onChange` 同时可用。 */
   onValueChange?: (value: string) => void
 }
 

@@ -6,9 +6,13 @@ import { IconFrame, type IconProps } from '../Icon'
 export type ArrowDirection = 'up' | 'down' | 'left' | 'right' | 'up-left' | 'up-right' | 'down-left' | 'down-right'
 
 export interface ArrowProps extends IconProps {
+  /** 箭头方向，包括四个斜向。 */
   direction?: ArrowDirection
+  /** `xs` 12px、`sm` 14px。 */
   size?: 'xs' | 'sm'
+  /** 方向变化时旋转过渡，适合展开 / 收起。 */
   animate?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

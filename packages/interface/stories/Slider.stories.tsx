@@ -1,239 +1,163 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from 'storybook/test'
 import { Slider } from '../src/controls/sliders/Slider'
 import { Button } from '../src/controls/buttons'
-import { Text } from '../src/foundation/typography'
-import {
-  StoryPage,
-  StorySection,
-  StoryCard,
-  StoryRow,
-  StoryField,
-  StoryGrid,
-  StoryCode,
-  StoryProps,
-  StoryState,
-  StoryKeyboard,
-} from './support/StoryPage'
-
-const sizes = [
-  { size: 'xs' as const, height: '20px' },
-  { size: 'sm' as const, height: '24px' },
-  { size: 'md' as const, height: '32px' },
-]
+import { describeComponent } from './support/describe'
+import { Column, Item, Row, StateView } from './support/layout'
 
 const meta = {
+  title: 'Controls/Slider',
+  component: Slider,
   tags: ['autodocs'],
-  parameters: {
-    layout: 'fullscreen',
-    docs: {
-      description: {
-        component:
-          'Slider 通过拖动或键盘调整一个或多个数值位置。value 数组中的每一项对应一个滑块，适合单值参数和区间选择；onValueChange 提供预览，onValueCommit 保存一次完整调整。应用负责接受新值，并在取消时恢复编辑前的值。',
-      },
-    },
-  },
-  title: 'Widgets/Sliders/Slider',
-} satisfies Meta
+  parameters: describeComponent({
+    summary: '在固定范围内拖动调整数值；一个滑块是单值，两个是区间，也可以有更多。',
+    use: ['不透明度、强度等比例参数', '可见范围、过渡区间等区间值（多个滑块）'],
+    avoid: [
+      '需要精确输入数值 → 用 `SliderField`（输入框 + 滑块）',
+      '把一个总量分成几段 → 用 `PartitionSlider`',
+      '没有固定上限的数值 → 用 `NumberInput`',
+    ],
+    related: ['`SliderField`：输入框 + 滑块', '`PartitionSlider`：分段比例'],
+    notes: ['`value` 始终是数组；拖动中 `onValueChange` 给出预览，松开或按键后 `onValueCommit` 给出最终值'],
+    keyboard: [
+      ['← / → 或 ↓ / ↑', '按 `step` 调整'],
+      ['Page Up / Page Down', '大步调整'],
+      ['Home / End', '跳到最小 / 最大值'],
+      ['Escape', '取消本次拖动'],
+    ],
+  }),
+  args: { 'aria-label': 'Opacity', defaultValue: [40], min: 0, max: 100, onValueChange: fn(), onValueCommit: fn() },
+} satisfies Meta<typeof Slider>
 export default meta
-type Story = StoryObj
+type Story = StoryObj<typeof meta>
 
-function SliderExample() {
-  const [value, setValue] = useState([25])
-  const [range, setRange] = useState([20, 80])
-  const [compactRange, setCompactRange] = useState([20, 60, 80])
-  const [requests, setRequests] = useState<number[][]>([])
-  const [events, setEvents] = useState<string[]>([])
-  const [revision, setRevision] = useState(0)
-  const initial = useRef(value)
-  const reset = () => {
-    setValue([25])
-    setRange([20, 80])
-    setCompactRange([20, 60, 80])
-    setRequests([])
-    setEvents([])
-    setRevision((current) => current + 1)
-  }
-  return (
-    <StoryPage
-      eyebrow="Widgets / Sliders"
-      title="Slider"
-      summary="用于在固定范围内调整数值。单值参数使用一个滑块，区间和多值参数使用多个滑块；拖动提供实时预览，松开或键盘调整后再提交。"
-      meta={
-        <>
-          <span>single / range</span>
-          <span>·</span>
-          <span>20 / 24 / 32</span>
-          <span>·</span>
-          <span>keyboard</span>
-        </>
-      }
-      actions={
-        <Button size="sm" variant="outline" onClick={reset}>
-          Reset
-        </Button>
-      }>
-      <StorySection
-        title="Variants"
-        description="单值适合不透明度、强度等参数；多滑块适合区间；compact 使用细轨道和较短的竖条滑块，并隐藏轨道背景。">
-        <StoryGrid>
-          <StoryCard title="Single value" description="Controlled value with edit events.">
-            <Slider
-              aria-label="Opacity"
-              value={value}
-              onValueChange={setValue}
-              resetKey={revision}
-              min={0}
-              max={100}
-              step={1}
-              startSlot="Opacity"
-              endSlot="%"
-              showRuler
-              onEditStart={() => {
-                initial.current = value
-                setEvents((current) => [...current, 'start'])
-              }}
-              onValueCommit={(next, reason) => setEvents((current) => [...current, `${reason}: ${next.join(', ')}`])}
-              onEditCancel={(reason) => {
-                if (!['external-update', 'reset', 'target-change', 'unmount'].includes(reason))
-                  setValue(initial.current)
-                setEvents((current) => [...current, `cancel: ${reason}`])
-              }}
-            />
-            <Text size="sm" tone="muted">
-              Current value: {value[0]}
-            </Text>
-            <StoryState label="Value and edit events" value={{ value, events }} />
-          </StoryCard>
-          <StoryCard title="Range" description="Two thumbs with a minimum step gap.">
-            <Slider
-              aria-label="Visible range"
-              value={range}
-              onValueChange={setRange}
-              thumbLabels={['Minimum', 'Maximum']}
-              minStepsBetweenThumbs={5}
-              startSlot="20"
-              endSlot="80"
-            />
-            <StoryState label="Range value" value={range} />
-          </StoryCard>
-          <StoryCard title="Compact multi-thumb" description="细轨道与短竖条滑块，适合紧凑面板。">
-            <Slider
-              aria-label="Compact range"
-              value={compactRange}
-              onValueChange={setCompactRange}
-              thumbLabels={['Low', 'Middle', 'High']}
-              compact
-              minStepsBetweenThumbs={5}
-            />
-            <StoryState label="Compact range value" value={compactRange} />
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection
-        title="Sizes"
-        description="紧凑档使用 20px 和 24px；常规档使用 32px。控件高度、thumb 尺寸和命中区域一起变化。">
-        <StoryCard title="Size scale" description="xs / sm / md">
-          <StoryRow align="start">
-            {sizes.map(({ size, height }) => (
-              <StoryField key={size} label={`${size} · ${height}`}>
-                <Slider
-                  key={`${revision}-${size}`}
-                  aria-label={`${size} opacity`}
-                  size={size}
-                  defaultValue={[40]}
-                  startSlot={size}
-                />
-              </StoryField>
-            ))}
-          </StoryRow>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection
-        title="States"
-        description="readOnly 保留焦点和浏览但拒绝修改；disabled 禁止交互；固定 value 的示例展示应用拒绝请求时滑块保持原位置。">
-        <StoryCard>
-          <StoryRow align="start">
-            <StoryField label="Read only" hint="Focusable, value fixed">
-              <Slider
-                aria-label="Read only opacity"
-                value={[30]}
-                readOnly
-                onValueChange={(next) => setRequests((current) => [...current, next])}
-              />
-            </StoryField>
-            <StoryField label="Disabled" hint="Skipped by keyboard">
-              <Slider key={revision} aria-label="Disabled opacity" value={[50]} disabled />
-            </StoryField>
-            <StoryField label="Rejected request" hint="Controlled value stays 30">
-              <Slider
-                aria-label="Rejected opacity"
-                value={[30]}
-                onValueChange={(next) => setRequests((current) => [...current, next])}
-              />
-            </StoryField>
-          </StoryRow>
-          <StoryState label="Requested values" value={requests} />
-        </StoryCard>
-      </StorySection>
-
-      <StorySection
-        title="Keyboard & accessibility"
-        description="每个 thumb 都是可聚焦的 slider；单独拖动、方向键和 PageUp/PageDown 都遵守 step 与范围。">
-        <StoryGrid>
-          <StoryKeyboard
-            rows={[
-              { keys: ['←', '→', '↑', '↓'], action: '按 step 调整当前 thumb。' },
-              { keys: ['PageUp', 'PageDown'], action: '按 10 倍 step 调整。' },
-              { keys: ['Home', 'End'], action: '跳到范围的最小或最大值。' },
-              { keys: ['Ctrl', '⌘'], action: '按住时细调，增量为 0.1 × step。' },
-              { keys: 'Escape', action: '取消当前拖动并恢复编辑前的值。' },
-            ]}
-          />
-          <StoryCard title="Notes">
-            <Text size="sm" tone="muted">
-              为滑块提供 aria-label；多滑块使用 thumbLabels 区分每个 thumb。readOnly 仍可聚焦， disabled
-              会移出键盘顺序。拖动时 onValueChange 更新预览，松开时 onValueCommit 提交一次完整调整。
-            </Text>
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection title="Usage">
-        <StoryGrid>
-          <StoryCode
-            label="tsx"
-            code={`const [opacity, setOpacity] = useState([25])
-
-<Slider
-  aria-label="Opacity"
-  value={opacity}
-  onValueChange={setOpacity}
-  min={0}
-  max={100}
-  step={1}
-  startSlot="Opacity"
-  endSlot="%"
-/>`}
-          />
-          <StoryProps
-            rows={[
-              { name: 'value', type: 'number[]', description: '每个 thumb 的受控值。' },
-              { name: 'onValueChange', type: '(value: number[]) => void', description: '拖动中的预览请求。' },
-              { name: 'onValueCommit', type: '(value, reason) => void', description: '一次调整完成。' },
-              { name: 'onEditCancel', type: '(reason) => void', description: 'Escape、指针取消或窗口失焦。' },
-              { name: 'min / max / step', type: 'number', defaultValue: '0 / 100 / 1', description: '范围与步长。' },
-              { name: 'size', type: "'xs' | 'sm' | 'md'", defaultValue: "'sm'", description: '20 / 24 / 32px。' },
-              { name: 'compact', type: 'boolean', defaultValue: 'false', description: '细轨道与短竖条 thumb。' },
-              { name: 'thumbLabels', type: 'readonly string[]', description: '多滑块的可访问名称。' },
-            ]}
-          />
-        </StoryGrid>
-      </StorySection>
-    </StoryPage>
-  )
+/** 块状轨道：填充表示当前值，竖条是滑块；可以在轨道内显示参数名和单位。 */
+export const Basic: Story = {
+  args: { startSlot: 'Opacity', endSlot: '%' },
+  render: (args) => (
+    <Column width={280}>
+      <Slider {...args} />
+    </Column>
+  ),
 }
 
-export const Overview: Story = { render: () => <SliderExample /> }
+/** 两个滑块表示区间，`minStepsBetweenThumbs` 保持最小间隔，`thumbLabels` 为每个滑块命名。 */
+export const Range: Story = {
+  args: {
+    'aria-label': 'Visible range',
+    defaultValue: [20, 80],
+    minStepsBetweenThumbs: 5,
+    thumbLabels: ['Start', 'End'],
+  },
+  render: (args) => (
+    <Column width={280}>
+      <Slider {...args} />
+    </Column>
+  ),
+}
+
+/** `compact` 使用细轨道和短竖条，适合紧凑面板里的多个滑块。 */
+export const Compact: Story = {
+  args: {
+    'aria-label': 'Levels',
+    defaultValue: [20, 60, 80],
+    compact: true,
+    minStepsBetweenThumbs: 5,
+    thumbLabels: ['Low', 'Mid', 'High'],
+  },
+  render: (args) => (
+    <Column width={280}>
+      <Slider {...args} />
+    </Column>
+  ),
+}
+
+/** `showRuler` 显示刻度，便于对齐常用值。 */
+export const WithRuler: Story = {
+  args: { showRuler: true, startSlot: 'Strength' },
+  render: (args) => (
+    <Column width={280}>
+      <Slider {...args} />
+    </Column>
+  ),
+}
+
+/** `xs` 20 / `sm` 24 用于面板，`md` 32 用于表单。 */
+export const Sizes: Story = {
+  render: (args) => (
+    <Column width={280}>
+      {(['xs', 'sm', 'md'] as const).map((size) => (
+        <Item key={size} label={`${size} · ${{ xs: 20, sm: 24, md: 32 }[size]}px`}>
+          <Slider {...args} size={size} />
+        </Item>
+      ))}
+    </Column>
+  ),
+}
+
+/** 竖向滑块，默认高 160px。 */
+export const Vertical: Story = {
+  render: (args) => (
+    <Row>
+      <Slider {...args} orientation="vertical" />
+      <Slider {...args} orientation="vertical" defaultValue={[30, 70]} aria-label="Range" />
+    </Row>
+  ),
+}
+
+/** 只读可以聚焦和浏览但不修改；禁用不可交互。 */
+export const States: Story = {
+  render: (args) => (
+    <Column width={280}>
+      <Item label="readOnly">
+        <Slider {...args} readOnly />
+      </Item>
+      <Item label="disabled">
+        <Slider {...args} disabled />
+      </Item>
+    </Column>
+  ),
+}
+
+/** 记录 start / commit / cancel；External 50 模拟外部更新，会取消正在进行的拖动。 */
+export const BehaviorEditLifecycle: Story = {
+  tags: ['!autodocs'],
+  render: function Render() {
+    const [value, setValue] = useState([25])
+    const [revision, setRevision] = useState(0)
+    const [events, setEvents] = useState<string[]>([])
+    const initial = useRef(value)
+    const record = (event: string) => setEvents((items) => [...items.slice(-7), event])
+    return (
+      <Column width={280}>
+        <Slider
+          aria-label="Opacity"
+          value={value}
+          onValueChange={setValue}
+          resetKey={revision}
+          startSlot="Opacity"
+          endSlot="%"
+          onEditStart={(source) => {
+            initial.current = value
+            record(`start: ${source}`)
+          }}
+          onValueCommit={(next, reason) => record(`${reason}: ${next.join(', ')}`)}
+          onEditCancel={(reason) => {
+            if (!['external-update', 'reset', 'target-change', 'unmount'].includes(reason)) setValue(initial.current)
+            record(`cancel: ${reason}`)
+          }}
+        />
+        <Row>
+          <Button size="sm" variant="outline" onClick={() => setValue([50])}>
+            External 50
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => setRevision((current) => current + 1)}>
+            Change target
+          </Button>
+        </Row>
+        <StateView value={{ value, events }} />
+      </Column>
+    )
+  },
+}
