@@ -1,83 +1,126 @@
 import { css } from '../../styled-system/css'
+import { DocLink } from './DocLink'
 
 interface Layer {
   /** Sidebar group and source directory. */
   name: string
   dir: string
   role: string
-  components: readonly string[]
+  /** Docs pages in sidebar order; Editors splits them by value type. */
+  groups: readonly { name?: string; pages: readonly string[] }[]
 }
 
 // Top to bottom, as an architecture diagram reads; every layer builds on the ones below it.
 const layers: readonly Layer[] = [
-  { name: 'Property', dir: 'property', role: '把控件接到应用数据', components: ['PropertyField'] },
+  { name: 'Property', dir: 'property', role: '把控件接到应用数据', groups: [{ pages: ['PropertyField'] }] },
   {
     name: 'Editors',
     dir: 'editors',
     role: '按值类型组织的编辑器',
-    components: [
-      'SliderField',
-      'Vector3Input',
-      'ColorField',
-      'ColorEditor',
-      'CurvePicker',
-      'CurveEditor',
-      'AssetField',
-      'ResourceBrowser',
+    groups: [
+      { name: 'Numeric', pages: ['SliderField', 'VectorInput', 'NumberTupleInput', 'NumericDistributionEditor'] },
+      {
+        name: 'Color',
+        pages: [
+          'ColorField',
+          'HDRColorField',
+          'ColorPicker',
+          'ColorEditor',
+          'ColorRampPicker',
+          'ColorRampEditor',
+          'ColorAlphaRampEditor',
+          'ColorDistributionEditor',
+        ],
+      },
+      { name: 'Curve', pages: ['CurvePicker', 'CurveEditor', 'CurvePresets'] },
+      { name: 'Resources', pages: ['AssetField', 'ResourceBrowser'] },
     ],
   },
   {
     name: 'Collections',
     dir: 'collections',
     role: '一组数据',
-    components: ['Tree', 'Table', 'DataTable', 'AssetItem', 'CollectionEditor', 'Breadcrumbs', 'Pagination'],
-  },
-  {
-    name: 'Layout',
-    dir: 'layout',
-    role: '组织页面',
-    components: ['Section', 'Accordion', 'PropertyRow', 'Flex', 'ResizableSplit', 'ScrollArea', 'Separator'],
+    groups: [{ pages: ['Tree', 'Table', 'DataTable', 'AssetItem', 'CollectionEditor', 'Breadcrumbs', 'Pagination'] }],
   },
   {
     name: 'Dialogs',
     dir: 'dialogs',
     role: '模态操作与确认',
-    components: ['Dialog', 'AlertDialog', 'ConfirmationProvider'],
+    groups: [{ pages: ['Dialog', 'AlertDialog', 'ConfirmationProvider'] }],
+  },
+  {
+    name: 'Layout',
+    dir: 'layout',
+    role: '组织页面',
+    groups: [
+      {
+        pages: [
+          'Section',
+          'Accordion',
+          'PropertyRow',
+          'Flex',
+          'ResizableSplit',
+          'ScrollArea',
+          'Separator',
+          'SectionDivider',
+        ],
+      },
+    ],
   },
   {
     name: 'Controls',
     dir: 'controls',
     role: '单一用途的交互控件',
-    components: [
-      'Button',
-      'IconButton',
-      'Input',
-      'NumberInput',
-      'Select',
-      'Combobox',
-      'Checkbox',
-      'SegmentControl',
-      'ToggleGroup',
-      'Slider',
+    groups: [
+      {
+        pages: [
+          'Button',
+          'IconButton',
+          'Input',
+          'Textarea',
+          'EditableText',
+          'NumberInput',
+          'Select',
+          'Combobox',
+          'Checkbox',
+          'SegmentControl',
+          'ToggleGroup',
+          'Slider',
+          'PartitionSlider',
+        ],
+      },
     ],
   },
   {
     name: 'Overlays',
     dir: 'overlays',
     role: '浮在页面上的层',
-    components: ['Popover', 'Tooltip', 'HoverCard', 'DropdownMenu', 'ContextMenu', 'Menubar', 'Notifications'],
+    groups: [
+      {
+        pages: [
+          'Popover',
+          'Tooltip',
+          'HoverCard',
+          'OverlayLayer',
+          'DropdownMenu',
+          'ContextMenu',
+          'Menubar',
+          'Notifications',
+        ],
+      },
+    ],
   },
   {
     name: 'Display',
     dir: 'display',
     role: '只展示、不编辑',
-    components: ['Badge', 'Kbd', 'ReadonlyValue', 'ImagePreview', 'Callout', 'Progress', 'Spin'],
+    groups: [{ pages: ['Badge', 'Kbd', 'ReadonlyValue', 'ImagePreview', 'Callout', 'Progress', 'Spin'] }],
   },
   {
     name: 'Foundation',
     dir: 'foundation',
     role: '主题、字体与图标',
-    components: ['ThemeProvider', 'Text', 'Icons', 'Tokens'],
+    groups: [{ pages: ['Tokens', 'Control Matrix', 'Theme', 'Typography', 'Icons'] }],
   },
 ]
 
@@ -99,7 +142,13 @@ const titleClass = css({
   color: 'var(--colors-textStrong)',
 })
 const metaClass = css({ fontSize: 'var(--fontSizes-micro)', color: 'var(--colors-textMuted)' })
-const chipsClass = css({ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-1)' })
+const chipsClass = css({ display: 'grid', gap: 'var(--space-1_5)' })
+const groupClass = css({ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--space-1)' })
+const groupNameClass = css({
+  minWidth: '72px',
+  fontSize: 'var(--fontSizes-micro)',
+  color: 'var(--colors-textMuted)',
+})
 const chipClass = css({
   padding: 'var(--space-0_5) var(--space-1_5)',
   borderRadius: 'var(--radii-control)',
@@ -107,6 +156,9 @@ const chipClass = css({
   color: 'var(--colors-text)',
   fontFamily: 'var(--fonts-mono)',
   fontSize: 'var(--fontSizes-micro)',
+  textDecoration: 'none',
+  '&:hover': { backgroundColor: 'var(--colors-selectionSubtleBg)', color: 'var(--colors-textStrong)' },
+  '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '1px' },
 })
 const sharedClass = css({
   padding: 'var(--space-2) var(--space-3)',
@@ -116,10 +168,11 @@ const sharedClass = css({
   fontSize: 'var(--fontSizes-control)',
 })
 
-/** The library's layers with representative components, highest layer first. */
+/** The library's layers with links to every component page, highest layer first. */
 export function LayerDiagram() {
   return (
-    <div className={rootClass}>
+    // sb-unstyled keeps the docs page's typography (blue underlined links) off the diagram.
+    <div className={`sb-unstyled ${rootClass}`}>
       {layers.map((layer) => (
         <div key={layer.name} className={rowClass}>
           <div className={nameClass}>
@@ -129,10 +182,18 @@ export function LayerDiagram() {
             </span>
           </div>
           <div className={chipsClass}>
-            {layer.components.map((component) => (
-              <span key={component} className={chipClass}>
-                {component}
-              </span>
+            {layer.groups.map((group) => (
+              <div key={group.name ?? layer.name} className={groupClass}>
+                {group.name && <span className={groupNameClass}>{group.name}</span>}
+                {group.pages.map((page) => (
+                  <DocLink
+                    key={page}
+                    title={[layer.name, group.name, page].filter(Boolean).join('/')}
+                    className={chipClass}>
+                    {page}
+                  </DocLink>
+                ))}
+              </div>
             ))}
           </div>
         </div>

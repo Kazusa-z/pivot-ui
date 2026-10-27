@@ -42,7 +42,38 @@ interface PropertyAccess<T> {
 }
 ```
 
-`PropertyField` 会根据属性类型选择内置控件（文本、数字、布尔、枚举），复杂值通过 `render` 组合 `Vector3Input`、`ColorField`、`CurvePicker` 等。保存失败时显示错误并保留草稿，多选对象值不一致时用 `mixed` 显示。后端没准备好时，可以先写一个内存版的 `PropertyAccess`。
+`PropertyField` 会根据属性类型选择内置控件（文本、数字、布尔、枚举），复杂值通过 `render` 组合 `Vector3Input`、`ColorField`、`CurvePicker` 等。保存失败时显示错误并保留草稿，多选对象值不一致时用 `mixed` 显示。
+
+## 实现 PropertyAccess
+
+一次编辑是一个**会话**：`begin()` 开始，`change()` 更新预览，`commit()` 或 `cancel()` 结束。
+
+| 方法                | 返回                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| `getSnapshot()`     | 不可变快照：`value`、`revision`、只读 / 禁用及原因、`error`、正在编辑的 `edit.previewValue` |
+| `subscribe(fn)`     | 值或状态变化时调用 `fn`；返回取消订阅函数                                                   |
+| `begin()`           | `{ status: 'started', session }`，或只读 / 禁用时 `{ status: 'unavailable', message }`      |
+| `session.change(v)` | `changed` / `unchanged`；校验失败 `invalid`；已提交或已结束时 `ignored`                     |
+| `session.commit()`  | Promise，结果见下表；重复调用返回同一个 Promise                                             |
+| `session.cancel()`  | 结束未提交的编辑；已经提交时返回提交结果，不会撤销已保存的数据                              |
+
+`commit()` 的结果（也会传给 `PropertyField` 的 `onEditResult`）：
+
+| status       | 含义                                                          |
+| ------------ | ------------------------------------------------------------- |
+| `committed`  | 已保存；`transactionId` 用于撤销记录                          |
+| `unchanged`  | 值没有变化，不产生撤销记录                                    |
+| `rejected`   | 应用拒绝，`error.message` 显示在字段下方，草稿保留            |
+| `cancelled`  | 用户或环境取消（Escape、失焦、切换对象等），`reason` 说明原因 |
+| `superseded` | 编辑期间数据被外部更新、新会话或重置取代                      |
+
+几条约定：
+
+- 快照在没有变化时返回**同一个对象**，变化时返回新对象，`useSyncExternalStore` 依赖这一点。
+- 会话记录了开始时的 `baseRevision`；保存时如果当前版本已经变了，应用可以拒绝或合并。
+- 编辑预览写进快照的 `edit.previewValue`，其他视图（例如 3D 视口）可以订阅同一个 access 实时预览。
+
+`stories/support/mock-property-access.ts` 是一个完整的内存实现，可以作为参考，也可以在后端准备好之前直接使用。
 
 ## 应用提供的服务
 

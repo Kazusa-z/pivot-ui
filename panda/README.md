@@ -104,14 +104,16 @@ pnpm verify
 
 ## 样式与 Story 审计
 
-`pnpm verify` 会在构建前运行两条审计：
+`pnpm verify` 会在构建前运行三条审计：
 
 ```bash
 pnpm audit:styles
 pnpm audit:stories
+pnpm audit:layers
 ```
 
 - `audit:styles` 扫描组件源码中的裸 `height`、`minHeight`、`borderRadius` 和 `fontSize`；只允许图标/指示线、内容尺寸和文档化例外。它还检查所有 `--colors-*` 引用在明暗主题中都已定义且已解析。
-- `audit:stories` 要求 58 个 story 文件使用 `StoryPage`、只有一个 `Overview`（行为 story 必须 `!autodocs`），并拒绝 `ContractFrame`、`Control*` 和原生演示 `<select>/<input>`。
+- `audit:stories` 检查每个组件页的标题（`<Layer>/<Page>`，Editors 为 `Editors/<值类型>/<Page>`）、文件名、`describeComponent` 描述，以及只有 `Behavior*` story 隐藏在文档之外；`Guides/*` 指南写在 `stories/guides/*.mdx`。
+- `audit:layers` 检查每个组件只依赖更低的层。
 
 新增控件尺寸必须使用 `var(--sizes-control*)`、`var(--radii-*)`、`var(--fontSizes-*)`；确需例外时在审计脚本中写明文件与用途。

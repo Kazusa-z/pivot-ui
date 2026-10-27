@@ -31,7 +31,7 @@ export interface PropertyFieldControlProps {
 }
 
 export interface PropertyFieldRenderProps<T> extends PropertyBinding<T> {
-  /** Matches the row density so custom editors can choose 24/32 controls. */
+  /** 与字段行一致的密度，自定义控件据此选择 24 / 32 档。 */
   density: 'compact' | 'regular'
   /** 传给实际输入或控件组，使字段标签、帮助文字、错误和忙碌状态与控件关联。 */
   controlProps: PropertyFieldControlProps
@@ -49,15 +49,25 @@ export interface PropertyFieldRenderProps<T> extends PropertyBinding<T> {
 }
 
 export interface PropertyFieldProps<T = PropertyValue> extends Omit<PropertyRowProps, 'children'> {
+  /** 应用实现的属性访问：提供当前快照、订阅变化，并开始编辑会话。 */
   access: PropertyAccess<T>
-  /** 选择字段的输入方式；默认根据属性类型使用 input、input-number、checkbox 或 select。 */
+  /** 行高：`compact` 24（默认）或 `regular` 32；内置控件和 `render` 参数里的 `density` 随之变化。 */
+  density?: 'compact' | 'regular'
+  /** `row` 标签在左（默认），`column` 标签在上。 */
+  direction?: 'row' | 'column'
+  /** 内置控件：文本 `input` / `textarea`，数字 `input-number` / `numeric-slider`，布尔 `checkbox`，枚举 `select` / `combobox`；默认按属性类型选择第一个。 */
   widget?: PropertyFieldWidget
+  /** 内置控件的 id，默认自动生成。 */
   controlId?: string
+  /** 标签，默认使用属性描述里的 `label`。 */
   label?: ReactNode
+  /** 帮助文字，默认使用属性描述里的 `description`。 */
   description?: ReactNode
+  /** 文本和数字输入框的占位文字；`mixed` 时显示 `Multiple values`。 */
   placeholder?: string
   /** 展示多个选中对象具有不同值的状态。应用计算是否混合，并在接受统一的新值后将它设为 false。 */
   mixed?: boolean
+  /** 每次编辑结束时调用：`committed`、`unchanged`、`cancelled`、`rejected` 或 `superseded`。 */
   onEditResult?: (result: EditResult<T>) => void
   /** 自定义字段内容，例如向量、颜色或资源选择器。参数提供当前值、控件关联属性和编辑方法。 */
   render?: (field: PropertyFieldRenderProps<T>) => ReactNode

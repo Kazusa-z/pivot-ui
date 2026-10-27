@@ -226,6 +226,6 @@ Popover、Tooltip、HoverCard、Dialog 和 AlertDialog 的便利组件使用 `ro
 
 `clamp` 将数值限制到指定上下界，调用方提供有效范围。`mergeRefs` 可将组件的多个对象 ref 或函数 ref 连接到同一元素，支持 React 19 的 ref 清理回调。数值、颜色和曲线计算函数可从 `/values` 使用。
 
-运行 `pnpm dev:interface` 后，在 Storybook 中查看每个组件的操作说明和状态反馈。`Property` 展示实际控件的数据连接，`Contracts / Property editing` 展示保存延迟、拒绝、外部更新等数据场景。示例数据在浏览器内模拟，生产应用通过上述接口连接自己的服务。
+运行 `pnpm dev:interface` 后，在 Storybook 中查看每个组件的操作说明和状态反馈。`Property / PropertyField` 展示实际控件的数据连接，侧边栏里的 `BehaviorSaveLifecycle` 演示保存延迟、拒绝、外部更新等数据场景；`Guides / 编辑与数据` 说明 `PropertyAccess` 的实现方式。示例数据在浏览器内模拟，生产应用通过上述接口连接自己的服务。
 
 完整导航见[文档索引](../../docs/README.md)。修改组件后运行 `pnpm verify`，会依次检查格式、类型、`audit:styles`、`audit:stories` 和构建；也可单独运行 `pnpm audit:styles` 或 `pnpm audit:stories`。

@@ -22,9 +22,6 @@ const layers = [
   'Property',
 ]
 const editorGroups = ['Numeric', 'Color', 'Curve', 'Resources']
-// Pages still on the retired StoryPage layout while the migration is in progress.
-const allowLegacy = true
-let legacy = 0
 
 for (const file of files) {
   const text = readFileSync(join(storiesRoot, file), 'utf8')
@@ -32,12 +29,6 @@ for (const file of files) {
   const title = meta?.[1].match(/title:\s*'([^']+)'/)?.[1]
   if (!meta || !title) {
     problems.push(`${file}: missing meta block or title`)
-    continue
-  }
-
-  if (/from ['"]\.\/support\/StoryPage['"]/.test(text)) {
-    legacy++
-    if (!allowLegacy) problems.push(`${file}: still uses the retired StoryPage layout`)
     continue
   }
 
@@ -78,9 +69,5 @@ if (problems.length) {
   for (const problem of problems) console.error(`- ${problem}`)
   process.exitCode = 1
 } else {
-  const migrated = files.length - legacy
-  console.log(
-    `audit:stories ok — ${migrated} component page(s) follow the docs model` +
-      (legacy ? `; ${legacy} legacy page(s) awaiting migration.` : '.')
-  )
+  console.log(`audit:stories ok — ${files.length} component page(s) follow the docs model.`)
 }

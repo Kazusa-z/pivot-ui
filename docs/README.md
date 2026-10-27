@@ -189,7 +189,7 @@ interface PropertyAccess<T> {
 }
 ```
 
-`PropertyField` 使用 `access` 读取快照、开始编辑、预览和提交。快照包含 `target`、`revision`、`value`、`disabled`、`readOnly`、`error`、`edit.previewValue` 等信息。保存确认、持久化和撤销记录由应用负责；后端未就绪时可以用内存实现。
+`PropertyField` 使用 `access` 读取快照、开始编辑、预览和提交。快照包含 `target`、`revision`、`value`、`disabled`、`readOnly`、`error`、`edit.previewValue` 等信息。保存确认、持久化和撤销记录由应用负责；会话各方法的返回值见 Storybook 的「编辑与数据」指南，`stories/support/mock-property-access.ts` 是可参考的内存实现。
 
 内置字段：`Input`、`Textarea`、`Checkbox`、`Select`、`Combobox`、`NumberInput`、`SliderField`。复杂值通过 `render` 组合 `Vector3Input`、颜色、曲线或资源控件。`density="compact" | "regular"` 控制内置控件高度。
 
@@ -199,7 +199,7 @@ interface PropertyAccess<T> {
 
 ### 5.5 资源
 
-`ResourceProvider` 负责 `query` 与 `get`；可选 `rename`、`locate`、`chooseFile`。`ResourceBrowser` 通过 `onSelect` / `onSelectedIdChange` 回写选择；`AssetField` 通过 `onValueChange` 接收引用变化。资源状态（loading/error/missing/not selectable）应保留在 `AssetDescriptor` 中。
+`ResourceProvider` 负责 `query` 与 `get`；可选 `rename`、`locate`、`chooseFile`（实现步骤见 Storybook 的「接入资源服务」指南）。`ResourceBrowser` 通过 `onSelect` / `onSelectedIdChange` 回写选择；`AssetField` 通过 `onValueChange` 接收引用变化。资源状态（loading/error/missing/not selectable）应保留在 `AssetDescriptor` 中。
 
 ## 6. 主题与样式接入
 
@@ -242,6 +242,8 @@ pnpm build:storybook
 
 侧边栏从上到下是 `Guides`，然后按层排列：`Foundation` → `Display` → `Overlays` → `Controls` → `Layout` → `Dialogs` → `Collections` → `Editors/<Numeric|Color|Curve|Resources>` → `Property`，与源码目录一致。
 
+`Guides` 是跨组件的说明：介绍（分层图，每个组件名都链接到它的文档页）、快速开始、选择组件、编辑与数据（受控值、编辑生命周期、`PropertyAccess` 会话）、拖放、接入资源服务。
+
 ### 组件页
 
 每个组件一个 story 文件，文件名与页面名相同（`Controls/Button` → `stories/Button.stories.tsx`）。文档页由 `storybook/docs.tsx` 统一生成，顺序固定：
@@ -267,9 +269,11 @@ export const Variants: Story = { render: (args) => <Row>…</Row> }
 ```
 
 - 示例只展示组件本身，用 `stories/support/layout.tsx` 的 `Row`、`Column`、`Grid`、`Item`、`Panel` 排版；不要加标题卡片或调试面板。
+- 同一组页面共用的示例数据放在 `stories/support/`：`color-samples.ts`、`curve-samples.ts`、`mock-resource-provider.ts`、`mock-property-access.ts`（后两个是 `ResourceProvider` 和 `PropertyAccess` 的完整内存实现）。
+- 一个页面可以覆盖一组同形态的组件，例如 `Editors/Numeric/VectorInput` 包含 `Vector2Input`、`Vector3Input`、`Vector4Input` 和 `RectInput`。
 - 拒绝请求、保存失败、外部更新这类测试场景写成 `Behavior*` story，加 `tags: ['!autodocs']`，只出现在侧边栏，可以用 `StateView` 显示内部状态。
 - 说明使用中文；组件名、prop 名和示例数据使用英文。
-- `pnpm audit:stories` 检查标题、文件名、`describeComponent` 和 Behavior 规则。`Guides/*` 页面写在 `stories/guides/*.mdx`。
+- `pnpm audit:stories` 检查标题、文件名、`describeComponent` 和 Behavior 规则。`Guides/*` 页面写在 `stories/guides/*.mdx`，新增时把页面名加到 `.storybook/preview.tsx` 的排序里；指南之间用 `[文字](?path=/docs/<id>)` 链接，React 组件里用 `stories/guides/DocLink.tsx`。
 
 ## 8. 开发与质量
 
