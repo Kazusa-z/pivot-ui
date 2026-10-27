@@ -38,24 +38,37 @@ import {
 import { ResourceBrowser, type ResourceBrowserProps } from './ResourceBrowser'
 
 export interface AssetFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'> {
+  /** 引用的资源 ID（受控），`null` 表示未选择。 */
   value: AssetId | null
+  /** 应用实现的资源服务；可选的 `locate`、`chooseFile` 分别启用"定位"和"从文件选择"按钮。 */
   provider: ResourceProvider
-  /** 接收选中的资源 ID。接受后更新 value 并返回 true 或 void；返回 false 或抛出错误会保留选择器，方便用户重试。 */
+  /** 请求更换或清空引用；返回 `false` 或抛错表示拒绝，选择浮层保持打开以便重试。不提供时字段只能查看。 */
   onValueChange?: (id: AssetId | null, asset: AssetDescriptor | null) => boolean | void | Promise<boolean | void>
-  /** 为当前 value 对应的资源提供可直接展示的描述，例如名称和缩略图；资源引用仍通过 value 指定。 */
+  /** 当前资源的描述（名称、缩略图），避免先显示加载状态；不提供时用 `provider.get` 读取。 */
   selectedAsset?: AssetDescriptor
+  /** 选择浮层里只列出这些类型。 */
   kinds?: readonly string[]
+  /** 选择浮层里只列出这个分组。 */
   groupId?: string | null
+  /** 切换编辑对象时改变，取消进行中的操作。 */
   resetKey?: unknown
+  /** 整组的无障碍名称，默认 `Asset reference`。 */
   label?: string
+  /** 未选择时显示的文字，默认 `Choose an asset`。 */
   placeholder?: string
+  /** 禁用。 */
   disabled?: boolean
+  /** 只读：可以查看和定位，不能更换或清空。 */
   readOnly?: boolean
-  /** 启用应用内资源拖放。请包裹 DragDropProvider，拖动数据使用 { id }，应用通过 provider 查询资源详情。 */
+  /** 允许把应用内的资源拖到字段上；需要外层 `DragDropProvider`，拖动类型为 `ASSET_REFERENCE_DRAG_TYPE`，数据为 `{ id }`。 */
   dropEnabled?: boolean
+  /** 选择浮层是否打开（受控）。 */
   open?: boolean
+  /** 非受控时初始是否打开。 */
   defaultOpen?: boolean
+  /** 打开或关闭选择浮层时调用。 */
   onOpenChange?: (open: boolean) => void
+  /** 传给浮层里 `ResourceBrowser` 的属性：搜索文字、视图和每页数量。 */
   pickerProps?: Pick<
     ResourceBrowserProps,
     | 'queryText'
@@ -66,8 +79,11 @@ export interface AssetFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'c
     | 'onViewModeChange'
     | 'pageSize'
   >
+  /** 传给浮层内容的属性。 */
   contentProps?: Omit<PopoverContentProps, 'children' | 'asChild'>
+  /** 传给浮层 Portal 的属性。 */
   portalProps?: Omit<PopoverPortalProps, 'children'>
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 type Action = 'picker' | 'clear' | 'file' | 'drop' | 'locate'

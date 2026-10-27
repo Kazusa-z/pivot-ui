@@ -40,34 +40,63 @@ const viewModeOptions = [
 ] as const satisfies readonly { key: string; value: ResourceViewMode; label: string }[]
 
 export interface ResourceBrowserProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect' | 'children'> {
+  /** 应用实现的资源服务：`query` 返回一页结果，`get` 按 ID 读取；可选的 `rename` 启用改名。 */
   provider: ResourceProvider
+  /** 选中的资源（受控）。 */
   selectedId?: AssetId | null
+  /** 非受控时初始选中的资源。 */
   defaultSelectedId?: AssetId | null
+  /** 选中项变化时调用，在 `onSelect` 接受之后。 */
   onSelectedIdChange?: (id: AssetId | null) => void
+  /** 点击资源时请求选择；返回 `false` 或抛错表示拒绝，选中项不变并显示错误。 */
   onSelect?: (id: AssetId, asset: AssetDescriptor) => boolean | void | Promise<boolean | void>
+  /** 选择被接受、选中项更新之后调用，例如关闭所在的浮层。 */
   onSelectSuccess?: (id: AssetId) => void
+  /** 搜索文字（受控）。 */
   queryText?: string
+  /** 非受控时的初始搜索文字。 */
   defaultQueryText?: string
+  /** 搜索文字变化时调用。 */
   onQueryTextChange?: (text: string) => void
+  /** 按类型筛选（受控），例如 `['texture']`。 */
   kinds?: readonly string[]
+  /** 非受控时的初始类型筛选。 */
   defaultKinds?: readonly string[]
+  /** 类型筛选变化时调用。 */
   onKindsChange?: (kinds: readonly string[]) => void
+  /** 类型筛选下拉的选项；不提供时不显示类型筛选。 */
   kindOptions?: readonly ResourceFilterOption[]
+  /** 按分组（文件夹、资源库）筛选（受控），空字符串表示全部。 */
   groupId?: string
+  /** 非受控时的初始分组。 */
   defaultGroupId?: string
+  /** 分组变化时调用。 */
   onGroupIdChange?: (groupId: string) => void
+  /** 分组下拉的选项；不提供时不显示分组筛选。 */
   groupOptions?: readonly ResourceFilterOption[]
+  /** `grid` 磁贴或 `list` 列表（受控）。 */
   viewMode?: ResourceViewMode
+  /** 非受控时的初始视图，默认 `grid`。 */
   defaultViewMode?: ResourceViewMode
+  /** 切换视图时调用，可以把偏好存到应用里。 */
   onViewModeChange?: (mode: ResourceViewMode) => void
+  /** 当前页（受控），从 1 开始。 */
   page?: number
+  /** 非受控时的初始页，默认 1。 */
   defaultPage?: number
+  /** 翻页时调用。 */
   onPageChange?: (page: number) => void
+  /** 每页数量，默认 24。 */
   pageSize?: number
+  /** 禁用。 */
   disabled?: boolean
+  /** 只读：可以浏览和搜索，不能选择或改名。 */
   readOnly?: boolean
+  /** 切换编辑对象时改变，丢弃进行中的请求并重新查询。 */
   resetKey?: unknown
+  /** 整组的无障碍名称，默认 `Resources`。 */
   label?: string
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

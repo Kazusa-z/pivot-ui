@@ -1,0 +1,86 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Guides/接入资源服务" />
+
+# 接入资源服务
+
+`ResourceBrowser` 和 `AssetField` 不知道资源存在哪里。应用实现一个 `ResourceProvider`，把自己的资源对象转换成组件能显示的 `AssetDescriptor`；组件只保存资源 ID，需要显示时再向 provider 读取。
+
+## 1. 把资源对象转换成 AssetDescriptor
+
+`AssetDescriptor` 只包含显示需要的数据，不要把应用对象本身（带方法、引用其他实例）交给组件：
+
+| 字段                           | 说明                                                   |
+| ------------------------------ | ------------------------------------------------------ |
+| `id`                           | 稳定的资源 ID，属性值里保存的就是它                    |
+| `name`、`kind`                 | 显示名称和类型（`texture`、`material` 等，由应用约定） |
+| `status`                       | `ready`、`loading`、`error`、`missing`                 |
+| `thumbnailUrl`                 | 缩略图地址；生成和缓存缩略图由应用负责                 |
+| `path`、`group`                | 所在路径和分组，用于显示和按分组筛选                   |
+| `selectable`、`disabledReason` | 设为 `false` 时显示但不能选，`disabledReason` 说明原因 |
+
+```ts
+function toDescriptor(asset: EngineAsset): AssetDescriptor {
+  return {
+    id: asset.id,
+    name: asset.name,
+    kind: asset.getMetaConfig().type.toLowerCase(),
+    status: asset.isInitCompleted ? 'ready' : 'loading',
+    thumbnailUrl: thumbnails.urlFor(asset.id),
+    path: asset.getRoutes(),
+  }
+}
+```
+
+## 2. 实现 ResourceProvider
+
+```ts
+const provider: ResourceProvider = {
+  // 搜索文字、类型、分组和分页都在参数里；返回当前页和总数
+  async query({ text, kinds, groupId, offset, limit }) {
+    const matches = library.search({ text, kinds, groupId })
+    return { items: matches.slice(offset, offset + limit).map(toDescriptor), total: matches.length, offset }
+  },
+  // 读取一个资源，用于显示当前引用；找不到时返回 null
+  async get(id) {
+    const asset = library.find(id)
+    return asset ? toDescriptor(asset) : null
+  },
+  // 以下方法可选：实现了哪个，界面就启用对应的操作
+  async rename(id, name) {
+    /* 改名后返回新的描述 */
+  },
+  async locate(id) {
+    /* 在资源面板里定位 */
+  },
+  async chooseFile() {
+    /* 打开系统文件选择，导入后返回描述或 null */
+  },
+}
+```
+
+| 方法         | 必需 | 启用的界面                                 |
+| ------------ | ---- | ------------------------------------------ |
+| `query`      | 是   | `ResourceBrowser` 的列表、搜索、筛选、分页 |
+| `get`        | 是   | `AssetField` 显示当前资源                  |
+| `rename`     | 否   | `ResourceBrowser` 中资源名称的就地改名     |
+| `locate`     | 否   | `AssetField` 的"定位"按钮                  |
+| `chooseFile` | 否   | `AssetField` 的"从文件选择"按钮            |
+
+方法抛出的错误会显示在组件里，用户可以重试。provider 对象应保持稳定（例如放在 `useMemo` 里），它变化时组件会重新查询。
+
+## 3. 使用
+
+```tsx
+<AssetField
+  label="Base texture"
+  provider={provider}
+  value={material.baseTextureId}
+  kinds={['texture']}
+  onValueChange={(id) => updateMaterial({ baseTextureId: id })}
+/>
+```
+
+`onValueChange` 只拿到 ID；需要原始对象时，应用按 ID 从自己的资源库里取。保存失败时返回 `false` 或抛错，选择浮层会保持打开。
+
+资源被外部修改（改名、重新导入）后，更新 `resetKey` 或换一个 provider 实例，组件会重新读取。
