@@ -107,7 +107,7 @@ pnpm audit:styles
 pnpm audit:stories
 ```
 
-- `audit:styles` 扫描组件源码中的裸 `height`、`minHeight`、`borderRadius` 和 `fontSize`；只允许图标/指示线、内容尺寸和文档化例外。
+- `audit:styles` 扫描组件源码中的裸 `height`、`minHeight`、`borderRadius` 和 `fontSize`；只允许图标/指示线、内容尺寸和文档化例外。它还检查所有 `--colors-*` 引用在明暗主题中都已定义且已解析。
 - `audit:stories` 要求 58 个 story 文件使用 `StoryPage`、只有一个 `Overview`（行为 story 必须 `!autodocs`），并拒绝 `ContractFrame`、`Control*` 和原生演示 `<select>/<input>`。
 
 新增控件尺寸必须使用 `var(--sizes-control*)`、`var(--radii-*)`、`var(--fontSizes-*)`；确需例外时在审计脚本中写明文件与用途。

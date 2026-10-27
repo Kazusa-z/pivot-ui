@@ -8,15 +8,15 @@ import { orange, orangeA, orangeDark, orangeDarkA } from '@radix-ui/colors'
 import { green, greenA, greenDark, greenDarkA } from '@radix-ui/colors'
 // negative colors
 import { red, redA, redDark, redDarkA } from '@radix-ui/colors'
-import { amber, amberDark, amberDarkA } from '@radix-ui/colors'
+import { amber, amberA, amberDark, amberDarkA } from '@radix-ui/colors'
 import { yellow, yellowA, yellowDark, yellowDarkA } from '@radix-ui/colors'
 // exclusive colors
-import { gold, goldDark, goldDarkA } from '@radix-ui/colors'
+import { gold, goldA, goldDark, goldDarkA } from '@radix-ui/colors'
 // dedicated colors for prefab
-import { cyan, cyanDark, cyanDarkA } from '@radix-ui/colors'
-import { teal, tealDark } from '@radix-ui/colors'
+import { cyan, cyanA, cyanDark, cyanDarkA } from '@radix-ui/colors'
+import { teal, tealA, tealDark, tealDarkA } from '@radix-ui/colors'
 import { violet, violetA, violetDark, violetDarkA } from '@radix-ui/colors'
-import { lime, limeDark } from '@radix-ui/colors'
+import { lime, limeA, limeDark, limeDarkA } from '@radix-ui/colors'
 
 const conver2StandardGrayColors = (colors: Record<string, string>): typeof gray & typeof grayA => {
   const standardColors: any = {}
@@ -30,7 +30,16 @@ const conver2StandardGrayColors = (colors: Record<string, string>): typeof gray 
 export const lightStandardGrayColor = conver2StandardGrayColors({ ...slate, ...slateA })
 export const darkStandardGrayColor = conver2StandardGrayColors({ ...slateDark, ...slateDarkA })
 
+// Absolute colors are shared by both themes so `$white` / `$black` always resolve.
+const absoluteColors = {
+  white: '#ffffff',
+  black: '#000000',
+}
+
+// Both themes must expose the same keys; a key missing from one theme silently
+// inherits the other theme's value through the CSS cascade.
 const darkColors = {
+  ...absoluteColors,
   ...darkStandardGrayColor,
   ...blueDark,
   ...blueDarkA,
@@ -49,13 +58,15 @@ const darkColors = {
   ...cyanDark,
   ...cyanDarkA,
   ...tealDark,
-  ...violetA,
+  ...tealDarkA,
   ...violetDark,
   ...violetDarkA,
   ...limeDark,
+  ...limeDarkA,
 }
 
 const lightColors = {
+  ...absoluteColors,
   ...lightStandardGrayColor,
   ...blue,
   ...blueA,
@@ -66,14 +77,19 @@ const lightColors = {
   ...red,
   ...redA,
   ...amber,
+  ...amberA,
   ...yellow,
   ...yellowA,
   ...gold,
+  ...goldA,
   ...cyan,
+  ...cyanA,
   ...teal,
-  ...violetA,
+  ...tealA,
   ...violet,
+  ...violetA,
   ...lime,
+  ...limeA,
 }
 
 const coreSemanticColors = {

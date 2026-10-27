@@ -47,10 +47,56 @@ for (const full of files) {
   })
 }
 
+// Every `--colors-*` reference must exist, with a resolved value, in both themes.
+// A missing or unresolved key becomes an invalid custom property at runtime: overlays
+// turn transparent and selected text inherits the wrong color in only one theme.
+const tokenSource = readFileSync(join(root, 'panda/designTokens.ts'), 'utf8')
+const readColors = (name) => {
+  const start = tokenSource.indexOf(`export const ${name} = {`)
+  const end = tokenSource.indexOf('} as const', start)
+  const entries = tokenSource.slice(start, end).matchAll(/^\s*['"]?([A-Za-z0-9_]+)['"]?:\s*['"]([^'"]*)['"]/gm)
+  return new Map([...entries].map(([, key, value]) => [key, value]))
+}
+const themes = { dark: readColors('darkColors'), light: readColors('lightColors') }
+const colorFiles = []
+for (const directory of ['packages/interface/src', 'packages/interface/stories', 'storybook', 'app/src']) {
+  const before = files.length
+  walk(join(root, directory))
+  colorFiles.push(...files.splice(before))
+}
+let colorReferences = 0
+const colorProblems = new Set()
+for (const full of [...files, ...colorFiles]) {
+  const file = relative(root, full).split('\\').join('/')
+  for (const [, key] of readFileSync(full, 'utf8').matchAll(/--colors-([A-Za-z0-9_]+)/g)) {
+    colorReferences++
+    for (const [theme, colors] of Object.entries(themes)) {
+      const value = colors.get(key)
+      if (value === undefined) colorProblems.add(`${file}: --colors-${key} is not defined in the ${theme} theme`)
+      else if (value.startsWith('$'))
+        colorProblems.add(`${file}: --colors-${key} is unresolved in the ${theme} theme (${value})`)
+    }
+  }
+}
+for (const [theme, colors] of Object.entries(themes)) {
+  for (const [key, value] of colors) {
+    if (value.startsWith('$')) colorProblems.add(`panda/designTokens.ts: ${theme} ${key} is unresolved (${value})`)
+  }
+}
+
 if (problems.length) {
   console.error(`audit:styles failed with ${problems.length} raw size(s):`)
   for (const problem of problems) console.error(`- ${problem}`)
   process.exitCode = 1
-} else {
-  console.log(`audit:styles ok — ${files.length} source files use tokens for control sizes, radii and type.`)
+}
+if (colorProblems.size) {
+  console.error(`audit:styles failed with ${colorProblems.size} color token problem(s):`)
+  for (const problem of colorProblems) console.error(`- ${problem}`)
+  process.exitCode = 1
+}
+if (!process.exitCode) {
+  console.log(
+    `audit:styles ok — ${files.length} source files use tokens for control sizes, radii and type; ` +
+      `${colorReferences} color references resolve in both themes.`
+  )
 }

@@ -75,6 +75,25 @@ const data = {
     color: 'color .2s ease',
   },
 }
+// A `$token` that survives resolution becomes an invalid CSS variable at runtime,
+// which renders as transparent backgrounds or inherited text. Fail loudly instead.
+const problems = []
+for (const [scale, values] of Object.entries(data)) {
+  for (const [key, value] of Object.entries(values)) {
+    if (typeof value === 'string' && /\$[A-Za-z]/.test(value) && scale !== 'shadows') {
+      problems.push(`${scale}.${key} references an unknown token: ${value}`)
+    }
+  }
+}
+const darkKeys = new Set(Object.keys(data.darkColors))
+const lightKeys = new Set(Object.keys(data.lightColors))
+for (const key of darkKeys) if (!lightKeys.has(key)) problems.push(`lightColors is missing ${key}`)
+for (const key of lightKeys) if (!darkKeys.has(key)) problems.push(`darkColors is missing ${key}`)
+if (problems.length) {
+  console.error(`token generation failed:\n  ${problems.join('\n  ')}`)
+  process.exit(1)
+}
+
 const body = Object.entries(data)
   .map(([key, value]) => `export const ${key} = ${JSON.stringify(value, null, 2)} as const`)
   .join('\n\n')

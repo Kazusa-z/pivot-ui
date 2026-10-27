@@ -260,17 +260,17 @@ pnpm build:storybook
 
 ### 命令
 
-| 命令                                       | 用途                                          |
-| ------------------------------------------ | --------------------------------------------- |
-| `pnpm dev` / `pnpm dev:interface`          | 启动 Storybook                                |
-| `pnpm dev:demo`                            | 启动 Vite 示例                                |
-| `pnpm typecheck`                           | 检查组件、Storybook、示例和工具配置           |
-| `pnpm audit:styles`                        | 扫描裸 px 控件尺寸、圆角和字号                |
-| `pnpm audit:stories`                       | 检查 StoryPage、Overview、标题和旧 story 依赖 |
-| `pnpm verify:quick`                        | 格式 + 类型                                   |
-| `pnpm verify`                              | 格式 + 类型 + 两条审计 + demo/Storybook 构建  |
-| `pnpm build:demo` / `pnpm build:storybook` | 构建示例 / 静态 Storybook                     |
-| `pnpm clean`                               | 清理生成文件和缓存                            |
+| 命令                                       | 用途                                           |
+| ------------------------------------------ | ---------------------------------------------- |
+| `pnpm dev` / `pnpm dev:interface`          | 启动 Storybook                                 |
+| `pnpm dev:demo`                            | 启动 Vite 示例                                 |
+| `pnpm typecheck`                           | 检查组件、Storybook、示例和工具配置            |
+| `pnpm audit:styles`                        | 扫描裸 px 尺寸，并检查颜色变量在两套主题中存在 |
+| `pnpm audit:stories`                       | 检查 StoryPage、Overview、标题和旧 story 依赖  |
+| `pnpm verify:quick`                        | 格式 + 类型                                    |
+| `pnpm verify`                              | 格式 + 类型 + 两条审计 + demo/Storybook 构建   |
+| `pnpm build:demo` / `pnpm build:storybook` | 构建示例 / 静态 Storybook                      |
+| `pnpm clean`                               | 清理生成文件和缓存                             |
 
 ### 修改组件
 
@@ -282,7 +282,7 @@ pnpm build:storybook
 
 ### 样式审计白名单
 
-`audit:styles` 允许图标/指示线、内容尺寸和明确登记的文件例外。新增例外必须说明用途；控制高度、圆角和字号不能随手写裸 px。
+`audit:styles` 允许图标/指示线、内容尺寸和明确登记的文件例外。新增例外必须说明用途；控制高度、圆角和字号不能随手写裸 px。它同时检查每个 `--colors-*` 引用在明暗主题中都有已解析的值；`node panda/generate-tokens.mjs` 遇到未解析的 `$token` 或两套主题键不一致时会直接失败。
 
 ### 可访问性
 
