@@ -26,22 +26,35 @@ import { ColorAlphaRampEditor } from './ColorAlphaRampEditor'
 export type ColorDistributionEditSource = ColorEditSource | 'mode'
 export type ColorDistributionCommitReason = ColorCommitReason | 'mode'
 export interface ColorDistributionEditorProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'> {
-  /** 当前显示的颜色分布。应用在 onValueChange 中更新预览，在取消或保存失败时恢复应显示的值。 */
+  /** 当前值（受控），带 `mode` 的联合类型：固定颜色、两色之间随机、渐变，或两条渐变之间随机。 */
   value: ColorDistributionValue
+  /** 编辑中的预览值。 */
   onValueChange?: (value: ColorDistributionValue) => void
+  /** 开始编辑时调用；返回 `false` 拒绝这次编辑。 */
   onEditStart?: (source: ColorDistributionEditSource) => boolean | void
+  /** 提交最终值；返回 Promise 时失败会恢复并显示错误。 */
   onValueCommit?: (value: ColorDistributionValue, reason: ColorDistributionCommitReason) => void | Promise<void>
+  /** 编辑被取消，应用恢复编辑前的值。 */
   onEditCancel?: (reason: ColorCancelReason) => void
+  /** 各模式上次的值（受控），切回某个模式时恢复它。 */
   cache?: ColorDistributionCache
+  /** 非受控时各模式的初始缓存。 */
   defaultCache?: ColorDistributionCache
+  /** 模式缓存变化时调用。 */
   onCacheChange?: (cache: ColorDistributionCache) => void
-  /** 切换对象或收到外部新版本时更新此值，以重置当前编辑和模式缓存。 */
+  /** 切换编辑对象时改变：取消正在进行的编辑并清空模式缓存。 */
   resetKey?: unknown
+  /** 整组的无障碍名称，默认 `Color distribution`。 */
   label?: string
+  /** 允许颜色超过 1（HDR），默认关闭。 */
   hdr?: boolean
+  /** 禁用。 */
   disabled?: boolean
+  /** 只读。 */
   readOnly?: boolean
+  /** 应用提供的剪贴板和屏幕取色。 */
   capabilities?: ColorCapabilities
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 const modeLabels: Record<ColorDistributionMode, string> = {

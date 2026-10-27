@@ -10,7 +10,9 @@ import { ColorPicker } from './ColorPicker'
 
 export interface ColorFieldProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'>, ColorControlProps {
+  /** 整组的无障碍名称，默认 `Color`。 */
   label?: string
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

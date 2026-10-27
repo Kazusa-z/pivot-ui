@@ -27,12 +27,19 @@ import { getColorAlphaRampCss, getColorRampCss } from './color-ramp-preview'
 import { defaultRamp, rampStyles } from './RampControls'
 
 interface PickerProps {
+  /** 按钮的无障碍名称，默认 `Edit color ramp`。 */
   label?: string
+  /** 浮层是否打开（受控）。 */
   open?: boolean
+  /** 非受控时初始是否打开。 */
   defaultOpen?: boolean
+  /** 打开或关闭浮层时调用。 */
   onOpenChange?: (open: boolean) => void
+  /** 传给预览按钮的属性。 */
   triggerProps?: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'disabled'>
+  /** 传给浮层 Portal 的属性。 */
   portalProps?: Omit<PopoverPortalProps, 'children'>
+  /** 传给浮层内容的属性。 */
   contentProps?: Omit<PopoverContentProps, 'children'>
 }
 export type ColorRampPickerProps = PickerProps &

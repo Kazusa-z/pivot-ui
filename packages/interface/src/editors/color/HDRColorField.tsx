@@ -6,9 +6,11 @@ import { NumberInput } from '../../controls/inputs/NumberInput'
 import { ColorField, type ColorFieldProps } from './ColorField'
 
 export interface HDRColorFieldProps extends Omit<ColorFieldProps, 'hdr'> {
-  /** 设置强度字段的下限，使用当前颜色编码下的 RGB 峰值倍率；intensityMax 设置上限。若界面使用曝光档位，应用需先转换为倍率。 */
+  /** 强度输入的下限，默认 0；强度是 RGB 的峰值倍率，使用曝光档位时由应用换算。 */
   intensityMin?: number
+  /** 强度输入的上限，默认不限。 */
   intensityMax?: number
+  /** 强度的步长，默认 0.1。 */
   intensityStep?: number
 }
 

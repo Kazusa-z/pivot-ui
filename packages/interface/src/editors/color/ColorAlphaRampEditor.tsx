@@ -20,19 +20,33 @@ export interface ColorAlphaRampEditorProps
   extends
     Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange' | 'children'>,
     ColorEditCallbacks<ColorAlphaRampValue> {
+  /** 渐变（受控）：颜色色标和透明度色标分开保存。 */
   value?: ColorAlphaRampValue
+  /** 非受控时的初始渐变。 */
   defaultValue?: ColorAlphaRampValue
+  /** 编辑中的预览值，返回完整渐变。 */
   onValueChange?: (value: ColorAlphaRampValue) => void
+  /** 当前选中的颜色色标（受控）。 */
   activeStopId?: string | null
+  /** 非受控时初始选中的颜色色标。 */
   defaultActiveStopId?: string | null
+  /** 选中的颜色色标变化时调用。 */
   onActiveStopIdChange?: (id: string | null) => void
+  /** 当前选中的透明度色标（受控）。 */
   activeAlphaStopId?: string | null
+  /** 非受控时初始选中的透明度色标。 */
   defaultActiveAlphaStopId?: string | null
+  /** 选中的透明度色标变化时调用。 */
   onActiveAlphaStopIdChange?: (id: string | null) => void
+  /** 禁用。 */
   disabled?: boolean
+  /** 只读：可以选中色标查看，不能修改。 */
   readOnly?: boolean
+  /** 允许色标颜色超过 1（HDR），默认关闭。 */
   hdr?: boolean
+  /** 切换编辑对象时改变，取消正在进行的编辑。 */
   resetKey?: unknown
+  /** 应用提供的剪贴板和屏幕取色。 */
   capabilities?: ColorCapabilities
 }
 const defaultChannels: ColorAlphaRampValue = {

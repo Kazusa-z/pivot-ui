@@ -16,13 +16,21 @@ import {
 } from '../../overlays/Popover'
 
 export interface ColorPickerProps extends ColorControlProps {
+  /** 色块按钮的无障碍名称，默认 `Color`。 */
   label?: string
+  /** 浮层是否打开（受控）。 */
   open?: boolean
+  /** 非受控时初始是否打开。 */
   defaultOpen?: boolean
+  /** 打开或关闭浮层时调用。 */
   onOpenChange?: (open: boolean) => void
+  /** 传给色块按钮的属性。 */
   triggerProps?: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'disabled' | 'type'>
+  /** 传给浮层内容的属性，例如 `side`、`align`。 */
   contentProps?: Omit<PopoverContentProps, 'children' | 'asChild'>
+  /** 校验错误说明的元素 id。 */
   'aria-errormessage'?: string
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

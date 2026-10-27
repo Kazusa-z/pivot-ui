@@ -25,8 +25,11 @@ import type { ColorControlProps } from './types'
 export type { ColorControlProps } from './types'
 export interface ColorEditorProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'>, ColorControlProps {
+  /** 整组的无障碍名称，默认 `Color`。 */
   label?: string
+  /** 初始的输入方式：`rgb`（默认）或 `hsv`，用户可以切换。 */
   defaultModel?: 'rgb' | 'hsv'
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 const stack = css({ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', minWidth: 0 })
