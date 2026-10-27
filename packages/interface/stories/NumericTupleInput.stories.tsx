@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Vector2Input, Vector3Input, Vector4Input, RectInput } from '../src/templates/numeric/GeometryInputs'
+import { Vector2Input, Vector3Input, Vector4Input, RectInput } from '../src/editors/numeric/GeometryInputs'
 import type { Rect, Vector3 } from '../src/values/geometry'
 import type { NumericCancelReason } from '../src/interaction/numeric/types'
-import { Button } from '../src/widgets/buttons/Button'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
+import { Button } from '../src/controls/buttons/Button'
+import { Checkbox } from '../src/controls/choices/Checkbox'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -177,12 +177,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'NumericTupleInput 编辑一组命名数值，Vector2/3/4 和 Rect 保留对象形状。每个轴有独立范围、精度和单位；linked 打开时按本次编辑开始时的比例联动。提交与取消以整组值为单位，应用负责保存并通过 resetKey 触发外部重置。',
+          'NumberTupleInput 编辑一组命名数值，Vector2/3/4 和 Rect 保留对象形状。每个轴有独立范围、精度和单位；linked 打开时按本次编辑开始时的比例联动。提交与取消以整组值为单位，应用负责保存并通过 resetKey 触发外部重置。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Numeric/NumericTupleInput',
+  title: 'Numeric/NumberTupleInput',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -191,7 +191,7 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Numeric"
-      title="NumericTupleInput"
+      title="NumberTupleInput"
       summary="用一行的多个数值输入编辑坐标、尺寸或参数组。对象输入保留 Vector/Rect 形状，联动模式按起始比例缩放。"
       meta={
         <>
@@ -208,7 +208,7 @@ export const Overview: Story = {
 
       <StorySection
         title="Density"
-        description="xs 20、sm 24 为紧凑档，md 32 为常规档。NumericTupleInput 没有 lg/36；联动按钮与输入保持同一档。">
+        description="xs 20、sm 24 为紧凑档，md 32 为常规档。NumberTupleInput 没有 lg/36；联动按钮与输入保持同一档。">
         <StoryGrid>
           {(
             [

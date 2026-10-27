@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { IconAlertCircle, IconAlertTriangle, IconCircleCheck, IconInfoCircle } from '@tabler/icons-react'
-import { Callout, Progress, Spin } from '../src/widgets/feedback'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { InputNumber } from '../src/widgets/inputs/InputNumber'
+import { Callout, Progress, Spin } from '../src/display/feedback'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { NumberInput } from '../src/controls/inputs/NumberInput'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {
@@ -95,7 +95,7 @@ function FeedbackExample() {
         <StoryCard>
           <StoryRow align="end">
             <StoryField label="Value">
-              <InputNumber
+              <NumberInput
                 aria-label="Progress value"
                 value={value}
                 min={0}
@@ -104,7 +104,7 @@ function FeedbackExample() {
               />
             </StoryField>
             <StoryField label="Max">
-              <InputNumber
+              <NumberInput
                 aria-label="Progress max"
                 value={max}
                 min={1}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Dialog } from '../src/widgets/dialogs'
-import { Popover, Tooltip, TooltipProvider, HoverCard } from '../src/widgets/overlays'
+import { Dialog } from '../src/dialogs'
+import { Popover, Tooltip, TooltipProvider, HoverCard } from '../src/overlays'
 import {
   DropdownMenuRoot,
   DropdownMenuTrigger,
@@ -11,9 +11,9 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-} from '../src/widgets/menus'
-import { Button } from '../src/widgets/buttons'
-import { Input } from '../src/widgets/inputs/Input'
+} from '../src/overlays/menus'
+import { Button } from '../src/controls/buttons'
+import { Input } from '../src/controls/inputs/Input'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {

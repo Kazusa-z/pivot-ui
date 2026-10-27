@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { DistributionSlider } from '../src/widgets/sliders/DistributionSlider'
-import { Button } from '../src/widgets/buttons'
+import { PartitionSlider } from '../src/controls/sliders/PartitionSlider'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,
@@ -29,11 +29,11 @@ const meta = {
     docs: {
       description: {
         component:
-          'DistributionSlider 调整各部分在固定总量中的分配，value 保存每段长度，滑块表示相邻段之间的边界。移动一个边界只改变相邻两段，onValueChange 返回完整数组，onValueCommit 表示一次调整完成。total 和 minSegment 约束总量与每段最小值。',
+          'PartitionSlider 调整各部分在固定总量中的分配，value 保存每段长度，滑块表示相邻段之间的边界。移动一个边界只改变相邻两段，onValueChange 返回完整数组，onValueCommit 表示一次调整完成。total 和 minSegment 约束总量与每段最小值。',
       },
     },
   },
-  title: 'Widgets/Sliders/DistributionSlider',
+  title: 'Widgets/Sliders/PartitionSlider',
 } satisfies Meta
 export default meta
 type Story = StoryObj
@@ -54,7 +54,7 @@ function DistributionExample() {
   return (
     <StoryPage
       eyebrow="Widgets / Sliders"
-      title="DistributionSlider"
+      title="PartitionSlider"
       summary="把固定总量分配到多个段。拖动一个边界只改变相邻两段，总和保持不变；value 是长度数组，不是边界数组。"
       meta={
         <>
@@ -75,7 +75,7 @@ function DistributionExample() {
         description="三段、五段和带业务单位的分配共用同一种数据结构。formatter 和 unit 只影响显示，不改变保存的长度。">
         <StoryGrid>
           <StoryCard title="Three segments" description="Controlled fixed total.">
-            <DistributionSlider
+            <PartitionSlider
               aria-label="Three segment distribution"
               value={value}
               total={100}
@@ -100,7 +100,7 @@ function DistributionExample() {
             <StoryState label="Value, total and events" value={{ value, total, events }} />
           </StoryCard>
           <StoryCard title="Five segments" description="More boundaries, same data shape.">
-            <DistributionSlider
+            <PartitionSlider
               key={`five-${revision}`}
               aria-label="Five segment distribution"
               defaultValue={[10, 20, 30, 20, 20]}
@@ -111,7 +111,7 @@ function DistributionExample() {
             />
           </StoryCard>
           <StoryCard title="Units and formatting" description="Total is 1, displayed in meters.">
-            <DistributionSlider
+            <PartitionSlider
               key={`units-${revision}`}
               aria-label="Meter distribution"
               defaultValue={[0.2, 0.3, 0.5]}
@@ -137,7 +137,7 @@ function DistributionExample() {
           <StoryRow align="start">
             {sizes.map(({ size, height }) => (
               <StoryField key={size} label={`${size} · ${height}`}>
-                <DistributionSlider
+                <PartitionSlider
                   key={`${revision}-${size}`}
                   aria-label={`${size} distribution`}
                   size={size}
@@ -158,7 +158,7 @@ function DistributionExample() {
         <StoryCard>
           <StoryRow align="start">
             <StoryField label="Read only" hint="Focusable, lengths fixed">
-              <DistributionSlider
+              <PartitionSlider
                 aria-label="Read only distribution"
                 value={[20, 30, 50]}
                 total={100}
@@ -168,7 +168,7 @@ function DistributionExample() {
               />
             </StoryField>
             <StoryField label="Disabled" hint="Skipped by keyboard">
-              <DistributionSlider
+              <PartitionSlider
                 key={revision}
                 aria-label="Disabled distribution"
                 value={[20, 30, 50]}
@@ -177,7 +177,7 @@ function DistributionExample() {
               />
             </StoryField>
             <StoryField label="Rejected request" hint="Controlled value stays 20 / 30 / 50">
-              <DistributionSlider
+              <PartitionSlider
                 aria-label="Rejected distribution"
                 value={[20, 30, 50]}
                 total={100}
@@ -195,25 +195,16 @@ function DistributionExample() {
         description="零长度段、单段、空数组和零总量都有明确形状；加载中或尚未分配时可以先传入空数组。">
         <StoryGrid>
           <StoryCard title="Zero-length segments">
-            <DistributionSlider
-              key={`zero-${revision}`}
-              aria-label="Zero length segments"
-              defaultValue={[0, 20, 0, 80]}
-            />
+            <PartitionSlider key={`zero-${revision}`} aria-label="Zero length segments" defaultValue={[0, 20, 0, 80]} />
           </StoryCard>
           <StoryCard title="Single segment">
-            <DistributionSlider
-              key={`single-${revision}`}
-              aria-label="Single segment"
-              defaultValue={[100]}
-              total={100}
-            />
+            <PartitionSlider key={`single-${revision}`} aria-label="Single segment" defaultValue={[100]} total={100} />
           </StoryCard>
           <StoryCard title="Empty distribution">
-            <DistributionSlider key={`empty-${revision}`} aria-label="Empty distribution" defaultValue={[]} />
+            <PartitionSlider key={`empty-${revision}`} aria-label="Empty distribution" defaultValue={[]} />
           </StoryCard>
           <StoryCard title="Zero total">
-            <DistributionSlider key={`zero-total-${revision}`} aria-label="Zero total" defaultValue={[0, 0, 0]} />
+            <PartitionSlider key={`zero-total-${revision}`} aria-label="Zero total" defaultValue={[0, 0, 0]} />
           </StoryCard>
         </StoryGrid>
       </StorySection>
@@ -246,7 +237,7 @@ function DistributionExample() {
             label="tsx"
             code={`const [parts, setParts] = useState([20, 30, 50])
 
-<DistributionSlider
+<PartitionSlider
   aria-label="Time distribution"
   value={parts}
   total={100}

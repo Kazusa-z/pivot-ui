@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 import { css, cx } from '../../styled-system/css'
 import { Title, Text } from '../../src/foundation/typography'
-import { Badge } from '../../src/widgets/display/Badge'
-import { Separator } from '../../src/widgets/display/Separator'
-import { Kbd } from '../../src/widgets/display/Kbd'
+import { Badge } from '../../src/display/Badge'
+import { Separator } from '../../src/layout/Separator'
+import { Kbd } from '../../src/display/Kbd'
 
 /* Page shell */
 const pageClass = css({

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/widgets/buttons'
-import { CurveWidget } from '../src/widgets/curve/CurveWidget'
+import { Button } from '../src/controls/buttons'
+import { CurveEditor } from '../src/editors/curve/CurveEditor'
 import {
   copyCurveValue,
   sampleCurve,
@@ -42,7 +42,7 @@ const initialViewport: CurveViewport = { xMin: 0, xMax: 1, yMin: 0, yMax: 1 }
 
 function StaticCurve({ value, label, height }: { value: CurveValue; label: string; height: number }) {
   return (
-    <CurveWidget
+    <CurveEditor
       value={value}
       label={label}
       height={height}
@@ -73,7 +73,7 @@ function ControlledCurve() {
     <StoryCard
       title="Controlled curve"
       description="value、selectedPointIds 和 viewport 都由宿主保存；拖动时先接收预览，onValueCommit 再表示一次完整编辑。">
-      <CurveWidget
+      <CurveEditor
         value={value}
         label="Response curve"
         selectedPointIds={selection}
@@ -134,7 +134,7 @@ function RejectingCurve() {
     <StoryCard
       title="Commit rejection"
       description="保存失败时保留编辑内容并显示错误；Retry 会重新提交。下一次提交默认会被拒绝，方便重复观察错误状态。">
-      <CurveWidget
+      <CurveEditor
         value={value}
         label="Rejecting curve"
         height={180}
@@ -199,12 +199,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'CurveWidget 直接编辑 linear 折线或 bezier 曲线。value 保存带稳定 ID 的点与控制柄，selection 和 viewport 可分别受控；onValueChange 返回预览，onValueCommit 表示一次完整编辑。',
+          'CurveEditor 直接编辑 linear 折线或 bezier 曲线。value 保存带稳定 ID 的点与控制柄，selection 和 viewport 可分别受控；onValueChange 返回预览，onValueCommit 表示一次完整编辑。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Curve/CurveWidget',
+  title: 'Curve/CurveEditor',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -213,7 +213,7 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Curve"
-      title="CurveWidget"
+      title="CurveEditor"
       summary="直接编辑二维曲线的完整控件：点、贝塞尔控制柄、插值模式、选中、视口和保存反馈都在同一块画布内。适合需要持续观察曲线形状的编辑器。"
       meta={
         <>
@@ -236,7 +236,7 @@ export const Overview: Story = {
           </StoryCard>
         </StoryGrid>
         <StoryNote>
-          CurveWidget 没有 density 属性；`height`
+          CurveEditor 没有 density 属性；`height`
           是唯一的尺寸开关。增加高度只扩大绘图区，不会改变工具行和坐标输入的高度。
         </StoryNote>
       </StorySection>
@@ -252,10 +252,10 @@ export const Overview: Story = {
         description="禁用、只读和保存失败是三种不同状态：禁用阻止交互，只读允许查看，失败保留编辑并要求重试。">
         <StoryGrid>
           <StoryCard title="Disabled" description="不可选择、编辑或查看控制柄；整块控件降低不透明度。">
-            <CurveWidget value={linear} label="Disabled curve" height={180} disabled />
+            <CurveEditor value={linear} label="Disabled curve" height={180} disabled />
           </StoryCard>
           <StoryCard title="Read only" description="可以选中点、查看控制柄和调整视图，但不能修改曲线。">
-            <CurveWidget value={bezier} label="Read-only curve" height={180} readOnly />
+            <CurveEditor value={bezier} label="Read-only curve" height={180} readOnly />
           </StoryCard>
           <RejectingCurve />
         </StoryGrid>
@@ -275,7 +275,7 @@ export const Overview: Story = {
 const [selected, setSelected] = useState(['middle'])
 const [viewport, setViewport] = useState({ xMin: 0, xMax: 1, yMin: 0, yMax: 1 })
 
-<CurveWidget
+<CurveEditor
   value={value}
   onValueChange={setValue}
   onValueCommit={saveCurve}

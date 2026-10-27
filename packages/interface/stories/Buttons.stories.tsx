@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button, ActionButton, ActionButtonGroup } from '../src/widgets/buttons'
+import { Button, IconButton, IconButtonGroup } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {
@@ -31,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Button 用于带文字的操作，ActionButton 用于紧凑图标操作，ActionButtonGroup 把相关动作排成一组。size 使用两档密度，variant 表达层级；async 接收 Promise 并在等待期间阻止重复请求。',
+          'Button 用于带文字的操作，IconButton 用于紧凑图标操作，IconButtonGroup 把相关动作排成一组。size 使用两档密度，variant 表达层级；async 接收 Promise 并在等待期间阻止重复请求。',
       },
     },
     layout: 'fullscreen',
@@ -128,46 +128,46 @@ function ButtonsExample() {
         <StoryCard>
           <StoryRow>
             {(['xs', 'sm', 'md', 'lg'] as const).map((size) => (
-              <ActionButton
+              <IconButton
                 key={size}
                 size={size}
                 aria-label={`Add ${size}`}
                 onClick={() => setClicks((value) => value + 1)}>
                 <AddIcon />
-              </ActionButton>
+              </IconButton>
             ))}
-            <ActionButton active aria-label="Active action">
+            <IconButton active aria-label="Active action">
               <AddIcon />
-            </ActionButton>
-            <ActionButton disabled aria-label="Disabled action">
+            </IconButton>
+            <IconButton disabled aria-label="Disabled action">
               <AddIcon />
-            </ActionButton>
-            <ActionButton loading aria-label="Loading action">
+            </IconButton>
+            <IconButton loading aria-label="Loading action">
               <AddIcon />
-            </ActionButton>
-            <ActionButton corner aria-label="Open action menu">
+            </IconButton>
+            <IconButton corner aria-label="Open action menu">
               <AddIcon />
-            </ActionButton>
+            </IconButton>
           </StoryRow>
           <StoryRow>
             {(['horizontal', 'vertical'] as const).map((direction) => (
-              <ActionButtonGroup
+              <IconButtonGroup
                 key={direction}
                 direction={direction}
                 size="md"
                 role="group"
                 aria-label={`${direction} actions`}>
                 {['move', 'rotate', 'scale'].map((action) => (
-                  <ActionButton
+                  <IconButton
                     key={action}
                     size="md"
                     aria-label={`${direction} ${action}`}
                     active={selected === action}
                     onClick={() => setSelected(action)}>
                     {action[0]?.toUpperCase()}
-                  </ActionButton>
+                  </IconButton>
                 ))}
-              </ActionButtonGroup>
+              </IconButtonGroup>
             ))}
           </StoryRow>
         </StoryCard>
@@ -179,10 +179,10 @@ function ButtonsExample() {
             label="tsx"
             code={`<Button variant="solid" onClick={save}>Save</Button>
 <Button startSlot={<IconPlus />} loading={saving}>Add</Button>
-<ActionButton aria-label="Delete" active onClick={remove}>
+<IconButton aria-label="Delete" active onClick={remove}>
   <IconTrash />
-</ActionButton>
-<ActionButtonGroup size="md" direction="horizontal">…</ActionButtonGroup>`}
+</IconButton>
+<IconButtonGroup size="md" direction="horizontal">…</IconButtonGroup>`}
           />
           <StoryProps
             rows={[

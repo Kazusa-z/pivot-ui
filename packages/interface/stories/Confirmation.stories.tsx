@@ -6,9 +6,9 @@ import {
   useConfirmation,
   type ConfirmationOptions,
   type ConfirmationResult,
-} from '../src/widgets/dialogs'
-import { Button } from '../src/widgets/buttons'
-import { Badge } from '../src/widgets/display/Badge'
+} from '../src/dialogs'
+import { Button } from '../src/controls/buttons'
+import { Badge } from '../src/display/Badge'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,

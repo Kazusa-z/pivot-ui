@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Breadcrumbs, type BreadcrumbEntry } from '../src/widgets/navigation/Breadcrumbs'
-import { Button } from '../src/widgets/buttons/Button'
+import { Breadcrumbs, type BreadcrumbEntry } from '../src/collections/navigation/Breadcrumbs'
+import { Button } from '../src/controls/buttons/Button'
 import {
   StoryPage,
   StorySection,

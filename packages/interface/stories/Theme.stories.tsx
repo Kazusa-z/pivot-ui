@@ -9,9 +9,9 @@ import {
   type ResolvedTheme,
   type ThemePreference,
 } from '../src/foundation/theme'
-import { Button } from '../src/widgets/buttons'
-import { Select } from '../src/widgets/choices/Select'
-import { Callout } from '../src/widgets/feedback'
+import { Button } from '../src/controls/buttons'
+import { Select } from '../src/controls/choices/Select'
+import { Callout } from '../src/display/feedback'
 import { Text } from '../src/foundation/typography'
 import { StoryPage, StorySection, StoryCard, StoryRow, StoryField, StoryGrid, StoryState } from './support/StoryPage'
 

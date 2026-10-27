@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Flex, type FlexProps } from '../src/layout/Flex'
-import { Select } from '../src/widgets/choices/Select'
-import { Button } from '../src/widgets/buttons'
+import { Select } from '../src/controls/choices/Select'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {

@@ -9,11 +9,11 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-} from '../src/widgets/collections/Table'
-import { DataTable, type DataTableColumn } from '../src/widgets/collections/DataTable'
+} from '../src/collections/Table'
+import { DataTable, type DataTableColumn } from '../src/collections/DataTable'
 import type { CollectionKey } from '../src/values/collection'
-import { Badge } from '../src/widgets/display/Badge'
-import { Button } from '../src/widgets/buttons'
+import { Badge } from '../src/display/Badge'
+import { Button } from '../src/controls/buttons'
 import { css } from '../styled-system/css'
 import {
   StoryPage,

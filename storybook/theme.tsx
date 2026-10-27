@@ -5,7 +5,7 @@ import {
   createThemeStore,
   ThemeProvider,
 } from '../packages/interface/src/foundation/theme'
-import { TooltipProvider } from '../packages/interface/src/widgets/overlays'
+import { TooltipProvider } from '../packages/interface/src/overlays'
 
 function ThemePreview({ mode, children }: { mode: 'dark' | 'light'; children: ReactNode }) {
   const [store] = useState(() =>

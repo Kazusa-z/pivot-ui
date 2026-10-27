@@ -4,18 +4,19 @@
 
 ## 选择需要的组件
 
-| 你要实现的界面                   | 可选组件                                                                                                                      |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 操作按钮、状态标签、进度提示     | Button、ActionButton、Badge、Tag、Callout、Progress、Spin                                                                     |
-| 文字、布尔值或选项编辑           | Input、Textarea、EditableText、Checkbox、Select、Combobox、SegmentControl、ToggleGroup                                        |
-| 数值、位置、尺寸和比例编辑       | InputNumber、Slider、NumericSlider、NumericTupleInput、Vector2/3/4Input、RectInput、DistributionSlider                        |
-| 颜色、渐变和随机颜色             | ColorWidget、ColorInput、ColorPicker、HDRColorInput、ColorRamp、ColorRampChannels、ColorRampPicker、ColorDistributionTemplate |
-| 曲线和数值分布                   | CurveWidget、CurvePicker、CurvePresets、NumericDistributionTemplate                                                           |
-| 列表、树和表格                   | CollectionTemplate、TreeRoot、DataTable、Table                                                                                |
-| 资源展示和选择                   | AssetItem、AssetName、AssetThumbnail、ResourcePicker、AssetReferenceInput                                                     |
-| 字段排版和可折叠面板             | PropertyRow、Section、Accordion、Collapsible、Flex、ResizableSplit                                                            |
-| 菜单、说明浮层、确认和通知       | DropdownMenuRoot、ContextMenuRoot、MenubarRoot、Popover、Tooltip、HoverCard、Dialog、AlertDialog、NotificationProvider        |
-| 连接应用数据、显示保存状态与错误 | PropertyField、usePropertyBinding                                                                                             |
+| 你要实现的界面                   | 可选组件                                                                                                                             |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 操作按钮、状态标签、进度提示     | Button、IconButton、Badge、Tag、Callout、Progress、Spin                                                                              |
+| 文字、布尔值或选项编辑           | Input、Textarea、EditableText、Checkbox、Select、Combobox、SegmentControl、ToggleGroup                                               |
+| 数值、位置、尺寸和比例编辑       | NumberInput、Slider、SliderField、NumberTupleInput、Vector2/3/4Input、RectInput、PartitionSlider                                     |
+| 颜色、渐变和随机颜色             | ColorEditor、ColorField、ColorPicker、HDRColorField、ColorRampEditor、ColorAlphaRampEditor、ColorRampPicker、ColorDistributionEditor |
+| 曲线和数值分布                   | CurveEditor、CurvePicker、CurvePresets、NumericDistributionEditor                                                                    |
+| 列表、树和表格                   | CollectionEditor、TreeRoot、DataTable、Table                                                                                         |
+| 资源展示和选择                   | AssetItem、AssetName、AssetThumbnail、ResourceBrowser、AssetField                                                                    |
+| 字段排版和可折叠面板             | PropertyRow、Section、Accordion、Flex、ResizableSplit、ScrollArea                                                                    |
+| 菜单、说明浮层和通知             | DropdownMenuRoot、ContextMenuRoot、MenubarRoot、Popover、Tooltip、HoverCard、NotificationProvider                                    |
+| 模态操作与确认                   | Dialog、AlertDialog、ConfirmationProvider                                                                                            |
+| 连接应用数据、显示保存状态与错误 | PropertyField、usePropertyBinding                                                                                                    |
 
 ## 导入与样式
 
@@ -81,8 +82,8 @@ export function Example() {
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Text、Bold、Title、Link | 展示正文、强调文字、标题和链接。`as` 选择 HTML 语义，`size` 选择视觉字号                                             |
 | 图标与 Arrow            | 为动作、文件类型或方向提供图形提示。独立表达含义时提供可访问名称；旁边已有完整文字时可作为装饰                       |
-| Button、ActionButton    | 触发操作；ActionButton 适合图标动作。`onClick` 接收点击，`async` 可等待 Promise，`onAsyncError` 接收失败             |
-| ActionButtonGroup       | 将相关图标动作排在一起，每个按钮保留自己的回调和可用状态                                                             |
+| Button、IconButton      | 触发操作；IconButton 适合图标动作。`onClick` 接收点击，`async` 可等待 Promise，`onAsyncError` 接收失败               |
+| IconButtonGroup         | 将相关图标动作排在一起，每个按钮保留自己的回调和可用状态                                                             |
 | Badge、Tag              | Badge 展示状态（gray/blue/green/amber/red）或分类（violet）；Tag 适合可移除的标签，`onRemove` 通知父组件更新标签列表 |
 | Kbd、KbdGroup           | 展示快捷键或手势提示。应用通过键盘事件注册对应命令                                                                   |
 | Callout                 | 显示说明、警告或错误；`severity` 选择外观，`role="status"` 或 `"alert"` 用于需要即时播报的变化                       |
@@ -100,35 +101,35 @@ Button 的 `loading` 和异步等待状态会禁用重复激活。保存、网�
 
 ## 数值与几何
 
-`InputNumber` 支持键入、拖动和步进调整。`Slider` 用滑块编辑一个或多个数值；`NumericSlider` 将单个数值输入和滑块组合起来，适合同时需要精确输入与快速调整的参数。
+`NumberInput` 支持键入、拖动和步进调整。`Slider` 用滑块编辑一个或多个数值；`SliderField` 将单个数值输入和滑块组合起来，适合同时需要精确输入与快速调整的参数。
 
-`NumericTupleInput` 编辑多个命名数值。`Vector2Input`、`Vector3Input`、`Vector4Input` 和 `RectInput` 接收对应形状的对象，适合位置、尺寸和矩形区域。`DistributionSlider` 编辑总量固定的分段长度，回调返回各段的长度数组。
+`NumberTupleInput` 编辑多个命名数值。`Vector2Input`、`Vector3Input`、`Vector4Input` 和 `RectInput` 接收对应形状的对象，适合位置、尺寸和矩形区域。`PartitionSlider` 编辑总量固定的分段长度，回调返回各段的长度数组。
 
-这些组件提供编辑开始、实时变化、提交和取消回调。InputNumber 及其数值输入组合用 `min/max` 限制有效值，用 `softMin/softMax` 设置拖动和步进的常用范围；键入可覆盖常用范围并遵守有效值范围。`step`、`dragStep` 和 `precision` 分别设置步进、拖动增量和精度。Slider 使用 `min/max/step` 设置轨道范围和步长；DistributionSlider 使用 `total/minSegment` 设置总量和最小分段长度。比例联动及零值处理见[使用与开发指南](../../docs/README.md)。
+这些组件提供编辑开始、实时变化、提交和取消回调。NumberInput 及其数值输入组合用 `min/max` 限制有效值，用 `softMin/softMax` 设置拖动和步进的常用范围；键入可覆盖常用范围并遵守有效值范围。`step`、`dragStep` 和 `precision` 分别设置步进、拖动增量和精度。Slider 使用 `min/max/step` 设置轨道范围和步长；PartitionSlider 使用 `total/minSegment` 设置总量和最小分段长度。比例联动及零值处理见[使用与开发指南](../../docs/README.md)。
 
 ## 颜色、渐变与曲线
 
-`ColorWidget` 是内联颜色编辑器，`ColorPicker` 通过浮层节省空间，`ColorInput` 提供紧凑的颜色字段。`HDRColorInput` 适合包含高亮强度的颜色。回调返回 `ColorValue`，其中 `space` 指定 `srgb` 或 `linear`，RGB 通常使用 0–1 通道值，HDR 值可超过 1。
+`ColorEditor` 是内联颜色编辑器，`ColorPicker` 通过浮层节省空间，`ColorField` 提供紧凑的颜色字段。`HDRColorField` 适合包含高亮强度的颜色。回调返回 `ColorValue`，其中 `space` 指定 `srgb` 或 `linear`，RGB 通常使用 0–1 通道值，HDR 值可超过 1。
 
-`ColorRamp` 编辑多个色标组成的渐变，`ColorRampChannels` 将颜色与透明度分开编辑，`ColorRampPicker` 提供浮层入口。`ColorDistributionTemplate` 在固定颜色、随机范围和渐变等模式间切换。它们通过编辑回调返回颜色数据；选择色标和切换显示方式用于辅助操作。需要取屏幕颜色或复制粘贴时，应用通过 `capabilities` 提供相应方法。显示偏好通过受控显示属性及应用存储保存。详见[使用与开发指南](../../docs/README.md)。
+`ColorRampEditor` 编辑多个色标组成的渐变，`ColorAlphaRampEditor` 将颜色与透明度分开编辑，`ColorRampPicker` 提供浮层入口。`ColorDistributionEditor` 在固定颜色、随机范围和渐变等模式间切换。它们通过编辑回调返回颜色数据；选择色标和切换显示方式用于辅助操作。需要取屏幕颜色或复制粘贴时，应用通过 `capabilities` 提供相应方法。显示偏好通过受控显示属性及应用存储保存。详见[使用与开发指南](../../docs/README.md)。
 
-`CurveWidget` 用曲线图编辑随输入变化的数值，支持移动点和控制柄。`CurvePicker` 在浮层中提供同样的编辑体验，`CurvePresets` 用于选择并应用预设。编辑回调返回 `CurveValue`；选点、缩放和平移用于查看曲线。曲线点需要稳定 ID 和递增的 x 坐标。保存与加载个人预设时，应用提供 `CurvePresetService`。
+`CurveEditor` 用曲线图编辑随输入变化的数值，支持移动点和控制柄。`CurvePicker` 在浮层中提供同样的编辑体验，`CurvePresets` 用于选择并应用预设。编辑回调返回 `CurveValue`；选点、缩放和平移用于查看曲线。曲线点需要稳定 ID 和递增的 x 坐标。保存与加载个人预设时，应用提供 `CurvePresetService`。
 
-`NumericDistributionTemplate` 将固定值、范围、曲线等模式组合成一个字段，适合随时间变化或带随机性的参数。应用接收带模式标记的值，并按需保存模式切换时的缓存。详见[使用与开发指南](../../docs/README.md)。
+`NumericDistributionEditor` 将固定值、范围、曲线等模式组合成一个字段，适合随时间变化或带随机性的参数。应用接收带模式标记的值，并按需保存模式切换时的缓存。详见[使用与开发指南](../../docs/README.md)。
 
 ## 列表、树、表格与拖放
 
 `Breadcrumbs` 展示当前位置，`Pagination` 切换分页；回调交给应用更新路由或加载数据。`TreeRoot`、`TreeItem`、`TreeItemContent` 和 `TreeGroup` 组合层级列表。`Table` 的结构部件适合自定义单元格，`DataTable` 适合按列配置展示数据。
 
-`CollectionTemplate` 为列表提供选中、展开、添加、移除和排序入口。应用传入稳定的项目 key，并在回调中更新数据。异步添加完成后可返回新项目的 key，使组件将焦点移到新项目。
+`CollectionEditor` 为列表提供选中、展开、添加、移除和排序入口。应用传入稳定的项目 key，并在回调中更新数据。异步添加完成后可返回新项目的 key，使组件将焦点移到新项目。
 
 需要应用内拖放时，在相关区域外放置 `DragDropProvider`，通过 `useDragSource` 和 `useDropTarget` 配置拖动项及接收回调。系统文件拖入通过 `onFilesDrop` 返回文件数组；应用可使用 File API 读取内容或将文件交给上传服务。详细用法见[使用与开发指南](../../docs/README.md)。
 
 ## 资源引用与选择
 
-`AssetItem` 展示资源缩略图、名称和状态，支持选择与改名；`AssetName` 和 `AssetThumbnail` 可用于自定义资源布局。`ResourcePicker` 提供搜索、筛选、分页以及列表/网格视图，适合选择项目资源。`AssetReferenceInput` 展示当前引用，并提供更换、清空和定位入口。
+`AssetItem` 展示资源缩略图、名称和状态，支持选择与改名；`AssetName` 和 `AssetThumbnail` 可用于自定义资源布局。`ResourceBrowser` 提供搜索、筛选、分页以及列表/网格视图，适合选择项目资源。`AssetField` 展示当前引用，并提供更换、清空和定位入口。
 
-应用通过 `ResourceProvider` 提供 `query` 与 `get`，返回用于展示的资源描述。选中资源时，回调返回资源 ID；AssetReferenceInput 通过 `onValueChange` 接收引用更新并回写 `value`，独立 ResourcePicker 通过 `onSelect` 处理选择请求，再用 `onSelectedIdChange` 回写 `selectedId`。`rename`、`locate` 和 `chooseFile` 等可选方法用于接入改名、定位与文件选择。详见[使用与开发指南](../../docs/README.md)。
+应用通过 `ResourceProvider` 提供 `query` 与 `get`，返回用于展示的资源描述。选中资源时，回调返回资源 ID；AssetField 通过 `onValueChange` 接收引用更新并回写 `value`，独立 ResourceBrowser 通过 `onSelect` 处理选择请求，再用 `onSelectedIdChange` 回写 `selectedId`。`rename`、`locate` 和 `chooseFile` 等可选方法用于接入改名、定位与文件选择。详见[使用与开发指南](../../docs/README.md)。
 
 ## 字段与面板布局
 
@@ -164,7 +165,7 @@ export function NameRow() {
 
 `Separator` 分隔相邻内容，`SectionDivider` 在分隔线中加入文字。需要章节语义时，向 SectionDivider 传入 `Title` 或原生标题元素；竖向 Separator 需要容器提供高度。
 
-`Section` 将相关字段放在有标题的区域内，默认展开。`Collapsible` 用于默认收起的内容；两者通过 `open/onOpenChange` 控制展开状态。`Accordion` 用于多个可折叠区域，支持单项或多项展开。标题旁的操作按钮放入 `actions`，用户可独立操作按钮和折叠入口。`collapsible={false}` 适合始终显示的 Section。
+`Section` 将相关字段放在有标题的区域内，默认展开。`Section` 用于默认收起的内容；两者通过 `open/onOpenChange` 控制展开状态。`Accordion` 用于多个可折叠区域，支持单项或多项展开。标题旁的操作按钮放入 `actions`，用户可独立操作按钮和折叠入口。`collapsible={false}` 适合始终显示的 Section。
 
 ## 滚动与调整面板尺寸
 

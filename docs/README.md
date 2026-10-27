@@ -84,7 +84,7 @@ Provider 只放在使用相应功能的区域。局部主题使用 `ThemeProvide
 - 对话框、常规表单、文档页使用 regular。
 - 控件高度来自 `sizes.controlXs/controlSm/controlMd/controlLg`，圆角来自 `radii.control/controlMd/controlLg`，字号来自 `fontSizes.control/controlLarge`。
 - 11px 只用于 micro 角色（Kbd、轴标签、元信息）。Checkbox 的 14/18/22 是元素尺寸例外。
-- AssetReferenceInput 的缩略图字段保留 48px；ColorPlane 130px、渐变条 64px、竖 Slider 160px 是内容尺寸例外。
+- AssetField 的缩略图字段保留 48px；ColorPlane 130px、渐变条 64px、竖 Slider 160px 是内容尺寸例外。
 
 ### 3.2 Surface 层级
 
@@ -126,52 +126,39 @@ const panel = css({
 
 ## 4. 组件地图
 
-### Foundation
+组件按层组织，源码目录、`src/index.ts` 的导出分组和 Storybook 侧边栏使用同一套层级。每层只依赖更低的层（`pnpm audit:layers` 检查）；`values`、`contracts`、`interaction` 是不含界面的共享模块。
 
-- `Title`、`Text`、`Link`：字阶、语气和链接。
-- `Kbd`、`KbdGroup`：快捷键展示。
-- `Badge`、`Tag`、`StatusDot`：状态和分类。
-- `ThemeProvider`、`useTheme`、`createThemeStore`：主题。
-- `Icons`：常用图标与领域图标。
+```
+property     PropertyField · usePropertyBinding                       连接应用数据
+editors      numeric · color · curve · resources                      按值类型的编辑器
+collections  Tree · Table · DataTable · Asset* · CollectionEditor · Breadcrumbs · Pagination
+layout       Section · Accordion · PropertyRow · Flex · ResizableSplit · ScrollArea · Separator
+dialogs      Dialog · AlertDialog · ConfirmationProvider
+controls     Button · IconButton · Input · NumberInput · Select · Combobox · Checkbox · SegmentControl · ToggleGroup · Slider · PartitionSlider
+overlays     Popover · Tooltip · HoverCard · OverlayLayer · DropdownMenu · ContextMenu · Menubar · NotificationProvider
+display      Badge · Tag · Kbd · ReadonlyValue · ImagePreview · Callout · Progress · Spin
+foundation   ThemeProvider · Text · Title · Link · Icons
+```
 
-### 输入与选择
+### 命名约定
 
-- `Input`、`Textarea`、`EditableText`、`InputNumber`：文本和数字输入。
-- `Checkbox`、`Select`、`Combobox`、`SegmentControl`、`ToggleGroup`：单选、多选和分段选择。
-- `Slider`、`DistributionSlider`：连续值和分布编辑。
-- `Button`、`ActionButton`、`ActionButtonGroup`：文字按钮和图标操作。
+组件名的后缀说明它的形态：
 
-### 布局与折叠
+| 后缀      | 含义                       | 例子                                                       |
+| --------- | -------------------------- | ---------------------------------------------------------- |
+| `*Input`  | 在一个输入框里直接编辑值   | `NumberInput`、`Vector3Input`、`NumberTupleInput`          |
+| `*Field`  | 属性面板里的紧凑组合字段   | `SliderField`、`ColorField`、`HDRColorField`、`AssetField` |
+| `*Picker` | 一个预览按钮，点开浮层编辑 | `ColorPicker`、`ColorRampPicker`、`CurvePicker`            |
+| `*Editor` | 完整展开的内联编辑面板     | `ColorEditor`、`CurveEditor`、`CollectionEditor`           |
 
-- `Section`、`Collapsible`、`Accordion`：分区和折叠。
-- `PropertyRow`、`PropertyLabel`、`PropertyControl`、`PropertyDescription`：属性行。
-- `Flex`、`ResizableSplit`、`SectionDivider`：布局、分隔和可调整面板。
+### Editors
 
-### 浮层与反馈
+- 数值：`SliderField`（输入框 + 滑块）、`NumberTupleInput`、`Vector2Input/3/4`、`RectInput`、`NumericDistributionEditor`（固定值 / 随机范围 / 曲线）。
+- 颜色：`ColorEditor`、`ColorField`、`HDRColorField`、`ColorPicker`、`ColorRampEditor`、`ColorAlphaRampEditor`（颜色轨与透明度轨分开）、`ColorRampPicker`、`ColorDistributionEditor`。
+- 曲线：`CurveEditor`、`CurvePicker`、`CurvePresets`。
+- 资源：`ResourceBrowser`（内联浏览、搜索、分页）、`AssetField`（展示和更换一个资源引用）。
 
-- `Popover`、`Tooltip`、`HoverCard`：轻量浮层。
-- `Dialog`、`AlertDialog`、`ConfirmationProvider`：模态操作和确认队列。
-- `DropdownMenu`、`ContextMenu`、`Menubar`：菜单。
-- `ToastView`、`NotificationProvider`、`useNotifications`：通知。
-- `Callout`、`Progress`、`Spin`：反馈。
-
-### 集合与导航
-
-- `Tree`：层级选择、展开、重命名和拖放。
-- `Table`、`DataTable`：表格、选中、行操作和密度。
-- `AssetItem`、`AssetName`、`AssetThumbnail`：资源磁贴和列表。
-- `Breadcrumbs`、`Pagination`：导航。
-
-### 数值、颜色与曲线
-
-- `NumericSlider`、`NumericTupleInput`、`Vector2Input/3/4`、`RectInput`：数值和几何。
-- `ColorWidget`、`ColorPicker`、`ColorInput`、`HDRColorInput`、`ColorRamp`、`ColorRampChannels`、`ColorRampPicker`、`ColorDistributionTemplate`：颜色编辑。
-- `CurveWidget`、`CurvePicker`、`CurvePresets`、`NumericDistributionTemplate`：曲线和数值分布。
-
-### 资源与属性
-
-- `ResourceProvider`、`ResourcePicker`、`AssetReferenceInput`：资源查询、选择和引用。
-- `PropertyAccess`、`PropertyField`、`usePropertyBinding`：属性数据连接、草稿、提交、错误和混合值。
+`PartitionSlider` 把一个总量切分成多段（拖动分界点）；`NumericDistributionEditor` / `ColorDistributionEditor` 编辑随机分布。两者含义不同，名字也不同。
 
 完整组件名和主要参数见 [组件 API 参考](../packages/interface/README.md)。
 
@@ -204,7 +191,7 @@ interface PropertyAccess<T> {
 
 `PropertyField` 使用 `access` 读取快照、开始编辑、预览和提交。快照包含 `target`、`revision`、`value`、`disabled`、`readOnly`、`error`、`edit.previewValue` 等信息。保存确认、持久化和撤销记录由应用负责；后端未就绪时可以用内存实现。
 
-内置字段：`Input`、`Textarea`、`Checkbox`、`Select`、`Combobox`、`InputNumber`、`NumericSlider`。复杂值通过 `render` 组合 `Vector3Input`、颜色、曲线或资源控件。`density="compact" | "regular"` 控制内置控件高度。
+内置字段：`Input`、`Textarea`、`Checkbox`、`Select`、`Combobox`、`NumberInput`、`SliderField`。复杂值通过 `render` 组合 `Vector3Input`、颜色、曲线或资源控件。`density="compact" | "regular"` 控制内置控件高度。
 
 ### 5.4 异步保存与错误
 
@@ -212,7 +199,7 @@ interface PropertyAccess<T> {
 
 ### 5.5 资源
 
-`ResourceProvider` 负责 `query` 与 `get`；可选 `rename`、`locate`、`chooseFile`。`ResourcePicker` 通过 `onSelect` / `onSelectedIdChange` 回写选择；`AssetReferenceInput` 通过 `onValueChange` 接收引用变化。资源状态（loading/error/missing/not selectable）应保留在 `AssetDescriptor` 中。
+`ResourceProvider` 负责 `query` 与 `get`；可选 `rename`、`locate`、`chooseFile`。`ResourceBrowser` 通过 `onSelect` / `onSelectedIdChange` 回写选择；`AssetField` 通过 `onValueChange` 接收引用变化。资源状态（loading/error/missing/not selectable）应保留在 `AssetDescriptor` 中。
 
 ## 6. 主题与样式接入
 
@@ -270,8 +257,9 @@ pnpm build:storybook
 | `pnpm typecheck`                           | 检查组件、Storybook、示例和工具配置            |
 | `pnpm audit:styles`                        | 扫描裸 px 尺寸，并检查颜色变量在两套主题中存在 |
 | `pnpm audit:stories`                       | 检查 StoryPage、Overview、标题和旧 story 依赖  |
+| `pnpm audit:layers`                        | 检查组件只依赖更低的层                         |
 | `pnpm verify:quick`                        | 格式 + 类型                                    |
-| `pnpm verify`                              | 格式 + 类型 + 两条审计 + demo/Storybook 构建   |
+| `pnpm verify`                              | 格式 + 类型 + 三条审计 + demo/Storybook 构建   |
 | `pnpm build:demo` / `pnpm build:storybook` | 构建示例 / 静态 Storybook                      |
 | `pnpm clean`                               | 清理生成文件和缓存                             |
 

@@ -15,7 +15,7 @@ export interface ColorRampValue {
   readonly stops: readonly ColorRampStop[]
   readonly interpolation: ColorRampInterpolation
 }
-export interface ColorRampChannelsValue {
+export interface ColorAlphaRampValue {
   readonly color: ColorRampValue
   readonly alpha: readonly AlphaStop[]
 }
@@ -52,12 +52,12 @@ export function assertAlphaStops(stops: unknown): asserts stops is readonly Alph
   assertStops(stops)
   for (const stop of stops) assertPosition((stop as AlphaStop).alpha)
 }
-export function assertColorRampChannelsValue(
+export function assertColorAlphaRampValue(
   value: unknown,
   options: ColorOptions = {}
-): asserts value is ColorRampChannelsValue {
+): asserts value is ColorAlphaRampValue {
   if (!value || typeof value !== 'object') throw new TypeError('A channels ramp must be an object.')
-  const ramp = value as Partial<ColorRampChannelsValue>
+  const ramp = value as Partial<ColorAlphaRampValue>
   assertColorRampValue(ramp.color, options)
   assertAlphaStops(ramp.alpha)
 }
@@ -70,8 +70,8 @@ export function cloneColorRampValue(value: ColorRampValue): ColorRampValue {
     ),
   })
 }
-export function cloneColorRampChannelsValue(value: ColorRampChannelsValue): ColorRampChannelsValue {
-  assertColorRampChannelsValue(value, { hdr: true })
+export function cloneColorAlphaRampValue(value: ColorAlphaRampValue): ColorAlphaRampValue {
+  assertColorAlphaRampValue(value, { hdr: true })
   return Object.freeze({
     color: cloneColorRampValue(value.color),
     alpha: Object.freeze(value.alpha.map((stop) => Object.freeze({ ...stop }))),
@@ -121,8 +121,8 @@ export function sampleAlphaStops(
   const [left, right, amount] = pair
   return interpolation === 'constant' ? left.alpha : left.alpha * (1 - amount) + right.alpha * amount
 }
-export function sampleColorRampChannels(value: ColorRampChannelsValue, position: number): ColorValue | null {
-  assertColorRampChannelsValue(value, { hdr: true })
+export function sampleColorAlphaRamp(value: ColorAlphaRampValue, position: number): ColorValue | null {
+  assertColorAlphaRampValue(value, { hdr: true })
   const color = sampleColorRamp(value.color, position)
   return (
     color &&
@@ -139,7 +139,7 @@ export function areColorRampsEqual(a: ColorRampValue, b: ColorRampValue): boolea
     })
   )
 }
-export function areColorRampChannelsEqual(a: ColorRampChannelsValue, b: ColorRampChannelsValue): boolean {
+export function areColorAlphaRampsEqual(a: ColorAlphaRampValue, b: ColorAlphaRampValue): boolean {
   return (
     areColorRampsEqual(a.color, b.color) &&
     a.alpha.length === b.alpha.length &&

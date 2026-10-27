@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { ColorRampChannels } from '../src/templates/color/ColorRampChannels'
-import { ColorRampPicker } from '../src/templates/color/ColorRampPicker'
-import type { ColorRampChannelsValue } from '../src/values/color-ramp'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { ColorAlphaRampEditor } from '../src/editors/color/ColorAlphaRampEditor'
+import { ColorRampPicker } from '../src/editors/color/ColorRampPicker'
+import type { ColorAlphaRampValue } from '../src/values/color-ramp'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -19,7 +19,7 @@ import {
   StoryNote,
 } from './support/StoryPage'
 
-const channels: ColorRampChannelsValue = {
+const channels: ColorAlphaRampValue = {
   color: {
     interpolation: 'linear',
     stops: [
@@ -33,7 +33,7 @@ const channels: ColorRampChannelsValue = {
     { id: 'fade-out', position: 1, alpha: 0 },
   ],
 }
-const emptyAlpha: ColorRampChannelsValue = { ...channels, alpha: [] }
+const emptyAlpha: ColorAlphaRampValue = { ...channels, alpha: [] }
 const cancelReasons = ['escape', 'pointer-cancel', 'window-blur', 'disabled', 'read-only']
 
 function ChannelsDemo({
@@ -47,7 +47,7 @@ function ChannelsDemo({
   disabled?: boolean
   narrow?: boolean
 }) {
-  const [value, setValue] = useState<ColorRampChannelsValue>(empty ? emptyAlpha : channels)
+  const [value, setValue] = useState<ColorAlphaRampValue>(empty ? emptyAlpha : channels)
   const [colorStop, setColorStop] = useState<string | null>('warm')
   const [alphaStop, setAlphaStop] = useState<string | null>(empty ? null : 'solid')
   const [revision, setRevision] = useState(0)
@@ -79,7 +79,7 @@ function ChannelsDemo({
               : '颜色轨和透明度轨分别选点；任一修改都回传完整双轨数据。'
       }>
       <div className={css({ width: '100%', maxWidth: narrow ? '280px' : '380px', minWidth: 0 })}>
-        <ColorRampChannels
+        <ColorAlphaRampEditor
           value={value}
           hdr
           activeStopId={colorStop}
@@ -185,12 +185,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'ColorRampChannels 把颜色轨与透明度轨分开编辑，适合粒子、发光或遮罩渐变。value 包含 color 和 alpha 两组停靠点；选择停靠点不会修改属性。最终透明度是颜色自身 alpha 与 alpha 轨采样值的乘积，空 alpha 轨按 1 处理。',
+          'ColorAlphaRampEditor 把颜色轨与透明度轨分开编辑，适合粒子、发光或遮罩渐变。value 包含 color 和 alpha 两组停靠点；选择停靠点不会修改属性。最终透明度是颜色自身 alpha 与 alpha 轨采样值的乘积，空 alpha 轨按 1 处理。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Color/ColorRampChannels',
+  title: 'Color/ColorAlphaRampEditor',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -199,7 +199,7 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Color"
-      title="ColorRampChannels"
+      title="ColorAlphaRampEditor"
       summary="颜色与透明度各自拥有停靠点。两条轨道共享一次编辑会话，但保留独立的当前选择。"
       meta={
         <>
@@ -231,7 +231,7 @@ export const Overview: Story = {
 
       <StorySection title="Density and sizing">
         <StoryNote>
-          ColorRampChannels 没有 density 变体：内部 Select、Button、InputNumber 使用 24px 紧凑档，分隔线和 6px
+          ColorAlphaRampEditor 没有 density 变体：内部 Select、Button、NumberInput 使用 24px 紧凑档，分隔线和 6px
           圆角来自语义 token。280px 宽度下两条轨道仍可操作，操作按钮会换行。
         </StoryNote>
       </StorySection>
@@ -252,7 +252,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<ColorRampChannels
+            code={`<ColorAlphaRampEditor
   value={value}
   hdr
   activeStopId={colorStop}
@@ -266,7 +266,7 @@ export const Overview: Story = {
             rows={[
               {
                 name: 'value / defaultValue',
-                type: 'ColorRampChannelsValue',
+                type: 'ColorAlphaRampValue',
                 description: 'color 色轨 + alpha 透明度轨。',
               },
               { name: 'activeStopId', type: 'string | null', description: '当前颜色停靠点。' },

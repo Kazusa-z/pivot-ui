@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Separator } from '../src/widgets/display/Separator'
+import { Separator } from '../src/layout/Separator'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import { StoryPage, StorySection, StoryCard, StoryRow, StoryCode } from './support/StoryPage'

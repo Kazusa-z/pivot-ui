@@ -1,11 +1,11 @@
 import { useMemo, useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { ColorWidget } from '../src/widgets/color/ColorWidget'
-import { ColorInput } from '../src/templates/color/ColorInput'
-import { ColorPicker } from '../src/templates/color/ColorPicker'
-import { HDRColorInput } from '../src/templates/color/HDRColorInput'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { ColorEditor } from '../src/editors/color/ColorEditor'
+import { ColorField } from '../src/editors/color/ColorField'
+import { ColorPicker } from '../src/editors/color/ColorPicker'
+import { HDRColorField } from '../src/editors/color/HDRColorField'
 import { convertColorSpace, type ColorSpace, type ColorValue } from '../src/values/color'
 import type { ColorCapabilities } from '../src/contracts/color'
 import { css } from '../styled-system/css'
@@ -88,11 +88,11 @@ function ColorDemo({ kind, label, controls = false }: { kind: DemoKind; label: s
     <StoryCard title={label}>
       <div className={css({ width: '100%', maxWidth: '320px', minWidth: 0 })}>
         {kind === 'compact' ? (
-          <ColorInput {...common} label={label} />
+          <ColorField {...common} label={label} />
         ) : kind === 'picker' ? (
           <ColorPicker {...common} label={label} />
         ) : (
-          <ColorWidget {...common} label={label} defaultModel={kind === 'hsv' ? 'hsv' : 'rgb'} />
+          <ColorEditor {...common} label={label} defaultModel={kind === 'hsv' ? 'hsv' : 'rgb'} />
         )}
       </div>
       {controls && (
@@ -147,9 +147,9 @@ function HdrDemo() {
   const [value, setValue] = useState<ColorValue>({ space: 'linear', r: 4, g: 1, b: 0.25, a: 0.75 })
   const [events, setEvents] = useState<string[]>([])
   return (
-    <StoryCard title="HDRColorInput" description="亮度倍率会按比例缩放 RGB；屏幕预览与 HEX 只显示可显示范围内的颜色。">
+    <StoryCard title="HDRColorField" description="亮度倍率会按比例缩放 RGB；屏幕预览与 HEX 只显示可显示范围内的颜色。">
       <div className={css({ width: '100%', maxWidth: '420px', minWidth: 0 })}>
-        <HDRColorInput
+        <HDRColorField
           value={value}
           label="Emission"
           intensityMax={12}
@@ -174,12 +174,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'ColorWidget 是内联单色编辑器，ColorPicker 用色块打开浮层，ColorInput 组合紧凑字段，HDRColorInput 额外提供峰值亮度。颜色值包含 space、r、g、b、a；HEX 始终按 sRGB 解释，显示空间只改变查看方式。onValueChange 负责实时预览，onValueCommit 负责一次保存。',
+          'ColorEditor 是内联单色编辑器，ColorPicker 用色块打开浮层，ColorField 组合紧凑字段，HDRColorField 额外提供峰值亮度。颜色值包含 space、r、g、b、a；HEX 始终按 sRGB 解释，显示空间只改变查看方式。onValueChange 负责实时预览，onValueCommit 负责一次保存。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Color/ColorWidget',
+  title: 'Color/ColorEditor',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -188,7 +188,7 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Color"
-      title="ColorWidget"
+      title="ColorEditor"
       summary="单色编辑的四种入口：完整内联面板、HSV 模式、紧凑字段和弹出式取色器。所有入口共享同一套值、提交与取消语义。"
       meta={
         <>
@@ -220,7 +220,7 @@ export const Overview: Story = {
 
       <StorySection title="Density and sizing">
         <StoryNote>
-          ColorWidget 没有 density 变体：内部 Select、InputNumber 和 Slider 使用 24px 紧凑档，面板圆角为 6px。宽度小于约
+          ColorEditor 没有 density 变体：内部 Select、NumberInput 和 Slider 使用 24px 紧凑档，面板圆角为 6px。宽度小于约
           320px 时，模型、显示空间和通道字段会自动换行；不会切换到另一套字号。
         </StoryNote>
       </StorySection>
@@ -240,7 +240,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<ColorWidget
+            code={`<ColorEditor
   value={color}
   displaySpace="srgb"
   onValueChange={setColor}

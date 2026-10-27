@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Checkbox, type CheckboxState } from '../src/widgets/choices/Checkbox'
-import { Button } from '../src/widgets/buttons'
+import { Checkbox, type CheckboxState } from '../src/controls/choices/Checkbox'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,

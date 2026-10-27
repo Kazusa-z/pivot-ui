@@ -42,13 +42,13 @@ export {
 } from './numeric'
 export type { ResolvedNumericConstraints, NumericDraft } from './numeric'
 export {
-  getDistributionTotal,
-  validateDistribution,
-  distributionToBoundaries,
-  boundariesToDistribution,
-  moveDistributionBoundary,
-} from './distribution'
-export type { DistributionConstraints } from './distribution'
+  getPartitionTotal,
+  validatePartition,
+  partitionToBoundaries,
+  boundariesToPartition,
+  movePartitionBoundary,
+} from './partition'
+export type { PartitionConstraints } from './partition'
 export type { Vector2, Vector3, Vector4, Rect } from './geometry'
 export {
   assertNumericTuple,
@@ -94,20 +94,20 @@ export type {
   AlphaStop,
   ColorRampInterpolation,
   ColorRampValue,
-  ColorRampChannelsValue,
+  ColorAlphaRampValue,
 } from './color-ramp'
 export {
   assertColorRampValue,
   assertAlphaStops,
-  assertColorRampChannelsValue,
+  assertColorAlphaRampValue,
   cloneColorRampValue,
-  cloneColorRampChannelsValue,
+  cloneColorAlphaRampValue,
   sortRampStops,
   sampleColorRamp,
   sampleAlphaStops,
-  sampleColorRampChannels,
+  sampleColorAlphaRamp,
   areColorRampsEqual,
-  areColorRampChannelsEqual,
+  areColorAlphaRampsEqual,
 } from './color-ramp'
 export type { ColorDistributionValue, ColorDistributionMode, ColorDistributionCache } from './color-distribution'
 export {

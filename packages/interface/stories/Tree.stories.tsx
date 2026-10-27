@@ -8,11 +8,11 @@ import {
   TreeDragPreview,
   TreeInsertionIndicator,
   type TreeDropRequest,
-} from '../src/widgets/collections/tree'
+} from '../src/collections/tree'
 import { createTreeCollection } from '../src/values/tree'
 import type { CollectionKey } from '../src/values/collection'
 import { DragDropProvider, useDragDropState } from '../src/interaction/drag-drop'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { css } from '../styled-system/css'
 import {
   StoryPage,

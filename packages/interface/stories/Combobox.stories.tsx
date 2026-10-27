@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Combobox } from '../src/widgets/choices/Combobox'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { Button } from '../src/widgets/buttons'
+import { Combobox } from '../src/controls/choices/Combobox'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import type { ChoiceOption, ChoiceValue } from '../src/values'
 import {

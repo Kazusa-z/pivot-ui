@@ -8,8 +8,8 @@ import {
   useDragDropCancel,
 } from '../src/interaction/drag-drop'
 import type { DragResult } from '../src/values/drag-drop'
-import { TreeDragPreview, TreeInsertionIndicator } from '../src/widgets/collections/tree'
-import { Button } from '../src/widgets/buttons'
+import { TreeDragPreview, TreeInsertionIndicator } from '../src/collections/tree'
+import { Button } from '../src/controls/buttons'
 import { css } from '../styled-system/css'
 import {
   StoryPage,

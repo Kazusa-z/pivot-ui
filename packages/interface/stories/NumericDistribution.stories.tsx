@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import type { CurvePreset } from '../src/contracts/curve'
-import { NumericDistributionTemplate } from '../src/templates/curve/NumericDistributionTemplate'
+import { NumericDistributionEditor } from '../src/editors/numeric/NumericDistributionEditor'
 import { copyCurveValue, type CurveValue, type CurveViewport } from '../src/values/curve'
 import {
   copyNumericDistributionValue,
@@ -9,9 +9,9 @@ import {
   type NumericDistributionMode,
   type NumericDistributionValue,
 } from '../src/values/numeric-distribution'
-import { Button } from '../src/widgets/buttons/Button'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { SegmentControl } from '../src/widgets/choices/SegmentControl'
+import { Button } from '../src/controls/buttons/Button'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { SegmentControl } from '../src/controls/choices/SegmentControl'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -65,7 +65,7 @@ function ModeDemo({ mode, title, description }: { mode: NumericDistributionMode;
   return (
     <StoryCard title={title} description={description}>
       <div className={distributionWidth}>
-        <NumericDistributionTemplate
+        <NumericDistributionEditor
           value={value}
           label={`${title} distribution`}
           curveViewport={viewport}
@@ -142,7 +142,7 @@ function ControlledDemo() {
         </StoryField>
       </StoryRow>
       <div className={distributionWidth}>
-        <NumericDistributionTemplate
+        <NumericDistributionEditor
           value={value}
           cache={cache}
           onCacheChange={setCache}
@@ -216,7 +216,7 @@ function CompactDemo() {
   const [value, setValue] = useState<NumericDistributionValue>(() => makeValue('constant'))
   return (
     <div className={distributionWidth}>
-      <NumericDistributionTemplate value={value} onValueChange={setValue} label="Compact distribution" />
+      <NumericDistributionEditor value={value} onValueChange={setValue} label="Compact distribution" />
     </div>
   )
 }
@@ -227,7 +227,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'NumericDistributionTemplate 在单个数值、曲线、两个数值和两条曲线之间切换，适合既允许固定参数又允许随时间变化的输入。value 的 mode 决定内容，cache 保存其他模式已接受的设置；曲线选择和视图变化不会产生属性提交。应用负责保存、拒绝和取消，并通过 resetKey 标识当前对象。',
+          'NumericDistributionEditor 在单个数值、曲线、两个数值和两条曲线之间切换，适合既允许固定参数又允许随时间变化的输入。value 的 mode 决定内容，cache 保存其他模式已接受的设置；曲线选择和视图变化不会产生属性提交。应用负责保存、拒绝和取消，并通过 resetKey 标识当前对象。',
       },
     },
     layout: 'fullscreen',
@@ -267,7 +267,7 @@ export const Overview: Story = {
 
       <StorySection
         title="Control tier"
-        description="当前 NumericDistributionTemplate 没有 size/density prop，内部使用 24px 紧凑档的 InputNumber 和 Select。需要 32px 常规表单时，应由外层表单或后续 API 提供，而不是在 story 里伪造。">
+        description="当前 NumericDistributionEditor 没有 size/density prop，内部使用 24px 紧凑档的 NumberInput 和 Select。需要 32px 常规表单时，应由外层表单或后续 API 提供，而不是在 story 里伪造。">
         <StoryCard title="Compact controls" description="模式 Select 与数值输入保持同一紧凑档。">
           <CompactDemo />
         </StoryCard>
@@ -297,7 +297,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<NumericDistributionTemplate
+            code={`<NumericDistributionEditor
   value={value}
   cache={cache}
   onCacheChange={setCache}

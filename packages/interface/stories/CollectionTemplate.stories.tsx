@@ -1,12 +1,12 @@
 import { useId, useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { CollectionTemplate } from '../src/templates/collections/CollectionTemplate'
+import { CollectionEditor } from '../src/collections/CollectionEditor'
 import type { CollectionKey } from '../src/values/collection'
 import { DragDropProvider } from '../src/interaction/drag-drop'
 import { PropertyRow, PropertyLabel, PropertyControl } from '../src/layout/PropertyRow'
-import { InputNumber } from '../src/widgets/inputs/InputNumber'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { Button } from '../src/widgets/buttons/Button'
+import { NumberInput } from '../src/controls/inputs/NumberInput'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { Button } from '../src/controls/buttons/Button'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -41,12 +41,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'CollectionTemplate 用于编辑带稳定标识的条目列表，例如图层、材质槽或规则集合。它提供展开、选择、重命名、增删和排序入口，条目内容由 renderItem 组合。应用在 onAdd、onDelete、onRename、onReorder 中更新 items，并分别保存选择与展开状态。',
+          'CollectionEditor 用于编辑带稳定标识的条目列表，例如图层、材质槽或规则集合。它提供展开、选择、重命名、增删和排序入口，条目内容由 renderItem 组合。应用在 onAdd、onDelete、onRename、onReorder 中更新 items，并分别保存选择与展开状态。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Templates/CollectionTemplate',
+  title: 'Templates/CollectionEditor',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -58,7 +58,7 @@ function DensityExample() {
     <StoryGrid>
       <StoryField label="Compact · 24">
         <StoryCard>
-          <CollectionTemplate
+          <CollectionEditor
             label="Compact layers"
             items={initialLayers}
             getKey={(item: Layer) => item.id}
@@ -70,7 +70,7 @@ function DensityExample() {
       </StoryField>
       <StoryField label="Regular · 32">
         <StoryCard>
-          <CollectionTemplate
+          <CollectionEditor
             label="Regular layers"
             items={initialLayers}
             getKey={(item: Layer) => item.id}
@@ -107,7 +107,7 @@ function CollectionExample() {
   return (
     <StoryPage
       eyebrow="Templates"
-      title="CollectionTemplate"
+      title="CollectionEditor"
       summary="用一个模板管理可选择、展开、重命名、增删和排序的条目列表。紧凑档 24 / 常规档 32；条目内容由 renderItem 组合。"
       meta={
         <>
@@ -163,7 +163,7 @@ function CollectionExample() {
             </Button>
           </StoryRow>
           <DragDropProvider>
-            <CollectionTemplate<Layer>
+            <CollectionEditor<Layer>
               label="Layers"
               items={items}
               getKey={(item) => item.id}
@@ -207,7 +207,7 @@ function CollectionExample() {
                   <PropertyRow density={density}>
                     <PropertyLabel htmlFor={`${prefix}-${String(item.id)}-weight`}>Weight</PropertyLabel>
                     <PropertyControl association="control">
-                      <InputNumber
+                      <NumberInput
                         id={`${prefix}-${String(item.id)}-weight`}
                         value={item.weight}
                         min={0}
@@ -245,7 +245,7 @@ function CollectionExample() {
         description="readOnly 保留展开和选择，但阻止修改；disabled 阻止所有请求。空列表仍保留 Add layer。">
         <StoryGrid>
           <StoryCard title="Read only">
-            <CollectionTemplate
+            <CollectionEditor
               label="Read only layers"
               items={initialLayers}
               getKey={(item: Layer) => item.id}
@@ -257,7 +257,7 @@ function CollectionExample() {
             />
           </StoryCard>
           <StoryCard title="Disabled">
-            <CollectionTemplate
+            <CollectionEditor
               label="Disabled layers"
               items={initialLayers}
               getKey={(item: Layer) => item.id}
@@ -268,7 +268,7 @@ function CollectionExample() {
             />
           </StoryCard>
           <StoryCard title="Empty">
-            <CollectionTemplate
+            <CollectionEditor
               label="Empty layers"
               items={[]}
               getKey={(item: Layer) => item.id}
@@ -303,7 +303,7 @@ function CollectionExample() {
           <StoryCode
             label="tsx"
             code={`<DragDropProvider>
-  <CollectionTemplate
+  <CollectionEditor
     items={layers}
     getKey={(item) => item.id}
     getLabel={(item) => item.name}

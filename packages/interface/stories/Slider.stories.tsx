@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Slider } from '../src/widgets/sliders/Slider'
-import { Button } from '../src/widgets/buttons'
+import { Slider } from '../src/controls/sliders/Slider'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { ReadonlyValue } from '../src/widgets/display/ReadonlyValue'
-import { Textarea } from '../src/widgets/inputs/Textarea'
+import { ReadonlyValue } from '../src/display/ReadonlyValue'
+import { Textarea } from '../src/controls/inputs/Textarea'
 import { Text } from '../src/foundation/typography'
 import { StoryPage, StorySection, StoryCard, StoryRow, StoryField, StoryCode, StoryProps } from './support/StoryPage'
 

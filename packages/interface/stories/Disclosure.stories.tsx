@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Accordion, AccordionItem, Collapsible } from '../src/widgets/disclosure'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { Input } from '../src/widgets/inputs/Input'
-import { Select } from '../src/widgets/choices/Select'
+import { Accordion, AccordionItem, Section } from '../src/layout/disclosure'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { Input } from '../src/controls/inputs/Input'
+import { Select } from '../src/controls/choices/Select'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -32,7 +32,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Accordion 管理一组可展开内容，Collapsible 管理单个区域。标题支持点击或键盘展开，受控模式通过 onValueChange/onOpenChange 接收请求；标题旁的独立操作放在 actions，内容状态由应用保存。',
+          'Accordion 管理一组可展开内容，Section 管理单个区域。标题支持点击或键盘展开，受控模式通过 onValueChange/onOpenChange 接收请求；标题旁的独立操作放在 actions，内容状态由应用保存。',
       },
     },
     layout: 'fullscreen',
@@ -55,10 +55,10 @@ function VariantsExample() {
           ))}
         </Accordion>
       </StoryCard>
-      <StoryCard title="Collapsible · subtle" description="单个区域，标题和内容独立组合。">
-        <Collapsible title="Standalone section" defaultOpen>
+      <StoryCard title="Section · subtle" description="单个区域，标题和内容独立组合。">
+        <Section title="Standalone section" defaultOpen>
           <p className={css({ margin: 0 })}>单个折叠区域可以包含任意内容，不要求与其他区域连接。</p>
-        </Collapsible>
+        </Section>
       </StoryCard>
     </StoryGrid>
   )
@@ -93,7 +93,7 @@ function StatesExample() {
   const [open, setOpen] = useState(true)
   return (
     <StoryCard
-      title="Collapsible states"
+      title="Section states"
       description="disabled 只控制折叠入口；fixed 始终展示内容；icon trigger 只保留图标。">
       <StoryRow>
         <Checkbox checked={disabled} onCheckedChange={setDisabled} label="Disabled" size="sm" />
@@ -103,7 +103,7 @@ function StatesExample() {
           External toggle
         </Button>
       </StoryRow>
-      <Collapsible
+      <Section
         title="Standalone section"
         open={open}
         disabled={disabled}
@@ -117,8 +117,8 @@ function StatesExample() {
           </Button>
         }>
         <Input aria-label="Content field" defaultValue="Editable content" size="sm" />
-      </Collapsible>
-      <StoryState label="Collapsible state" value={{ open, disabled, fixed, iconOnly, actions }} />
+      </Section>
+      <StoryState label="Section state" value={{ open, disabled, fixed, iconOnly, actions }} />
     </StoryCard>
   )
 }
@@ -213,7 +213,7 @@ function NarrowExample() {
             Unavailable content.
           </AccordionItem>
         </Accordion>
-        <Collapsible
+        <Section
           title={longTitle}
           defaultOpen
           variant="transparent"
@@ -221,7 +221,7 @@ function NarrowExample() {
           triggerLabel="Toggle long section"
           actions={<Input aria-label="Rename action" value={name} onValueChange={setName} size="sm" />}>
           文字和控件会使用当前区域的可用宽度。
-        </Collapsible>
+        </Section>
       </div>
       <StoryState label="Narrow state" value={{ name, actions }} />
     </StoryCard>
@@ -288,17 +288,17 @@ export const Overview: Story = {
     <StoryPage
       eyebrow="Layout"
       title="Disclosure"
-      summary="用 Accordion 组织一组可展开的区块，用 Collapsible 处理单个区域。标题是唯一折叠入口，其他操作放在 actions。"
+      summary="用 Accordion 组织一组可展开的区块，用 Section 处理单个区域。标题是唯一折叠入口，其他操作放在 actions。"
       meta={
         <>
           <span>Accordion</span>
           <span>·</span>
-          <span>Collapsible</span>
+          <span>Section</span>
           <span>·</span>
           <span>24 / 32 header</span>
         </>
       }>
-      <StorySection title="Variants" description="Accordion 适合多区块导航；Collapsible 适合单个可折叠面板。">
+      <StorySection title="Variants" description="Accordion 适合多区块导航；Section 适合单个可折叠面板。">
         <VariantsExample />
       </StorySection>
       <StorySection title="Sizes" description="sm 24px / md 32px；字号和内容 padding 同步切换。">
@@ -326,9 +326,9 @@ export const Overview: Story = {
   </AccordionItem>
 </Accordion>
 
-<Collapsible title="Advanced" actions={<Button size="xs">Reset</Button>}>
+<Section title="Advanced" actions={<Button size="xs">Reset</Button>}>
   <Input … />
-</Collapsible>`}
+</Section>`}
           />
           <StoryProps
             rows={[
@@ -344,7 +344,7 @@ export const Overview: Story = {
                 name: 'triggerMode',
                 type: "'title' | 'icon'",
                 defaultValue: "'title'",
-                description: '仅 Collapsible。',
+                description: '仅 Section。',
               },
               { name: 'collapsible', type: 'boolean', defaultValue: 'true', description: 'false 时固定展开。' },
             ]}

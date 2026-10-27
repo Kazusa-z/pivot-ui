@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import {
   createNotificationService,
   NotificationProvider,
   ToastView,
   useNotifications,
-} from '../src/widgets/notifications'
+} from '../src/overlays/notifications'
 import { css } from '../styled-system/css'
 import {
   StoryPage,

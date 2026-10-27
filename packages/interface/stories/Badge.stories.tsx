@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Badge, Tag } from '../src/widgets/display/Badge'
-import { Button } from '../src/widgets/buttons'
+import { Badge, Tag } from '../src/display/Badge'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { StoryPage, StorySection, StoryCard, StoryRow, StoryGrid, StoryState, StoryCode } from './support/StoryPage'
 

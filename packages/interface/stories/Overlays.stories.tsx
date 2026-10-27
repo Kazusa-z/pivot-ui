@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { Input } from '../src/widgets/inputs/Input'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { Input } from '../src/controls/inputs/Input'
 import {
   HoverCard,
   HoverCardRoot,
@@ -19,7 +19,7 @@ import {
   PopoverDescription,
   Tooltip,
   TooltipProvider,
-} from '../src/widgets/overlays'
+} from '../src/overlays'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {

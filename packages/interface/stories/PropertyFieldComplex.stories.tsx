@@ -4,10 +4,10 @@ import type { ColorValue } from '../src/values/color'
 import type { CurveValue } from '../src/values/curve'
 import type { Vector3 } from '../src/values/geometry'
 import { PropertyField, type PropertyFieldRenderProps } from '../src/property/PropertyField'
-import { Vector3Input } from '../src/templates/numeric/GeometryInputs'
-import { ColorInput } from '../src/templates/color/ColorInput'
-import { CurvePicker } from '../src/templates/curve/CurvePicker'
-import { Button } from '../src/widgets/buttons'
+import { Vector3Input } from '../src/editors/numeric/GeometryInputs'
+import { ColorField } from '../src/editors/color/ColorField'
+import { CurvePicker } from '../src/editors/curve/CurvePicker'
+import { Button } from '../src/controls/buttons'
 import { createMockPropertyAccess } from './support/mock-property-access'
 import {
   StoryPage,
@@ -133,7 +133,7 @@ function ComplexExample() {
       }>
       <StorySection
         title="Custom editors"
-        description="三个字段分别把 editProps 接到 Vector3Input、ColorInput 和 CurvePicker；它们都保留 PropertyField 的标签、说明、错误和保存生命周期。">
+        description="三个字段分别把 editProps 接到 Vector3Input、ColorField 和 CurvePicker；它们都保留 PropertyField 的标签、说明、错误和保存生命周期。">
         <StoryGrid>
           <StoryCard title="Vector3 · render" description="比例联动由自定义编辑器自己维护，提交仍走 PropertyField。">
             <PropertyField
@@ -158,12 +158,12 @@ function ComplexExample() {
 
           <StoryCard
             title="Color · render"
-            description="ColorInput 负责取色、HEX 和 alpha；字段级错误由 PropertyField 统一渲染。">
+            description="ColorField 负责取色、HEX 和 alpha；字段级错误由 PropertyField 统一渲染。">
             <PropertyField
               access={hosts.color}
               density={density}
               onEditResult={resultHandler}
-              render={(field) => <ColorInput {...field.editProps} label="Color" />}
+              render={(field) => <ColorField {...field.editProps} label="Color" />}
             />
             <StoryRow>
               <Button size="sm" variant="outline" onClick={() => hosts.color.rejectNext('Color was rejected.')}>
@@ -248,7 +248,7 @@ function ComplexExample() {
 
 <PropertyField
   access={color}
-  render={(field) => <ColorInput {...field.editProps} />}
+  render={(field) => <ColorField {...field.editProps} />}
 />`}
           />
           <StoryProps

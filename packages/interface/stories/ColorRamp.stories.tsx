@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { ColorRamp } from '../src/templates/color/ColorRamp'
-import { ColorRampPicker } from '../src/templates/color/ColorRampPicker'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { ColorRampEditor } from '../src/editors/color/ColorRampEditor'
+import { ColorRampPicker } from '../src/editors/color/ColorRampPicker'
 import type { ColorRampValue } from '../src/values/color-ramp'
 import { css } from '../styled-system/css'
 import {
@@ -65,7 +65,7 @@ function RampDemo({
               : '拖动、键盘、添加/删除停靠点和切换插值都通过同一份 value 回传。'
       }>
       <div className={css({ width: '100%', maxWidth: narrow ? '280px' : '360px', minWidth: 0 })}>
-        <ColorRamp
+        <ColorRampEditor
           value={value}
           activeStopId={selected}
           onActiveStopIdChange={(id) => {
@@ -140,10 +140,10 @@ function Variants() {
   return (
     <StoryGrid>
       <StoryCard title="Linear" description="颜色在相邻停靠点之间连续插值。">
-        <ColorRamp defaultValue={initialRamp} aria-label="Linear color ramp" />
+        <ColorRampEditor defaultValue={initialRamp} aria-label="Linear color ramp" />
       </StoryCard>
       <StoryCard title="Constant" description="停靠点之间保持前一个颜色，适合色阶或分段材质。">
-        <ColorRamp defaultValue={constantRamp} aria-label="Constant color ramp" />
+        <ColorRampEditor defaultValue={constantRamp} aria-label="Constant color ramp" />
       </StoryCard>
     </StoryGrid>
   )
@@ -171,12 +171,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'ColorRamp 编辑随位置变化的颜色渐变，ColorRampPicker 提供紧凑入口和弹出编辑器。每个停靠点有稳定 id、0–1 position 和颜色值；interpolation 控制线性或阶梯过渡。选择停靠点只切换编辑对象，结构、位置和颜色修改通过 onValueChange/onValueCommit 回传。',
+          'ColorRampEditor 编辑随位置变化的颜色渐变，ColorRampPicker 提供紧凑入口和弹出编辑器。每个停靠点有稳定 id、0–1 position 和颜色值；interpolation 控制线性或阶梯过渡。选择停靠点只切换编辑对象，结构、位置和颜色修改通过 onValueChange/onValueCommit 回传。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Color/ColorRamp',
+  title: 'Color/ColorRampEditor',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -185,7 +185,7 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Color"
-      title="ColorRamp"
+      title="ColorRampEditor"
       summary="停靠点、插值和颜色共同组成一条渐变。轨道支持指针拖动、键盘移动、添加/删除，以及同一位置上的多个独立停靠点。"
       meta={
         <>
@@ -219,8 +219,8 @@ export const Overview: Story = {
 
       <StorySection title="Density and sizing">
         <StoryNote>
-          ColorRamp 没有 density 变体：内部 Select、Button 和 InputNumber 使用 24px 紧凑档，面板圆角 6px。 轨道在 280px
-          宽度下仍可操作，但操作按钮会换行；更窄时优先把编辑器放进 Popover 或单独面板。
+          ColorRampEditor 没有 density 变体：内部 Select、Button 和 NumberInput 使用 24px 紧凑档，面板圆角 6px。 轨道在
+          280px 宽度下仍可操作，但操作按钮会换行；更窄时优先把编辑器放进 Popover 或单独面板。
         </StoryNote>
       </StorySection>
 
@@ -240,7 +240,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<ColorRamp
+            code={`<ColorRampEditor
   value={ramp}
   activeStopId={selected}
   onActiveStopIdChange={setSelected}

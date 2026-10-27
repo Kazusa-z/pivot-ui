@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { ImagePreview } from '../src/widgets/display/ImagePreview'
-import { Select } from '../src/widgets/choices/Select'
-import { InputNumber } from '../src/widgets/inputs/InputNumber'
+import { ImagePreview } from '../src/display/ImagePreview'
+import { Select } from '../src/controls/choices/Select'
+import { NumberInput } from '../src/controls/inputs/NumberInput'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {
@@ -70,7 +70,7 @@ function ImagePreviewExample() {
               />
             </StoryField>
             <StoryField label="Preview width">
-              <InputNumber
+              <NumberInput
                 aria-label="Preview width"
                 value={width}
                 min={80}

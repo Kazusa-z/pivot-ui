@@ -13,9 +13,9 @@ import type {
 import type { PropertyDescriptorSchema, PropertyNumericAxis, PropertyValueAdapter } from '../../src/contracts/property'
 import { clonePropertyData, arePropertyDataEqual } from '../../src/values/property-data'
 import type { NumericConstraints } from '../../src/values/numeric'
-import { validateDistribution } from '../../src/values/distribution'
+import { validatePartition } from '../../src/values/partition'
 import { assertColorValue } from '../../src/values/color'
-import { assertColorRampValue, assertColorRampChannelsValue } from '../../src/values/color-ramp'
+import { assertColorRampValue, assertColorAlphaRampValue } from '../../src/values/color-ramp'
 import { assertColorDistributionValue } from '../../src/values/color-distribution'
 import { assertCurveValue } from '../../src/values/curve'
 import { assertNumericDistributionValue } from '../../src/values/numeric-distribution'
@@ -159,10 +159,10 @@ function copyDescriptor<T>(descriptor: PropertyDescriptor<T>): PropertyDescripto
       assertNumericRules(source.constraints)
       axes(source.axes)
       break
-    case 'distribution':
+    case 'partition':
       for (const number of [source.constraints?.total, source.constraints?.minSegment])
         if (number !== undefined && (!Number.isFinite(number) || number < 0))
-          throw new TypeError('Distribution constraints must be finite and nonnegative.')
+          throw new TypeError('Partition constraints must be finite and nonnegative.')
       break
     case 'enum':
     case 'multi-enum': {
@@ -184,7 +184,7 @@ function copyDescriptor<T>(descriptor: PropertyDescriptor<T>): PropertyDescripto
     }
     case 'color':
     case 'color-ramp':
-    case 'color-ramp-channels':
+    case 'color-alpha-ramp':
     case 'color-distribution':
       if (source.hdr !== undefined && typeof source.hdr !== 'boolean')
         throw new TypeError('HDR metadata must be boolean.')
@@ -286,10 +286,10 @@ function validateValue(
           return 'Numeric tuple length must match its axes.'
         value.forEach((item, index) => number(item, { ...descriptor.constraints, ...descriptor.axes[index] }))
         break
-      case 'distribution':
-        if (!Array.isArray(value) || value.length < 2) return 'A distribution requires at least two numeric segments.'
+      case 'partition':
+        if (!Array.isArray(value) || value.length < 2) return 'A partition requires at least two numeric segments.'
         value.forEach((item) => number(item))
-        validateDistribution(value as number[], descriptor.constraints)
+        validatePartition(value as number[], descriptor.constraints)
         break
       case 'color':
         assertColorValue(value, { hdr: descriptor.hdr })
@@ -297,8 +297,8 @@ function validateValue(
       case 'color-ramp':
         assertColorRampValue(value, { hdr: descriptor.hdr })
         break
-      case 'color-ramp-channels':
-        assertColorRampChannelsValue(value, { hdr: descriptor.hdr })
+      case 'color-alpha-ramp':
+        assertColorAlphaRampValue(value, { hdr: descriptor.hdr })
         break
       case 'color-distribution':
         assertColorDistributionValue(value, { hdr: descriptor.hdr })

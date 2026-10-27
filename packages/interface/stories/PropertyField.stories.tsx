@@ -2,7 +2,7 @@ import { useState, useSyncExternalStore } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { PropertyField } from '../src/property/PropertyField'
 import type { ChoiceValue, EditResult } from '../src'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { createMockPropertyAccess } from './support/mock-property-access'
 import {
@@ -156,7 +156,7 @@ function FieldExample() {
     <StoryPage
       eyebrow="Property"
       title="PropertyField"
-      summary="PropertyField 把 PropertyAccess 接到带标签、说明和错误的字段。density 让内置 Input、Textarea、Select、Combobox、InputNumber、NumericSlider 与 Checkbox 跟随 24/32 两档；应用负责数据、校验和异步保存。"
+      summary="PropertyField 把 PropertyAccess 接到带标签、说明和错误的字段。density 让内置 Input、Textarea、Select、Combobox、NumberInput、SliderField 与 Checkbox 跟随 24/32 两档；应用负责数据、校验和异步保存。"
       meta={
         <>
           <span>compact 24 / regular 32</span>

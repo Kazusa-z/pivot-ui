@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { AssetItem, AssetName, AssetThumbnail } from '../src/widgets/collections/asset'
+import { AssetItem, AssetName, AssetThumbnail } from '../src/collections/asset'
 import type { AssetDescriptor } from '../src/values/assets'
-import { Badge } from '../src/widgets/display/Badge'
-import { Button } from '../src/widgets/buttons'
+import { Badge } from '../src/display/Badge'
+import { Button } from '../src/controls/buttons'
 import { css } from '../styled-system/css'
 import {
   StoryPage,

@@ -4,15 +4,15 @@ import { join, relative } from 'node:path'
 const root = process.cwd()
 const srcRoot = join(root, 'packages/interface/src')
 const allowedByFile = new Map([
-  ['widgets/display/Kbd.tsx', new Set(['11px', '12px', '16px', '18px', '20px'])],
-  ['widgets/color/ColorPlane.tsx', new Set(['130px'])],
-  ['widgets/color/ColorWidget.tsx', new Set(['48px'])],
-  ['widgets/sliders/Slider.tsx', new Set(['160px'])],
-  ['widgets/collections/asset/AssetThumbnail.tsx', new Set(['64px'])],
-  ['templates/color/RampControls.tsx', new Set(['64px'])],
-  ['templates/resources/AssetReferenceInput.tsx', new Set(['48px'])],
+  ['display/Kbd.tsx', new Set(['11px', '12px', '16px', '18px', '20px'])],
+  ['editors/color/ColorPlane.tsx', new Set(['130px'])],
+  ['editors/color/ColorEditor.tsx', new Set(['48px'])],
+  ['controls/sliders/Slider.tsx', new Set(['160px'])],
+  ['collections/asset/AssetThumbnail.tsx', new Set(['64px'])],
+  ['editors/color/RampControls.tsx', new Set(['64px'])],
+  ['editors/resources/AssetField.tsx', new Set(['48px'])],
   // Multi-line textarea content heights are content sizes, not control heights.
-  ['widgets/inputs/text.styles.ts', new Set(['56px', '64px'])],
+  ['controls/inputs/text.styles.ts', new Set(['56px', '64px'])],
 ])
 const propertyPattern = /\b(height|minHeight|borderRadius|fontSize):\s*'([^']+)'/g
 const files = []

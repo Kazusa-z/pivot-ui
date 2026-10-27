@@ -1,17 +1,17 @@
 import { areColorsEqual, assertColorValue, type ColorOptions, type ColorValue } from './color'
 import {
-  assertColorRampChannelsValue,
-  areColorRampChannelsEqual,
-  cloneColorRampChannelsValue,
-  sampleColorRampChannels,
-  type ColorRampChannelsValue,
+  assertColorAlphaRampValue,
+  areColorAlphaRampsEqual,
+  cloneColorAlphaRampValue,
+  sampleColorAlphaRamp,
+  type ColorAlphaRampValue,
 } from './color-ramp'
 
 export type ColorDistributionValue =
   | { readonly mode: 'constant'; readonly color: ColorValue }
-  | { readonly mode: 'gradient'; readonly ramp: ColorRampChannelsValue }
+  | { readonly mode: 'gradient'; readonly ramp: ColorAlphaRampValue }
   | { readonly mode: 'two-constant'; readonly colors: readonly [ColorValue, ColorValue] }
-  | { readonly mode: 'two-gradient'; readonly ramps: readonly [ColorRampChannelsValue, ColorRampChannelsValue] }
+  | { readonly mode: 'two-gradient'; readonly ramps: readonly [ColorAlphaRampValue, ColorAlphaRampValue] }
 
 export type ColorDistributionMode = ColorDistributionValue['mode']
 /** 保存各模式的编辑值，方便切回某模式时恢复内容。当前正在使用的值通过 ColorDistributionValue 传入。 */
@@ -37,7 +37,7 @@ export function assertColorDistributionValue(
       assertColorValue(candidate.color, options)
       return
     case 'gradient':
-      assertColorRampChannelsValue(candidate.ramp, options)
+      assertColorAlphaRampValue(candidate.ramp, options)
       return
     case 'two-constant':
       if (!Array.isArray(candidate.colors) || candidate.colors.length !== 2)
@@ -47,7 +47,7 @@ export function assertColorDistributionValue(
     case 'two-gradient':
       if (!Array.isArray(candidate.ramps) || candidate.ramps.length !== 2)
         throw new TypeError('Two-gradient distributions require exactly two ramps.')
-      candidate.ramps.forEach((ramp) => assertColorRampChannelsValue(ramp, options))
+      candidate.ramps.forEach((ramp) => assertColorAlphaRampValue(ramp, options))
       return
     default:
       throw new TypeError('Unknown color distribution mode.')
@@ -55,7 +55,7 @@ export function assertColorDistributionValue(
 }
 
 const copyColor = (color: ColorValue): ColorValue => Object.freeze({ ...color })
-const copyRamp = cloneColorRampChannelsValue
+const copyRamp = cloneColorAlphaRampValue
 
 /** 校验并深拷贝颜色分布，保留通道精度和颜色编码。需要映射到渲染引擎的数据格式时，由应用转换结果。 */
 export function copyColorDistributionValue(value: ColorDistributionValue): ColorDistributionValue {
@@ -73,18 +73,18 @@ export function copyColorDistributionValue(value: ColorDistributionValue): Color
     case 'two-gradient':
       return Object.freeze({
         mode: value.mode,
-        ramps: Object.freeze(value.ramps.map(copyRamp)) as readonly [ColorRampChannelsValue, ColorRampChannelsValue],
+        ramps: Object.freeze(value.ramps.map(copyRamp)) as readonly [ColorAlphaRampValue, ColorAlphaRampValue],
       })
   }
 }
 
 export function areColorDistributionsEqual(a: ColorDistributionValue, b: ColorDistributionValue): boolean {
   if (a.mode === 'constant' && b.mode === 'constant') return areColorsEqual(a.color, b.color)
-  if (a.mode === 'gradient' && b.mode === 'gradient') return areColorRampChannelsEqual(a.ramp, b.ramp)
+  if (a.mode === 'gradient' && b.mode === 'gradient') return areColorAlphaRampsEqual(a.ramp, b.ramp)
   if (a.mode === 'two-constant' && b.mode === 'two-constant')
     return a.colors.every((color, index) => areColorsEqual(color, b.colors[index]))
   if (a.mode === 'two-gradient' && b.mode === 'two-gradient')
-    return a.ramps.every((ramp, index) => areColorRampChannelsEqual(ramp, b.ramps[index]))
+    return a.ramps.every((ramp, index) => areColorAlphaRampsEqual(ramp, b.ramps[index]))
   return false
 }
 
@@ -107,7 +107,7 @@ export function rememberColorDistribution(
   return Object.freeze({ ...copyColorDistributionCache(cache), [value.mode]: copyColorDistributionValue(value) })
 }
 
-function constantRamp(color: ColorValue): ColorRampChannelsValue {
+function constantRamp(color: ColorValue): ColorAlphaRampValue {
   return {
     color: {
       interpolation: 'linear',
@@ -141,12 +141,9 @@ export function switchColorDistributionMode(
       : value.mode === 'two-constant'
         ? value.colors
         : value.mode === 'gradient'
-          ? [sampleColorRampChannels(value.ramp, 0) ?? fallback, sampleColorRampChannels(value.ramp, 1) ?? fallback]
-          : [
-              sampleColorRampChannels(value.ramps[0], 0) ?? fallback,
-              sampleColorRampChannels(value.ramps[1], 0) ?? fallback,
-            ]
-  const ramps: readonly [ColorRampChannelsValue, ColorRampChannelsValue] =
+          ? [sampleColorAlphaRamp(value.ramp, 0) ?? fallback, sampleColorAlphaRamp(value.ramp, 1) ?? fallback]
+          : [sampleColorAlphaRamp(value.ramps[0], 0) ?? fallback, sampleColorAlphaRamp(value.ramps[1], 0) ?? fallback]
+  const ramps: readonly [ColorAlphaRampValue, ColorAlphaRampValue] =
     value.mode === 'gradient'
       ? [value.ramp, value.ramp]
       : value.mode === 'two-gradient'

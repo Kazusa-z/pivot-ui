@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { AlertDialog, Dialog, DialogClose } from '../src/widgets/dialogs'
-import { Button } from '../src/widgets/buttons'
-import { Input } from '../src/widgets/inputs'
+import { AlertDialog, Dialog, DialogClose } from '../src/dialogs'
+import { Button } from '../src/controls/buttons'
+import { Input } from '../src/controls/inputs'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {

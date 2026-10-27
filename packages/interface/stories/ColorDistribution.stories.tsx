@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { ColorDistributionTemplate } from '../src/templates/color/ColorDistributionTemplate'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { ColorDistributionEditor } from '../src/editors/color/ColorDistributionEditor'
 import {
   copyColorDistributionValue,
   switchColorDistributionMode,
@@ -75,7 +75,7 @@ function DistributionDemo({
               : '模式、颜色和渐变都通过同一份 value 回传；cache 保留已切换模式的设置。'
       }>
       <div className={css({ width: '100%', maxWidth: narrow ? '300px' : '480px', minWidth: 0 })}>
-        <ColorDistributionTemplate
+        <ColorDistributionEditor
           value={value}
           cache={cache}
           onCacheChange={setCache}
@@ -139,7 +139,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'ColorDistributionTemplate 在单色、渐变、两种颜色和两组渐变之间切换，适合效果参数或随机颜色范围。value.mode 决定当前数据形状；cache 保留已接受过的模式，切换时可以恢复。onValueChange 返回预览，onValueCommit 表示一次保存，应用负责接受、拒绝和取消后的恢复。',
+          'ColorDistributionEditor 在单色、渐变、两种颜色和两组渐变之间切换，适合效果参数或随机颜色范围。value.mode 决定当前数据形状；cache 保留已接受过的模式，切换时可以恢复。onValueChange 返回预览，onValueCommit 表示一次保存，应用负责接受、拒绝和取消后的恢复。',
       },
     },
     layout: 'fullscreen',
@@ -184,7 +184,7 @@ export const Overview: Story = {
 
       <StorySection title="Density and sizing">
         <StoryNote>
-          ColorDistributionTemplate 没有 density 变体：模式 SegmentControl、ColorInput、ColorRampChannels 都使用 24px
+          ColorDistributionEditor 没有 density 变体：模式 SegmentControl、ColorField、ColorAlphaRampEditor 都使用 24px
           紧凑控件；两种颜色/渐变的外框为 6px 圆角。300px 以下字段会换行，但不会改变字号档位。
         </StoryNote>
       </StorySection>
@@ -204,7 +204,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<ColorDistributionTemplate
+            code={`<ColorDistributionEditor
   value={value}
   cache={cache}
   onCacheChange={setCache}

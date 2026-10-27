@@ -1,5 +1,5 @@
 import { convertColorSpace, type ColorSpace, type ColorValue } from '../../src/values/color'
-import type { ColorRampChannelsValue } from '../../src/values/color-ramp'
+import type { ColorAlphaRampValue } from '../../src/values/color-ramp'
 
 /** 示例颜色数据，展示应用如何传递归一化通道、颜色编码和稳定资源 ID。 */
 export interface HostColorChannels {
@@ -8,7 +8,7 @@ export interface HostColorChannels {
   interpolation: 'linear' | 'constant'
 }
 
-export function fromHostColorChannels(value: HostColorChannels, space: ColorSpace): ColorRampChannelsValue {
+export function fromHostColorChannels(value: HostColorChannels, space: ColorSpace): ColorAlphaRampValue {
   return {
     color: {
       interpolation: value.interpolation,
@@ -18,7 +18,7 @@ export function fromHostColorChannels(value: HostColorChannels, space: ColorSpac
   }
 }
 
-export function toHostColorChannels(value: ColorRampChannelsValue, storageSpace: ColorSpace): HostColorChannels {
+export function toHostColorChannels(value: ColorAlphaRampValue, storageSpace: ColorSpace): HostColorChannels {
   return {
     interpolation: value.color.interpolation,
     color: value.color.stops.map((stop) => {

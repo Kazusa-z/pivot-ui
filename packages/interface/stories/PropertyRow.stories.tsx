@@ -1,9 +1,9 @@
 import { useId, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { PropertyRow, PropertyLabel, PropertyControl, PropertyDescription } from '../src/layout/PropertyRow'
-import { Input } from '../src/widgets/inputs/Input'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { Button } from '../src/widgets/buttons'
+import { Input } from '../src/controls/inputs/Input'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {

@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button, ActionButton } from '../src/widgets/buttons'
-import { Input } from '../src/widgets/inputs/Input'
-import { InputNumber } from '../src/widgets/inputs/InputNumber'
-import { Select } from '../src/widgets/choices/Select'
-import { Combobox } from '../src/widgets/choices/Combobox'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { SegmentControl } from '../src/widgets/choices/SegmentControl'
-import { ToggleGroup } from '../src/widgets/choices/ToggleGroup'
-import { Slider } from '../src/widgets/sliders/Slider'
+import { Button, IconButton } from '../src/controls/buttons'
+import { Input } from '../src/controls/inputs/Input'
+import { NumberInput } from '../src/controls/inputs/NumberInput'
+import { Select } from '../src/controls/choices/Select'
+import { Combobox } from '../src/controls/choices/Combobox'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { SegmentControl } from '../src/controls/choices/SegmentControl'
+import { ToggleGroup } from '../src/controls/choices/ToggleGroup'
+import { Slider } from '../src/controls/sliders/Slider'
 import { Text } from '../src/foundation/typography'
 import { StoryPage, StorySection, StoryCard, StoryRow } from './support/StoryPage'
 
@@ -65,11 +65,11 @@ function Matrix({ density }: { density: 'compact' | 'regular' }) {
         <Button size={size} variant="solid">
           Solid
         </Button>
-        <ActionButton size={size} aria-label={`Add (${density})`}>
+        <IconButton size={size} aria-label={`Add (${density})`}>
           <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14">
             <path d="M8 2V14M2 8H14" stroke="currentColor" strokeWidth="1.5" />
           </svg>
-        </ActionButton>
+        </IconButton>
       </Row>
       <Row label="Text input">
         <Input size={size} placeholder="Value" aria-label={`${density} input`} css={controlWidth} />
@@ -82,7 +82,7 @@ function Matrix({ density }: { density: 'compact' | 'regular' }) {
         />
       </Row>
       <Row label="Number">
-        <InputNumber size={size} value={10} min={0} max={100} aria-label={`${density} number`} css={controlWidth} />
+        <NumberInput size={size} value={10} min={0} max={100} aria-label={`${density} number`} css={controlWidth} />
       </Row>
       <Row label="Select">
         <Select size={size} value="local" options={options} aria-label={`${density} select`} css={controlWidth} />
@@ -139,7 +139,7 @@ function States() {
       </Row>
       <Row label="Loading">
         <Button loading>Loading</Button>
-        <ActionButton loading aria-label="Loading action" />
+        <IconButton loading aria-label="Loading action" />
       </Row>
     </StoryCard>
   )

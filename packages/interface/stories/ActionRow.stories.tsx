@@ -1,9 +1,9 @@
 import { useId, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { PropertyRow, PropertyLabel, PropertyControl } from '../src/layout/PropertyRow'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { Flex } from '../src/layout/Flex'
-import { Input } from '../src/widgets/inputs/Input'
+import { Input } from '../src/controls/inputs/Input'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,

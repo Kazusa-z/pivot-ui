@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { IconCopy, IconTrash } from '@tabler/icons-react'
-import * as M from '../src/widgets/menus'
-import type { MenuSize } from '../src/widgets/menus'
-import { Button } from '../src/widgets/buttons'
+import * as M from '../src/overlays/menus'
+import type { MenuSize } from '../src/overlays/menus'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {

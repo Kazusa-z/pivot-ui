@@ -13,7 +13,7 @@ pnpm dev:demo            # Vite 示例应用
 pnpm verify             # 格式、类型、示例应用与 Storybook 构建检查
 ```
 
-在 Storybook 中按用途浏览组件：`Widgets` 是单个控件，`Layout` 用于组织页面，`Templates` 提供多个控件的组合，`Property` 展示如何将控件连接到应用数据。工具栏的 Theme 可切换明暗主题；`Foundation / Tokens` 可以查看颜色、间距和字号。
+组件按层组织：`Foundation` → `Display` → `Overlays` → `Controls` → `Layout` / `Dialogs` → `Collections` → `Editors` → `Property`，源码目录与 Storybook 侧边栏一一对应，分层说明见[组件地图](./docs/README.md#4-组件地图)。工具栏的 Theme 可切换明暗主题；`Foundation / Tokens` 可以查看颜色、间距和字号。
 
 ## 在 React 中使用
 

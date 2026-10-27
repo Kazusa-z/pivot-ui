@@ -1,10 +1,10 @@
 import { useMemo, useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import type { CurvePreset, CurvePresetService } from '../src/contracts/curve'
-import { CurvePicker } from '../src/templates/curve/CurvePicker'
-import { defaultCurvePresets } from '../src/templates/curve/CurvePresets'
+import { CurvePicker } from '../src/editors/curve/CurvePicker'
+import { defaultCurvePresets } from '../src/editors/curve/CurvePresets'
 import { copyCurveValue, type CurvePointId, type CurveValue, type CurveViewport } from '../src/values/curve'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import {
   StoryCode,
   StoryCard,
@@ -329,7 +329,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'CurvePicker 用 32px 曲线预览按钮打开弹出编辑器，适合属性面板。它把 CurveWidget 的编辑能力与预设列表组合在一起，并通过 onValueChange / onValueCommit 把预览和保存结果交给宿主。',
+          'CurvePicker 用 32px 曲线预览按钮打开弹出编辑器，适合属性面板。它把 CurveEditor 的编辑能力与预设列表组合在一起，并通过 onValueChange / onValueCommit 把预览和保存结果交给宿主。',
       },
     },
     layout: 'fullscreen',
@@ -369,7 +369,7 @@ export const Overview: Story = {
           才会写入当前曲线。
         </StoryNote>
         <StoryNote>
-          内部编辑器使用 24px 的 Select、Button 和 InputNumber；触发器固定 32px。CurvePicker 没有独立的 density 属性。
+          内部编辑器使用 24px 的 Select、Button 和 NumberInput；触发器固定 32px。CurvePicker 没有独立的 density 属性。
         </StoryNote>
       </StorySection>
 

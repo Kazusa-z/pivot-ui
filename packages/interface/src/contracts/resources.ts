@@ -28,7 +28,7 @@ export interface ResourceProvider {
   chooseFile?(): Promise<AssetDescriptor | null>
 }
 
-/** 保存列表或网格的展示偏好。应用将读写方法连接到 ResourcePicker 的 viewMode 和 onViewModeChange。 */
+/** 保存列表或网格的展示偏好。应用将读写方法连接到 ResourceBrowser 的 viewMode 和 onViewModeChange。 */
 export interface ResourceViewPreferences {
   getViewMode(): ResourceViewMode
   setViewMode(mode: ResourceViewMode): void

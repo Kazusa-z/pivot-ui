@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { SegmentControl } from '../src/widgets/choices/SegmentControl'
+import { SegmentControl } from '../src/controls/choices/SegmentControl'
 import type { ChoiceOption, ChoiceValue } from '../src/values'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { css } from '../styled-system/css'
 import {

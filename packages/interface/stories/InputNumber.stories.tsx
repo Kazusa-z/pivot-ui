@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { InputNumber } from '../src/widgets/inputs/InputNumber'
-import { Button } from '../src/widgets/buttons'
-import { Kbd } from '../src/widgets/display/Kbd'
+import { NumberInput } from '../src/controls/inputs/NumberInput'
+import { Button } from '../src/controls/buttons'
+import { Kbd } from '../src/display/Kbd'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,
@@ -23,7 +23,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'InputNumber 用于精确输入、拖动和步进调整一个有限数值，适合尺寸、角度和强度等参数。value/onValueChange 控制受控值，onEditStart/onValueCommit/onEditCancel 区分开始、保存和取消。min/max 与 softMin/softMax 分别控制硬范围和常用调节范围，step/dragStep/precision 控制步进与精度。',
+          'NumberInput 用于精确输入、拖动和步进调整一个有限数值，适合尺寸、角度和强度等参数。value/onValueChange 控制受控值，onEditStart/onValueCommit/onEditCancel 区分开始、保存和取消。min/max 与 softMin/softMax 分别控制硬范围和常用调节范围，step/dragStep/precision 控制步进与精度。',
       },
     },
     layout: 'fullscreen',
@@ -62,7 +62,7 @@ export const Overview: Story = {
           <StoryCard title="Compact 20 / 24">
             <StoryRow align="end">
               <StoryField label="xs · 20px">
-                <InputNumber
+                <NumberInput
                   aria-label="Compact xs number"
                   size="xs"
                   defaultValue={12}
@@ -73,7 +73,7 @@ export const Overview: Story = {
                 />
               </StoryField>
               <StoryField label="sm · 24px">
-                <InputNumber
+                <NumberInput
                   aria-label="Compact sm number"
                   size="sm"
                   defaultValue={12}
@@ -88,7 +88,7 @@ export const Overview: Story = {
           <StoryCard title="Regular 32 / 36">
             <StoryRow align="end">
               <StoryField label="md · 32px">
-                <InputNumber
+                <NumberInput
                   aria-label="Regular md number"
                   size="md"
                   defaultValue={12}
@@ -99,7 +99,7 @@ export const Overview: Story = {
                 />
               </StoryField>
               <StoryField label="lg · 36px">
-                <InputNumber
+                <NumberInput
                   aria-label="Regular lg number"
                   size="lg"
                   defaultValue={12}
@@ -119,19 +119,19 @@ export const Overview: Story = {
         description="disabled 不可操作；readOnly 仍可聚焦；valid/invalid 使用统一边框与文字状态。">
         <StoryGrid>
           <StoryCard title="Default">
-            <InputNumber aria-label="Default number" defaultValue={5} />
+            <NumberInput aria-label="Default number" defaultValue={5} />
           </StoryCard>
           <StoryCard title="Valid">
-            <InputNumber aria-label="Valid number" state="valid" defaultValue={5} />
+            <NumberInput aria-label="Valid number" state="valid" defaultValue={5} />
           </StoryCard>
           <StoryCard title="Invalid">
-            <InputNumber aria-label="Invalid number" state="invalid" defaultValue={5} />
+            <NumberInput aria-label="Invalid number" state="invalid" defaultValue={5} />
           </StoryCard>
           <StoryCard title="Disabled">
-            <InputNumber aria-label="Disabled number" disabled defaultValue={5} />
+            <NumberInput aria-label="Disabled number" disabled defaultValue={5} />
           </StoryCard>
           <StoryCard title="Read only">
-            <InputNumber aria-label="Read only number" readOnly defaultValue={5} />
+            <NumberInput aria-label="Read only number" readOnly defaultValue={5} />
           </StoryCard>
         </StoryGrid>
       </StorySection>
@@ -177,7 +177,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<InputNumber
+            code={`<NumberInput
   aria-label="Position X"
   value={position.x}
   min={-100}
@@ -228,7 +228,7 @@ function StepperVariant() {
   const [value, setValue] = useState(12)
   return (
     <StoryCard title="Stepper and unit" description="输入框右侧保留单位，步进按钮使用同一编辑会话。">
-      <InputNumber
+      <NumberInput
         aria-label="Stepper value"
         value={value}
         min={-100}
@@ -251,7 +251,7 @@ function SoftRangeVariant() {
   const [value, setValue] = useState(25)
   return (
     <StoryCard title="Soft range" description="硬范围 −100…100，常用范围 0…10；键入仍可覆盖常用范围。">
-      <InputNumber
+      <NumberInput
         aria-label="Soft range value"
         value={value}
         min={-100}
@@ -276,7 +276,7 @@ function MixedVariant() {
   const [mixed, setMixed] = useState(true)
   return (
     <StoryCard title="Mixed" description="多个对象的数值不一致时显示空值；输入具体值后清除 mixed。">
-      <InputNumber
+      <NumberInput
         aria-label="Mixed value"
         value={value}
         mixed={mixed}
@@ -308,7 +308,7 @@ function NumberBehaviorCard() {
   const record = (message: string) => setEvents((items) => [...items.slice(-11), message])
   return (
     <StoryCard title="Drag, step and text draft" description="尝试键入 -、1e-、1+2，或拖动输入框、点击 +/−。">
-      <InputNumber
+      <NumberInput
         aria-label="Number behavior"
         value={value}
         mixed={mixed}
@@ -362,7 +362,7 @@ function AsyncNumberBehaviorCard() {
   const record = (message: string) => setEvents((items) => [...items.slice(-11), message])
   return (
     <StoryCard title="Async commit" description="Enter 后保存进入等待；Accept 提交，Reject 显示错误并保留草稿。">
-      <InputNumber
+      <NumberInput
         aria-label="Async number"
         value={value}
         min={-100}

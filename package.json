@@ -14,8 +14,9 @@
     "build:storybook": "pnpm --filter @pivot-ui/react build-storybook",
     "audit:styles": "node scripts/audit-styles.mjs",
     "audit:stories": "node scripts/audit-stories.mjs",
+    "audit:layers": "node scripts/audit-layers.mjs",
     "verify:quick": "pnpm exec prettier --check . && pnpm typecheck",
-    "verify": "pnpm run verify:quick && pnpm run audit:styles && pnpm run audit:stories && pnpm build:demo && pnpm build:storybook",
+    "verify": "pnpm run verify:quick && pnpm run audit:styles && pnpm run audit:stories && pnpm run audit:layers && pnpm build:demo && pnpm build:storybook",
     "build:demo": "pnpm --filter @pivot-ui/demo build",
     "analyze:demo": "pnpm --filter @pivot-ui/demo analyze"
   },

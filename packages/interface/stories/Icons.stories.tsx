@@ -23,7 +23,7 @@ import {
   IconPendingFile,
   ConstrainIcon,
 } from '../src/foundation/icons'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { StoryPage, StorySection, StoryCard, StoryGrid, StoryRow, StoryState, StoryCode } from './support/StoryPage'
 

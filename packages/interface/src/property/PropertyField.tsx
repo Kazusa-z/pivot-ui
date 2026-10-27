@@ -9,14 +9,14 @@ import {
   PropertyDescription,
   type PropertyRowProps,
 } from '../layout/PropertyRow'
-import { Input } from '../widgets/inputs/Input'
-import { Textarea } from '../widgets/inputs/Textarea'
-import { useTextEdit } from '../widgets/inputs/useTextEdit'
-import { Checkbox } from '../widgets/choices/Checkbox'
-import { Select } from '../widgets/choices/Select'
-import { Combobox } from '../widgets/choices/Combobox'
-import { InputNumber } from '../widgets/inputs/InputNumber'
-import { NumericSlider } from '../templates/numeric/NumericSlider'
+import { Input } from '../controls/inputs/Input'
+import { Textarea } from '../controls/inputs/Textarea'
+import { useTextEdit } from '../controls/inputs/useTextEdit'
+import { Checkbox } from '../controls/choices/Checkbox'
+import { Select } from '../controls/choices/Select'
+import { Combobox } from '../controls/choices/Combobox'
+import { NumberInput } from '../controls/inputs/NumberInput'
+import { SliderField } from '../editors/numeric/SliderField'
 
 export type PropertyFieldWidget =
   'input' | 'textarea' | 'checkbox' | 'select' | 'combobox' | 'input-number' | 'numeric-slider'
@@ -226,9 +226,9 @@ export function PropertyField<T>({
         {!render &&
           descriptor.kind === 'number' &&
           (selectedWidget === 'numeric-slider' ? (
-            <NumericSlider {...numberProps} size={controlSize} label={descriptor.label} unit={descriptor.unit} />
+            <SliderField {...numberProps} size={controlSize} label={descriptor.label} unit={descriptor.unit} />
           ) : (
-            <InputNumber {...numberProps} size={controlSize} endSlot={descriptor.unit} />
+            <NumberInput {...numberProps} size={controlSize} endSlot={descriptor.unit} />
           ))}
         {!render &&
           descriptor.kind === 'string' &&

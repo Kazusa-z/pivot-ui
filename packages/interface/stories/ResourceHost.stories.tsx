@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { AssetReferenceInput } from '../src/templates/resources/AssetReferenceInput'
-import { Button } from '../src/widgets/buttons'
+import { AssetField } from '../src/editors/resources/AssetField'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { createMockResourceProvider } from './support/mock-resource-provider'
 import { createEngineAssetLookup, type EngineAssetFixture } from './support/resource-host-adapter'
@@ -59,7 +59,7 @@ function HostBoundaryExample() {
     <StoryPage
       eyebrow="Resources"
       title="ResourceHost"
-      summary="把应用自己的资源对象转换成 AssetDescriptor，再通过 ResourceProvider 接入 AssetReferenceInput。选择时 onValueChange 返回资源 ID，应用按 ID 找回原始对象，业务方法仍留在应用侧。"
+      summary="把应用自己的资源对象转换成 AssetDescriptor，再通过 ResourceProvider 接入 AssetField。选择时 onValueChange 返回资源 ID，应用按 ID 找回原始对象，业务方法仍留在应用侧。"
       meta={
         <>
           <span>AssetDescriptor</span>
@@ -80,7 +80,7 @@ function HostBoundaryExample() {
         <StoryCard
           title="Engine resource → AssetDescriptor"
           description="选择纹理、模型或子材质，比较下方应用对象与组件使用的描述。">
-          <AssetReferenceInput
+          <AssetField
             value={selectedId}
             provider={provider}
             resetKey={revision}
@@ -122,7 +122,7 @@ function HostBoundaryExample() {
   status: 'ready',
 }
 
-<AssetReferenceInput
+<AssetField
   value={selectedId}
   provider={provider}
   onValueChange={setSelectedId}
@@ -141,7 +141,7 @@ function HostBoundaryExample() {
   get: async (id) => descriptors.get(id) ?? null,
 }
 
-<AssetReferenceInput
+<AssetField
   value={value}
   provider={provider}
   onValueChange={(id) => setValue(id)}
@@ -183,7 +183,7 @@ const meta = {
     docs: {
       description: {
         component:
-          '这些示例展示如何把应用自己的资源对象接到 ResourceProvider 和 AssetReferenceInput。应用先把对象转换成 AssetDescriptor，界面只接收显示所需的数据；选择时 onValueChange 返回 ID，应用再按 ID 找到原始对象。路径解析、缩略图和业务方法仍由应用适配器负责。',
+          '这些示例展示如何把应用自己的资源对象接到 ResourceProvider 和 AssetField。应用先把对象转换成 AssetDescriptor，界面只接收显示所需的数据；选择时 onValueChange 返回 ID，应用再按 ID 找到原始对象。路径解析、缩略图和业务方法仍由应用适配器负责。',
       },
     },
     layout: 'fullscreen',

@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { NumericSlider } from '../src/templates/numeric/NumericSlider'
+import { SliderField } from '../src/editors/numeric/SliderField'
 import type { NumericCancelReason } from '../src/interaction/numeric/types'
-import { Button } from '../src/widgets/buttons/Button'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
+import { Button } from '../src/controls/buttons/Button'
+import { Checkbox } from '../src/controls/choices/Checkbox'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -34,7 +34,7 @@ function ExposureDemo() {
   return (
     <div className={css({ display: 'grid', gap: 'var(--space-3)', minWidth: 0 })}>
       <div className={sliderWidth}>
-        <NumericSlider
+        <SliderField
           id="numeric-slider-exposure"
           label="Exposure"
           value={value}
@@ -84,7 +84,7 @@ function SoftRangeDemo() {
         文本可输入 −200…200；滑块只覆盖 −50…50，适合大范围精确输入和小范围快速拖动。
       </p>
       <div className={sliderWidth}>
-        <NumericSlider
+        <SliderField
           label="Offset"
           value={value}
           min={-200}
@@ -125,7 +125,7 @@ function AsyncDemo() {
         label="Reject next commit"
       />
       <div className={sliderWidth}>
-        <NumericSlider
+        <SliderField
           label="Async amount"
           value={value}
           min={0}
@@ -169,12 +169,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'NumericSlider 把数值输入框和滑块连接到同一个值，适合既要快速拖动又要精确输入的参数。输入框负责硬范围内的文本输入，滑块可使用 softMin/softMax 限定拖动范围；两者共享 onValueChange 与 onValueCommit。受控取消由应用恢复编辑前的值，异步提交被拒绝后可继续修改或重试。',
+          'SliderField 把数值输入框和滑块连接到同一个值，适合既要快速拖动又要精确输入的参数。输入框负责硬范围内的文本输入，滑块可使用 softMin/softMax 限定拖动范围；两者共享 onValueChange 与 onValueCommit。受控取消由应用恢复编辑前的值，异步提交被拒绝后可继续修改或重试。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Numeric/NumericSlider',
+  title: 'Numeric/SliderField',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -183,11 +183,11 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Numeric"
-      title="NumericSlider"
+      title="SliderField"
       summary="一个数值输入框加一条滑块。紧凑档用于属性面板，常规档用于表单；文本输入和拖动共用同一组提交/取消语义。"
       meta={
         <>
-          <span>InputNumber + Slider</span>
+          <span>NumberInput + Slider</span>
           <span>·</span>
           <span>20 / 24 / 32</span>
         </>
@@ -207,7 +207,7 @@ export const Overview: Story = {
 
       <StorySection
         title="Density"
-        description="xs 20、sm 24 为紧凑档，md 32 为常规档。NumericSlider 没有 lg/36 尺寸，滑块与输入框始终同档。">
+        description="xs 20、sm 24 为紧凑档，md 32 为常规档。SliderField 没有 lg/36 尺寸，滑块与输入框始终同档。">
         <StoryGrid>
           {(
             [
@@ -218,7 +218,7 @@ export const Overview: Story = {
           ).map(([size, height, usage]) => (
             <StoryCard key={size} title={`${size} · ${height}`} description={usage}>
               <div className={sliderWidth}>
-                <NumericSlider label={`${size} amount`} size={size} defaultValue={32} min={0} max={100} unit="%" />
+                <SliderField label={`${size} amount`} size={size} defaultValue={32} min={0} max={100} unit="%" />
               </div>
             </StoryCard>
           ))}
@@ -229,22 +229,22 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCard title="Disabled">
             <div className={sliderWidth}>
-              <NumericSlider label="Disabled amount" defaultValue={25} disabled />
+              <SliderField label="Disabled amount" defaultValue={25} disabled />
             </div>
           </StoryCard>
           <StoryCard title="Read only">
             <div className={sliderWidth}>
-              <NumericSlider label="Readonly amount" defaultValue={25} readOnly />
+              <SliderField label="Readonly amount" defaultValue={25} readOnly />
             </div>
           </StoryCard>
           <StoryCard title="Mixed">
             <div className={sliderWidth}>
-              <NumericSlider label="Mixed amount" defaultValue={0} mixed />
+              <SliderField label="Mixed amount" defaultValue={0} mixed />
             </div>
           </StoryCard>
           <StoryCard title="Invalid">
             <div className={sliderWidth}>
-              <NumericSlider label="Invalid amount" defaultValue={120} min={0} max={100} state="invalid" />
+              <SliderField label="Invalid amount" defaultValue={120} min={0} max={100} state="invalid" />
             </div>
           </StoryCard>
         </StoryGrid>
@@ -274,7 +274,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<NumericSlider
+            code={`<SliderField
   label="Exposure"
   value={value}
   min={0}

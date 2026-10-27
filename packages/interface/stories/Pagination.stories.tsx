@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Pagination } from '../src/widgets/navigation/Pagination'
-import { Button } from '../src/widgets/buttons/Button'
+import { Pagination } from '../src/collections/navigation/Pagination'
+import { Button } from '../src/controls/buttons/Button'
 import {
   StoryPage,
   StorySection,

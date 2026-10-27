@@ -1,8 +1,8 @@
 import type { ChoiceOption, ChoiceValue, NumericConstraints, PropertyValue } from '../values'
 import type { Vector2, Vector3, Vector4, Rect } from '../values/geometry'
-import type { DistributionConstraints } from '../values/distribution'
+import type { PartitionConstraints } from '../values/partition'
 import type { ColorValue } from '../values/color'
-import type { ColorRampValue, ColorRampChannelsValue } from '../values/color-ramp'
+import type { ColorRampValue, ColorAlphaRampValue } from '../values/color-ramp'
 import type { ColorDistributionValue } from '../values/color-distribution'
 import type { CurveValue, CurveViewport } from '../values/curve'
 import type { NumericDistributionValue } from '../values/numeric-distribution'
@@ -48,8 +48,8 @@ type DescriptorSchemas =
       readonly axes: readonly PropertyNumericAxis[]
       readonly constraints?: NumericConstraints
     }
-  | { readonly kind: 'distribution'; readonly constraints?: DistributionConstraints }
-  | { readonly kind: 'color' | 'color-ramp' | 'color-ramp-channels' | 'color-distribution'; readonly hdr?: boolean }
+  | { readonly kind: 'partition'; readonly constraints?: PartitionConstraints }
+  | { readonly kind: 'color' | 'color-ramp' | 'color-alpha-ramp' | 'color-distribution'; readonly hdr?: boolean }
   | { readonly kind: 'curve'; readonly bounds?: Partial<CurveViewport> }
   | { readonly kind: 'numeric-distribution'; readonly constraints?: NumericConstraints }
   | { readonly kind: 'resource'; readonly kinds?: readonly string[]; readonly groupId?: string }
@@ -95,10 +95,10 @@ export type PropertyDescriptor<T = PropertyValue> = PropertyDescriptorBase &
     | Match<T, Vector3, SchemaKind<'vector3'>>
     | Match<T, Vector4, SchemaKind<'vector4'>>
     | Match<T, Rect, SchemaKind<'rect'>>
-    | Match<T, readonly number[], SchemaKind<'numeric-tuple'> | SchemaKind<'distribution'>>
+    | Match<T, readonly number[], SchemaKind<'numeric-tuple'> | SchemaKind<'partition'>>
     | Match<T, ColorValue, SchemaKind<'color'>>
     | Match<T, ColorRampValue, SchemaKind<'color-ramp'>>
-    | Match<T, ColorRampChannelsValue, SchemaKind<'color-ramp-channels'>>
+    | Match<T, ColorAlphaRampValue, SchemaKind<'color-alpha-ramp'>>
     | Match<T, ColorDistributionValue, SchemaKind<'color-distribution'>>
     | Match<T, CurveValue, SchemaKind<'curve'>>
     | Match<T, NumericDistributionValue, SchemaKind<'numeric-distribution'>>

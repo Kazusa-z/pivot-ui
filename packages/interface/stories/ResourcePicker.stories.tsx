@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import type { ResourceProvider } from '../src/contracts/resources'
-import { ResourcePicker } from '../src/templates/resources/ResourcePicker'
+import { ResourceBrowser } from '../src/editors/resources/ResourceBrowser'
 import type { ResourceViewMode } from '../src/values/assets'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -85,7 +85,7 @@ function PickerExample() {
         </Button>
       </StoryRow>
       <div className={pickerWidth}>
-        <ResourcePicker
+        <ResourceBrowser
           provider={provider}
           selectedId={selectedId}
           onSelectedIdChange={setSelectedId}
@@ -138,7 +138,7 @@ function StatePicker({
 }) {
   return (
     <StoryCard title={title} description={description}>
-      <ResourcePicker
+      <ResourceBrowser
         provider={provider}
         selectedId={selectedId}
         pageSize={4}
@@ -195,12 +195,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'ResourcePicker 在页面或弹层中浏览资源，支持搜索、类型与分组筛选、分页和网格/列表视图。selectedId 表示当前选择，onSelect 可异步接受或拒绝；provider 负责查询与可选改名。',
+          'ResourceBrowser 在页面或弹层中浏览资源，支持搜索、类型与分组筛选、分页和网格/列表视图。selectedId 表示当前选择，onSelect 可异步接受或拒绝；provider 负责查询与可选改名。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Resources/ResourcePicker',
+  title: 'Resources/ResourceBrowser',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -209,7 +209,7 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Resources"
-      title="ResourcePicker"
+      title="ResourceBrowser"
       summary="搜索、筛选、翻页，再选择一项资源。把查询状态放在 React 中，把接受逻辑放在 onSelect；浏览器本身不假设资源数据的来源。"
       meta={
         <>
@@ -235,7 +235,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<ResourcePicker
+            code={`<ResourceBrowser
   provider={provider}
   selectedId={selectedId}
   onSelectedIdChange={setSelectedId}

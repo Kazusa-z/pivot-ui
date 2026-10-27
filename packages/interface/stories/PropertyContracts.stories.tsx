@@ -1,9 +1,9 @@
 import { useRef, useState, useSyncExternalStore } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import type { EditSession } from '../src/contracts'
-import { Button } from '../src/widgets/buttons'
-import { Checkbox } from '../src/widgets/choices/Checkbox'
-import { InputNumber } from '../src/widgets/inputs/InputNumber'
+import { Button } from '../src/controls/buttons'
+import { Checkbox } from '../src/controls/choices/Checkbox'
+import { NumberInput } from '../src/controls/inputs/NumberInput'
 import { Text } from '../src/foundation/typography'
 import { createMockPropertyAccess } from './support/mock-property-access'
 import {
@@ -159,7 +159,7 @@ function ContractExample() {
               {objectId} · phase {phase} · revision {snapshot.revision} · history {snapshot.historyCount}
             </Text>
           </StoryRow>
-          <InputNumber
+          <NumberInput
             aria-label="Preview value"
             size="sm"
             value={preview}

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { ToggleGroup, ToggleGroupRoot, ToggleGroupItem } from '../src/widgets/choices/ToggleGroup'
+import { ToggleGroup, ToggleGroupRoot, ToggleGroupItem } from '../src/controls/choices/ToggleGroup'
 import type { ChoiceOption, ChoiceValue } from '../src/values'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,

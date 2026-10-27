@@ -3,14 +3,14 @@ import type { Meta, StoryObj } from '@storybook/react'
 import type { ResourceProvider } from '../src/contracts/resources'
 import { DragDropProvider } from '../src/interaction/drag-drop/DragDropProvider'
 import { useDragSource } from '../src/interaction/drag-drop/useDragSource'
-import { AssetReferenceInput } from '../src/templates/resources/AssetReferenceInput'
+import { AssetField } from '../src/editors/resources/AssetField'
 import {
   ASSET_REFERENCE_DRAG_TYPE,
   type AssetDescriptor,
   type AssetDragData,
   type ResourceViewMode,
 } from '../src/values/assets'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { css } from '../styled-system/css'
 import {
   StoryPage,
@@ -115,7 +115,7 @@ function ReferenceExample() {
         </Button>
       </StoryRow>
       <div className={fieldWidth}>
-        <AssetReferenceInput
+        <AssetField
           value={value}
           provider={provider}
           resetKey={revision}
@@ -159,7 +159,7 @@ function StateReference({
 }) {
   return (
     <StoryCard title={title} description={description}>
-      <AssetReferenceInput
+      <AssetField
         value={value}
         provider={provider}
         selectedAsset={selectedAsset}
@@ -244,7 +244,7 @@ function DragDemo() {
           ))}
         </StoryRow>
         <div className={fieldWidth}>
-          <AssetReferenceInput
+          <AssetField
             value={value}
             provider={provider}
             dropEnabled
@@ -268,12 +268,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'AssetReferenceInput 在表单中展示并更换一个资源引用。value 保存资源 ID，provider.get 解析当前资源名称；onValueChange 可异步接受或拒绝选择，dropEnabled 时接受应用内资源拖放。',
+          'AssetField 在表单中展示并更换一个资源引用。value 保存资源 ID，provider.get 解析当前资源名称；onValueChange 可异步接受或拒绝选择，dropEnabled 时接受应用内资源拖放。',
       },
     },
     layout: 'fullscreen',
   },
-  title: 'Resources/AssetReferenceInput',
+  title: 'Resources/AssetField',
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -282,7 +282,7 @@ export const Overview: Story = {
   render: () => (
     <StoryPage
       eyebrow="Resources"
-      title="AssetReferenceInput"
+      title="AssetField"
       summary="一个 48px 的资源字段：显示当前资源，打开弹层搜索选择，并允许清空、定位、文件选择或拖入。接受逻辑由 onValueChange 决定。"
       meta={
         <>
@@ -312,7 +312,7 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCode
             label="tsx"
-            code={`<AssetReferenceInput
+            code={`<AssetField
   value={value}
   provider={provider}
   resetKey={targetId}
@@ -345,7 +345,7 @@ export const Overview: Story = {
                 defaultValue: 'false',
                 description: '需要 DragDropProvider；只接受资源引用类型。',
               },
-              { name: 'pickerProps', type: 'ResourcePicker subset', description: '透传查询、视图和分页配置。' },
+              { name: 'pickerProps', type: 'ResourceBrowser subset', description: '透传查询、视图和分页配置。' },
             ]}
           />
         </StoryGrid>

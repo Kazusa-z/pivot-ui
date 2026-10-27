@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Arrow, type ArrowDirection } from '../src/foundation/icons'
-import { Button } from '../src/widgets/buttons'
+import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
 import { StoryPage, StorySection, StoryCard, StoryGrid, StoryCode, StoryRow } from './support/StoryPage'
 

@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Input, Textarea, EditableText } from '../src/widgets/inputs'
-import { Button } from '../src/widgets/buttons'
-import { Kbd } from '../src/widgets/display/Kbd'
+import { Input, Textarea, EditableText } from '../src/controls/inputs'
+import { Button } from '../src/controls/buttons'
+import { Kbd } from '../src/display/Kbd'
 import { Text } from '../src/foundation/typography'
 import {
   StoryPage,
