@@ -369,23 +369,28 @@ export function StoryCode({ code, label }: { code: string; label?: ReactNode }) 
   )
 }
 
+// Debug state is secondary to the component: a quiet, collapsed disclosure line
+// that only turns into a code panel when someone opens it.
 const detailsClass = css({
   minWidth: 0,
-  border: '1px solid var(--colors-border)',
-  borderRadius: 'var(--radii-controlMd)',
-  backgroundColor: 'var(--colors-surfaceSubtle)',
   '& > summary': {
-    padding: 'var(--space-2) var(--space-3)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 'var(--space-1)',
+    padding: 'var(--space-0_5) 0',
     cursor: 'pointer',
-    fontSize: 'var(--fontSizes-control)',
+    fontSize: 'var(--fontSizes-micro)',
     lineHeight: 'var(--lineHeights-1)',
-    fontWeight: 500,
     color: 'var(--colors-textMuted)',
     listStyle: 'none',
+    userSelect: 'none',
     '&::-webkit-details-marker': { display: 'none' },
+    '&::before': { content: '"▸"', transition: 'transform 120ms ease-out' },
+    '&:hover': { color: 'var(--colors-text)' },
+    '&:focus-visible': { outline: '2px solid var(--colors-focusRing)', outlineOffset: '2px' },
   },
-  '&[open] > summary': { borderBottom: '1px solid var(--colors-border)' },
-  '& > pre': { border: 0, borderRadius: 0, margin: 0 },
+  '&[open] > summary::before': { transform: 'rotate(90deg)' },
+  '& > pre': { marginTop: 'var(--space-1)' },
 })
 
 export function StoryState({

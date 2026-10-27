@@ -67,7 +67,7 @@ export const Inspector = styled('aside', {
 
 1. 在本仓库运行 `pnpm --filter @pivot-ui/react panda`，生成组件包的样式工具模块。
 2. 在应用的 Panda 配置中使用共享 `pandaBase`，扫描应用源码和 `packages/interface/src/**/*.{ts,tsx}`。
-3. 在应用入口加载一次 `@pivot-ui/react/panda.css`，通过 Panda PostCSS 构建应用 CSS。
+3. 在应用入口加载一次 `@pivot-ui/react/panda.css`，通过 Panda PostCSS 构建应用 CSS；同时导入 `@pivot-ui/react/fonts.css` 使用随包字体。
 
 仓库中的 Vite 示例和 Storybook 已配置这些步骤。源码链接到其他应用时，请按[使用与开发指南](../docs/README.md)配置路径。
 

@@ -118,12 +118,14 @@ const thumbRecipe = cva({
       sm: {},
       md: { height: 'var(--sizes-controlMd)' },
     },
+    // Compact thumbs keep the same bar shape as block sliders and the color hue strip,
+    // just shorter, so every slider in the library shares one thumb language.
     compact: {
       true: {
-        width: '12px',
-        height: '12px',
-        borderRadius: '50%',
-        '&[data-orientation=vertical]': { width: '12px', height: '12px' },
+        width: '4px',
+        height: 'var(--sizes-iconSm)',
+        boxShadow: '0 0 0 1px var(--colors-surface)',
+        '&[data-orientation=vertical]': { width: 'var(--sizes-iconSm)', height: '4px' },
       },
     },
   },

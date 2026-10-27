@@ -112,13 +112,13 @@ function StatesExample() {
         triggerLabel={iconOnly ? 'Toggle section' : undefined}
         onOpenChange={setOpen}
         actions={
-          <Button size="xs" onClick={() => setActions((value) => value + 1)}>
+          <Button size="xs" variant="subtle" onClick={() => setActions((value) => value + 1)}>
             Independent action
           </Button>
         }>
         <Input aria-label="Content field" defaultValue="Editable content" size="sm" />
       </Collapsible>
-      <StoryState label="Collapsible state" value={{ open, disabled, fixed, iconOnly, actions }} open />
+      <StoryState label="Collapsible state" value={{ open, disabled, fixed, iconOnly, actions }} />
     </StoryCard>
   )
 }
@@ -187,7 +187,7 @@ function ControlledExample() {
           </StoryField>
         </div>
       </StoryGrid>
-      <StoryState label="Accordion state" value={{ single, many, changes }} open />
+      <StoryState label="Accordion state" value={{ single, many, changes }} />
     </StoryCard>
   )
 }

@@ -111,9 +111,9 @@ function SelectPage() {
           <StoryRow align="start">
             {(
               [
-                ['xs', 'XS · 20px'],
-                ['sm', 'SM · 24px'],
-                ['md', 'MD · 32px'],
+                ['xs', 'xs · 20px'],
+                ['sm', 'sm · 24px'],
+                ['md', 'md · 32px'],
               ] as const
             ).map(([size, label]) => (
               <StoryField key={size} label={label}>
@@ -169,7 +169,7 @@ function SelectPage() {
             value: {value === null ? 'null' : `${String(value)} (${typeof value})`}
           </Text>
         </StoryCard>
-        <StoryState label="Select state" value={{ value, type: typeof value, lastRequest: request, reject }} open />
+        <StoryState label="Select state" value={{ value, type: typeof value, lastRequest: request, reject }} />
       </StorySection>
 
       <StorySection title="Uncontrolled" description="defaultValue 只在首次渲染使用；key 变化可重建实例并恢复初始值。">

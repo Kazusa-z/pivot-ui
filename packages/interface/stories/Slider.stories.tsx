@@ -75,7 +75,7 @@ function SliderExample() {
       }>
       <StorySection
         title="Variants"
-        description="单值适合不透明度、强度等参数；多滑块适合区间；compact 把滑块变成圆点并隐藏轨道背景。">
+        description="单值适合不透明度、强度等参数；多滑块适合区间；compact 使用细轨道和较短的竖条滑块，并隐藏轨道背景。">
         <StoryGrid>
           <StoryCard title="Single value" description="Controlled value with edit events.">
             <Slider
@@ -103,7 +103,7 @@ function SliderExample() {
             <Text size="sm" tone="muted">
               Current value: {value[0]}
             </Text>
-            <StoryState label="Value and edit events" value={{ value, events }} open />
+            <StoryState label="Value and edit events" value={{ value, events }} />
           </StoryCard>
           <StoryCard title="Range" description="Two thumbs with a minimum step gap.">
             <Slider
@@ -115,9 +115,9 @@ function SliderExample() {
               startSlot="20"
               endSlot="80"
             />
-            <StoryState label="Range value" value={range} open />
+            <StoryState label="Range value" value={range} />
           </StoryCard>
-          <StoryCard title="Compact multi-thumb" description="Dot thumbs; useful in dense panels.">
+          <StoryCard title="Compact multi-thumb" description="细轨道与短竖条滑块，适合紧凑面板。">
             <Slider
               aria-label="Compact range"
               value={compactRange}
@@ -126,7 +126,7 @@ function SliderExample() {
               compact
               minStepsBetweenThumbs={5}
             />
-            <StoryState label="Compact range value" value={compactRange} open />
+            <StoryState label="Compact range value" value={compactRange} />
           </StoryCard>
         </StoryGrid>
       </StorySection>
@@ -137,7 +137,7 @@ function SliderExample() {
         <StoryCard title="Size scale" description="xs / sm / md">
           <StoryRow align="start">
             {sizes.map(({ size, height }) => (
-              <StoryField key={size} label={`${size} — ${height}`}>
+              <StoryField key={size} label={`${size} · ${height}`}>
                 <Slider
                   key={`${revision}-${size}`}
                   aria-label={`${size} opacity`}
@@ -175,7 +175,7 @@ function SliderExample() {
               />
             </StoryField>
           </StoryRow>
-          <StoryState label="Requested values" value={requests} open />
+          <StoryState label="Requested values" value={requests} />
         </StoryCard>
       </StorySection>
 
@@ -226,7 +226,7 @@ function SliderExample() {
               { name: 'onEditCancel', type: '(reason) => void', description: 'Escape、指针取消或窗口失焦。' },
               { name: 'min / max / step', type: 'number', defaultValue: '0 / 100 / 1', description: '范围与步长。' },
               { name: 'size', type: "'xs' | 'sm' | 'md'", defaultValue: "'sm'", description: '20 / 24 / 32px。' },
-              { name: 'compact', type: 'boolean', defaultValue: 'false', description: '圆点 thumb 与细轨道。' },
+              { name: 'compact', type: 'boolean', defaultValue: 'false', description: '细轨道与短竖条 thumb。' },
               { name: 'thumbLabels', type: 'readonly string[]', description: '多滑块的可访问名称。' },
             ]}
           />

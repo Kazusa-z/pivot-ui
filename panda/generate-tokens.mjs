@@ -49,11 +49,12 @@ const data = {
   fontSizes: resolveScale(sizesMod.fontSizes),
   radii: sizesMod.radii,
   shadows: resolveShadows(sizesMod.shadows),
+  // Geist and JetBrains Mono ship with @pivot-ui/react/fonts.css; the stacks fall back to
+  // platform UI and monospace fonts so code never renders in a proportional face.
   fonts: {
     default:
-      'geist,InterVariable,-apple-system,system-ui,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol',
-    untitled: 'Untitled Sans, -apple-system, system-ui, sans-serif',
-    mono: 'mono, -apple-system, system-ui, sans-serif',
+      '"Geist Variable", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    mono: '"JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
   },
   fontWeights: { light: 300, regular: 400, medium: 500, bold: 600 },
   lineHeights: {

@@ -120,11 +120,7 @@ function SplitPlayground() {
           )}
         </div>
       </div>
-      <StoryState
-        label="Resize requests and parent state"
-        value={{ size, accept, requests, commits, cancellations }}
-        open
-      />
+      <StoryState label="Resize requests and parent state" value={{ size, accept, requests, commits, cancellations }} />
     </StoryCard>
   )
 }

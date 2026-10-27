@@ -9,6 +9,16 @@ import {
   type KeyboardEvent,
   type PointerEvent,
 } from 'react'
+import {
+  IconFocusCentered,
+  IconPlayerPlay,
+  IconPlayerStop,
+  IconPlus,
+  IconTrash,
+  IconZoomIn,
+  IconZoomOut,
+  IconZoomReset,
+} from '@tabler/icons-react'
 import { css, cx } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
 import { useValueEdit } from '../../interaction/value/useValueEdit'
@@ -39,6 +49,7 @@ import {
 } from '../../values/curve'
 import { roundNumeric } from '../../values/numeric'
 import { Button } from '../buttons/Button'
+import { ActionButton, ActionButtonGroup } from '../buttons/ActionButton'
 import { Select } from '../choices/Select'
 import { InputNumber } from '../inputs/InputNumber'
 
@@ -92,11 +103,12 @@ const fieldClass = css({
   gap: 'var(--space-1)',
   fontSize: 'var(--fontSizes-control)',
 })
+// Interpolation select plus grouped icon actions: one 24px row that does not wrap in half-width panels.
 const toolRow = css({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: 'var(--space-1_5)',
+  gap: 'var(--space-2)',
 })
 
 /** Controlled curve value, independently controlled selection and viewport. */
@@ -607,34 +619,70 @@ export const CurveWidget = forwardRef<HTMLDivElement, CurveWidgetProps>(function
             }}
           />
         )}
-        <Button size="sm" disabled={!canMutate || edit.owner !== null} onClick={() => add()}>
-          Add point
-        </Button>
-        <Button size="sm" disabled={!canMutate || edit.owner !== null || !selected.length} onClick={remove}>
-          Delete selected
-        </Button>
-        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => setView(fitCurveViewport(value))}>
-          Fit view
-        </Button>
-        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => zoom(1 / 1.2)}>
-          Zoom in
-        </Button>
-        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => zoom(1.2)}>
-          Zoom out
-        </Button>
-        <Button size="sm" disabled={disabled || edit.phase !== 'idle'} onClick={() => setView(defaultViewport)}>
-          Reset view
-        </Button>
+        <ActionButtonGroup role="group" aria-label={`${label} points`} size="sm">
+          <ActionButton
+            variant="subtle"
+            aria-label="Add point"
+            title="Add point"
+            disabled={!canMutate || edit.owner !== null}
+            onClick={() => add()}>
+            <IconPlus aria-hidden />
+          </ActionButton>
+          <ActionButton
+            variant="subtle"
+            aria-label="Delete selected"
+            title="Delete selected"
+            disabled={!canMutate || edit.owner !== null || !selected.length}
+            onClick={remove}>
+            <IconTrash aria-hidden />
+          </ActionButton>
+        </ActionButtonGroup>
+        <ActionButtonGroup role="group" aria-label={`${label} view`} size="sm">
+          <ActionButton
+            variant="subtle"
+            aria-label="Fit view"
+            title="Fit view"
+            disabled={disabled || edit.phase !== 'idle'}
+            onClick={() => setView(fitCurveViewport(value))}>
+            <IconFocusCentered aria-hidden />
+          </ActionButton>
+          <ActionButton
+            variant="subtle"
+            aria-label="Zoom in"
+            title="Zoom in"
+            disabled={disabled || edit.phase !== 'idle'}
+            onClick={() => zoom(1 / 1.2)}>
+            <IconZoomIn aria-hidden />
+          </ActionButton>
+          <ActionButton
+            variant="subtle"
+            aria-label="Zoom out"
+            title="Zoom out"
+            disabled={disabled || edit.phase !== 'idle'}
+            onClick={() => zoom(1.2)}>
+            <IconZoomOut aria-hidden />
+          </ActionButton>
+          <ActionButton
+            variant="subtle"
+            aria-label="Reset view"
+            title="Reset view"
+            disabled={disabled || edit.phase !== 'idle'}
+            onClick={() => setView(defaultViewport)}>
+            <IconZoomReset aria-hidden />
+          </ActionButton>
+        </ActionButtonGroup>
         {showAnimation && (
-          <Button
-            size="sm"
+          <ActionButton
+            variant="subtle"
+            aria-label={playing ? 'Stop preview' : 'Play preview'}
+            title={playing ? 'Stop preview' : 'Play preview'}
             disabled={disabled || !value.points.length}
             onClick={() => {
               setAnimationX(viewport.xMin)
               setPlaying((old) => !old)
             }}>
-            {playing ? 'Stop preview' : 'Play preview'}
-          </Button>
+            {playing ? <IconPlayerStop aria-hidden /> : <IconPlayerPlay aria-hidden />}
+          </ActionButton>
         )}
       </div>
       <svg

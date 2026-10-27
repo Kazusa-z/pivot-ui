@@ -10,18 +10,22 @@ const rowRecipe = cva({
     padding: 'var(--space-0_5)',
     gap: 'var(--property-row-gap, var(--space-1))',
     alignItems: 'center',
-    gridTemplateColumns: 'var(--property-label-width, minmax(0, 1.3fr)) minmax(0, 3fr)',
+    // The label column scales with narrow panels but stops growing, so labels line up
+    // across sections and wide dialogs do not push controls far from their labels.
+    gridTemplateColumns: 'var(--property-label-width, var(--property-label-default)) minmax(0, 1fr)',
     '& > [data-property-part="description"]': { gridColumn: '2' },
   },
   variants: {
     density: {
       compact: {
+        '--property-label-default': 'clamp(64px, 35%, 120px)',
         '--property-row-gap': 'var(--space-1)',
         '--property-label-min-height': 'var(--sizes-controlSm)',
         '--property-font-size': 'var(--fontSizes-control)',
         '--property-description-size': 'var(--fontSizes-control)',
       },
       regular: {
+        '--property-label-default': 'clamp(80px, 35%, 160px)',
         '--property-row-gap': 'var(--space-2)',
         '--property-label-min-height': 'var(--sizes-controlMd)',
         '--property-font-size': 'var(--fontSizes-controlLarge)',

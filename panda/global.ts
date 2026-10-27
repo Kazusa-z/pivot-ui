@@ -63,60 +63,13 @@ const convert = (value: unknown): unknown => {
   return value
 }
 
-const colorPickerCss = {
-  '.pivot-color-picker .react-colorful': {
-    width: '220px !important',
-    height: '180px !important',
-  },
-  '.pivot-color-picker .react-colorful__saturation': {
-    borderBottom: '6px !important',
-    borderRadius: '6px !important',
-  },
-  '.pivot-color-picker .react-colorful__hue': {
-    width: '140px !important',
-    height: '6px !important',
-    margin: '12px 0 !important',
-    borderRadius: '4px !important',
-  },
-  '.pivot-color-picker .react-colorful__hue .react-colorful__pointer': {
-    height: '12px !important',
-    width: '12px !important',
-    borderRadius: '9999px !important',
-    borderWidth: '2px !important',
-  },
-  '.pivot-color-picker .react-colorful__pointer': {
-    height: '16px !important',
-    width: '16px !important',
-    borderRadius: '9999px !important',
-    borderWidth: '2px !important',
-  },
-  '.pivot-color-picker .react-colorful__alpha': {
-    width: '140px !important',
-    height: '6px !important',
-    borderRadius: '4px !important',
-  },
-  '.pivot-color-picker .react-colorful__alpha .react-colorful__pointer': {
-    height: '12px !important',
-    width: '12px !important',
-    borderRadius: '9999px !important',
-    borderWidth: '2px !important',
-  },
-  '.pivot-color-picker[data-readonly="true"] .react-colorful__saturation, .pivot-color-picker[data-readonly="true"] .react-colorful__hue':
-    {
-      pointerEvents: 'none !important',
-      opacity: '0.5 !important',
-    },
-}
-
 export const globalCss = {
   ...(convert(resetCSS) as Record<string, unknown>),
-  ...(colorPickerCss as any),
   ':root': commonVars as any,
   '.dark-theme': { ...cssVars('colors', darkColors), colorScheme: 'dark' } as any,
   '.light-theme': { ...lightVars, colorScheme: 'light' } as any,
   html: {
-    fontFamily:
-      'geist, InterVariable, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol',
+    fontFamily: 'var(--fonts-default)',
     fontSize: '16px',
     backgroundColor: 'var(--colors-appBg, #111113)',
     color: 'var(--colors-textStrong, #edeef0)',
@@ -128,63 +81,4 @@ export const globalCss = {
     backgroundColor: 'var(--colors-appBg, #111113)',
     color: 'var(--colors-textStrong, #edeef0)',
   },
-}
-
-export const globalFontface = {
-  mono: [
-    {
-      fontFamily: 'mono',
-      fontWeight: 300,
-      src: 'url("https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*XvJJSIIEDbYAAAAAAAAAAAAADinLAQ/JetBrainsMono-Light.woff2") format("woff2")',
-    },
-    {
-      fontFamily: 'mono',
-      fontWeight: 400,
-      src: 'url("https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*cCg_QbqN1BAAAAAAAAAAAAAADinLAQ/JetBrainsMono-Regular.woff2") format("woff2")',
-    },
-    {
-      fontFamily: 'mono',
-      fontWeight: 500,
-      src: 'url("https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*M8hRRpGAU5sAAAAAAAAAAAAADinLAQ/JetBrainsMono-Medium.woff2") format("woff2")',
-    },
-  ],
-  geist: [
-    {
-      fontFamily: 'geist',
-      fontWeight: 300,
-      fontStyle: 'normal',
-      src: 'url(https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*zUmLTpFfGT4AAAAAAAAAAAAADinLAQ/Geist-ExtraLight.woff2) format("woff2")',
-    },
-    {
-      fontFamily: 'geist',
-      fontWeight: 400,
-      fontStyle: 'normal',
-      src: 'url(https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*uQQpSZey8WoAAAAAAAAAAAAADinLAQ/Geist-Regular.woff2) format("woff2")',
-      unicodeRange: 'U+0000-002F, U+003A-007F, U+0080-00FF, U+0100-FFFF',
-    },
-    {
-      fontFamily: 'geist',
-      fontWeight: 500,
-      fontStyle: 'normal',
-      src: 'url(https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*y26-RqzF8tUAAAAAAAAAAAAADinLAQ/Geist-Medium.woff2) format("woff2")',
-    },
-    {
-      fontFamily: 'geist',
-      fontWeight: 600,
-      fontStyle: 'normal',
-      src: 'url(https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*RsRyTpStUPsAAAAAAAAAAAAADinLAQ/Geist-SemiBold.woff2) format("woff2")',
-    },
-    {
-      fontFamily: 'geist',
-      fontWeight: 700,
-      fontStyle: 'normal',
-      src: 'url(https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*S5q2SYDWJ44AAAAAAAAAAAAADinLAQ/Geist-Bold.woff2) format("woff2")',
-    },
-    {
-      fontFamily: 'geist',
-      fontWeight: 800,
-      fontStyle: 'normal',
-      src: 'url(https://mdn.alipayobjects.com/huamei_piroyv/afts/file/A*1HUETbzL9gsAAAAAAAAAAAAADinLAQ/Geist-Black.woff2) format("woff2")',
-    },
-  ],
 }

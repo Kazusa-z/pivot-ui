@@ -77,7 +77,7 @@ function ButtonsExample() {
             <Button critical variant="solid" onClick={() => setClicks((value) => value + 1)}>
               Critical
             </Button>
-            <Button positive variant="soft" onClick={() => setClicks((value) => value + 1)}>
+            <Button positive variant="solid" onClick={() => setClicks((value) => value + 1)}>
               Positive
             </Button>
             <Button disabled>Disabled</Button>

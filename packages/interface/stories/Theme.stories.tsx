@@ -105,7 +105,7 @@ function ThemeConsumer({ name }: { name: string }) {
           }}
         />
       </StoryField>
-      <StoryState label={`${name} snapshot`} value={{ preference, resolvedTheme }} open />
+      <StoryState label={`${name} snapshot`} value={{ preference, resolvedTheme }} />
       <Callout severity="success">语义颜色随 resolvedTheme 使用对应的明暗配色。</Callout>
     </StoryCard>
   )
@@ -203,7 +203,7 @@ function ThemePlayground({ scenario, onReset }: { scenario: Scenario; onReset: (
         </StorySection>
 
         <StorySection title="Diagnostics">
-          <StoryState label="Injected adapter state" value={diagnostics} open />
+          <StoryState label="Injected adapter state" value={diagnostics} />
           <Text size="sm" tone="muted">
             两个消费者共享同一个 store；Provider 卸载后 store 释放订阅，重新挂载时读取存储和系统主题。
           </Text>

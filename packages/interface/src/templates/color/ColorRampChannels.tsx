@@ -251,6 +251,7 @@ export const ColorRampChannels = forwardRef<HTMLDivElement, ColorRampChannelsPro
                 step={0.01}
                 dragStep={0.005}
                 precision={6}
+                displayPrecision={3}
                 disabled={disabled}
                 readOnly={readOnly || (editor.owner !== null && editor.owner !== `alpha-${field}:${active.id}`)}
                 resetKey={inputReset}

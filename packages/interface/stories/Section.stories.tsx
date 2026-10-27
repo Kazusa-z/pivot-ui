@@ -75,7 +75,7 @@ function BasicExample() {
           </Section>
         </div>
       </Section>
-      <StoryState label="Section state" value={{ open, nestedOpen, text, actions }} open />
+      <StoryState label="Section state" value={{ open, nestedOpen, text, actions }} />
       <Text size="xs" tone="muted">
         标题操作应放在 Section 的 actions 中，避免与折叠点击区域重叠。
       </Text>
@@ -157,7 +157,7 @@ function SectionPage() {
             label="tsx"
             code={`<Section
   title="Object"
-  actions={<Button size="xs">Reset</Button>}
+  actions={<Button size="xs" variant="subtle">Reset</Button>}
   open={open}
   onOpenChange={setOpen}>
   {fields}

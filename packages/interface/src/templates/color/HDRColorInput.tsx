@@ -102,6 +102,7 @@ export const HDRColorInput = forwardRef<HTMLDivElement, HDRColorInputProps>(func
         step={intensityStep}
         dragStep={intensityStep / 10}
         precision={5}
+        displayPrecision={3}
         resetKey={childResetKey}
         disabled={disabled}
         readOnly={locked('intensity')}

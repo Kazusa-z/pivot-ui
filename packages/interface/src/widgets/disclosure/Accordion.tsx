@@ -93,8 +93,9 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
               {...triggerProps}
               disabled={disabled || props.disabled || triggerProps?.disabled}
               className={cx(getDisclosureTriggerClass(size), triggerProps?.className)}>
-              <span className={disclosureClasses.title}>{title}</span>
+              {/* Same leading chevron as Collapsible/Section so every disclosure header reads alike. */}
               {arrow && <IconChevronRight data-disclosure-chevron aria-hidden className={disclosureClasses.chevron} />}
+              <span className={disclosureClasses.title}>{title}</span>
             </Primitive.Trigger>
           )}
         </Primitive.Header>

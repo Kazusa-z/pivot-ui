@@ -108,7 +108,7 @@ function BadgeExample() {
             </Tag>
           </StoryRow>
         </StoryCard>
-        <StoryState label="Parent-owned tags" value={{ tags, removeRequests: requests }} open />
+        <StoryState label="Parent-owned tags" value={{ tags, removeRequests: requests }} />
       </StorySection>
 
       <StorySection title="Usage">

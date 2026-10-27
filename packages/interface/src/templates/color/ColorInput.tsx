@@ -124,6 +124,7 @@ export const ColorInput = forwardRef<HTMLDivElement, ColorInputProps>(function C
             step={0.01}
             dragStep={0.005}
             precision={4}
+            displayPrecision={3}
             resetKey={childResetKey}
             disabled={disabled}
             readOnly={locked('alpha')}

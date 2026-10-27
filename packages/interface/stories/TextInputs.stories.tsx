@@ -81,10 +81,10 @@ export const Overview: Story = {
         <StoryGrid>
           <StoryCard title="Compact 20 / 24">
             <StoryRow align="end">
-              <StoryField label="xs · 20">
+              <StoryField label="xs · 20px">
                 <Input aria-label="Compact xs input" size="xs" defaultValue="Material" css={{ width: '160px' }} />
               </StoryField>
-              <StoryField label="sm · 24">
+              <StoryField label="sm · 24px">
                 <Input aria-label="Compact sm input" size="sm" defaultValue="material.mat" css={{ width: '180px' }} />
               </StoryField>
             </StoryRow>
@@ -94,10 +94,10 @@ export const Overview: Story = {
           </StoryCard>
           <StoryCard title="Regular 32 / 36">
             <StoryRow align="end">
-              <StoryField label="md · 32">
+              <StoryField label="md · 32px">
                 <Input aria-label="Regular md input" size="md" defaultValue="Material" css={{ width: '180px' }} />
               </StoryField>
-              <StoryField label="lg · 36">
+              <StoryField label="lg · 36px">
                 <Input aria-label="Regular lg input" size="lg" defaultValue="material.mat" css={{ width: '200px' }} />
               </StoryField>
             </StoryRow>

@@ -3,7 +3,7 @@ import { css } from '../../../styled-system/css'
 import { Input, type InputProps } from './Input'
 import { useNumericInput, type NumericInputOptions } from '../../interaction/numeric/useNumericInput'
 import { numericModifierScale, useNumericDrag } from '../../interaction/numeric/useNumericDrag'
-import { normalizeNumericConstraints } from '../../values/numeric'
+import { normalizeNumericConstraints, roundNumeric } from '../../values/numeric'
 
 export interface InputNumberProps
   extends
@@ -11,6 +11,11 @@ export interface InputNumberProps
     NumericInputOptions {
   /** Optional native increase/decrease buttons. ArrowUp/ArrowDown always work. */
   stepper?: boolean
+  /**
+   * Decimal places shown while the field is not being typed into. Values keep their full
+   * `precision`; text editing still starts from the exact value.
+   */
+  displayPrecision?: number
 }
 
 export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(function InputNumber(
@@ -31,6 +36,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
     dragStep,
     precision,
     stepper,
+    displayPrecision,
     disabled,
     readOnly,
     onChange,
@@ -104,7 +110,8 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
     }
   }, [props.form, value, resetKey, mixed, disabled, readOnly, min, max, softMin, softMax, step, dragStep, precision])
   const textDraft = editor.phase !== 'idle' && (editor.source === 'text' || !!editor.error)
-  const display = textDraft ? editor.draft : mixed && editor.phase === 'idle' ? '' : String(editor.value)
+  const shown = displayPrecision === undefined ? editor.value : roundNumeric(editor.value, displayPrecision)
+  const display = textDraft ? editor.draft : mixed && editor.phase === 'idle' ? '' : String(shown)
   const showLocalError = !!editor.error && !props['aria-errormessage']?.trim()
   const locked = disabled || readOnly || editor.phase === 'pending'
   return (

@@ -1,4 +1,5 @@
 import '../panda.css'
+import '../fonts.css'
 import type { Preview } from '@storybook/react'
 import { themePreview } from '../../../storybook/theme'
 

@@ -97,7 +97,7 @@ function DistributionExample() {
             <Text size="sm" tone="muted">
               {value.join(' / ')} = {total}
             </Text>
-            <StoryState label="Value, total and events" value={{ value, total, events }} open />
+            <StoryState label="Value, total and events" value={{ value, total, events }} />
           </StoryCard>
           <StoryCard title="Five segments" description="More boundaries, same data shape.">
             <DistributionSlider
@@ -136,7 +136,7 @@ function DistributionExample() {
         <StoryCard title="Size scale" description="xs / sm / md">
           <StoryRow align="start">
             {sizes.map(({ size, height }) => (
-              <StoryField key={size} label={`${size} — ${height}`}>
+              <StoryField key={size} label={`${size} · ${height}`}>
                 <DistributionSlider
                   key={`${revision}-${size}`}
                   aria-label={`${size} distribution`}
@@ -186,7 +186,7 @@ function DistributionExample() {
               />
             </StoryField>
           </StoryRow>
-          <StoryState label="Requested distributions" value={requests} open />
+          <StoryState label="Requested distributions" value={requests} />
         </StoryCard>
       </StorySection>
 

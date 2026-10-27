@@ -549,9 +549,8 @@ export const shadows = {
 
 export const fonts = {
   default:
-    'geist,InterVariable,-apple-system,system-ui,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol',
-  untitled: 'Untitled Sans, -apple-system, system-ui, sans-serif',
-  mono: 'mono, -apple-system, system-ui, sans-serif',
+    '"Geist Variable", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+  mono: '"JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
 } as const
 
 export const fontWeights = {

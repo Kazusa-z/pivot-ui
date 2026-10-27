@@ -137,7 +137,7 @@ function ToggleExample() {
         <StoryCard title="Size scale" description="sm / md / lg">
           <StoryRow align="start">
             {sizes.map(({ size, height }) => (
-              <StoryField key={size} label={`${size} — ${height}`}>
+              <StoryField key={size} label={`${size} · ${height}`}>
                 <ToggleGroup
                   key={`${revision}-${size}`}
                   aria-label={`${size} tool group`}
@@ -196,7 +196,7 @@ function ToggleExample() {
               />
             </StoryField>
           </StoryRow>
-          <StoryState label="Requested values" value={requests} open />
+          <StoryState label="Requested values" value={requests} />
         </StoryCard>
       </StorySection>
 

@@ -46,7 +46,7 @@ function ActionRowExample() {
           </Flex>
         </PropertyControl>
       </PropertyRow>
-      <StoryState label="Actions" value={{ refreshCount: count }} open />
+      <StoryState label="Actions" value={{ refreshCount: count }} />
     </StoryCard>
   )
 }

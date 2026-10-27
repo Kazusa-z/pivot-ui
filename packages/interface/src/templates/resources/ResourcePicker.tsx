@@ -24,6 +24,7 @@ import {
 import { AssetItem } from '../../widgets/collections/asset/AssetItem'
 import { Button } from '../../widgets/buttons/Button'
 import { Combobox } from '../../widgets/choices/Combobox'
+import { SegmentControl } from '../../widgets/choices/SegmentControl'
 import { Select } from '../../widgets/choices/Select'
 import { Input } from '../../widgets/inputs/Input'
 import { Pagination } from '../../widgets/navigation/Pagination'
@@ -33,6 +34,11 @@ export interface ResourceFilterOption {
   readonly label: string
 }
 export type { ResourceViewMode } from '../../values/assets'
+const viewModeOptions = [
+  { key: 'grid', value: 'grid', label: 'Grid' },
+  { key: 'list', value: 'list', label: 'List' },
+] as const satisfies readonly { key: string; value: ResourceViewMode; label: string }[]
+
 export interface ResourcePickerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect' | 'children'> {
   provider: ResourceProvider
   selectedId?: AssetId | null
@@ -523,20 +529,15 @@ export const ResourcePicker = forwardRef<HTMLDivElement, ResourcePickerProps>(fu
             />
           </label>
         )}
-        <div role="group" aria-label="Resource view" className={css({ display: 'flex', gap: 'var(--space-1)' })}>
-          {(['grid', 'list'] as const).map((mode) => (
-            <Button
-              key={mode}
-              type="button"
-              size="sm"
-              variant={viewMode === mode ? 'soft' : 'outline'}
-              aria-pressed={viewMode === mode}
-              disabled={disabled}
-              onClick={() => setViewMode(mode)}>
-              {mode === 'grid' ? 'Grid' : 'List'}
-            </Button>
-          ))}
-        </div>
+        <SegmentControl
+          aria-label="Resource view"
+          size="sm"
+          options={viewModeOptions}
+          value={viewMode}
+          disabled={disabled}
+          css={{ width: 'auto', minWidth: '96px' }}
+          onValueChange={setViewMode}
+        />
         <Button
           type="button"
           size="sm"

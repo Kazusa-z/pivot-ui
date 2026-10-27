@@ -4,7 +4,7 @@ import { useRampPointer } from '../../interaction/color-ramp/useRampPointer'
 import type { useColorEdit } from '../../interaction/color/useColorEdit'
 import type { ColorValue } from '../../values/color'
 import { sampleColorRamp, sortRampStops, type ColorRampValue } from '../../values/color-ramp'
-import { getColorCss } from '../../widgets/color/color-preview'
+import { checkerboardClass, getColorCss } from '../../widgets/color/color-preview'
 import { Button } from '../../widgets/buttons/Button'
 import { Select } from '../../widgets/choices/Select'
 import { InputNumber } from '../../widgets/inputs/InputNumber'
@@ -29,11 +29,7 @@ export const rampStyles = {
     alignItems: 'center',
     minWidth: 0,
   }),
-  checker: css({
-    backgroundColor: '#fff',
-    backgroundImage: 'conic-gradient(#ccc 25%, transparent 0 50%, #ccc 0 75%, transparent 0)',
-    backgroundSize: '12px 12px',
-  }),
+  checker: checkerboardClass,
 }
 export const defaultRamp: ColorRampValue = {
   interpolation: 'linear',
@@ -403,6 +399,7 @@ export function ColorRampControls<T>({
                 step={0.01}
                 dragStep={0.005}
                 precision={6}
+                displayPrecision={3}
                 disabled={disabled}
                 readOnly={lockedFor(positionOwner)}
                 resetKey={inputReset}

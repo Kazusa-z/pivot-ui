@@ -60,6 +60,15 @@ export const badgeRecipe = cva({
     whiteSpace: 'nowrap',
     fontWeight: 500,
     fontSize: 'var(--fontSizes-control)',
+    // Inside a solid selected row (Table, Tree) a tinted badge loses contrast; switch to a
+    // translucent white chip that follows the row's selection text color.
+    '[data-selected]:not([data-selected=false]) &': {
+      '--badge-color': 'currentColor',
+      '--badge-highlight-color': 'currentColor',
+      '--badge-bg-color': 'rgba(255, 255, 255, 0.16)',
+      '--badge-highlight-bg-color': 'rgba(255, 255, 255, 0.24)',
+      '--badge-border-color': 'rgba(255, 255, 255, 0.32)',
+    },
   },
   variants: {
     size: {

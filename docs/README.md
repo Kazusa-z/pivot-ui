@@ -29,7 +29,7 @@ pnpm dev:demo   # Vite 示例
 }
 ```
 
-应用入口只加载一次 `@pivot-ui/react/panda.css`，并让 Panda 扫描应用源码和 `packages/interface/src/**/*.{ts,tsx}`。组件库内部在构建前生成 styled-system：
+应用入口只加载一次 `@pivot-ui/react/panda.css`，并让 Panda 扫描应用源码和 `packages/interface/src/**/*.{ts,tsx}`。界面字体（Geist）与代码字体（JetBrains Mono）随包提供，在入口同时导入 `@pivot-ui/react/fonts.css`；不导入时回退到系统 UI 字体和系统等宽字体。组件库内部在构建前生成 styled-system：
 
 ```bash
 pnpm --filter @pivot-ui/react panda

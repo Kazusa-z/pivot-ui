@@ -1,5 +1,5 @@
 import type { Config } from '@pandacss/dev'
-import { globalCss, globalFontface } from './global'
+import { globalCss } from './global'
 import { tokens } from './theme'
 
 export const pandaBase = {
@@ -16,7 +16,6 @@ export const pandaBase = {
     },
   ],
   globalCss,
-  globalFontface,
   theme: {
     tokens,
     keyframes: {

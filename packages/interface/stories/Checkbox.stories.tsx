@@ -17,9 +17,9 @@ import {
 } from './support/StoryPage'
 
 const sizes = [
-  { size: 'sm', label: 'SM · 14px' },
-  { size: 'md', label: 'MD · 18px' },
-  { size: 'lg', label: 'LG · 22px' },
+  { size: 'sm', label: 'sm · 14px' },
+  { size: 'md', label: 'md · 18px' },
+  { size: 'lg', label: 'lg · 22px' },
 ] as const
 
 const meta = {
@@ -180,7 +180,7 @@ function CheckboxPage() {
             控件保持未选中，请求仍会被记录。
           </Text>
         </StoryCard>
-        <StoryState label="Checkbox state" value={{ visible, mixed, requests, lastRequest }} open />
+        <StoryState label="Checkbox state" value={{ visible, mixed, requests, lastRequest }} />
       </StorySection>
 
       <StorySection

@@ -119,7 +119,7 @@ function SegmentExample() {
         <StoryCard title="Size scale" description="sm / md / lg">
           <StoryRow align="start">
             {sizes.map(({ size, height }) => (
-              <StoryField key={size} label={`${size} — ${height}`}>
+              <StoryField key={size} label={`${size} · ${height}`}>
                 <SegmentControl
                   key={`${revision}-${size}`}
                   aria-label={`${size} coordinate system`}
@@ -165,7 +165,7 @@ function SegmentExample() {
               />
             </StoryField>
           </StoryRow>
-          <StoryState label="Requested values" value={requests} open />
+          <StoryState label="Requested values" value={requests} />
         </StoryCard>
       </StorySection>
 

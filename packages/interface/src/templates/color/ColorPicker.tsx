@@ -3,7 +3,7 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { css, cx } from '../../../styled-system/css'
 import type { SystemStyleObject } from '../../../styled-system/types'
 import { ColorWidget, type ColorControlProps } from '../../widgets/color/ColorWidget'
-import { getColorCss } from '../../widgets/color/color-preview'
+import { checkerboardClass, getColorCss } from '../../widgets/color/color-preview'
 import { assertColorValue } from '../../values/color'
 import {
   PopoverRoot,
@@ -84,14 +84,16 @@ export const ColorPicker = forwardRef<HTMLButtonElement, ColorPickerProps>(funct
           )}>
           <span
             aria-hidden="true"
-            className={css({
-              width: 'var(--sizes-controlSm)',
-              alignSelf: 'stretch',
-              flexShrink: 0,
-              borderRadius: 'var(--radii-control)',
-              background: 'repeating-conic-gradient(#bbb 0% 25%, #fff 0% 50%) 0 / 8px 8px',
-              overflow: 'hidden',
-            })}>
+            className={cx(
+              checkerboardClass,
+              css({
+                width: 'var(--sizes-controlSm)',
+                alignSelf: 'stretch',
+                flexShrink: 0,
+                borderRadius: 'var(--radii-control)',
+                overflow: 'hidden',
+              })
+            )}>
             <span style={{ display: 'block', height: '100%', backgroundColor: getColorCss(control.value) }} />
           </span>
           <span

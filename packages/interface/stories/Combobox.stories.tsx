@@ -108,9 +108,9 @@ function ComboboxPage() {
           <StoryRow align="start">
             {(
               [
-                ['xs', 'XS · 20px'],
-                ['sm', 'SM · 24px'],
-                ['md', 'MD · 32px'],
+                ['xs', 'xs · 20px'],
+                ['sm', 'sm · 24px'],
+                ['md', 'md · 32px'],
               ] as const
             ).map(([size, label]) => (
               <StoryField key={size} label={label}>
@@ -171,7 +171,7 @@ function ComboboxPage() {
             value: {single === null ? 'null' : `${String(single)} (${typeof single})`}
           </Text>
         </StoryCard>
-        <StoryState label="Single combobox state" value={{ single, type: typeof single }} open />
+        <StoryState label="Single combobox state" value={{ single, type: typeof single }} />
       </StorySection>
 
       <StorySection
@@ -203,11 +203,7 @@ function ComboboxPage() {
             selected: {multiple.length === 0 ? 'none' : multiple.map(String).join(', ')}
           </Text>
         </StoryCard>
-        <StoryState
-          label="Multiple combobox state"
-          value={{ multiple, lastRequest, reject, disabled, readOnly }}
-          open
-        />
+        <StoryState label="Multiple combobox state" value={{ multiple, lastRequest, reject, disabled, readOnly }} />
       </StorySection>
 
       <StorySection

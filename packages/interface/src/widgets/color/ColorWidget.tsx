@@ -19,7 +19,7 @@ import { InputNumber } from '../inputs/InputNumber'
 import { Slider } from '../sliders/Slider'
 import { ColorPlane } from './ColorPlane'
 import { HexColorField } from './HexColorField'
-import { getColorCss } from './color-preview'
+import { checkerboardClass, getColorCss } from './color-preview'
 import type { ColorControlProps } from './types'
 
 export type { ColorControlProps } from './types'
@@ -217,13 +217,15 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
       )}>
       <div
         aria-label={`${label} preview`}
-        className={css({
-          height: '48px',
-          border: '1px solid var(--colors-border)',
-          borderRadius: 'var(--radii-control)',
-          overflow: 'hidden',
-          background: 'repeating-conic-gradient(#bbb 0% 25%, #fff 0% 50%) 0 / 12px 12px',
-        })}>
+        className={cx(
+          checkerboardClass,
+          css({
+            height: '48px',
+            border: '1px solid var(--colors-border)',
+            borderRadius: 'var(--radii-control)',
+            overflow: 'hidden',
+          })
+        )}>
         <div style={{ backgroundColor: getColorCss(value), height: '100%' }} />
       </div>
       <ColorPlane
@@ -317,6 +319,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
               step={key === 'h' ? 1 : 0.01}
               dragStep={key === 'h' ? 0.5 : 0.005}
               precision={5}
+              displayPrecision={key === 'h' ? 1 : 3}
               resetKey={childResetKey}
               disabled={disabled}
               readOnly={locked(key)}
@@ -339,6 +342,7 @@ export const ColorWidget = forwardRef<HTMLDivElement, ColorWidgetProps>(function
           step={0.01}
           dragStep={0.005}
           precision={4}
+          displayPrecision={3}
           resetKey={childResetKey}
           disabled={disabled}
           readOnly={locked('a')}

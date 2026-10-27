@@ -26,6 +26,7 @@
 | `@pivot-ui/react/contracts`                                      | 为应用实现属性访问、资源查询等服务接口     |
 | `@pivot-ui/react/theme`                                          | 配置主题状态、Provider 或主题适配器        |
 | `@pivot-ui/react/panda.css`                                      | 在应用入口加载 CSS layer 声明              |
+| `@pivot-ui/react/fonts.css`                                      | 随包提供的 Geist 与 JetBrains Mono 字体    |
 | `@pivot-ui/react/styling/css`、`/styling/jsx`、`/styling/tokens` | 为应用界面编写样式、使用设计 token         |
 | `@pivot-ui/react/styling/types`                                  | 导入 Panda 样式类型                        |
 

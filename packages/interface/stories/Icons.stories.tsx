@@ -122,7 +122,7 @@ function IconAttributesExample() {
           {message}; width {width}
         </Text>
       </StoryRow>
-      <StoryState label="Icon state" value={{ width, message }} open />
+      <StoryState label="Icon state" value={{ width, message }} />
     </StoryCard>
   )
 }
