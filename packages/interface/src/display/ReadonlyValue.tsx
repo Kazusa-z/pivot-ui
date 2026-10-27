@@ -16,9 +16,11 @@ const valueRecipe = cva({
 })
 
 export interface ReadonlyValueProps extends HTMLAttributes<HTMLDivElement> {
-  /** Used for null, undefined or empty-string content. Zero is preserved. */
+  /** 内容为 null、undefined 或空字符串时显示的文字；数字 0 会正常显示。 */
   emptyText?: ReactNode
+  /** 使用等宽字体，适合路径、哈希、标识符。 */
   code?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

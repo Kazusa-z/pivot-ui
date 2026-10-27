@@ -1,136 +1,83 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Badge, Tag } from '../src/display/Badge'
-import { Button } from '../src/controls/buttons'
-import { Text } from '../src/foundation/typography'
-import { StoryPage, StorySection, StoryCard, StoryRow, StoryGrid, StoryState, StoryCode } from './support/StoryPage'
+import { describeComponent } from './support/describe'
+import { Item, Row } from './support/layout'
 
 const colors = ['gray', 'blue', 'green', 'amber', 'red', 'violet'] as const
-const initialTags = ['Mesh', 'Material', 'Texture']
 
 const meta = {
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Badge 展示状态、数量或分类，Tag 额外提供移除入口。颜色、尺寸和外形影响展示；Tag 的 onRemove 通知应用，应用接受后更新数组，标签才会消失。',
-      },
-    },
-    layout: 'fullscreen',
-  },
-  title: 'Widgets/Display/Badge',
+  title: 'Display/Badge',
   component: Badge,
+  tags: ['autodocs'],
+  parameters: describeComponent({
+    summary: '短文字标签，标出状态或分类；`Tag` 是可以移除的 Badge。',
+    use: ['资源状态：ready、draft、missing', '分类或类型：texture、material', '已选的筛选条件：`Tag` 带移除按钮'],
+    avoid: ['长句说明 → 用 `Callout`', '可点击的操作 → 用 `Button`', '快捷键 → 用 `Kbd`'],
+    related: ['`Callout`：成段的状态说明', '`Kbd`：快捷键'],
+    notes: [
+      '状态用 gray / blue / green / amber / red，分类只用 violet；更多分类用文字区分',
+      '不要只靠颜色表达含义，文字本身要能读懂',
+      '放在实心选中的表格行里时，Badge 会自动切换成半透明白色以保持可读',
+    ],
+  }),
+  args: { children: 'ready', color: 'green' },
 } satisfies Meta<typeof Badge>
 export default meta
 type Story = StoryObj<typeof meta>
 
-function BadgeExample() {
-  const [tags, setTags] = useState(initialTags)
-  const [requests, setRequests] = useState(0)
-  return (
-    <StoryPage
-      eyebrow="Widgets / Display"
-      title="Badge & Tag"
-      summary="用短文字和颜色标记状态或分类。Badge 只展示；Tag 提供可移除入口，移除结果由应用决定。"
-      meta={
-        <>
-          <span>6 colors</span>
-          <span>·</span>
-          <span>solid / surface</span>
-          <span>·</span>
-          <span>pill</span>
-        </>
-      }
-      actions={
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => {
-            setTags(initialTags)
-            setRequests(0)
-          }}>
-          Reset
-        </Button>
-      }>
-      <StorySection
-        title="Colors"
-        description="solid 是浅色 tint，surface 增加 1px 边框；gray/blue/green/amber/red 表示状态，violet 是唯一的分类色。">
-        {(['solid', 'surface'] as const).map((variant) => (
-          <StoryRow key={variant}>
-            <Text size="xs" tone="muted" css={{ width: '56px' }}>
-              {variant}
-            </Text>
+export const Basic: Story = {}
+
+/** 五种状态色和一种分类色。`surface` 加 1px 边框，适合放在有底色的区域。 */
+export const Colors: Story = {
+  render: () => (
+    <div style={{ display: 'grid', gap: 'var(--space-3)' }}>
+      {(['solid', 'surface'] as const).map((variant) => (
+        <Item key={variant} label={variant}>
+          <Row>
             {colors.map((color) => (
               <Badge key={color} color={color} variant={variant}>
                 {color}
               </Badge>
             ))}
-          </StoryRow>
-        ))}
-      </StorySection>
-
-      <StorySection title="Sizes and shapes" description="xs 用于密集的元信息；pill 适合筛选标签；code 使用等宽字体。">
-        <StoryCard>
-          <StoryRow>
-            <Badge size="xs">XS</Badge>
-            <Badge pill color="blue">
-              Pill
-            </Badge>
-            <Badge code color="violet">
-              Code
-            </Badge>
-            <Badge active>Active</Badge>
-          </StoryRow>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection
-        title="Tags"
-        description="移除按钮使用 onRemove；应用更新数组后标签消失。禁用 Tag 仍保留内容，但不可移除。">
-        <StoryCard>
-          <StoryRow>
-            {tags.map((tag) => (
-              <Tag
-                key={tag}
-                color="blue"
-                pill
-                onRemove={() => {
-                  setRequests((value) => value + 1)
-                  setTags((items) => items.filter((item) => item !== tag))
-                }}>
-                {tag}
-              </Tag>
-            ))}
-            <Tag onRemove={() => setRequests((value) => value + 1)}>Keep me</Tag>
-            <Tag disabled onRemove={() => setRequests((value) => value + 1)}>
-              Disabled tag
-            </Tag>
-          </StoryRow>
-        </StoryCard>
-        <StoryState label="Parent-owned tags" value={{ tags, removeRequests: requests }} />
-      </StorySection>
-
-      <StorySection title="Usage">
-        <StoryGrid>
-          <StoryCode
-            label="tsx"
-            code={`<Badge color="green">Ready</Badge>
-<Badge color="blue" variant="surface" pill>Selected</Badge>
-<Tag color="blue" onRemove={() => remove(tag.id)}>
-  {tag.label}
-</Tag>`}
-          />
-          <StoryCard title="Rules">
-            <Text size="sm" tone="muted">
-              用颜色表达状态时使用 blue / green / amber / red；分类只用 violet，更多分类用文字区分。
-              不要只靠颜色传达含义，文字本身要能读懂。
-            </Text>
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-    </StoryPage>
-  )
+          </Row>
+        </Item>
+      ))}
+    </div>
+  ),
 }
 
-export const Overview: Story = { render: () => <BadgeExample /> }
+/** `xs` 用于元信息；`pill` 适合筛选；`code` 用等宽字体；`active` 表示当前选中的条件。 */
+export const Shapes: Story = {
+  render: () => (
+    <Row>
+      <Badge size="xs">xs</Badge>
+      <Badge pill color="blue">
+        pill
+      </Badge>
+      <Badge code color="violet">
+        .prefab
+      </Badge>
+      <Badge active>active</Badge>
+    </Row>
+  ),
+}
+
+/** `Tag` 的移除按钮只发出请求，由应用从列表中删除；禁用的 Tag 仍然显示但不能移除。 */
+export const Tags: Story = {
+  render: function Render() {
+    const [tags, setTags] = useState(['Mesh', 'Material', 'Texture'])
+    return (
+      <Row>
+        {tags.map((tag) => (
+          <Tag key={tag} color="blue" onRemove={() => setTags((items) => items.filter((item) => item !== tag))}>
+            {tag}
+          </Tag>
+        ))}
+        <Tag disabled onRemove={() => {}}>
+          Locked
+        </Tag>
+      </Row>
+    )
+  },
+}

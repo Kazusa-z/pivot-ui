@@ -34,11 +34,15 @@ const ringClass = css({
 })
 
 export interface SpinProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'> {
+  /** 尺寸：`xs` 12、`sm` 16、`md` 20。 */
   size?: 'xs' | 'sm' | 'md'
+  /** 颜色：`primary` 强调色，`inherit` 跟随文字色（放在按钮里），`default` 中性色。 */
   color?: 'primary' | 'inherit' | 'default'
+  /** 无障碍名称，默认 "Loading"。 */
   label?: string
-  /** Use inside a control which already exposes its own accessible busy state. */
+  /** 纯装饰：放在已经声明忙碌状态的控件里（例如加载中的按钮）时使用，不再单独播报。 */
   decorative?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

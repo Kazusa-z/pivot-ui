@@ -3,8 +3,11 @@ import { css, cx } from '../../styled-system/css'
 import type { SystemStyleObject } from '../../styled-system/types'
 
 export interface ImagePreviewProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'alt'> {
+  /** 图片的文字说明（必填）；纯装饰时传空字符串。 */
   alt: string
+  /** 图片在容器内的缩放方式，默认 `contain`。 */
   objectFit?: CSSProperties['objectFit']
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

@@ -1,127 +1,76 @@
-import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Kbd, KbdGroup } from '../src/display/Kbd'
-import { Input } from '../src/controls/inputs/Input'
-import { Button } from '../src/controls/buttons'
 import { Text } from '../src/foundation/typography'
-import { formatShortcut } from '../src/values/shortcut'
-import { css } from '../styled-system/css'
-import { StoryPage, StorySection, StoryCard, StoryRow, StoryField, StoryGrid, StoryCode } from './support/StoryPage'
-
-const normalization = [
-  { label: 'extra spaces', value: ' Ctrl + SHIFT + d ' },
-  { label: 'explicit tokens', value: [' Ctrl ', 'SHIFT', 'd'] },
-  { label: 'named keys', value: ' Command + Option + Enter ' },
-  { label: 'symbols', value: ['Ctrl', '+'] },
-  { label: 'comma', value: 'Ctrl+Comma' },
-  { label: 'lower case', value: 'foo + BAR' },
-]
-
-const gestures = ['shift + mld', 'mrd,mdd', 'touch-one + touch-two']
+import { describeComponent } from './support/describe'
+import { Column, Item, Row } from './support/layout'
 
 const meta = {
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Kbd 显示单个键名，KbdGroup 组合快捷键或鼠标、触摸手势。KbdGroup 统一空格、大小写和常见按键名称；size 控制密度。快捷键监听和执行由应用注册。',
-      },
-    },
-    layout: 'fullscreen',
-  },
   title: 'Display/Kbd',
   component: KbdGroup,
+  tags: ['autodocs'],
+  parameters: describeComponent({
+    summary: '显示快捷键和鼠标手势：`KbdGroup` 从字符串解析出一组按键，`Kbd` 显示单个按键。',
+    use: ['菜单项、按钮、Tooltip 里的快捷键提示', '视口操作说明：Shift + 左键拖动'],
+    notes: [
+      '`shortcuts` 支持 `ctrl`、`cmd`、`alt`、`shift`、方向键等名称，显示为对应符号；`mld` / `mrd` / `mdd` 是鼠标左键 / 右键 / 双击',
+      '这里只负责显示；快捷键的注册和平台差异（Ctrl 或 ⌘）由应用处理',
+    ],
+  }),
+  args: { shortcuts: 'ctrl+shift+s' },
 } satisfies Meta<typeof KbdGroup>
 export default meta
 type Story = StoryObj<typeof meta>
 
-function ShortcutExample() {
-  const [value, setValue] = useState(' Ctrl + Shift + d ')
-  return (
-    <StoryPage
-      eyebrow="Display"
-      title="Kbd"
-      summary="把快捷键和手势显示成紧凑的键帽。解析和展示由组件负责，实际键盘事件由应用注册。"
-      meta={
-        <>
-          <span>keys</span>
-          <span>·</span>
-          <span>gestures</span>
-          <span>·</span>
-          <span>Ctrl / ⌘</span>
-        </>
-      }>
-      <StorySection title="Shortcut" description="输入文字即时解析；非法或空白输入不显示键帽。">
-        <StoryCard>
-          <StoryRow align="end">
-            <StoryField label="Shortcut text" hint="Space-separated or array input">
-              <Input aria-label="Shortcut text" value={value} onValueChange={setValue} />
-            </StoryField>
-            <Button variant="outline" onClick={() => setValue(' Ctrl + Shift + d ')}>
-              Reset
-            </Button>
-          </StoryRow>
-          <KbdGroup shortcuts={value} />
-          <Text size="sm" tone="muted">
-            {formatShortcut(value)
-              .map((token) => token.label)
-              .join(' + ') || 'No shortcut'}
+export const Basic: Story = {}
+
+/** 常见写法：字符串用 `+` 或 `,` 分隔，也可以传数组。 */
+export const Formats: Story = {
+  render: () => (
+    <Column>
+      {['cmd+k', 'alt+arrowup', 'shift+enter', 'ctrl++'].map((shortcut) => (
+        <Row key={shortcut}>
+          <KbdGroup shortcuts={shortcut} />
+          <Text size="xs" tone="muted">
+            {`'${shortcut}'`}
           </Text>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection title="Normalization" description="别名、大小写和多余空格会被统一；应用只负责注册实际快捷键。">
-        <StoryGrid>
-          {normalization.map((item) => (
-            <StoryCard key={item.label} title={item.label}>
-              <KbdGroup shortcuts={item.value} />
-            </StoryCard>
-          ))}
-          <StoryCard title="preserve case">
-            <KbdGroup shortcuts="foo + BAR" letterCase="preserve" />
-          </StoryCard>
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection title="Sizes" description="键帽随快捷键密度选择尺寸；同一组内保持一致。">
-        <StoryCard>
-          <StoryRow>
-            {(['xs', 'sm', 'md'] as const).map((size) => (
-              <div key={size} className={css({ display: 'grid', gap: 'var(--space-1)' })}>
-                <Text size="xs" tone="muted">
-                  {size}
-                </Text>
-                <KbdGroup shortcuts="Ctrl+Shift+MLD" size={size} />
-              </div>
-            ))}
-          </StoryRow>
-          <Text size="sm" tone="muted">
-            <Kbd letterCase="preserve">Escape</Kbd> 用于关闭当前弹出面板。
-          </Text>
-        </StoryCard>
-      </StorySection>
-
-      <StorySection title="Gestures" description="鼠标和触摸手势使用图标 + 修饰键；图标旁边保留可访问名称。">
-        <StoryGrid>
-          {gestures.map((gesture) => (
-            <StoryCard key={gesture} title={gesture}>
-              <KbdGroup shortcuts={gesture} />
-            </StoryCard>
-          ))}
-        </StoryGrid>
-      </StorySection>
-
-      <StorySection title="Usage">
-        <StoryCode
-          label="tsx"
-          code={`<KbdGroup shortcuts="Ctrl+Shift+D" />
-<KbdGroup shortcuts={['Ctrl', 'K']} size="sm" />
-<Kbd>Esc</Kbd>`}
-        />
-      </StorySection>
-    </StoryPage>
-  )
+        </Row>
+      ))}
+      <Row>
+        <KbdGroup shortcuts={['cmd', 'shift', 'p']} />
+        <Text size="xs" tone="muted">
+          {"['cmd', 'shift', 'p']"}
+        </Text>
+      </Row>
+    </Column>
+  ),
 }
 
-export const Overview: Story = { render: () => <ShortcutExample /> }
+/** 鼠标和触摸手势显示为图标，可以和修饰键组合。 */
+export const Gestures: Story = {
+  render: () => (
+    <Row>
+      <KbdGroup shortcuts="shift+mld" />
+      <KbdGroup shortcuts="mrd" />
+      <KbdGroup shortcuts="mdd" />
+      <KbdGroup shortcuts="touch-two" />
+    </Row>
+  ),
+}
+
+/** 三档高度；正文中单个按键用 `Kbd`，`letterCase="preserve"` 保留按键名的大小写。 */
+export const Sizes: Story = {
+  render: () => (
+    <Column>
+      <Row>
+        {(['xs', 'sm', 'md'] as const).map((size) => (
+          <Item key={size} label={`${size} · ${{ xs: 16, sm: 18, md: 20 }[size]}px`}>
+            <KbdGroup shortcuts="ctrl+z" size={size} />
+          </Item>
+        ))}
+      </Row>
+      <Text size="sm">
+        按 <Kbd letterCase="preserve">Escape</Kbd> 关闭当前面板。
+      </Text>
+    </Column>
+  ),
+}

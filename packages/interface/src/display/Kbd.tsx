@@ -50,8 +50,11 @@ const keyRecipe = cva({
 })
 
 export interface KbdProps extends HTMLAttributes<HTMLElement> {
+  /** 高度：`xs` 16、`sm` 18、`md` 20。 */
   size?: 'xs' | 'sm' | 'md'
+  /** 字母大小写：默认 `upper`；`preserve` 保持原样，适合 `ArrowUp` 这类按键名。 */
   letterCase?: ShortcutLetterCase
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
@@ -89,6 +92,7 @@ const gestureIcons = {
 } satisfies Record<ShortcutGesture, typeof MouseLeftDownIcon | typeof IconHandFinger>
 
 export interface KbdGroupProps extends Omit<KbdGroupRootProps, 'children'> {
+  /** 快捷键，例如 `'ctrl+shift+s'`、`['cmd', 'k']`；`mld` / `mrd` / `mdd` 表示鼠标左键 / 右键 / 双击。平台差异（Ctrl 或 ⌘）由应用决定。 */
   shortcuts?: ShortcutInput
   size?: KbdProps['size']
   letterCase?: ShortcutLetterCase

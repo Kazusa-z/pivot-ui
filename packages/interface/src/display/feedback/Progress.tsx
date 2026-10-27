@@ -27,11 +27,17 @@ const indicatorClass = css({
 })
 
 export interface ProgressProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+  /** 当前进度；`null` 或省略时显示不确定进度的动画。 */
   value?: number | null
+  /** 总量，默认 100。 */
   max?: number
+  /** 轨道高度：`sm` 4、`md` 6、`lg` 8。 */
   size?: 'sm' | 'md' | 'lg'
+  /** 进度条的无障碍名称，例如 "Importing assets"。 */
   label?: string
+  /** 读屏播报的进度文字（`aria-valuetext`）；省略时由读屏根据 value / max 计算。 */
   getValueLabel?: (value: number, max: number) => string
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 

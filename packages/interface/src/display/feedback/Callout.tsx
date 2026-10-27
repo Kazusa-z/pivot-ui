@@ -32,11 +32,15 @@ const calloutRecipe = cva({
 })
 
 export interface CalloutProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'role'> {
+  /** 严重程度，决定图标和标题的颜色。 */
   severity?: 'info' | 'warning' | 'error' | 'success'
-  /** Visual severity does not imply an assertive announcement. */
+  /** 读屏播报方式：`note` 普通说明（默认，不主动播报），`status` 礼貌播报结果，`alert` 立即播报紧急错误。与 `severity` 独立选择。 */
   role?: 'note' | 'status' | 'alert'
+  /** 加粗的标题，说明是什么情况。 */
   title?: ReactNode
+  /** 左侧图标，通常与 severity 对应。 */
   icon?: ReactNode
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 
