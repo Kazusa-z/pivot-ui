@@ -90,18 +90,29 @@ export const AlertDialogDescription = forwardRef<HTMLParagraphElement, AlertDial
 )
 
 export interface AlertDialogProps {
+  /** 问题本身，例如 "Delete 3 objects?"。 */
   title: ReactNode
+  /** 说明后果，例如 "This cannot be undone."。 */
   description?: ReactNode
+  /** 说明下方的附加内容。 */
   children?: ReactNode
+  /** 打开对话框的元素；受控使用时可以省略。 */
   trigger?: ReactElement
+  /** 确认按钮文字，默认 "Confirm"；最好写成具体动作，例如 "Delete"。 */
   confirmLabel?: string
+  /** 取消按钮文字，默认 "Cancel"。 */
   cancelLabel?: string
+  /** 确认按钮使用危险色，用于删除、覆盖等不可逆操作。 */
   critical?: boolean
+  /** 点击确认按钮时调用。 */
   onConfirm?: () => void
+  /** 点击取消按钮时调用。 */
   onCancel?: () => void
-  /** Custom actions replace the standard Cancel/Confirm pair. */
+  /** 自定义按钮，替换默认的取消 / 确认两个按钮。 */
   actions?: ReactNode
+  /** 传给 Root：`open` / `defaultOpen` / `onOpenChange` 控制开关。 */
   rootProps?: Omit<AlertDialogRootProps, 'children'>
+  /** 合并到触发元素上的额外属性。 */
   triggerProps?: Omit<AlertDialogTriggerProps, 'children' | 'asChild'>
   portalProps?: Omit<AlertDialogPortalProps, 'children'>
   overlayProps?: AlertDialogOverlayProps

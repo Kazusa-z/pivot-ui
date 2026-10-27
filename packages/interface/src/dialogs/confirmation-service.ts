@@ -1,10 +1,15 @@
 import type { ReactNode } from 'react'
 
 export interface ConfirmationOptions {
+  /** 问题本身。 */
   readonly title: ReactNode
+  /** 说明后果。 */
   readonly description?: ReactNode
+  /** 确认按钮文字。 */
   readonly confirmLabel?: string
+  /** 取消按钮文字。 */
   readonly cancelLabel?: string
+  /** 确认按钮使用危险色。 */
   readonly critical?: boolean
 }
 

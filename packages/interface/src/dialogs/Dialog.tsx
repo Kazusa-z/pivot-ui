@@ -90,19 +90,31 @@ export const DialogDescription = forwardRef<HTMLParagraphElement, DialogDescript
 })
 
 export interface DialogProps {
+  /** 对话框标题（必填），也是对话框的无障碍名称。 */
   title: ReactNode
+  /** 视觉上隐藏标题，只保留给读屏。 */
   titleHidden?: boolean
+  /** 标题下的说明；没有说明时对话框不会关联 `aria-describedby`。 */
   description?: ReactNode
+  /** 对话框主体，例如表单。 */
   children?: ReactNode
+  /** 打开对话框的元素，例如 `Button`；受控使用时可以省略。 */
   trigger?: ReactElement
+  /** 显示右上角关闭按钮，默认显示。 */
   closable?: boolean
+  /** 关闭按钮的无障碍名称，默认 "Close dialog"。 */
   closeLabel?: string
-  /** Close button size; dialogs use 24 by default and 32 for touch/regular surfaces. */
+  /** 关闭按钮尺寸：`sm` 24（默认）、`md` 32。 */
   closeSize?: 'sm' | 'md'
+  /** 传给 Root：`open` / `defaultOpen` / `onOpenChange` 控制开关。 */
   rootProps?: Omit<DialogRootProps, 'children'>
+  /** 合并到触发元素上的额外属性。 */
   triggerProps?: Omit<DialogTriggerProps, 'children' | 'asChild'>
+  /** 传给 Portal 的属性，例如 `container`。 */
   portalProps?: Omit<DialogPortalProps, 'children'>
+  /** 传给遮罩层的属性。 */
   overlayProps?: DialogOverlayProps
+  /** 传给对话框内容的属性，例如 `onEscapeKeyDown`、`css`。 */
   contentProps?: Omit<DialogContentProps, 'children'>
   titleProps?: Omit<DialogTitleProps, 'children'>
   descriptionProps?: Omit<DialogDescriptionProps, 'children'>

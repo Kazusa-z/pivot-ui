@@ -14,8 +14,9 @@ const ConfirmationContext = createContext<ConfirmationService | null>(null)
 const useClientLayoutEffect = typeof document === 'undefined' ? useEffect : useLayoutEffect
 
 export interface ConfirmationProviderProps {
-  /** Exactly one mounted Provider per service; distinct applications use distinct services. */
+  /** 确认服务，用 `createConfirmationService()` 创建；每个服务只挂载一个 Provider。 */
   service: ConfirmationService
+  /** 使用确认的应用区域。 */
   children?: ReactNode
 }
 
