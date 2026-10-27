@@ -26,13 +26,21 @@ import {
 import { CurvePresets } from './CurvePresets'
 
 export interface CurvePickerProps extends CurveEditorProps {
+  /** 浮层里可选的曲线预设，默认使用 `defaultCurvePresets`。 */
   presets?: readonly CurvePreset[]
+  /** 提供后可以保存、加载和删除个人预设。 */
   presetService?: CurvePresetService
+  /** 浮层是否打开（受控）。 */
   open?: boolean
+  /** 非受控时初始是否打开。 */
   defaultOpen?: boolean
+  /** 打开或关闭浮层时调用。 */
   onOpenChange?: (open: boolean) => void
+  /** 传给曲线预览按钮的属性。 */
   triggerProps?: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'type' | 'disabled'>
+  /** 传给浮层内容的属性。 */
   contentProps?: Omit<PopoverContentProps, 'children' | 'asChild'>
+  /** 传给浮层 Portal 的属性。 */
   portalProps?: Omit<PopoverPortalProps, 'children'>
 }
 function PickerWidget(props: CurveEditorProps) {

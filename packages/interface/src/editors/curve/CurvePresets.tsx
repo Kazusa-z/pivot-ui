@@ -97,12 +97,19 @@ const presetRows = css({
   minWidth: 0,
 })
 export interface CurvePresetsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
+  /** 当前曲线，保存个人预设时使用。 */
   value: CurveValue
+  /** 内置预设列表，默认 `defaultCurvePresets`。 */
   presets?: readonly CurvePreset[]
+  /** 提供后列出个人预设；保存、删除按服务是否实现对应方法启用。 */
   presetService?: CurvePresetService
+  /** 应用预设时调用，应用用它替换曲线。 */
   onApplyPreset?: (value: CurveValue) => void | Promise<void>
+  /** 禁用。 */
   disabled?: boolean
+  /** 只读：不能应用、保存或删除。 */
   readOnly?: boolean
+  /** 切换编辑对象时改变，丢弃进行中的操作。 */
   resetKey?: unknown
 }
 type Operation = 'listing' | 'loading' | 'applying' | 'saving' | 'removing'

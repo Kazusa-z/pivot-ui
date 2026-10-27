@@ -55,30 +55,53 @@ import { NumberInput } from '../../controls/inputs/NumberInput'
 
 export interface CurveEditorProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'>, CurveEditCallbacks {
+  /** 曲线（受控）：`interpolation` 为 `linear` 或 `bezier`，`points` 是带稳定 id 的点，贝塞尔点可以有 `inHandle` / `outHandle`。 */
   value: CurveValue
+  /** 编辑中的预览值，返回完整曲线。 */
   onValueChange?: (value: CurveValue) => void
+  /** 选中的点（受控）。 */
   selectedPointIds?: readonly CurvePointId[]
+  /** 非受控时初始选中的点。 */
   defaultSelectedPointIds?: readonly CurvePointId[]
+  /** 选中的点变化时调用。 */
   onSelectedPointIdsChange?: (ids: readonly CurvePointId[]) => void
+  /** 可见范围（受控）`{ xMin, xMax, yMin, yMax }`。 */
   viewport?: CurveViewport
+  /** 非受控时的初始可见范围，也是"重置视图"回到的范围，默认 0–1。 */
   defaultViewport?: CurveViewport
+  /** 平移、缩放或重置视图时调用。 */
   onViewportChange?: (viewport: CurveViewport) => void
-  /** 限制用户编辑点时可达到的范围。已有点与视口保持原样；若某点无法在当前 x 范围内移动，请调整边界或相邻点。 */
+  /** 编辑点时可以到达的范围；已有的点和视口不受影响。 */
   bounds?: Partial<CurveViewport>
+  /** 方向键横向移动的步长，默认 0.01；Shift 10 倍，Ctrl（⌘）0.1 倍。 */
   xStep?: number
+  /** 方向键纵向移动的步长，默认 0.01。 */
   yStep?: number
+  /** 点坐标保留的小数位数，默认 6。 */
   precision?: number
+  /** 整组的无障碍名称，默认 `Curve`。 */
   label?: string
+  /** 横轴名称，默认 `X`。 */
   xLabel?: string
+  /** 纵轴名称，默认 `Y`。 */
   yLabel?: string
+  /** 横轴刻度的显示格式，例如加单位。 */
   formatXTick?: (value: number) => string
+  /** 纵轴刻度的显示格式。 */
   formatYTick?: (value: number) => string
+  /** 图表区域的高度（px），默认 260。 */
   height?: number
+  /** 显示"播放预览"按钮，沿横轴扫过曲线，默认关闭。 */
   showAnimation?: boolean
+  /** 显示插值方式（Linear / Bezier）选择，默认开启。 */
   showInterpolationSelector?: boolean
+  /** 切换编辑对象时改变，取消正在进行的编辑。 */
   resetKey?: unknown
+  /** 禁用。 */
   disabled?: boolean
+  /** 只读：可以选中点、平移和缩放，不能修改。 */
   readOnly?: boolean
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 type Handle = 'inHandle' | 'outHandle'
