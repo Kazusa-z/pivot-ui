@@ -27,29 +27,49 @@ export type NumericDistributionEditSource = CurveEditSource
 export type NumericDistributionCommitReason = CurveCommitReason
 export interface NumericDistributionEditorProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onChange'>, NumericConstraints {
-  /** 当前显示的分布值。应用在 onValueChange 中更新预览，在取消或保存失败时恢复应显示的值。 */
+  /** 当前值（受控）：`constant` 固定值、`two-constant` 两值之间随机、`curve` 曲线、`two-curve` 两条曲线之间随机。 */
   value: NumericDistributionValue
+  /** 编辑中的预览值。 */
   onValueChange?: (value: NumericDistributionValue) => void
+  /** 开始编辑时调用；返回 `false` 拒绝这次编辑。 */
   onEditStart?: (source: NumericDistributionEditSource) => boolean | void
+  /** 提交最终值；返回 Promise 时失败会恢复并显示错误。 */
   onValueCommit?: (value: NumericDistributionValue, reason: NumericDistributionCommitReason) => void | Promise<void>
+  /** 编辑被取消，应用恢复编辑前的值。 */
   onEditCancel?: (reason: CurveCancelReason) => void
+  /** 各模式上次的值（受控），切回某个模式时恢复它；需要随文档保存时使用。 */
   cache?: NumericDistributionCache
+  /** 非受控时各模式的初始缓存。 */
   defaultCache?: NumericDistributionCache
+  /** 模式缓存变化时调用。 */
   onCacheChange?: (cache: NumericDistributionCache) => void
+  /** 切换编辑对象时改变：取消正在进行的编辑并清空模式缓存。 */
   resetKey?: unknown
+  /** 整组的无障碍名称，默认 `Numeric distribution`。 */
   label?: string
+  /** 数值单位，显示在输入框末尾。 */
   unit?: string
+  /** 禁用。 */
   disabled?: boolean
+  /** 只读：可以查看各模式的值和曲线，不能修改。 */
   readOnly?: boolean
-  /** curveBounds 限制曲线编辑范围，curveViewport 控制视口。固定数值的范围通过 min/max 等属性配置，业务单位由应用在读写时转换。 */
+  /** 曲线模式下点可以移动的范围；固定数值的范围用 `min` / `max`。 */
   curveBounds?: Partial<CurveViewport>
+  /** 曲线编辑器的可见范围（受控）。 */
   curveViewport?: CurveViewport
+  /** 平移或缩放曲线视图时调用；`index` 是第几条曲线。 */
   onCurveViewportChange?: (viewport: CurveViewport, index: 0 | 1) => void
+  /** 曲线点横向的吸附步长。 */
   curveXStep?: number
+  /** 曲线点纵向的吸附步长。 */
   curveYStep?: number
+  /** 曲线点坐标保留的小数位数。 */
   curvePrecision?: number
+  /** 曲线预设列表。 */
   curvePresets?: readonly CurvePreset[]
+  /** 保存个人曲线预设的服务。 */
   curvePresetService?: CurvePresetService
+  /** 追加 Panda 样式对象。 */
   css?: SystemStyleObject
 }
 const modeLabels: Record<NumericDistributionMode, string> = {

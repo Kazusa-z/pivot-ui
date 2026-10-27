@@ -636,6 +636,7 @@ export { SliderField, NumberTupleInput, Vector2Input, Vector3Input, Vector4Input
 export type {
   SliderFieldProps,
   NumberTupleInputProps,
+  NumberTupleSharedProps,
   NumericAxisConfig,
   NumericObjectInputProps,
   Vector2InputProps,

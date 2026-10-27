@@ -10,30 +10,52 @@ import { cx } from '../../../styled-system/css'
 import { numericTemplateClasses as styles } from './numeric-template.styles'
 
 export interface NumericAxisConfig extends NumericConstraints {
+  /** 稳定 key，在 `axes` 中唯一。 */
   readonly key: string
+  /** 输入框前显示的轴名，例如 `X`、`W`。 */
   readonly label: string
+  /** 单位，显示在输入框末尾。 */
   readonly unit?: string
+  /** 只禁用这一轴。 */
   readonly disabled?: boolean
+  /** 只让这一轴只读。 */
   readonly readOnly?: boolean
 }
-export interface NumberTupleInputProps
+/** Props shared by NumberTupleInput and the Vector/Rect inputs built on it. */
+export interface NumberTupleSharedProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange' | 'children'>, NumericConstraints {
-  axes: readonly NumericAxisConfig[]
-  value?: readonly number[]
-  defaultValue?: readonly number[]
-  onValueChange?: (value: readonly number[], axis: number) => void
-  onEditStart?: (source: NumericEditSource, axis: number) => boolean | void
-  onValueCommit?: (value: readonly number[], reason: NumericCommitReason, axis: number) => void | Promise<void>
-  onEditCancel?: (reason: NumericCancelReason, axis: number) => void
-  /** 控制比例联动开关，使用 onLinkedChange 更新状态；提供该回调时显示联动按钮。 */
+  /** 比例联动是否开启（受控）。 */
   linked?: boolean
+  /** 提供后显示联动按钮；开启时编辑一项，其余项按编辑开始时的比例一起变化。 */
   onLinkedChange?: (linked: boolean) => void
+  /** 联动按钮的无障碍名称，默认 `Proportional scaling`。 */
   linkLabel?: string
+  /** 整组的无障碍名称。 */
   label?: string
+  /** 禁用所有轴。 */
   disabled?: boolean
+  /** 所有轴只读。 */
   readOnly?: boolean
+  /** 切换编辑对象时改变，取消正在进行的编辑。 */
   resetKey?: unknown
+  /** 输入框高度：`xs` 20、`sm` 24（默认）、`md` 32。 */
   size?: 'xs' | 'sm' | 'md'
+}
+export interface NumberTupleInputProps extends NumberTupleSharedProps {
+  /** 每一项的轴名、单位和范围；轴上的范围覆盖整组的范围。 */
+  axes: readonly NumericAxisConfig[]
+  /** 当前值（受控），长度与 `axes` 相同。 */
+  value?: readonly number[]
+  /** 非受控时的初始值。 */
+  defaultValue?: readonly number[]
+  /** 编辑中的预览值；`axis` 是正在编辑的项。 */
+  onValueChange?: (value: readonly number[], axis: number) => void
+  /** 开始编辑时调用；返回 `false` 拒绝这次编辑。 */
+  onEditStart?: (source: NumericEditSource, axis: number) => boolean | void
+  /** 提交完整数组；返回 Promise 时失败会恢复并显示错误。 */
+  onValueCommit?: (value: readonly number[], reason: NumericCommitReason, axis: number) => void | Promise<void>
+  /** 编辑被取消，应用恢复编辑前的值。 */
+  onEditCancel?: (reason: NumericCancelReason, axis: number) => void
 }
 interface TupleEdit {
   axis: number

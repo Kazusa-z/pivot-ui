@@ -15,26 +15,32 @@ import {
   tupleToRect,
 } from '../../values/geometry'
 import type { NumericCancelReason, NumericCommitReason, NumericEditSource } from '../../interaction/numeric/types'
-import { NumberTupleInput, type NumericAxisConfig, type NumberTupleInputProps } from './NumberTupleInput'
+import { NumberTupleInput, type NumericAxisConfig, type NumberTupleSharedProps } from './NumberTupleInput'
 
 type AxisKey<T> = keyof T & string
-export type NumericObjectInputProps<T extends object> = Omit<
-  NumberTupleInputProps,
-  'axes' | 'value' | 'defaultValue' | 'onValueChange' | 'onValueCommit' | 'onEditStart' | 'onEditCancel'
-> & {
+export interface NumericObjectInputProps<T extends object> extends NumberTupleSharedProps {
+  /** 当前值（受控），例如 `{ x, y, z }`。 */
   value?: T
+  /** 非受控时的初始值。 */
   defaultValue?: T
+  /** 按分量覆盖轴名、单位和范围，例如 `{ z: { min: 0 } }`。 */
   axes?: Partial<Record<AxisKey<T>, Partial<Omit<NumericAxisConfig, 'key'>>>>
+  /** 编辑中的预览值；`axis` 是正在编辑的分量。 */
   onValueChange?: (value: T, axis: AxisKey<T>) => void
+  /** 开始编辑时调用；返回 `false` 拒绝这次编辑。 */
   onEditStart?: (source: NumericEditSource, axis: AxisKey<T>) => boolean | void
+  /** 提交完整的值；返回 Promise 时失败会恢复并显示错误。 */
   onValueCommit?: (value: T, reason: NumericCommitReason, axis: AxisKey<T>) => void | Promise<void>
+  /** 编辑被取消，应用恢复编辑前的值。 */
   onEditCancel?: (reason: NumericCancelReason, axis: AxisKey<T>) => void
 }
 export type Vector2InputProps = NumericObjectInputProps<Vector2>
 export type Vector3InputProps = NumericObjectInputProps<Vector3>
 export type Vector4InputProps = NumericObjectInputProps<Vector4>
 export type RectInputProps = Omit<NumericObjectInputProps<Rect>, 'linked' | 'onLinkedChange' | 'linkLabel'> & {
+  /** `x`、`y` 共用的范围。 */
   positionConstraints?: NumericConstraints
+  /** `width`、`height` 共用的范围，例如 `{ min: 0 }`。 */
   sizeConstraints?: NumericConstraints
 }
 

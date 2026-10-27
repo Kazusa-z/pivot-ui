@@ -1,5 +1,14 @@
 import { useEffect, useState, type ComponentProps } from 'react'
-import { Controls, Description, DocsContainer, Primary, Stories, Subtitle, Title } from '@storybook/addon-docs/blocks'
+import {
+  Controls,
+  Description,
+  DocsContainer,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+  useOf,
+} from '@storybook/addon-docs/blocks'
 import { create } from 'storybook/theming'
 import { darkColors, fonts, lightColors } from '../panda/designTokens'
 import { themeClasses } from '../packages/interface/src/foundation/theme'
@@ -68,6 +77,22 @@ export function ThemedDocsContainer({ context, children }: DocsContainerProps) {
   )
 }
 
+/** The component summary, with `code` spans rendered like the markdown description below it. */
+function SummarySubtitle() {
+  const { preparedMeta } = useOf('meta', ['meta'])
+  const summary = preparedMeta.parameters?.componentSubtitle
+  if (typeof summary !== 'string') return <Subtitle />
+  return (
+    <Subtitle>
+      {summary
+        .split(/(`[^`]+`)/)
+        .map((part, index) =>
+          part.startsWith('`') && part.endsWith('`') ? <code key={index}>{part.slice(1, -1)}</code> : part
+        )}
+    </Subtitle>
+  )
+}
+
 /**
  * One page per component, most important first: what it is for (subtitle), the typical
  * example, when to use it and its neighbours (description), its API with live controls,
@@ -78,7 +103,7 @@ export function ComponentDocsPage() {
   return (
     <>
       <Title />
-      <Subtitle />
+      <SummarySubtitle />
       <Primary />
       <Description />
       <Controls />

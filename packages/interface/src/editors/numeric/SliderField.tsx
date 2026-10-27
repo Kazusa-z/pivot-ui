@@ -6,10 +6,13 @@ import { normalizeNumericConstraints } from '../../values/numeric'
 import { numericTemplateClasses as styles } from './numeric-template.styles'
 
 export interface SliderFieldProps extends NumberInputProps {
+  /** 输入框和滑块的高度：`xs` 20、`sm` 24（默认）、`md` 32。 */
   size?: 'xs' | 'sm' | 'md'
-  /** Labels the composite and supplies the secondary slider's accessible name. */
+  /** 整组的无障碍名称，也用于滑块的名称，默认 `Value`。 */
   label?: string
+  /** 单位，显示在输入框末尾和滑块提示里。 */
   unit?: string
+  /** 拖动滑块时显示数值提示，默认开启。 */
   tooltip?: boolean
 }
 type Owner = 'input' | 'slider'
