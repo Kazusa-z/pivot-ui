@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 
 export interface ButtonStateOptions {
+  /** 禁用按钮：半透明显示，不响应点击和键盘。 */
   disabled?: boolean
+  /** 显示加载指示并阻止再次点击；由应用控制何时结束。 */
   loading?: boolean
+  /** 点击后执行的异步操作；等待期间自动显示加载状态并阻止重复点击。 */
   async?: () => Promise<unknown>
+  /** `async` 失败时调用；不提供时错误输出到 console。两种情况下按钮都会恢复可用。 */
   onAsyncError?: (error: unknown) => void
 }
 

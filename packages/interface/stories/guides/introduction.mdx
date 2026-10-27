@@ -1,0 +1,42 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { LayerDiagram } from './LayerDiagram'
+
+<Meta title="Guides/介绍" />
+
+# Pivot UI
+
+Pivot UI 是一套用来搭建 3D 编辑器界面的 React 组件库：属性面板、工具栏、资源浏览、颜色与曲线编辑。组件负责显示和交互，应用负责数据、保存、撤销和校验。
+
+## 分层
+
+组件按层组织，每层只依赖它下面的层。**侧边栏分组、源码目录 `src/<层>` 和 `src/index.ts` 的导出分组是同一套结构**，看到组件在哪一组，就知道它的源码在哪里、能依赖什么。
+
+<LayerDiagram />
+
+从下往上读：`Foundation` 提供主题和排版；`Display` 和 `Overlays` 是展示原子与浮层原语；`Controls` 是单个控件；`Layout` 和 `Dialogs` 把控件组织成页面和模态流程；`Collections` 处理一组数据；`Editors` 面向 3D 编辑器里的具体值类型；`Property` 把它们接到应用的数据服务。
+
+## 命名约定
+
+组件名的后缀说明它是什么形态，同一种值通常有几种形态可选：
+
+| 后缀      | 形态                       | 例子                                                       |
+| --------- | -------------------------- | ---------------------------------------------------------- |
+| `*Input`  | 在一个输入框里直接编辑值   | `NumberInput`、`Vector3Input`、`NumberTupleInput`          |
+| `*Field`  | 属性面板里的紧凑组合字段   | `SliderField`、`ColorField`、`HDRColorField`、`AssetField` |
+| `*Picker` | 一个预览按钮，点开浮层编辑 | `ColorPicker`、`ColorRampPicker`、`CurvePicker`            |
+| `*Editor` | 完整展开的内联编辑面板     | `ColorEditor`、`CurveEditor`、`CollectionEditor`           |
+
+例如颜色：面板里一行放 `ColorField`，空间更紧时用 `ColorPicker`，需要持续调色的侧栏用 `ColorEditor`。
+
+## 怎么读组件页
+
+每个组件一页，顺序固定：
+
+1. **用途**：一句话说明，以及适合 / 不适合的场景、和相近组件的区别。
+2. **典型示例**：最常见的用法，可以展开代码。
+3. **API**：从 TypeScript 类型自动生成，可以直接在表格里修改参数看效果。
+4. **示例**：变体、尺寸、状态等。
+
+侧边栏里名字以 `Behavior` 开头的条目是交互测试场景（拒绝请求、保存失败、外部更新等），只在开发组件时使用，不出现在文档页里。
+
+工具栏的 Theme 可以切换明暗主题。

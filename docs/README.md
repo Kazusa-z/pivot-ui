@@ -240,11 +240,36 @@ pnpm dev        # 启动 Storybook
 pnpm build:storybook
 ```
 
-- 每个公开组件一个 `Overview` 文档页。
-- 行为、边界和键盘示例使用 `tags: ['!autodocs']`，不进入 docs 页面。
-- 文档统一使用 `stories/support/StoryPage.tsx`；不引入旧 `ContractFrame` 或原生演示控件。
-- `Foundation / Control matrix` 展示两档密度与核心状态的代码对照。
-- 主题工具栏可切换明暗主题；`Foundation / Tokens` 展示颜色、字阶、圆角和间距。
+侧边栏从上到下是 `Guides`，然后按层排列：`Foundation` → `Display` → `Overlays` → `Controls` → `Layout` → `Dialogs` → `Collections` → `Editors/<Numeric|Color|Curve|Resources>` → `Property`，与源码目录一致。
+
+### 组件页
+
+每个组件一个 story 文件，文件名与页面名相同（`Controls/Button` → `stories/Button.stories.tsx`）。文档页由 `storybook/docs.tsx` 统一生成，顺序固定：
+
+1. 标题和一句话用途（`describeComponent` 的 `summary`）。
+2. 第一个 story：典型示例。它使用 args，下方的 API 表可以直接改参数。
+3. 适合、不适合、相近组件、键盘（`describeComponent` 的其余字段）。
+4. API 表：从 props 类型和 JSDoc 自动生成。props 写中文 JSDoc；继承其他文件的选项时，用 `extends` 具名接口（不要只写 `Omit<...>`），否则 API 表读不到。
+5. 其余 story：变体、尺寸、状态、组合用法。每个 story 的 JSDoc 注释就是它在文档里的说明。
+
+```tsx
+const meta = {
+  title: 'Controls/Button',
+  component: Button,
+  tags: ['autodocs'],
+  parameters: describeComponent({ summary: '…', use: […], avoid: […], related: […] }),
+  args: { children: 'Save' },
+} satisfies Meta<typeof Button>
+
+export const Basic: Story = {}
+/** 一组操作里只放一个 solid。 */
+export const Variants: Story = { render: (args) => <Row>…</Row> }
+```
+
+- 示例只展示组件本身，用 `stories/support/layout.tsx` 的 `Row`、`Column`、`Grid`、`Item`、`Panel` 排版；不要加标题卡片或调试面板。
+- 拒绝请求、保存失败、外部更新这类测试场景写成 `Behavior*` story，加 `tags: ['!autodocs']`，只出现在侧边栏，可以用 `StateView` 显示内部状态。
+- 说明使用中文；组件名、prop 名和示例数据使用英文。
+- `pnpm audit:stories` 检查标题、文件名、`describeComponent` 和 Behavior 规则。`Guides/*` 页面写在 `stories/guides/*.mdx`。
 
 ## 8. 开发与质量
 
@@ -256,7 +281,7 @@ pnpm build:storybook
 | `pnpm dev:demo`                            | 启动 Vite 示例                                 |
 | `pnpm typecheck`                           | 检查组件、Storybook、示例和工具配置            |
 | `pnpm audit:styles`                        | 扫描裸 px 尺寸，并检查颜色变量在两套主题中存在 |
-| `pnpm audit:stories`                       | 检查 StoryPage、Overview、标题和旧 story 依赖  |
+| `pnpm audit:stories`                       | 检查组件页的标题、文件名、描述和 Behavior 规则 |
 | `pnpm audit:layers`                        | 检查组件只依赖更低的层                         |
 | `pnpm verify:quick`                        | 格式 + 类型                                    |
 | `pnpm verify`                              | 格式 + 类型 + 三条审计 + demo/Storybook 构建   |
@@ -268,7 +293,7 @@ pnpm build:storybook
 1. 先确认现有 token 和状态约定，优先复用 `sizes` / `radii` / `fontSizes` / `colors`。
 2. 在 `packages/interface/src` 修改组件，在相邻 story 中更新演示。
 3. 运行 `pnpm typecheck` 和相应 story。
-4. 运行 `pnpm audit:styles`、`pnpm audit:stories`。
+4. 运行 `pnpm audit:styles`、`pnpm audit:stories`、`pnpm audit:layers`。
 5. 提交前运行 `pnpm verify`。
 
 ### 样式审计白名单

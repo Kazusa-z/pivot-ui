@@ -1,0 +1,71 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Guides/快速开始" />
+
+# 快速开始
+
+## 安装与样式
+
+本库通过 workspace 或源码链接接入，需要 Node.js `^22.18.0`、`^24.11.0` 或 `>=26.0.0`，pnpm `12.14.0`。
+
+```json
+{
+  "dependencies": {
+    "@pivot-ui/react": "workspace:*",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  }
+}
+```
+
+在应用入口各导入一次样式层声明和字体：
+
+```ts
+import '@pivot-ui/react/panda.css'
+import '@pivot-ui/react/fonts.css'
+```
+
+应用的 Panda 配置继承共享的 `panda` 预设，并扫描自己的源码和 `packages/interface/src/**/*.{ts,tsx}`。首次链接或清理生成文件后运行 `pnpm --filter @pivot-ui/react panda`。
+
+## 第一个属性面板
+
+```tsx
+import { useState } from 'react'
+import { Section, ThemeProvider, TooltipProvider, Vector3Input } from '@pivot-ui/react'
+
+export function TransformPanel() {
+  const [position, setPosition] = useState({ x: 0, y: 0, z: 5 })
+  return (
+    <ThemeProvider>
+      <TooltipProvider>
+        <Section title="Transform">
+          <Vector3Input aria-label="Position" value={position} onValueChange={setPosition} />
+        </Section>
+      </TooltipProvider>
+    </ThemeProvider>
+  )
+}
+```
+
+`value` 是当前显示的值，`onValueChange` 是修改请求：应用更新自己的状态后，控件才显示新值。只传 `value` 而不处理回调时，控件不会改变数据。
+
+## Providers
+
+Provider 只放在用到对应功能的区域：
+
+| Provider               | 用途                                                            |
+| ---------------------- | --------------------------------------------------------------- |
+| `ThemeProvider`        | 明暗主题和 `useTheme()`；可以嵌套出局部主题，浮层会继承所属主题 |
+| `TooltipProvider`      | Tooltip 的延迟与分组                                            |
+| `NotificationProvider` | 通知服务和全局 Toaster                                          |
+| `ConfirmationProvider` | 确认对话框队列，需要传入自己的 `ConfirmationService`            |
+| `DragDropProvider`     | 应用内拖放                                                      |
+
+## 本地开发
+
+```bash
+pnpm install --frozen-lockfile
+pnpm dev          # Storybook
+pnpm dev:demo     # Vite 示例应用
+pnpm verify       # 格式、类型、三项审计、构建
+```

@@ -1,0 +1,43 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Guides/选择组件" />
+
+# 选择组件
+
+## 按要做的界面找
+
+| 要实现的界面             | 组件                                                                                                   | 所在层             |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------ |
+| 触发一个操作             | `Button`；只有图标时 `IconButton`；一组工具 `IconButtonGroup`                                          | Controls           |
+| 文字、布尔值、选项       | `Input`、`Textarea`、`EditableText`、`Checkbox`、`Select`、`Combobox`、`SegmentControl`、`ToggleGroup` | Controls           |
+| 一个数字                 | `NumberInput`；既要输入又要拖动时 `SliderField`；只要拖动时 `Slider`                                   | Controls / Editors |
+| 位置、尺寸、多个数字     | `Vector2Input` / `Vector3Input` / `Vector4Input`、`RectInput`、`NumberTupleInput`                      | Editors            |
+| 把总量分成几段           | `PartitionSlider`                                                                                      | Controls           |
+| 随机或随时间变化的数值   | `NumericDistributionEditor`                                                                            | Editors            |
+| 颜色                     | `ColorField`、`HDRColorField`、`ColorPicker`、`ColorEditor`                                            | Editors            |
+| 渐变                     | `ColorRampPicker`、`ColorRampEditor`、`ColorAlphaRampEditor`、`ColorDistributionEditor`                | Editors            |
+| 曲线                     | `CurvePicker`、`CurveEditor`、`CurvePresets`                                                           | Editors            |
+| 引用资源（材质、贴图…）  | `AssetField`；浏览挑选时 `ResourceBrowser`                                                             | Editors            |
+| 一组可增删的配置项       | `CollectionEditor`                                                                                     | Collections        |
+| 层级、表格、资源磁贴     | `TreeRoot`、`Table`、`DataTable`、`AssetItem`                                                          | Collections        |
+| 字段排版、分组折叠       | `PropertyRow`、`Section`、`Accordion`                                                                  | Layout             |
+| 说明浮层、菜单、通知     | `Tooltip`、`Popover`、`HoverCard`、`DropdownMenu`、`ContextMenu`、`Menubar`、`NotificationProvider`    | Overlays           |
+| 需要确认的操作           | `Dialog`、`AlertDialog`、`ConfirmationProvider`                                                        | Dialogs            |
+| 状态和提示               | `Badge`、`Tag`、`Callout`、`Progress`、`Spin`、`Kbd`                                                   | Display            |
+| 接入应用数据、保存与撤销 | `PropertyField`                                                                                        | Property           |
+
+## 相近组件怎么区分
+
+**同一个值的几种形态**（见[命名约定](?path=/docs/guides-介绍--docs)）：`*Input` 直接输入 → `*Field` 紧凑组合 → `*Picker` 点开浮层 → `*Editor` 完整展开。属性面板一行放 `Field` 或 `Picker`，侧栏或独立面板放 `Editor`。
+
+| 容易混淆                                        | 区别                                                                                                                    |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `Slider` / `SliderField` / `PartitionSlider`    | `Slider` 只有滑块；`SliderField` 是输入框 + 滑块；`PartitionSlider` 拖动分界点把总量分成多段                            |
+| `PartitionSlider` / `NumericDistributionEditor` | 前者是"分段比例"，后者是"随机分布"（固定值、范围或曲线）                                                                |
+| `ColorField` / `ColorPicker` / `ColorEditor`    | 字段带 HEX 和透明度输入；Picker 只有色块按钮；Editor 是展开的完整取色面板                                               |
+| `ColorRampEditor` / `ColorAlphaRampEditor`      | 前者每个色标自带透明度；后者颜色轨和透明度轨分开编辑                                                                    |
+| `Section` / `Accordion`                         | `Section` 是独立的可折叠分组；`Accordion` 是一组互相关联、通常一次只展开一个的分组                                      |
+| `Separator` / `SectionDivider`                  | 前者是一条线；后者是带文字的分组标题线                                                                                  |
+| `Table` / `DataTable` / `CollectionEditor`      | `Table` 是可自由组合的表格部件；`DataTable` 按列配置生成表格并支持选中；`CollectionEditor` 管理可增删、改名、排序的条目 |
+| `Popover` / `Tooltip` / `HoverCard`             | Popover 点击打开、可交互；Tooltip 悬停显示一句说明；HoverCard 悬停显示较丰富的预览                                      |
+| `Dialog` / `AlertDialog`                        | Dialog 承载表单或详细内容；AlertDialog 只用于必须明确回答的决定                                                         |

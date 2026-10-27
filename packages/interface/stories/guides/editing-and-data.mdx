@@ -1,0 +1,60 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Guides/编辑与数据" />
+
+# 编辑与数据
+
+组件负责显示与交互，**应用拥有数据**：保存、撤销、冲突检查和业务校验都在应用里完成。这一页说明组件和应用之间怎么交换数据。
+
+## 受控值
+
+编辑组件成对使用 `value` 和 `onValueChange`：
+
+```tsx
+const [opacity, setOpacity] = useState(0.5)
+<SliderField aria-label="Opacity" value={opacity} min={0} max={1} onValueChange={setOpacity} />
+```
+
+`onValueChange` 只是**请求**。应用接受时更新状态，控件随之显示新值；拒绝时不更新，控件保持原值。也可以用 `defaultValue` 让组件自己保存状态，适合不需要同步的简单场景。
+
+## 一次编辑的生命周期
+
+拖动、连续输入这类编辑会持续一段时间。需要把"预览"和"保存"分开时，使用这组回调：
+
+| 回调            | 时机                             | 应用通常做什么                                             |
+| --------------- | -------------------------------- | ---------------------------------------------------------- |
+| `onEditStart`   | 开始拖动、开始输入               | 记录编辑前的值；返回 `false` 拒绝这次编辑                  |
+| `onValueChange` | 编辑过程中每次变化               | 更新界面预览，不写入持久化数据                             |
+| `onValueCommit` | 松开指针、按 Enter、失焦         | 保存并记录一步撤销；返回 Promise，失败时控件保留草稿和错误 |
+| `onEditCancel`  | Escape、窗口失焦、外部更新、卸载 | 恢复编辑前的值                                             |
+
+切换到另一个对象时更新 `resetKey`（对象 ID 或版本号），即使两个对象的值相同，控件也会丢弃旧对象的草稿。
+
+## PropertyField 与 PropertyAccess
+
+当很多字段都要接到同一套数据服务时，不必为每个控件手写上面的回调。实现一个 `PropertyAccess`，交给 `PropertyField`：
+
+```ts
+interface PropertyAccess<T> {
+  getSnapshot(): PropertySnapshot<T> // 当前值、版本、只读/禁用、错误、编辑预览
+  subscribe(listener: () => void): () => void
+  begin(): BeginEditResult<T> // 开始一次编辑会话：change / commit / cancel
+}
+```
+
+`PropertyField` 会根据属性类型选择内置控件（文本、数字、布尔、枚举），复杂值通过 `render` 组合 `Vector3Input`、`ColorField`、`CurvePicker` 等。保存失败时显示错误并保留草稿，多选对象值不一致时用 `mixed` 显示。后端没准备好时，可以先写一个内存版的 `PropertyAccess`。
+
+## 应用提供的服务
+
+部分组件需要应用实现服务接口（从 `@pivot-ui/react/contracts` 导入类型）：
+
+| 接口                  | 使用者                          | 作用                                                                              |
+| --------------------- | ------------------------------- | --------------------------------------------------------------------------------- |
+| `ResourceProvider`    | `ResourceBrowser`、`AssetField` | 查询和读取资源；可选改名、定位、选择文件                                          |
+| `ConfirmationService` | `ConfirmationProvider`          | 排队弹出确认对话框                                                                |
+| `NotificationService` | `NotificationProvider`          | 发送通知                                                                          |
+| `CurvePresetService`  | `CurvePresets`                  | 保存个人曲线预设                                                                  |
+| `ColorCapabilities`   | 颜色组件                        | 复制粘贴颜色、屏幕取色；提供了哪些方法就启用哪些按钮                              |
+| `HostCapabilities`    | 应用的宿主适配层                | 剪贴板、偏好存储、文件选择的通用接口，可以从中取出 `ColorCapabilities` 需要的部分 |
+
+数据类型与纯函数（颜色转换、曲线采样、数值约束等）从 `@pivot-ui/react/values` 导入，不依赖 React。
